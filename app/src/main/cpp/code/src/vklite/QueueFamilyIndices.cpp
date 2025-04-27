@@ -10,4 +10,4 @@ namespace vklite {
         return graphicQueueFamilyIndex.has_value() && presentQueueFamilyIndex.has_value();
     }
 
-} // engine
+} // vklite

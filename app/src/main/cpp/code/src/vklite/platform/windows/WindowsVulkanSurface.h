@@ -10,7 +10,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/vulkan_wrapper/VulkanSurface.h"
-#include "vklite/vulkan_wrapper/VulkanInstance.h"
+#include "vklite/vulkan_wrapper/Instance.h"
 
 // That way GLFW will include its own definitions and automatically load the Vulkan header with it.
 #define GLFW_INCLUDE_VULKAN
@@ -31,7 +31,7 @@ namespace engine{
         [[nodiscard]]
         vk::SurfaceKHR getSurface() const override { return mSurface; }
 
-        static std::function<std::unique_ptr<VulkanSurface>(const VulkanInstance &)> surfaceBuilder(GLFWwindow *window);
+        static std::function<std::unique_ptr<VulkanSurface>(const Instance &)> surfaceBuilder(GLFWwindow *window);
     };
 }
 

@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace common {
+namespace vklite {
 
     template<typename T>
     class ValueSelector {

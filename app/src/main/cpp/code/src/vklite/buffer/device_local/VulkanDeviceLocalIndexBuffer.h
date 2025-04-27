@@ -36,4 +36,4 @@ namespace vklite {
         void update(const VulkanCommandPool& vulkanCommandPool, const std::vector<uint32_t>& indices);
     };
 
-} // engine
+} // vklite

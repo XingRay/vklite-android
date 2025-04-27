@@ -3,7 +3,7 @@
 //
 
 #include "VertexBindingConfigure.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -74,4 +74,4 @@ namespace vklite {
         return addAttribute(mCurrentAttributeLocation + 1, mBinding, format, mCurrentAttributeOffset);
     }
 
-} // engine
+} // vklite

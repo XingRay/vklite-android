@@ -8,9 +8,9 @@
 #include <functional>
 #include <string>
 
-#include "vklite/common/Selector.h"
+#include "vklite/util/selector/Selector.h"
 
-namespace common {
+namespace vklite {
 
     class FixStringListSelector : public ListSelector<std::string> {
     private:

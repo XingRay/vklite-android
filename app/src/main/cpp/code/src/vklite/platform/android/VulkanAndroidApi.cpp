@@ -14,4 +14,4 @@ namespace vklite {
 
     PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
 
-} // engine
+} // vklite

@@ -77,4 +77,4 @@ namespace vklite {
                                                 const VulkanRenderPass &renderPass);
     };
 
-} // engine
+} // vklite

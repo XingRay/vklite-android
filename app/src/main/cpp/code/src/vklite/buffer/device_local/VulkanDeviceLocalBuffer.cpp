@@ -4,7 +4,7 @@
 
 #include "VulkanDeviceLocalBuffer.h"
 
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 #include "vklite/Log.h"
 
 namespace vklite {

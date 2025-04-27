@@ -8,20 +8,20 @@
 
 namespace vklite {
 
-    class VulkanSurface {
+    class Surface {
     public:
-        virtual ~VulkanSurface() = default;
+        virtual ~Surface() = default;
 
         // 禁用拷贝和赋值操作符
-        VulkanSurface(const VulkanSurface &) = delete;
-        VulkanSurface &operator=(const VulkanSurface &) = delete;
+        Surface(const Surface &) = delete;
+        Surface &operator=(const Surface &) = delete;
 
         // 获取 Vulkan Surface
         [[nodiscard]]
         virtual vk::SurfaceKHR getSurface() const = 0;
 
     protected:
-        VulkanSurface() = default;
+        Surface() = default;
     };
 
 } // namespace engine

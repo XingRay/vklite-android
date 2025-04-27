@@ -90,4 +90,4 @@ namespace vklite {
                                                   std::move(pipelineLayout));
     }
 
-} // engine
+} // vklite

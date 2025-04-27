@@ -47,4 +47,4 @@ namespace vklite {
         std::vector<vk::DescriptorBufferInfo> createDescriptorBufferInfos();
     };
 
-} // engine
+} // vklite

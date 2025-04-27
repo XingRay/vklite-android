@@ -4,9 +4,8 @@
 
 #include "VulkanPhysicalDevice.h"
 #include "vklite/Log.h"
-#include "vklite/VulkanUtil.h"
-
-#include "vklite/common/StringUtil.h"
+#include "vklite/util/VulkanUtil.h"
+#include "vklite/util/StringUtil.h"
 
 namespace vklite {
     VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::PhysicalDevice &physicalDevice) : mPhysicalDevice(physicalDevice) {
@@ -15,7 +14,7 @@ namespace vklite {
 
     VulkanPhysicalDevice::~VulkanPhysicalDevice() = default;
 
-    std::optional<VulkanPhysicalDeviceSurfaceSupport> VulkanPhysicalDevice::querySurfaceSupport(const VulkanSurface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const {
+    std::optional<VulkanPhysicalDeviceSurfaceSupport> VulkanPhysicalDevice::querySurfaceSupport(const Surface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const {
         const vk::SurfaceKHR &surface = vulkanSurface.getSurface();
 
         QueueFamilyIndices indices = VulkanUtil::findQueueFamilies(mPhysicalDevice, surface, requiredQueueFlags);
@@ -43,7 +42,7 @@ namespace vklite {
     }
 
     bool VulkanPhysicalDevice::isSupportExtensions(const std::vector<std::string> extensions) const{
-        return common::StringUtil::isContains(queryExtensionNames(), extensions);
+        return StringUtil::isContains(queryExtensionNames(), extensions);
     }
 
     const vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice() const {
@@ -394,4 +393,4 @@ namespace vklite {
         return extensionNames;
     }
 
-} // engine
+} // vklite

@@ -31,4 +31,4 @@ namespace vklite {
         mStagingBuffer.updateBuffer(data, size);
         mVertexBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
     }
-} // engine
+} // vklite

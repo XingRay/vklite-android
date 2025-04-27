@@ -118,4 +118,4 @@ namespace vklite {
 //        void updateDescriptorSets();
     };
 
-} // engine
+} // vklite

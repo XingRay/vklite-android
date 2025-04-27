@@ -25,4 +25,4 @@ namespace vklite {
 
     };
 
-} // engine
+} // vklite

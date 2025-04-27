@@ -7,7 +7,7 @@
 #include <vulkan/vulkan.hpp>
 #include <optional>
 
-#include "vklite/common/StringListSelector.h"
+#include "vklite/util/selector/StringListSelector.h"
 #include "vklite/swapchain/SwapChainSupportDetail.h"
 #include "vklite/QueueFamilyIndices.h"
 #include "vklite/configure/physical_device/VulkanPhysicalDeviceSurfaceSupport.h"
@@ -89,4 +89,4 @@ namespace vklite {
         [[nodiscard]]
         float getMaxSamplerAnisotropy()const;
     };
-} // engine
+} // vklite

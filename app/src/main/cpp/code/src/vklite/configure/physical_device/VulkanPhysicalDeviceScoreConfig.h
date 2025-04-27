@@ -91,4 +91,4 @@ namespace vklite {
         int32_t getOtherDeviceTypeScore() const { return otherDeviceTypeScore; }
     };
 
-} // engine
+} // vklite

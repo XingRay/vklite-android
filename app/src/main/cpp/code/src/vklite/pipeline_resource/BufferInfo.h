@@ -43,4 +43,4 @@ namespace vklite {
         vk::DescriptorBufferInfo createDescriptorBufferInfo() const;
     };
 
-} // engine
+} // vklite

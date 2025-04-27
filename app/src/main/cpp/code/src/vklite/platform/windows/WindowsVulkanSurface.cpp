@@ -25,8 +25,8 @@ namespace vklite {
         }
     }
 
-    std::function<std::unique_ptr<VulkanSurface>(const VulkanInstance &)> WindowsVulkanSurface::surfaceBuilder(GLFWwindow *window) {
-        return [window](const VulkanInstance &instance) -> std::unique_ptr<VulkanSurface> {
+    std::function<std::unique_ptr<VulkanSurface>(const Instance &)> WindowsVulkanSurface::surfaceBuilder(GLFWwindow *window) {
+        return [window](const Instance &instance) -> std::unique_ptr<VulkanSurface> {
             // 创建 WindowsVulkanSurface 实例
             return std::make_unique<WindowsVulkanSurface>(instance.getInstance(), window);
         };

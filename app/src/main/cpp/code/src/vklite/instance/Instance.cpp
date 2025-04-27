@@ -2,11 +2,11 @@
 // Created by leixing on 2024/12/22.
 //
 
-#include "VulkanInstance.h"
+#include "Instance.h"
 #include "vklite/VkCheck.h"
 #include "vklite/VkCheckCpp.h"
 #include "vklite/Log.h"
-#include "vklite/common/StringUtil.h"
+#include "vklite/util/StringUtil.h"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
@@ -18,13 +18,13 @@ namespace vklite {
             const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
             void *pUserData);
 
-    VulkanInstance::VulkanInstance(const std::string &applicationName,
+    Instance::Instance(const std::string &applicationName,
                                    uint32_t applicationVersion,
                                    const std::string &engineName,
                                    uint32_t engineVersion,
-                                   const common::ListSelector<std::string> &extensionsSelector,
-                                   const common::ListSelector<std::string> &layersSelector) {
-        LOG_D("VulkanInstance::VulkanInstance");
+                                   const ListSelector<std::string> &extensionsSelector,
+                                   const ListSelector<std::string> &layersSelector) {
+        LOG_D("Instance::Instance");
         vk::DynamicLoader dl;
 
         auto vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
@@ -93,8 +93,8 @@ namespace vklite {
                 .apiVersion = VK_API_VERSION_1_3,
         };
 
-        std::vector<const char *> layers = common::StringUtil::toStringPtrArray(mEnabledLayerNames);
-        std::vector<const char *> extensions = common::StringUtil::toStringPtrArray(mEnabledInstanceExtensionNames);
+        std::vector<const char *> layers = StringUtil::toStringPtrArray(mEnabledLayerNames);
+        std::vector<const char *> extensions = StringUtil::toStringPtrArray(mEnabledInstanceExtensionNames);
 
         VkInstanceCreateInfo instanceCreateInfo{
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
@@ -130,8 +130,8 @@ namespace vklite {
     }
 
 
-    VulkanInstance::~VulkanInstance() {
-        LOG_D("VulkanInstance::~VulkanInstance()");
+    Instance::~Instance() {
+        LOG_D("Instance::~Instance()");
         if (mInstance != nullptr) {
 //            mInstance.destroyDebugReportCallbackEXT(mDebugReportCallback);
             mInstance.destroy();
@@ -142,21 +142,21 @@ namespace vklite {
     }
 
     [[nodiscard]]
-    const vk::Instance &VulkanInstance::getInstance() const {
+    const vk::Instance &Instance::getInstance() const {
         return mInstance;
     }
 
     [[nodiscard]]
-    const std::vector<std::string> &VulkanInstance::getEnabledExtensions() const {
+    const std::vector<std::string> &Instance::getEnabledExtensions() const {
         return mEnabledInstanceExtensionNames;
     }
 
     [[nodiscard]]
-    const std::vector<std::string> &VulkanInstance::getEnabledLayers() const {
+    const std::vector<std::string> &Instance::getEnabledLayers() const {
         return mEnabledLayerNames;
     }
 
-    std::vector<std::unique_ptr<VulkanPhysicalDevice>> VulkanInstance::listPhysicalDevices() const {
+    std::vector<std::unique_ptr<VulkanPhysicalDevice>> Instance::listPhysicalDevices() const {
         std::vector<vk::PhysicalDevice> physicalDevices = mInstance.enumeratePhysicalDevices();
 
         std::vector<std::unique_ptr<VulkanPhysicalDevice>> vulkanPhysicalDevices;
@@ -167,7 +167,7 @@ namespace vklite {
         return vulkanPhysicalDevices;
     }
 
-    void VulkanInstance::setupDebugCallback() {
+    void Instance::setupDebugCallback() {
         vk::DebugReportCallbackCreateInfoEXT debugInfo{
                 vk::DebugReportFlagBitsEXT::eError | vk::DebugReportFlagBitsEXT::eWarning,
                 debugCallbackImpl,
@@ -178,7 +178,7 @@ namespace vklite {
     }
 
 
-    VKAPI_ATTR VkBool32 VKAPI_CALL VulkanInstance::debugCallbackImpl(
+    VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallbackImpl(
             VkDebugReportFlagsEXT flags,
             VkDebugReportObjectTypeEXT objectType,
             uint64_t object,
@@ -198,7 +198,7 @@ namespace vklite {
     }
 
 
-    void VulkanInstance::populateDebugMessengerCreateInfo(vk::DebugUtilsMessengerCreateInfoEXT &createInfo) {
+    void Instance::populateDebugMessengerCreateInfo(vk::DebugUtilsMessengerCreateInfoEXT &createInfo) {
         createInfo.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
                                      | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning
                                      | vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo;
@@ -207,10 +207,11 @@ namespace vklite {
                                  | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation
                                  | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance
                                  | vk::DebugUtilsMessageTypeFlagBitsEXT::eDeviceAddressBinding;
+
         createInfo.pfnUserCallback = debugCallback;
     }
 
-    void VulkanInstance::setupDebugMessenger() {
+    void Instance::setupDebugMessenger() {
         LOG_D("setupDebugMessenger");
 //        if (!mEnableValidationLayer) {
 //            return;
@@ -225,7 +226,7 @@ namespace vklite {
     }
 
 
-    vk::Result VulkanInstance::CreateDebugUtilsMessengerEXT(vk::Instance instance,
+    vk::Result Instance::CreateDebugUtilsMessengerEXT(vk::Instance instance,
                                                             const vk::DebugUtilsMessengerCreateInfoEXT *pCreateInfo,
                                                             const vk::AllocationCallbacks *pAllocator,
                                                             vk::DebugUtilsMessengerEXT *pDebugMessenger) {

@@ -40,4 +40,4 @@ namespace vklite {
         const void *getData() const;
     };
 
-} // engine
+} // vklite

@@ -34,4 +34,4 @@ namespace vklite {
 //                .setImageInfo(descriptorImageInfos);
 //    }
 
-} // engine
+} // vklite

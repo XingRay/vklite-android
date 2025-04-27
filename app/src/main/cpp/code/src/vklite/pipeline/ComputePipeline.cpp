@@ -52,4 +52,4 @@ namespace vklite {
     const vk::PipelineLayout &ComputePipeline::getPipelineLayout() const {
         return mPipelineLayout;
     }
-} // engine
+} // vklite

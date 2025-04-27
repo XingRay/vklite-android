@@ -23,4 +23,4 @@ namespace vklite {
         const vk::ShaderModule &getShaderModule() const;
     };
 
-} // engine
+} // vklite

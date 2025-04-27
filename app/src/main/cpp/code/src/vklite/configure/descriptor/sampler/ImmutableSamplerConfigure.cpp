@@ -37,4 +37,4 @@ namespace vklite {
 //                                                                  std::move(mVulkanDescriptorImmutableSamplerConfigure));
 //    }
 
-} // engine
+} // vklite

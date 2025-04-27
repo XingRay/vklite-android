@@ -40,29 +40,29 @@ namespace test04 {
 
         std::vector<uint32_t> indices = {0, 1, 2};
 
-        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
-                .layers({}, std::move(layers))
-                .extensions({}, std::move(instanceExtensions))
-                .deviceExtensions(std::move(deviceExtensions))
-                .surfaceBuilder(std::make_unique<vklite::AndroidVulkanSurfaceBuilder>(mApp.window))
-                .enableMsaa()
-                .physicalDeviceAsDefault()
-//                .graphicsPipeline([&](vklite::GraphicsPipelineConfigure &graphicsPipelineConfigure) {
-//                    graphicsPipelineConfigure
-//                            .vertexShaderCode(std::move(vertexShaderCode))
-//                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
-//                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
-//                                vertexConfigure
-//                                        .binding(0)
-//                                        .stride(sizeof(Vertex))
-//                                        .addAttribute(ShaderFormat::Vec3)
-//                                        .addAttribute(ShaderFormat::Vec3)
-//                                        .setVertexBuffer(vertices);
-//                            })
-//                            .index(std::move(indices))
-//                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex);;
-//                })
-                .build();
+//        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
+//                .layers({}, std::move(layers))
+//                .extensions({}, std::move(instanceExtensions))
+//                .deviceExtensions(std::move(deviceExtensions))
+//                .surfaceBuilder(std::make_unique<vklite::AndroidSurfaceBuilder>(mApp.window))
+//                .enableMsaa()
+//                .physicalDeviceAsDefault()
+////                .graphicsPipeline([&](vklite::GraphicsPipelineConfigure &graphicsPipelineConfigure) {
+////                    graphicsPipelineConfigure
+////                            .vertexShaderCode(std::move(vertexShaderCode))
+////                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
+////                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
+////                                vertexConfigure
+////                                        .binding(0)
+////                                        .stride(sizeof(Vertex))
+////                                        .addAttribute(ShaderFormat::Vec3)
+////                                        .addAttribute(ShaderFormat::Vec3)
+////                                        .setVertexBuffer(vertices);
+////                            })
+////                            .index(std::move(indices))
+////                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex);;
+////                })
+//                .build();
 
         mMvpMatrix = MvpMatrix{};
         float scale = 1.0f;

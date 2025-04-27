@@ -31,4 +31,4 @@ namespace vklite {
         virtual void update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) = 0;
     };
 
-} // engine
+} // vklite

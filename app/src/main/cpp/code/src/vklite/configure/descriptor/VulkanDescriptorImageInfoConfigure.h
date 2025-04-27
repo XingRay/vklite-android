@@ -40,4 +40,4 @@ namespace vklite {
         std::unique_ptr<ImageInfo> provideVulkanDescriptorImageInfo(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool);
     };
 
-} // engine
+} // vklite

@@ -6,7 +6,7 @@
 
 //#include "vulkan/vulkan.hpp"
 //
-//#include "vklite/vulkan_wrapper/VulkanInstance.h"
+//#include "vklite/vulkan_wrapper/Instance.h"
 //#include "vklite/vulkan_wrapper/VulkanDevice.h"
 //#include "vklite/vulkan_wrapper/VulkanCommandPool.h"
 //#include "vklite/ShaderFormat.h"
@@ -39,7 +39,7 @@ namespace vklite {
 //        std::vector<std::vector<uint8_t>> mPushConstantDataList;
 //
 //    public:
-//        explicit VulkanShader(const VulkanInstance &vulkanInstance,
+//        explicit VulkanShader(const Instance &vulkanInstance,
 //                              const VulkanDevice &vulkanDevice,
 //                              const VulkanCommandPool &commandPool,
 //                              uint32_t frameCount,
@@ -82,4 +82,4 @@ namespace vklite {
 //        void updatePushConstant(uint32_t index, const void *data);
 //    };
 
-} // engine
+} // vklite

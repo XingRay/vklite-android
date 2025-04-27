@@ -23,4 +23,4 @@ namespace vklite {
         const vk::WriteDescriptorSet &getWriteDescriptorSet() const;
     };
 
-} // engine
+} // vklite

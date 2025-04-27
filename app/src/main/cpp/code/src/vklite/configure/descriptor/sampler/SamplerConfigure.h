@@ -50,4 +50,4 @@ namespace vklite {
 //        std::unique_ptr<VulkanDescriptorBindingConfigure> createVulkanDescriptorBindingConfigure();
     };
 
-} // engine
+} // vklite

@@ -8,7 +8,7 @@
 #include <optional>
 
 #include "vklite/configure/physical_device/VulkanPhysicalDeviceSurfaceSupport.h"
-#include "VulkanSurface.h"
+#include "vklite/surface/Surface.h"
 
 namespace vklite {
 
@@ -22,7 +22,7 @@ namespace vklite {
 
         ~VulkanPhysicalDevice();
 
-        std::optional<VulkanPhysicalDeviceSurfaceSupport> querySurfaceSupport(const VulkanSurface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const;
+        std::optional<VulkanPhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const;
 
         bool isSupportExtensions(const std::vector<std::string> extensions) const;
 
@@ -49,4 +49,4 @@ namespace vklite {
         std::vector<std::string> queryExtensionNames() const;
     };
 
-} // engine
+} // vklite

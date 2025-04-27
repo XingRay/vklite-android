@@ -50,4 +50,4 @@ namespace vklite {
     const vk::SamplerYcbcrConversion &VulkanAndroidHardwareBufferYcbcrConversion::getSamplerYcbcrConversion() const {
         return mSamplerYcbcrConversion;
     }
-} // engine
+} // vklite

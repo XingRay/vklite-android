@@ -15,4 +15,4 @@ namespace vklite {
         return std::make_unique<VulkanDeviceLocalUniformBuffer>(vulkanDevice, bufferSize);
     }
 
-} // engine
+} // vklite

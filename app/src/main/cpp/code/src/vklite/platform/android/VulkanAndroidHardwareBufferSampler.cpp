@@ -50,4 +50,4 @@ namespace vklite {
         return mSampler;
     }
 
-} // engine
+} // vklite

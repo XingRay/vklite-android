@@ -20,4 +20,4 @@ namespace vklite {
         virtual std::unique_ptr<SamplerInterface> build(const VulkanDevice &vulkanDevice) = 0;
     };
 
-} // engine
+} // vklite

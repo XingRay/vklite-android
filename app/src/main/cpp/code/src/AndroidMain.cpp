@@ -14,7 +14,7 @@
 #include <android/log.h>
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/AndroidVulkanSurface.h"
+#include "vklite/platform/android/surface/AndroidSurface.h"
 #include "pthread.h"
 
 #include "vklite/Log.h"

@@ -31,4 +31,4 @@ namespace vklite {
     const void *PushConstant::getData() const {
         return mData;
     }
-} // engine
+} // vklite

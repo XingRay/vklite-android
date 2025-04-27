@@ -11,15 +11,15 @@ namespace vklite {
 
     VulkanAndroidInstancePlugin::~VulkanAndroidInstancePlugin() = default;
 
-    void VulkanAndroidInstancePlugin::onVulkanInstanceCreated(const VulkanInstance &vulkanInstance) {
-        const vk::Instance &instance = vulkanInstance.getInstance();
+    void VulkanAndroidInstancePlugin::onInstanceCreated(const Instance &instance) {
+        const vk::Instance &vkInstance = instance.getInstance();
 
-        vkGetAndroidHardwareBufferPropertiesANDROID = (PFN_vkGetAndroidHardwareBufferPropertiesANDROID) vkGetInstanceProcAddr(instance, "vkGetAndroidHardwareBufferPropertiesANDROID");
-        vkBindImageMemory2KHR = (PFN_vkBindImageMemory2KHR) vkGetInstanceProcAddr(instance, "vkBindImageMemory2KHR");
+        vkGetAndroidHardwareBufferPropertiesANDROID = (PFN_vkGetAndroidHardwareBufferPropertiesANDROID) vkGetInstanceProcAddr(vkInstance, "vkGetAndroidHardwareBufferPropertiesANDROID");
+        vkBindImageMemory2KHR = (PFN_vkBindImageMemory2KHR) vkGetInstanceProcAddr(vkInstance, "vkBindImageMemory2KHR");
 
-        vkCreateSamplerYcbcrConversion = (PFN_vkCreateSamplerYcbcrConversion) vkGetInstanceProcAddr(instance, "vkCreateSamplerYcbcrConversion");
-        vkDestroySamplerYcbcrConversion = (PFN_vkDestroySamplerYcbcrConversion) vkGetInstanceProcAddr(instance, "vkDestroySamplerYcbcrConversion");
+        vkCreateSamplerYcbcrConversion = (PFN_vkCreateSamplerYcbcrConversion) vkGetInstanceProcAddr(vkInstance, "vkCreateSamplerYcbcrConversion");
+        vkDestroySamplerYcbcrConversion = (PFN_vkDestroySamplerYcbcrConversion) vkGetInstanceProcAddr(vkInstance, "vkDestroySamplerYcbcrConversion");
 
-        vkGetImageMemoryRequirements2KHR = (PFN_vkGetImageMemoryRequirements2KHR) vkGetInstanceProcAddr(instance, "vkGetImageMemoryRequirements2KHR");
+        vkGetImageMemoryRequirements2KHR = (PFN_vkGetImageMemoryRequirements2KHR) vkGetInstanceProcAddr(vkInstance, "vkGetImageMemoryRequirements2KHR");
     }
-} // engine
+} // vklite

@@ -33,4 +33,4 @@ namespace vklite {
         return descriptorImageInfo;
     }
 
-} // engine
+} // vklite

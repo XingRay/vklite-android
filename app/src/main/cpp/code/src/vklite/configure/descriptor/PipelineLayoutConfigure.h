@@ -35,4 +35,4 @@ namespace vklite {
         std::unique_ptr<PipelineLayout> createPipelineLayout(const VulkanDevice &vulkanDevice);
     };
 
-} // engine
+} // vklite

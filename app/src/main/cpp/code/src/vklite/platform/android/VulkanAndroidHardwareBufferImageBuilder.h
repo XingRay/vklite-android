@@ -26,4 +26,4 @@ namespace vklite {
         std::unique_ptr<VulkanImageInterface> build(const VulkanDevice &vulkanDevice, uint32_t width, uint32_t height, vk::Format format) override;
     };
 
-} // engine
+} // vklite

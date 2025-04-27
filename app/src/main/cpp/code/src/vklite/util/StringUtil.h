@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace common {
+namespace vklite {
 
     class StringUtil {
     public:

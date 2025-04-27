@@ -73,4 +73,4 @@ namespace vklite {
         static uint32_t getImageFormatBytesPerPixel(vk::Format format);
     };
 
-} // engine
+} // vklite

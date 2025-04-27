@@ -34,4 +34,4 @@ namespace vklite {
         return mVertexInputAttributeDescriptions;
     }
 
-} // engine
+} // vklite

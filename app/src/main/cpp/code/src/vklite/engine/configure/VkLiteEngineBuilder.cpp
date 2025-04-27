@@ -3,10 +3,10 @@
 //
 
 #include "VkLiteEngineBuilder.h"
-#include "vklite/common/StringUtil.h"
+#include "vklite/util/StringUtil.h"
 
 #include "vklite/device/VulkanDevice.h"
-#include "vklite/common/Uint32Selector.h"
+#include "vklite/util/selector/Uint32Selector.h"
 
 namespace vklite {
 
@@ -15,32 +15,32 @@ namespace vklite {
     VkLiteEngineBuilder::~VkLiteEngineBuilder() = default;
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::extensions(std::vector<std::string> &&required, std::vector<std::string> &&optional) {
-        mExtensionsSelector = std::make_unique<common::RequiredAndOptionalStringListSelector>(std::move(required), std::move(optional));
+        mExtensionsSelector = std::make_unique<RequiredAndOptionalStringListSelector>(std::move(required), std::move(optional));
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::extensionsSelector(std::unique_ptr<common::ListSelector<std::string>> &selector) {
+    VkLiteEngineBuilder &VkLiteEngineBuilder::extensionsSelector(std::unique_ptr<ListSelector<std::string>> &selector) {
         mExtensionsSelector = std::move(selector);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::extensionsSelector(std::function<std::vector<std::string>(const std::vector<std::string> &)> selector) {
-        mExtensionsSelector = std::make_unique<common::LambdaStringListSelector>(selector);
+        mExtensionsSelector = std::make_unique<LambdaStringListSelector>(selector);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::layers(std::vector<std::string> &&required, std::vector<std::string> &&optional) {
-        mLayersSelector = std::make_unique<common::RequiredAndOptionalStringListSelector>(std::move(required), std::move(optional));
+        mLayersSelector = std::make_unique<RequiredAndOptionalStringListSelector>(std::move(required), std::move(optional));
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::layersSelector(std::unique_ptr<common::ListSelector<std::string>> &selector) {
+    VkLiteEngineBuilder &VkLiteEngineBuilder::layersSelector(std::unique_ptr<ListSelector<std::string>> &selector) {
         mLayersSelector = std::move(selector);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::layersSelector(std::function<std::vector<std::string>(const std::vector<std::string> &)> selector) {
-        mLayersSelector = std::make_unique<common::LambdaStringListSelector>(selector);
+        mLayersSelector = std::make_unique<LambdaStringListSelector>(selector);
         return *this;
     }
 
@@ -55,7 +55,7 @@ namespace vklite {
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::applicationVersion(const std::string &version) {
-        std::vector<uint32_t> versionNumbers = common::StringUtil::parseVersion(version);
+        std::vector<uint32_t> versionNumbers = StringUtil::parseVersion(version);
 
         if (versionNumbers.size() < 2) {
             throw std::invalid_argument("Invalid version format: at least major and minor versions are required");
@@ -81,7 +81,7 @@ namespace vklite {
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::engineVersion(const std::string &version) {
-        std::vector<uint32_t> versionNumbers = common::StringUtil::parseVersion(version);
+        std::vector<uint32_t> versionNumbers = StringUtil::parseVersion(version);
 
         if (versionNumbers.size() < 2) {
             throw std::invalid_argument("Invalid version format: at least major and minor versions are required");
@@ -96,7 +96,7 @@ namespace vklite {
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::surfaceBuilder(std::unique_ptr<VulkanSurfaceBuilder> &&surfaceBuilder) {
+    VkLiteEngineBuilder &VkLiteEngineBuilder::surfaceBuilder(std::unique_ptr<SurfaceBuilder> &&surfaceBuilder) {
         mSurfaceBuilder = std::move(surfaceBuilder);
         return *this;
     }
@@ -127,27 +127,27 @@ namespace vklite {
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::enableMsaa() {
-        mMsaaSelector = std::make_unique<common::MaxUint32Selector>(4);
+        mMsaaSelector = std::make_unique<MaxUint32Selector>(4);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::enableMsaa(uint32_t msaaSamples) {
-        mMsaaSelector = std::make_unique<common::FixUint32Selector>(msaaSamples);
+        mMsaaSelector = std::make_unique<FixUint32Selector>(msaaSamples);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::enableMsaaMax() {
-        mMsaaSelector = std::make_unique<common::MaxUint32Selector>();
+        mMsaaSelector = std::make_unique<MaxUint32Selector>();
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::enableMsaaMax(uint32_t msaaSamplesMax) {
-        mMsaaSelector = std::make_unique<common::MaxUint32Selector>(msaaSamplesMax);
+        mMsaaSelector = std::make_unique<MaxUint32Selector>(msaaSamplesMax);
         return *this;
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::enableMsaa(const std::function<uint32_t(const std::vector<uint32_t> &)> &selector) {
-        mMsaaSelector = std::make_unique<common::LambdaUint32Selector>(selector);
+        mMsaaSelector = std::make_unique<LambdaUint32Selector>(selector);
         return *this;
     }
 
@@ -163,7 +163,7 @@ namespace vklite {
 
     std::unique_ptr<VkLiteEngine> VkLiteEngineBuilder::build() {
         // instance
-        std::unique_ptr<VulkanInstance> instance = std::make_unique<VulkanInstance>(mApplicationName,
+        std::unique_ptr<Instance> instance = std::make_unique<Instance>(mApplicationName,
                                                                                     mApplicationVersion,
                                                                                     mEngineName,
                                                                                     mEngineVersion,
@@ -171,7 +171,7 @@ namespace vklite {
                                                                                     *mLayersSelector);
 
         // surface
-        std::unique_ptr<VulkanSurface> surface = mSurfaceBuilder->build(*instance);
+        std::unique_ptr<Surface> surface = mSurfaceBuilder->build(*instance);
 
         // select physical device
         std::unique_ptr<VulkanPhysicalDeviceCandidate> candidate = std::move(mVulkanPhysicalDeviceProvider->provide(*instance, *surface, mDeviceExtensions));
@@ -210,6 +210,7 @@ namespace vklite {
             vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*vulkanDevice, *swapchain, *renderPass, *vulkanShader);
         }
 
+        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);
 
         LOG_D("create VulkanFrameBuffer");
         std::unique_ptr<VulkanFrameBuffer> frameBuffer = std::make_unique<VulkanFrameBuffer>(*vulkanDevice, *swapchain, *renderPass, *commandPool);
@@ -225,9 +226,10 @@ namespace vklite {
                                               std::move(renderPass),
                                               std::move(vulkanGraphicsPipeline),
                                               std::move(vulkanComputePipeline),
+                                              std::move(pipelineResources),
                                               std::move(frameBuffer),
                                               std::move(syncObject),
                                               mFrameCount);
     }
 
-} // engine
+} // vklite

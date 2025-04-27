@@ -4,10 +4,10 @@
 
 #include "VulkanSwapchain.h"
 #include "vklite/Log.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    VulkanSwapchain::VulkanSwapchain(const VulkanDevice &vulkanDevice, const VulkanSurface &vulkanSurface, uint32_t width, uint32_t height)
+    VulkanSwapchain::VulkanSwapchain(const VulkanDevice &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
             : mDevice(vulkanDevice) {
         const vk::Device &device = vulkanDevice.getDevice();
 

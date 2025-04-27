@@ -10,4 +10,4 @@ namespace vklite {
 
     SamplerInterface::~SamplerInterface() = default;
 
-} // engine
+} // vklite

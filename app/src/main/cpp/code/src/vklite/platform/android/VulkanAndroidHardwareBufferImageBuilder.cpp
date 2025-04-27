@@ -18,4 +18,4 @@ namespace vklite {
         return std::make_unique<VulkanAndroidHardwareBufferImage>(vulkanDevice, mAndroidHardwareBuffer, mVulkanAndroidSamplerYcbcrConversion);
     }
 
-} // engine
+} // vklite

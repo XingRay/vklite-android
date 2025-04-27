@@ -38,4 +38,4 @@ namespace vklite {
         mIndexBuffer.updateBuffer(indices.data(), size);
     }
 
-} // engine
+} // vklite

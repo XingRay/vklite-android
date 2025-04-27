@@ -12,4 +12,4 @@ namespace vklite {
     VertexBufferConfigure::~VertexBufferConfigure() {
 
     }
-} // engine
+} // vklite

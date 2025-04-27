@@ -14,7 +14,7 @@
 
 namespace vklite {
 
-//    VulkanShader::VulkanShader(const VulkanInstance &vulkanInstance,
+//    VulkanShader::VulkanShader(const Instance &vulkanInstance,
 //                               const VulkanDevice &vulkanDevice,
 //                               const VulkanCommandPool &commandPool,
 //                               uint32_t frameCount,
@@ -331,4 +331,4 @@ namespace vklite {
 //    void VulkanShader::updatePushConstant(uint32_t index, const void *data) {
 //        std::memcpy(mPushConstantDataList[index].data(), data, mPushConstantDataList[index].size());
 //    }
-} // engine
+} // vklite

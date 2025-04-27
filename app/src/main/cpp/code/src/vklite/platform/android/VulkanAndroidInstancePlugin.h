@@ -6,19 +6,19 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/instance/VulkanInstance.h"
-#include "vklite/instance/VulkanInstancePlugin.h"
+#include "vklite/instance/Instance.h"
+#include "vklite/instance/InstancePlugin.h"
 
 namespace vklite {
 
-    class VulkanAndroidInstancePlugin : public VulkanInstancePlugin {
+    class VulkanAndroidInstancePlugin : public InstancePlugin {
 
     public:
         VulkanAndroidInstancePlugin();
 
         ~VulkanAndroidInstancePlugin() override;
 
-        void onVulkanInstanceCreated(const VulkanInstance &vulkanInstance) override;
+        void onInstanceCreated(const Instance &vulkanInstance) override;
     };
 
-} // engine
+} // vklite

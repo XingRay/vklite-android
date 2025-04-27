@@ -89,9 +89,9 @@ namespace test10 {
 
 
 
-//        mInstance = std::make_unique<vklite::VulkanInstance>("app", 1, "engine", 1,
-//                                                             common::FixStringListSelector(instanceExtensions),
-//                                                             common::FixStringListSelector(layers));
+//        mInstance = std::make_unique<vklite::Instance>("app", 1, "engine", 1,
+//                                                             FixStringListSelector(instanceExtensions),
+//                                                             FixStringListSelector(layers));
 //        mSurface = std::make_unique<vklite::AndroidVulkanSurface>(mInstance->getInstance(), mApp.window);
 //
 //        std::unique_ptr<vklite::VulkanPhysicalDeviceProvider> mVulkanPhysicalDeviceProvider = std::make_unique<vklite::DefaultVulkanPhysicalDeviceProvider>

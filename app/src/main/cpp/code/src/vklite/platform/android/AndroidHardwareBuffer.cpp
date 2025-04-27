@@ -50,4 +50,4 @@ namespace vklite {
         return mHardwareBuffer;
     }
 
-} // engine
+} // vklite

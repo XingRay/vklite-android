@@ -10,4 +10,4 @@ namespace vklite {
 
     VulkanBufferInterface::~VulkanBufferInterface() = default;
 
-} // engine
+} // vklite

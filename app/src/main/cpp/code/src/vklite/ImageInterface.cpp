@@ -10,4 +10,4 @@ namespace vklite {
 
     ImageInterface::~ImageInterface() = default;
 
-} // engine
+} // vklite

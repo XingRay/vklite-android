@@ -28,4 +28,4 @@ namespace vklite {
 //        VulkanDescriptorBindingSet &updateUniformBuffer(const VulkanCommandPool& commandPool, uint32_t binding, const void *data, uint32_t size);
     };
 
-} // engine
+} // vklite

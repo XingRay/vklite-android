@@ -46,4 +46,4 @@ namespace vklite {
         void copyFrom(const VulkanCommandPool &vulkanCommandPool, vk::Buffer srcBuffer);
     };
 
-} // engine
+} // vklite

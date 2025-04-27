@@ -29,4 +29,4 @@ namespace vklite {
         const vk::Sampler &getSampler() const override;
     };
 
-} // engine
+} // vklite

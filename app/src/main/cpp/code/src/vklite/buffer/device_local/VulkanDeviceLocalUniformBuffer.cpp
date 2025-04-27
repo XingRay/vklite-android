@@ -47,4 +47,4 @@ namespace vklite {
         return descriptorBufferInfos;
     }
 
-} // engine
+} // vklite

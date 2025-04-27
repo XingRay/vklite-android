@@ -20,4 +20,4 @@ namespace vklite {
         ~VertexBufferConfigure();
     };
 
-} // engine
+} // vklite

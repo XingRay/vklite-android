@@ -26,4 +26,4 @@ namespace vklite {
         std::vector<vk::DescriptorSet> allocateDescriptorSets(const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts);
     };
 
-} // engine
+} // vklite

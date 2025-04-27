@@ -32,4 +32,4 @@ namespace vklite {
         const vk::PipelineLayout &getPipelineLayout() const;
     };
 
-} // engine
+} // vklite

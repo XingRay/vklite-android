@@ -35,4 +35,4 @@ namespace vklite {
         return mVulkanDevice.getDevice().allocateDescriptorSets(allocateInfo);
     }
 
-} // engine
+} // vklite

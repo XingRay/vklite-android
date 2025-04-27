@@ -21,4 +21,4 @@ namespace vklite {
         std::vector<vk::PresentModeKHR> presentModes;
     };
 
-} // engine
+} // vklite

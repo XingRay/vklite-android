@@ -28,4 +28,4 @@ namespace vklite {
         mVertexBuffer.updateBuffer(data, size);
     }
 
-} // engine
+} // vklite

@@ -34,4 +34,4 @@ namespace vklite {
         void update(const std::vector<uint32_t>& indices);
     };
 
-} // engine
+} // vklite

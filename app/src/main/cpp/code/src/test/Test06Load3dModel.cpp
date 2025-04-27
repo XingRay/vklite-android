@@ -118,50 +118,50 @@ namespace test06 {
         mMvpMatrix.proj[1][1] *= -1;
 
 
-        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
-                .layers({}, std::move(layers))
-                .extensions({}, std::move(instanceExtensions))
-                .deviceExtensions(std::move(deviceExtensions))
-                .surfaceBuilder(std::make_unique<vklite::AndroidVulkanSurfaceBuilder>(mApp.window))
-                .enableMsaa()
-                .physicalDeviceAsDefault()
-//                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
-//                    graphicsPipelineConfigure
-//                            .vertexShaderCode(std::move(vertexShaderCode))
-//                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
-//                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
-//                                vertexConfigure
-//                                        .binding(0)
-//                                        .stride(sizeof(Vertex))
-//                                        .addAttribute(ShaderFormat::Vec3)
-//                                        .addAttribute(ShaderFormat::Vec2)
-//                                        .setVertexBuffer(vertices);
-//                            })
-//                            .index(std::move(indices))
-//                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
-//                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
-//                                descriptorSetConfigure
-//                                        .set(0)
-//                                        .addUniform([&](vklite::VulkanUniformConfigure &uniformConfigure) {
-//                                            uniformConfigure
-//                                                    .binding(0)
-//                                                    .descriptorRange(1)
-//                                                    .descriptorOffset(0)
-//                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eVertex)
-//                                                    .setUniformBuffer(mMvpMatrix);
-//                                        })
-//                                        .addSampler([&](vklite::VulkanSamplerConfigure &samplerConfigure) {
-//                                            samplerConfigure
-//                                                    .binding(1)
-//                                                    .descriptorRange(1)
-//                                                    .descriptorOffset(0)
-//                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eFragment)
-//                                                    .setImage(std::move(image));
-//                                        });
-//
-//                            });
-//                })
-                .build();
+//        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
+//                .layers({}, std::move(layers))
+//                .extensions({}, std::move(instanceExtensions))
+//                .deviceExtensions(std::move(deviceExtensions))
+//                .surfaceBuilder(std::make_unique<vklite::AndroidSurfaceBuilder>(mApp.window))
+//                .enableMsaa()
+//                .physicalDeviceAsDefault()
+////                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
+////                    graphicsPipelineConfigure
+////                            .vertexShaderCode(std::move(vertexShaderCode))
+////                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
+////                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
+////                                vertexConfigure
+////                                        .binding(0)
+////                                        .stride(sizeof(Vertex))
+////                                        .addAttribute(ShaderFormat::Vec3)
+////                                        .addAttribute(ShaderFormat::Vec2)
+////                                        .setVertexBuffer(vertices);
+////                            })
+////                            .index(std::move(indices))
+////                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
+////                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
+////                                descriptorSetConfigure
+////                                        .set(0)
+////                                        .addUniform([&](vklite::VulkanUniformConfigure &uniformConfigure) {
+////                                            uniformConfigure
+////                                                    .binding(0)
+////                                                    .descriptorRange(1)
+////                                                    .descriptorOffset(0)
+////                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eVertex)
+////                                                    .setUniformBuffer(mMvpMatrix);
+////                                        })
+////                                        .addSampler([&](vklite::VulkanSamplerConfigure &samplerConfigure) {
+////                                            samplerConfigure
+////                                                    .binding(1)
+////                                                    .descriptorRange(1)
+////                                                    .descriptorOffset(0)
+////                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eFragment)
+////                                                    .setImage(std::move(image));
+////                                        });
+////
+////                            });
+////                })
+//                .build();
     }
 
     void Test06Load3dModel::init() {

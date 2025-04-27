@@ -67,4 +67,4 @@ namespace vklite {
         void recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
     };
 
-} // engine
+} // vklite

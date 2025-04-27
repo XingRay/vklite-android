@@ -5,4 +5,4 @@
 #include "VulkanPhysicalDeviceScoreCalculator.h"
 
 namespace vklite {
-} // engine
+} // vklite

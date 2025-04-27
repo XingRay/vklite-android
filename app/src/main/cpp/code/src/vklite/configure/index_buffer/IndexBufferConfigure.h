@@ -34,4 +34,4 @@ namespace vklite {
         std::shared_ptr<VulkanDeviceLocalIndexBuffer> createIndexBuffer(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) const;
     };
 
-} // engine
+} // vklite

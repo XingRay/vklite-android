@@ -26,4 +26,4 @@ namespace vklite {
         const vk::SamplerYcbcrConversion& getSamplerYcbcrConversion()const;
     };
 
-} // engine
+} // vklite

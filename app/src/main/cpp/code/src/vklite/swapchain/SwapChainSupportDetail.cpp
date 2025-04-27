@@ -5,4 +5,4 @@
 #include "SwapChainSupportDetail.h"
 
 namespace vklite {
-} // engine
+} // vklite

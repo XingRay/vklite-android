@@ -20,4 +20,4 @@ namespace vklite {
         virtual const vk::Sampler &getSampler() const = 0;
     };
 
-} // engine
+} // vklite

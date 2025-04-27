@@ -5,7 +5,7 @@
 
 #include "vklite/VkCheckCpp.h"
 #include "vklite/VkCheck.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 #include "VulkanAndroidApi.h"
 
 namespace vklite {
@@ -171,4 +171,4 @@ namespace vklite {
 
     }
 
-} // engine
+} // vklite

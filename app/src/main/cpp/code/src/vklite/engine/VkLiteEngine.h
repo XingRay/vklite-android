@@ -8,8 +8,8 @@
 #include <functional>
 #include <memory>
 
-#include "vklite/instance/VulkanInstance.h"
-#include "vklite/VulkanSurface.h"
+#include "vklite/instance/Instance.h"
+#include "vklite/surface/Surface.h"
 #include "vklite/VulkanPhysicalDevice.h"
 #include "vklite/device/VulkanDevice.h"
 #include "vklite/shader/VulkanShader.h"
@@ -17,6 +17,7 @@
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
 #include "vklite/pipeline/ComputePipeline.h"
+#include "vklite/pipeline_resource/PipelineResource.h"
 #include "vklite/command/VulkanCommandPool.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalVertexBuffer.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleVertexBuffer.h"
@@ -26,9 +27,9 @@
 #include "vklite/VulkanSyncObject.h"
 #include "vklite/VulkanFrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
-
-#include "vklite/common/StringListSelector.h"
+#include "vklite/util/selector/StringListSelector.h"
 #include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
+
 
 namespace vklite {
 
@@ -41,8 +42,8 @@ namespace vklite {
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
 
-        std::unique_ptr<VulkanInstance> mInstance;
-        std::unique_ptr<VulkanSurface> mSurface;
+        std::unique_ptr<Instance> mInstance;
+        std::unique_ptr<Surface> mSurface;
         std::unique_ptr<VulkanPhysicalDevice> mPhysicalDevice;
         std::unique_ptr<VulkanDevice> mVulkanDevice;
 
@@ -52,14 +53,16 @@ namespace vklite {
         std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
         std::unique_ptr<ComputePipeline> mComputePipeline;
 
+        std::vector<PipelineResource> mPipelineResources;
+
         std::unique_ptr<VulkanCommandPool> mVulkanCommandPool;
         std::unique_ptr<VulkanFrameBuffer> mFrameBuffer;
 
         std::unique_ptr<VulkanSyncObject> mSyncObject;
 
     public:
-        VkLiteEngine(std::unique_ptr<VulkanInstance> vulkanInstance,
-                     std::unique_ptr<VulkanSurface> vulkanSurface,
+        VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
+                     std::unique_ptr<Surface> vulkanSurface,
                      std::unique_ptr<VulkanPhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<VulkanDevice> vulkanDevice,
                      std::unique_ptr<VulkanCommandPool> commandPool,
@@ -67,6 +70,7 @@ namespace vklite {
                      std::unique_ptr<VulkanRenderPass> renderPass,
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                      std::unique_ptr<ComputePipeline> computePipeline,
+                     std::vector<PipelineResource>&& pipelineResources,
                      std::unique_ptr<VulkanFrameBuffer> frameBuffer,
                      std::unique_ptr<VulkanSyncObject> syncObject,
                      uint32_t frameCount);
@@ -137,4 +141,4 @@ namespace vklite {
     };
 
 
-} // engine
+} // vklite

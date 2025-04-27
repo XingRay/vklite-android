@@ -70,4 +70,4 @@ namespace vklite {
         VulkanDescriptorBufferInfoConfigure &copyData(const void *data, uint32_t size);
     };
 
-} // engine
+} // vklite

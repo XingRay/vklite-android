@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 
-namespace common {
+namespace vklite {
     FixUint32Selector::FixUint32Selector(uint32_t value) : mFixValue(value) {
     }
 
@@ -62,4 +62,4 @@ namespace common {
     }
 };
 
-// namespace common
+// namespace vklite

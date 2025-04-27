@@ -28,4 +28,4 @@ namespace vklite {
         return std::make_unique<ImageInfo>(std::move(vulkanImage), std::move(sampler));
     }
 
-} // engine
+} // vklite

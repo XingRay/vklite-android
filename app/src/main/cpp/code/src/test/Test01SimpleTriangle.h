@@ -8,7 +8,7 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/AndroidVulkanSurface.h"
+#include "vklite/platform/android/surface/AndroidSurface.h"
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "test/common/glm.h"
@@ -24,7 +24,10 @@ namespace test01 {
 
         const android_app &mApp;
 
-        std::unique_ptr<vklite::VkLiteEngine> mVkLiteEngine;
+//        std::unique_ptr<vklite::VkLiteEngine> mVkLiteEngine;
+
+        std::unique_ptr<vklite::Instance> mInstance;
+        std::unique_ptr<vklite::Surface> mSurface;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

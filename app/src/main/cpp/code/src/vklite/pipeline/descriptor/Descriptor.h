@@ -52,4 +52,4 @@ namespace vklite {
         const std::vector<vk::Sampler> &getImmutableVkSamplers() const;
     };
 
-} // engine
+} // vklite

@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <sstream>
 
-namespace common {
+namespace vklite {
 
     std::vector<uint32_t> StringUtil::parseVersion(const std::string &version) {
         std::vector<uint32_t> numbers;

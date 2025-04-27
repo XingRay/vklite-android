@@ -56,4 +56,4 @@ namespace vklite {
         vk::Device device = mDevice.getDevice();
         return device.waitForFences(1, &mFences[index], vk::True, std::numeric_limits<uint64_t>::max());
     }
-} // engine
+} // vklite

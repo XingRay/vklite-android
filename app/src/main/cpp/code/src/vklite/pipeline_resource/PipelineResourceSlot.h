@@ -31,4 +31,4 @@ namespace vklite {
         ~PipelineResourceSlot();
     };
 
-} // engine
+} // vklite

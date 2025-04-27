@@ -7,10 +7,10 @@
 #include <vector>
 #include <functional>
 
-#include "vklite/common/Selector.h"
+#include "vklite/util/selector/Selector.h"
 
 
-namespace common {
+namespace vklite {
 
     class FixUint32Selector : public ValueSelector<uint32_t> {
     private:

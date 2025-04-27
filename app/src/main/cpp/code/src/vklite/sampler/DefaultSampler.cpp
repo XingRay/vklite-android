@@ -3,7 +3,7 @@
 //
 
 #include "DefaultSampler.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -45,4 +45,4 @@ namespace vklite {
         return mSampler;
     }
 
-} // engine
+} // vklite

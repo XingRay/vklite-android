@@ -6,8 +6,8 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/instance/VulkanInstance.h"
-#include "vklite/VulkanSurface.h"
+#include "vklite/instance/Instance.h"
+#include "vklite/surface/Surface.h"
 #include "vklite/VulkanPhysicalDevice.h"
 #include "VulkanPhysicalDeviceCandidate.h"
 
@@ -23,8 +23,8 @@ namespace vklite {
 
         [[nodiscard]]
         virtual std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(
-                const VulkanInstance &instance,
-                const VulkanSurface &surface,
+                const Instance &instance,
+                const Surface &surface,
                 const std::vector<std::string> &deviceExtensions) = 0;
     };
 
@@ -41,8 +41,8 @@ namespace vklite {
         ~SimpleVulkanPhysicalDeviceProvider() override;
 
         [[nodiscard]]
-        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const VulkanInstance &instance,
-                                                               const VulkanSurface &surface,
+        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const Instance &instance,
+                                                               const Surface &surface,
                                                                const std::vector<std::string> &deviceExtensions) override;
     };
 
@@ -58,8 +58,8 @@ namespace vklite {
         ~FixedVulkanPhysicalDeviceProvider() override;
 
         [[nodiscard]]
-        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const VulkanInstance &instance,
-                                                               const VulkanSurface &surface,
+        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const Instance &instance,
+                                                               const Surface &surface,
                                                                const std::vector<std::string> &deviceExtensions) override;
     };
 
@@ -75,17 +75,17 @@ namespace vklite {
         ~DefaultVulkanPhysicalDeviceProvider() override;
 
         [[nodiscard]]
-        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const VulkanInstance &instance,
-                                                               const VulkanSurface &surface,
+        std::unique_ptr<VulkanPhysicalDeviceCandidate> provide(const Instance &instance,
+                                                               const Surface &surface,
                                                                const std::vector<std::string> &deviceExtensions) override;
 
     private:
         [[nodiscard]]
         std::optional<std::unique_ptr<VulkanPhysicalDeviceCandidate>> calcPhysicalDeviceCandidate(
                 std::unique_ptr<VulkanPhysicalDevice> &&vulkanPhysicalDevice,
-                const VulkanSurface &vulkanSurface,
+                const Surface &vulkanSurface,
                 const std::vector<std::string> &requiredDeviceExtensions,
                 vk::QueueFlags requiredQueueFlags) const;
     };
 
-} // engine
+} // vklite

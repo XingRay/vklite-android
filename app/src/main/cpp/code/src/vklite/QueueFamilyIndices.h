@@ -18,4 +18,4 @@ namespace vklite {
         bool isComplete();
     };
 
-} // engine
+} // vklite

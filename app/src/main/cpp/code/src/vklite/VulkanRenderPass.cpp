@@ -3,7 +3,7 @@
 //
 
 #include "VulkanRenderPass.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 

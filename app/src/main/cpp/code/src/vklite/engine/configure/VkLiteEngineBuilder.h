@@ -8,35 +8,35 @@
 #include <memory>
 #include <functional>
 
-#include "vklite/common/StringListSelector.h"
+#include "vklite/util/selector/StringListSelector.h"
 
 #ifndef APPLICATION_NAME
-#define APPLICATION_NAME "3d_application"
+#define APPLICATION_NAME "vklite_app"
 #endif
 
 #ifndef ENGINE_NAME
-#define ENGINE_NAME "3d_engine"
+#define ENGINE_NAME "vklite"
 #endif
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/instance/VulkanInstance.h"
+#include "vklite/instance/Instance.h"
 #include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
 
 #include "vklite/engine/VkLiteEngine.h"
-#include "vklite/VulkanSurfaceBuilder.h"
+#include "vklite/surface/SurfaceBuilder.h"
 #include "vklite/configure/pipeline/GraphicsPipelineConfigure.h"
 #include "vklite/configure/pipeline/ComputePipelineConfigure.h"
-
-#include "vklite/common/Selector.h"
+#include "vklite/pipeline_resource/configure/PipelineResourceConfigure.h"
+#include "vklite/util/selector/Selector.h"
 
 namespace vklite {
 
     class VkLiteEngineBuilder {
 
     private:
-        std::unique_ptr<common::ListSelector<std::string>> mExtensionsSelector;
-        std::unique_ptr<common::ListSelector<std::string>> mLayersSelector;
+        std::unique_ptr<ListSelector<std::string>> mExtensionsSelector;
+        std::unique_ptr<ListSelector<std::string>> mLayersSelector;
 
         std::string mApplicationName = APPLICATION_NAME;
         uint32_t mApplicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -44,16 +44,18 @@ namespace vklite {
         std::string mEngineName = ENGINE_NAME;
         uint32_t mEngineVersion = VK_MAKE_VERSION(1, 0, 0);
 
-        std::unique_ptr<VulkanSurfaceBuilder> mSurfaceBuilder;
+        std::unique_ptr<SurfaceBuilder> mSurfaceBuilder;
         std::vector<std::string> mDeviceExtensions;
 
         uint32_t mFrameCount = 2;
 
         std::unique_ptr<VulkanPhysicalDeviceProvider> mVulkanPhysicalDeviceProvider;
-        std::unique_ptr<common::ValueSelector<uint32_t>> mMsaaSelector;
+        std::unique_ptr<ValueSelector<uint32_t>> mMsaaSelector;
 
         std::unique_ptr<GraphicsPipelineConfigure> mVulkanGraphicsPipelineConfigure;
         std::unique_ptr<ComputePipelineConfigure> mVulkanComputePipelineConfigure;
+
+        std::unique_ptr<PipelineResourceConfigure> mPipelineResourceConfigure;
 
 //        // shader
 //        std::vector<char> mComputeShaderCode;
@@ -73,14 +75,14 @@ namespace vklite {
         // instance extensions
         VkLiteEngineBuilder &extensions(std::vector<std::string> &&required, std::vector<std::string> &&optional = {});
 
-        VkLiteEngineBuilder &extensionsSelector(std::unique_ptr<common::ListSelector<std::string>> &selector);
+        VkLiteEngineBuilder &extensionsSelector(std::unique_ptr<ListSelector<std::string>> &selector);
 
         VkLiteEngineBuilder &extensionsSelector(std::function<std::vector<std::string>(const std::vector<std::string> &)> selector);
 
         // instance layers
         VkLiteEngineBuilder &layers(std::vector<std::string> &&required, std::vector<std::string> &&optional = {});
 
-        VkLiteEngineBuilder &layersSelector(std::unique_ptr<common::ListSelector<std::string>> &selector);
+        VkLiteEngineBuilder &layersSelector(std::unique_ptr<ListSelector<std::string>> &selector);
 
         VkLiteEngineBuilder &layersSelector(std::function<std::vector<std::string>(const std::vector<std::string> &)> selector);
 
@@ -102,7 +104,7 @@ namespace vklite {
         VkLiteEngineBuilder &engineVersion(const std::string &version);
 
         // surface
-        VkLiteEngineBuilder &surfaceBuilder(std::unique_ptr<VulkanSurfaceBuilder> &&surfaceBuilder);
+        VkLiteEngineBuilder &surfaceBuilder(std::unique_ptr<SurfaceBuilder> &&surfaceBuilder);
 
         // device extensions
         VkLiteEngineBuilder &deviceExtensions(std::vector<std::string> &&deviceExtensions);
@@ -140,4 +142,4 @@ namespace vklite {
 
     };
 
-} // engine
+} // vklite

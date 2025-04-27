@@ -36,4 +36,4 @@ namespace vklite {
                 .setSize(mSize);
         return pushConstantRange;
     }
-} // engine
+} // vklite

@@ -45,4 +45,4 @@ namespace vklite {
         mIndexBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
     }
 
-} // engine
+} // vklite

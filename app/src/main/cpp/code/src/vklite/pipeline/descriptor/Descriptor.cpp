@@ -115,4 +115,4 @@ namespace vklite {
 //        return descriptorSetLayoutBinding;
 //    }
 
-} // engine
+} // vklite

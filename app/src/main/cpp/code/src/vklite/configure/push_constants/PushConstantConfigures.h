@@ -27,4 +27,4 @@ namespace vklite {
         uint32_t calcTotalPushConstantSize() const;
     };
 
-} // engine
+} // vklite

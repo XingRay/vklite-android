@@ -44,45 +44,45 @@ namespace test02 {
 
         ColorUniformBufferObject colorUniformBufferObject{{0.8f, 0.2f, 0.4f}};
 
-        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
-                .layers({}, std::move(layers))
-                .extensions({}, std::move(instanceExtensions))
-                .deviceExtensions(std::move(deviceExtensions))
-                .surfaceBuilder(std::make_unique<vklite::AndroidVulkanSurfaceBuilder>(mApp.window))
-                .enableMsaa()
-                .physicalDeviceAsDefault()
-//                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
-//                    graphicsPipelineConfigure
-//                            .vertexShaderCode(std::move(vertexShaderCode))
-//                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
-//                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
-//                                vertexConfigure
-//                                        .binding(0)
-//                                        .stride(sizeof(Vertex))
-//                                        .addAttribute(ShaderFormat::Vec3)
-//                                        .setVertexBuffer(vertices);
-//                            })
-//                            .index(std::move(indices))
-//                                    // or
-////                            .index([&](vklite::VulkanIndexConfigure &indexConfigure) {
-////                                indexConfigure
-////                                        .setIndexBuffer(std::move(indices));
+//        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
+//                .layers({}, std::move(layers))
+//                .extensions({}, std::move(instanceExtensions))
+//                .deviceExtensions(std::move(deviceExtensions))
+//                .surfaceBuilder(std::make_unique<vklite::AndroidSurfaceBuilder>(mApp.window))
+//                .enableMsaa()
+//                .physicalDeviceAsDefault()
+////                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
+////                    graphicsPipelineConfigure
+////                            .vertexShaderCode(std::move(vertexShaderCode))
+////                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
+////                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
+////                                vertexConfigure
+////                                        .binding(0)
+////                                        .stride(sizeof(Vertex))
+////                                        .addAttribute(ShaderFormat::Vec3)
+////                                        .setVertexBuffer(vertices);
 ////                            })
-////                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
-////                                descriptorSetConfigure
-////                                        .set(0)
-////                                        .addUniform([&](vklite::VulkanUniformConfigure &uniformConfigure) {
-////                                            uniformConfigure
-////                                                    .binding(0)
-////                                                    .descriptorRange(1)
-////                                                    .descriptorOffset(0)
-////                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eVertex)
-////                                                    .setUniformBuffer(colorUniformBufferObject);
-////                                        });
-////                            })
-//                            ;
-//                })
-                .build();
+////                            .index(std::move(indices))
+////                                    // or
+//////                            .index([&](vklite::VulkanIndexConfigure &indexConfigure) {
+//////                                indexConfigure
+//////                                        .setIndexBuffer(std::move(indices));
+//////                            })
+//////                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
+//////                                descriptorSetConfigure
+//////                                        .set(0)
+//////                                        .addUniform([&](vklite::VulkanUniformConfigure &uniformConfigure) {
+//////                                            uniformConfigure
+//////                                                    .binding(0)
+//////                                                    .descriptorRange(1)
+//////                                                    .descriptorOffset(0)
+//////                                                    .shaderStageFlags(vk::ShaderStageFlagBits::eVertex)
+//////                                                    .setUniformBuffer(colorUniformBufferObject);
+//////                                        });
+//////                            })
+////                            ;
+////                })
+//                .build();
     }
 
     void Test02SingleColorTriangle::init() {

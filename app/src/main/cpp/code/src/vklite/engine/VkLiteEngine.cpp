@@ -7,15 +7,15 @@
 #include <string>
 
 #include "VkLiteEngine.h"
-#include "vklite/common/StringListSelector.h"
+#include "vklite/util/selector/StringListSelector.h"
 #include "vklite/VkCheckCpp.h"
 #include "vklite/VkCheck.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
-    VkLiteEngine::VkLiteEngine(std::unique_ptr<VulkanInstance> vulkanInstance,
-                               std::unique_ptr<VulkanSurface> vulkanSurface,
+    VkLiteEngine::VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
+                               std::unique_ptr<Surface> vulkanSurface,
                                std::unique_ptr<VulkanPhysicalDevice> vulkanPhysicalDevice,
                                std::unique_ptr<VulkanDevice> vulkanDevice,
                                std::unique_ptr<VulkanCommandPool> commandPool,
@@ -23,6 +23,7 @@ namespace vklite {
                                std::unique_ptr<VulkanRenderPass> renderPass,
                                std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                                std::unique_ptr<ComputePipeline> computePipeline,
+                               std::vector<PipelineResource>&& pipelineResources,
                                std::unique_ptr<VulkanFrameBuffer> frameBuffer,
                                std::unique_ptr<VulkanSyncObject> syncObject,
                                uint32_t frameCount) {
@@ -36,6 +37,7 @@ namespace vklite {
         mRenderPass = std::move(renderPass);
         mGraphicsPipeline = std::move(graphicsPipeline);
         mComputePipeline = std::move(computePipeline);
+        mPipelineResources = std::move(pipelineResources);
         mFrameBuffer = std::move(frameBuffer);
         mSyncObject = std::move(syncObject);
         mFrameCount = frameCount;
@@ -240,7 +242,7 @@ namespace vklite {
          */
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
-//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
 
         commandBuffer.endRenderPass();
         commandBuffer.end();
@@ -298,4 +300,4 @@ namespace vklite {
         mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mFrameCount;
     }
 
-} // engine
+} // vklite

@@ -35,4 +35,4 @@ namespace vklite {
         virtual uint32_t getPixelBytes() const = 0;
     };
 
-} // engine
+} // vklite

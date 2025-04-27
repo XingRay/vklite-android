@@ -5,7 +5,7 @@
 #include <set>
 #include <string>
 
-#include "vklite/VulkanUtil.h"
+#include "VulkanUtil.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -632,4 +632,4 @@ namespace vklite {
         }
     }
 
-} // engine
+} // vklite

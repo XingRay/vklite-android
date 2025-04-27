@@ -8,7 +8,7 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/AndroidVulkanSurface.h"
+#include "vklite/platform/android/surface/AndroidSurface.h"
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "test/common/glm.h"
@@ -19,8 +19,8 @@
 #include <functional>
 #include <memory>
 
-#include "vklite/instance/VulkanInstance.h"
-#include "vklite/VulkanSurface.h"
+#include "vklite/instance/Instance.h"
+#include "vklite/surface/Surface.h"
 #include "vklite/VulkanPhysicalDevice.h"
 #include "vklite/device/VulkanDevice.h"
 #include "vklite/shader/VulkanShader.h"
@@ -35,7 +35,7 @@
 #include "vklite/VulkanFrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
 
-#include "vklite/common/StringListSelector.h"
+#include "vklite/util/selector/StringListSelector.h"
 #include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
 
 namespace test10 {
@@ -67,8 +67,8 @@ namespace test10 {
         const android_app &mApp;
         std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
 
-        std::unique_ptr<vklite::VulkanInstance> mInstance;
-        std::unique_ptr<vklite::VulkanSurface> mSurface;
+        std::unique_ptr<vklite::Instance> mInstance;
+        std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::VulkanPhysicalDevice> mPhysicalDevice;
         std::unique_ptr<vklite::VulkanDevice> mDevice;
 

@@ -27,4 +27,4 @@ namespace vklite {
     void VulkanHostVisibleUniformBuffer::updateBuffer(const void *data, uint32_t size) {
         mUniformBuffer.updateBuffer(data, size);
     }
-} // engine
+} // vklite

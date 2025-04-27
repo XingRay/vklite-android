@@ -5,4 +5,4 @@
 #include "SlotType.h"
 
 namespace vklite {
-} // engine
+} // vklite

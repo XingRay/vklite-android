@@ -8,7 +8,8 @@
 #include <utility>
 #include "vklite/Log.h"
 
-namespace common {
+namespace vklite {
+
     FixStringListSelector::FixStringListSelector(const std::vector<std::string> &selected)
         : mSelected(selected) {
     }

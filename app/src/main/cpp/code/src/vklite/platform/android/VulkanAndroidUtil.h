@@ -16,5 +16,5 @@ namespace vklite {
         static vk::AndroidHardwareBufferFormatPropertiesANDROID getAndroidHardwareBufferFormat(vk::Device device, AHardwareBuffer *hardwareBuffer);
     };
 
-} // engine
+} // vklite
 

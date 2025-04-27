@@ -28,4 +28,4 @@ namespace vklite {
         vk::PushConstantRange createPushConstantRange() const;
     };
 
-} // engine
+} // vklite

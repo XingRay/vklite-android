@@ -53,4 +53,4 @@ namespace vklite {
         return buffer;
     }
 
-} // engine
+} // vklite

@@ -47,41 +47,41 @@ namespace test05 {
 
         std::unique_ptr<vklite::ImageInterface> image = image::StbImage::loadImage("/storage/emulated/0/01.png");
 
-        std::unique_ptr<vklite::VkLiteEngine> engine = vklite::VkLiteEngineBuilder{}
-                .layers({}, std::move(layers))
-                .extensions({}, std::move(instanceExtensions))
-                .deviceExtensions(std::move(deviceExtensions))
-                .surfaceBuilder(std::make_unique<vklite::AndroidVulkanSurfaceBuilder>(mApp.window))
-                .enableMsaa()
-                .physicalDeviceAsDefault()
-//                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
-//                    graphicsPipelineConfigure
-//                            .vertexShaderCode(std::move(vertexShaderCode))
-//                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
-//                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
-//                                vertexConfigure
-//                                        .binding(0)
-//                                        .stride(sizeof(Vertex))
-//                                        .addAttribute(ShaderFormat::Vec3)
-//                                        .addAttribute(ShaderFormat::Vec2)
-//                                        .setVertexBuffer(vertices);
-//                            })
-//                            .index(std::move(indices))
-//                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
-//                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
-//                                descriptorSetConfigure.addSampler([&](vklite::VulkanSamplerConfigure &samplerConfigure) {
-//                                    samplerConfigure
-//                                            .binding(0)
-//                                            .descriptorRange(1)
-//                                            .descriptorOffset(0)
-//                                            .shaderStageFlags(vk::ShaderStageFlagBits::eFragment)
-//                                            .setImage(std::move(image));
-//                                });
-//                            });
-//                })
-                .build();
-
-        mVkLiteEngine = std::move(engine);
+//        std::unique_ptr<vklite::VkLiteEngine> engine = vklite::VkLiteEngineBuilder{}
+//                .layers({}, std::move(layers))
+//                .extensions({}, std::move(instanceExtensions))
+//                .deviceExtensions(std::move(deviceExtensions))
+//                .surfaceBuilder(std::make_unique<vklite::AndroidSurfaceBuilder>(mApp.window))
+//                .enableMsaa()
+//                .physicalDeviceAsDefault()
+////                .graphicsPipeline([&](vklite::VulkanGraphicsPipelineConfigure &graphicsPipelineConfigure) {
+////                    graphicsPipelineConfigure
+////                            .vertexShaderCode(std::move(vertexShaderCode))
+////                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
+////                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
+////                                vertexConfigure
+////                                        .binding(0)
+////                                        .stride(sizeof(Vertex))
+////                                        .addAttribute(ShaderFormat::Vec3)
+////                                        .addAttribute(ShaderFormat::Vec2)
+////                                        .setVertexBuffer(vertices);
+////                            })
+////                            .index(std::move(indices))
+////                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
+////                            .addDescriptorSet([&](vklite::VulkanDescriptorSetConfigure &descriptorSetConfigure) {
+////                                descriptorSetConfigure.addSampler([&](vklite::VulkanSamplerConfigure &samplerConfigure) {
+////                                    samplerConfigure
+////                                            .binding(0)
+////                                            .descriptorRange(1)
+////                                            .descriptorOffset(0)
+////                                            .shaderStageFlags(vk::ShaderStageFlagBits::eFragment)
+////                                            .setImage(std::move(image));
+////                                });
+////                            });
+////                })
+//                .build();
+//
+//        mVkLiteEngine = std::move(engine);
     }
 
     void Test05TextureImage::init() {

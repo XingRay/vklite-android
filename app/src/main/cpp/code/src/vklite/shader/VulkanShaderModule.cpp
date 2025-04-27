@@ -23,4 +23,4 @@ namespace vklite {
         return mShaderModule;
     }
 
-} // engine
+} // vklite

@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/VulkanDevice.h"
-#include "vklite/VulkanSurface.h"
+#include "vklite/surface/Surface.h"
 
 namespace vklite {
     class VulkanSwapchain {
@@ -23,7 +23,7 @@ namespace vklite {
         std::vector<vk::ImageView> mDisplayImageViews;
 
     public://methods
-        VulkanSwapchain(const VulkanDevice &vulkanDevice, const VulkanSurface &vulkanSurface, uint32_t width, uint32_t height);
+        VulkanSwapchain(const VulkanDevice &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
 
         ~VulkanSwapchain();
 

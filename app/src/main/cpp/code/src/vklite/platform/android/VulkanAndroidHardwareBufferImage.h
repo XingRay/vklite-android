@@ -8,7 +8,7 @@
 
 #include <android/hardware_buffer.h>
 
-#include "vklite/instance/VulkanInstance.h"
+#include "vklite/instance/Instance.h"
 #include "vklite/device/VulkanDevice.h"
 #include "vklite/command/VulkanCommandPool.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
@@ -53,4 +53,4 @@ namespace vklite {
 
     };
 
-} // engine
+} // vklite

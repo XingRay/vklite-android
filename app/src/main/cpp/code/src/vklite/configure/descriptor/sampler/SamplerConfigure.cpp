@@ -49,4 +49,4 @@ namespace vklite {
 //                                                                  std::move(mVulkanDescriptorImageInfoConfigure));
 //    }
 
-} // engine
+} // vklite

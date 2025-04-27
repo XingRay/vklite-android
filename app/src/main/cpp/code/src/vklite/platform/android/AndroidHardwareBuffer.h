@@ -35,4 +35,4 @@ namespace vklite {
         AHardwareBuffer *getHardwareBuffer() const;
     };
 
-} // engine
+} // vklite

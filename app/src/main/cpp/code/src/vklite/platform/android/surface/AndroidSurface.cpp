@@ -3,11 +3,12 @@
 //
 #ifdef ANDROID
 
-#include "AndroidVulkanSurface.h"
+#include "AndroidSurface.h"
 #include "vklite/Log.h"
 
 namespace vklite {
-    AndroidVulkanSurface::AndroidVulkanSurface(const VulkanInstance &instance, ANativeWindow *window) : mInstance(instance) {
+    AndroidSurface::AndroidSurface(const Instance &instance, ANativeWindow *window)
+            : mInstance(instance) {
         LOG_D("AndroidSurface::AndroidSurface");
         vk::AndroidSurfaceCreateInfoKHR createInfo{};
         createInfo
@@ -22,7 +23,7 @@ namespace vklite {
         }
     }
 
-    AndroidVulkanSurface::~AndroidVulkanSurface() {
+    AndroidSurface::~AndroidSurface() {
         LOG_D("AndroidSurface::~AndroidSurface()");
         if (mSurface != nullptr) {
             mInstance.getInstance().destroy(mSurface);
@@ -31,18 +32,6 @@ namespace vklite {
         }
     }
 
-    AndroidVulkanSurfaceBuilder::AndroidVulkanSurfaceBuilder(ANativeWindow *window)
-            : mWindow(window) {
-
-    }
-
-    AndroidVulkanSurfaceBuilder::~AndroidVulkanSurfaceBuilder() = default;
-
-    [[nodiscard]]
-    std::unique_ptr<VulkanSurface> AndroidVulkanSurfaceBuilder::build(const VulkanInstance & vulkanInstance) const{
-        return std::make_unique<AndroidVulkanSurface>(vulkanInstance, mWindow);
-    }
-
-} // engine
+} // vklite
 
 #endif

@@ -20,4 +20,4 @@ namespace vklite {
         virtual std::unique_ptr<VulkanBufferInterface> build(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize) = 0;
     };
 
-} // engine
+} // vklite

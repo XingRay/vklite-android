@@ -84,4 +84,4 @@ namespace vklite {
 //        std::shared_ptr<VulkanDeviceLocalVertexBuffer> createVertexBuffer(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) const;
     };
 
-} // engine
+} // vklite

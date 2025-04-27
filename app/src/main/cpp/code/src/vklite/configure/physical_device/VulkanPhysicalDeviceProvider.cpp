@@ -5,8 +5,8 @@
 #include "VulkanPhysicalDeviceProvider.h"
 #include "vklite/Log.h"
 #include "VulkanPhysicalDeviceCandidate.h"
-#include "vklite/VulkanUtil.h"
-#include "vklite/common/StringUtil.h"
+#include "vklite/util/VulkanUtil.h"
+#include "vklite/util/StringUtil.h"
 
 namespace vklite {
 
@@ -17,8 +17,8 @@ namespace vklite {
 
     SimpleVulkanPhysicalDeviceProvider::~SimpleVulkanPhysicalDeviceProvider() = default;
 
-    std::unique_ptr<VulkanPhysicalDeviceCandidate> SimpleVulkanPhysicalDeviceProvider::provide(const VulkanInstance &instance,
-                                                                                              const VulkanSurface &surface,
+    std::unique_ptr<VulkanPhysicalDeviceCandidate> SimpleVulkanPhysicalDeviceProvider::provide(const Instance &instance,
+                                                                                              const Surface &surface,
                                                                                               const std::vector<std::string> &deviceExtensions) {
         std::unique_ptr<VulkanPhysicalDeviceCandidate> candidate = std::make_unique<VulkanPhysicalDeviceCandidate>(std::move(mVulkanPhysicalDevice));
         std::optional<VulkanPhysicalDeviceSurfaceSupport> surfaceSupport = candidate->getPhysicalDevice()->querySurfaceSupport(surface, mQueueFlags);
@@ -37,8 +37,8 @@ namespace vklite {
 
     FixedVulkanPhysicalDeviceProvider::~FixedVulkanPhysicalDeviceProvider() = default;
 
-    std::unique_ptr<VulkanPhysicalDeviceCandidate> FixedVulkanPhysicalDeviceProvider::provide(const VulkanInstance &instance,
-                                                                                              const VulkanSurface &surface,
+    std::unique_ptr<VulkanPhysicalDeviceCandidate> FixedVulkanPhysicalDeviceProvider::provide(const Instance &instance,
+                                                                                              const Surface &surface,
                                                                                               const std::vector<std::string> &deviceExtensions) {
         return std::move(mCandidate);
     }
@@ -51,8 +51,8 @@ namespace vklite {
 
     DefaultVulkanPhysicalDeviceProvider::~DefaultVulkanPhysicalDeviceProvider() = default;
 
-    std::unique_ptr<VulkanPhysicalDeviceCandidate> DefaultVulkanPhysicalDeviceProvider::provide(const VulkanInstance &instance,
-                                                                                                const VulkanSurface &surface,
+    std::unique_ptr<VulkanPhysicalDeviceCandidate> DefaultVulkanPhysicalDeviceProvider::provide(const Instance &instance,
+                                                                                                const Surface &surface,
                                                                                                 const std::vector<std::string> &deviceExtensions) {
         std::vector<std::unique_ptr<VulkanPhysicalDevice>> physicalDevices = instance.listPhysicalDevices();
         if (physicalDevices.empty()) {
@@ -82,7 +82,7 @@ namespace vklite {
 
     std::optional<std::unique_ptr<VulkanPhysicalDeviceCandidate>> DefaultVulkanPhysicalDeviceProvider::calcPhysicalDeviceCandidate(
             std::unique_ptr<VulkanPhysicalDevice> &&vulkanPhysicalDevice,
-            const VulkanSurface &vulkanSurface,
+            const Surface &vulkanSurface,
             const std::vector<std::string> &requiredDeviceExtensions,
             vk::QueueFlags requiredQueueFlags) const {
 
@@ -112,4 +112,4 @@ namespace vklite {
         // 返回有效的候选项
         return candidate;
     }
-} // engine
+} // vklite

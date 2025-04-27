@@ -41,4 +41,4 @@ namespace vklite {
         vk::Result waitFence(uint32_t index);
     };
 
-} // engine
+} // vklite

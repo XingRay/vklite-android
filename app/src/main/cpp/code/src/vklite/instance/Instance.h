@@ -12,12 +12,12 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/common/Selector.h"
+#include "vklite/util/selector/Selector.h"
 #include "vklite/VulkanPhysicalDevice.h"
 
 namespace vklite {
 
-    class VulkanInstance {
+    class Instance {
     private:
         vk::Instance mInstance;
         vk::DebugReportCallbackEXT mDebugReportCallback;
@@ -27,14 +27,14 @@ namespace vklite {
         vk::DebugUtilsMessengerEXT mDebugMessenger;
 
     public:
-        VulkanInstance(const std::string &applicationName,
-                       uint32_t applicationVersion,
-                       const std::string &engineName,
-                       uint32_t engineVersion,
-                       const common::ListSelector<std::string> &extensionsSelector,
-                       const common::ListSelector<std::string> &layersSelector);
+        Instance(const std::string &applicationName,
+                 uint32_t applicationVersion,
+                 const std::string &engineName,
+                 uint32_t engineVersion,
+                 const ListSelector<std::string> &extensionsSelector,
+                 const ListSelector<std::string> &layersSelector);
 
-        ~VulkanInstance();
+        ~Instance();
 
         [[nodiscard]]
         const vk::Instance &getInstance() const;

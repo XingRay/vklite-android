@@ -23,4 +23,4 @@ namespace vklite {
         void updateBuffer(const void *data, uint32_t size);
     };
 
-} // engine
+} // vklite

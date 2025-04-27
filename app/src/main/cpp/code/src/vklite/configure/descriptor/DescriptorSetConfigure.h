@@ -60,4 +60,4 @@ namespace vklite {
 //        vk::DescriptorSetLayout createDescriptorSetLayout(const VulkanDevice &vulkanDevice);
     };
 
-} // engine
+} // vklite

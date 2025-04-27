@@ -16,4 +16,4 @@ namespace vklite {
         CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
         return formatInfo;
     }
-} // engine
+} // vklite

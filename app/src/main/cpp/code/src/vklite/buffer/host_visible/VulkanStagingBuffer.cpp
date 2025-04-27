@@ -3,7 +3,7 @@
 //
 
 #include "VulkanStagingBuffer.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -23,4 +23,4 @@ namespace vklite {
         mVulkanHostVisibleBuffer.updateBuffer(data, size);
     }
 
-} // engine
+} // vklite

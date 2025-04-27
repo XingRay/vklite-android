@@ -10,4 +10,4 @@ namespace vklite {
 
     VulkanImageBuilderInterface::~VulkanImageBuilderInterface() = default;
 
-} // engine
+} // vklite

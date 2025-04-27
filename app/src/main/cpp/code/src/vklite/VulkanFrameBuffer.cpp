@@ -3,7 +3,7 @@
 //
 
 #include "VulkanFrameBuffer.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -76,4 +76,4 @@ namespace vklite {
     const std::vector<vk::Framebuffer> &VulkanFrameBuffer::getFrameBuffers() const {
         return mFrameBuffers;
     }
-} // engine
+} // vklite

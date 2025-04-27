@@ -6,9 +6,9 @@
 
 #include "VulkanDevice.h"
 #include "vklite/Log.h"
-#include "vklite/VulkanUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
-#include "vklite/common/StringUtil.h"
+#include "vklite/util/StringUtil.h"
 
 namespace vklite {
 
@@ -51,13 +51,13 @@ namespace vklite {
             deviceFeatures.setSampleRateShading(vk::True);
         }
 
-        std::vector<const char *> enabledDeviceExtensionNames = common::StringUtil::toStringPtrArray(deviceExtensions);
+        std::vector<const char *> enabledDeviceExtensionNames = StringUtil::toStringPtrArray(deviceExtensions);
         LOG_D("enabled device extension names:[%ld]", enabledDeviceExtensionNames.size());
         for (const char *name: enabledDeviceExtensionNames) {
             LOG_D("    %s", name);
         }
 
-        std::vector<const char *> layerNames = common::StringUtil::toStringPtrArray(layers);
+        std::vector<const char *> layerNames = StringUtil::toStringPtrArray(layers);
 
         vk::PhysicalDeviceFeatures2 physicalDeviceFeatures2;
         vk::PhysicalDeviceSamplerYcbcrConversionFeatures ycbcr_features;
@@ -147,4 +147,4 @@ namespace vklite {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         return properties.limits.maxSamplerAnisotropy;
     }
-} // engine
+} // vklite

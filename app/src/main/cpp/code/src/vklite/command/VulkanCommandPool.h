@@ -41,4 +41,4 @@ namespace vklite {
         static void recordCommand(const vk::CommandBuffer &commandBuffer, vk::CommandBufferUsageFlagBits usage, const std::function<void(const vk::CommandBuffer &)> &command);
     };
 
-} // engine
+} // vklite

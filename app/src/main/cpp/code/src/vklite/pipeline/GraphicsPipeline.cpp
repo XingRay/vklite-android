@@ -418,4 +418,4 @@ namespace vklite {
         commandBuffer.drawIndexed(pipelineResource.getIndicesCount(), 1, 0, 0, 0);
     }
 
-} // engine
+} // vklite

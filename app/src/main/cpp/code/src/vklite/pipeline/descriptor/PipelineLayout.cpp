@@ -107,4 +107,4 @@ namespace vklite {
         return totalPushConstantSize;
     }
 
-} // engine
+} // vklite
