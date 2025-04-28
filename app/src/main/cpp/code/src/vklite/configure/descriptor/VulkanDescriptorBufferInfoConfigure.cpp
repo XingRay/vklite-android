@@ -56,7 +56,7 @@ namespace vklite {
 
     VulkanDescriptorBufferInfoConfigure::~VulkanDescriptorBufferInfoConfigure() = default;
 
-    std::unique_ptr<BufferInfo> VulkanDescriptorBufferInfoConfigure::provideVulkanDescriptorBufferInfo(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) {
+    std::unique_ptr<BufferInfo> VulkanDescriptorBufferInfoConfigure::provideVulkanDescriptorBufferInfo(const Device &vulkanDevice, const VulkanCommandPool &commandPool) {
         if (mVulkanDescriptorBufferInfo != nullptr) {
             if (!mVulkanBufferData.empty()) {
                 mVulkanDescriptorBufferInfo->update(commandPool, mVulkanBufferData.data(), mVulkanBufferData.size());

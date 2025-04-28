@@ -10,182 +10,17 @@
 
 namespace vklite {
 
-    QueueFamilyIndices VulkanUtil::findQueueFamilies(const vk::PhysicalDevice &physicalDevice,
-                                                     const vk::SurfaceKHR &surface,
-                                                     vk::QueueFlags requiredFlags) {
-        QueueFamilyIndices indices;
-        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = physicalDevice.getQueueFamilyProperties();
-
-        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
-            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
-            const vk::QueueFlags &queueFlags = queueFamilyProperty.queueFlags;
-
-            if ((queueFlags & requiredFlags) == requiredFlags) {
-                LOG_D("graphicQueueFamily found, index:%d", queueFamilyIndex);
-                indices.graphicQueueFamilyIndex = queueFamilyIndex;
-            }
-
-            if (physicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
-                LOG_D("presentQueueFamily found, index:%d", queueFamilyIndex);
-                indices.presentQueueFamilyIndex = queueFamilyIndex;
-            }
-
-            if (indices.isComplete()) {
-                break;
-            }
-        }
-
-        return indices;
-    }
-
-    bool VulkanUtil::isDeviceSupportedRequiredDeviceExtensions(const vk::PhysicalDevice &device,
-                                                               const std::vector<const char *> &requiredDeviceExtensions) {
-        LOG_D("requiredExtensions");
-        for (const auto &extension: requiredDeviceExtensions) {
-            LOG_D("\t:%s", extension);
-        }
-
-        std::set<std::string> requiredExtensionSet(requiredDeviceExtensions.begin(), requiredDeviceExtensions.end());
-
-        std::vector<vk::ExtensionProperties> properties = device.enumerateDeviceExtensionProperties();
-//        LOG_D("device.enumerateDeviceExtensionProperties():");
-        for (const auto &property: properties) {
-//            LOG_D("\tproperty.extensionName: %s", property.extensionName.data());
-            requiredExtensionSet.erase(property.extensionName);
-        }
-        return requiredExtensionSet.empty();
-    }
-
-
-    std::pair<vk::Buffer, vk::DeviceMemory> VulkanUtil::createBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) {
-        const vk::Device device = vulkanDevice.getDevice();
-        const vk::PhysicalDevice physicalDevice = vulkanDevice.getPhysicalDevice();
-
-        vk::BufferCreateInfo bufferCreateInfo{};
-        bufferCreateInfo.setSize(size)
-                .setUsage(usage)
-                .setSharingMode(vk::SharingMode::eExclusive);
-
-        vk::Buffer buffer = device.createBuffer(bufferCreateInfo);
-        vk::MemoryRequirements memoryRequirements = device.getBufferMemoryRequirements(buffer);
-        vk::PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.getMemoryProperties();
-
-        uint32_t memoryType = findMemoryType(memoryProperties, memoryRequirements.memoryTypeBits, properties);
-        vk::MemoryAllocateInfo memoryAllocateInfo{};
-        memoryAllocateInfo
-                .setAllocationSize(memoryRequirements.size)
-                .setMemoryTypeIndex(memoryType);
-
-        vk::DeviceMemory bufferMemory = device.allocateMemory(memoryAllocateInfo);
-        device.bindBufferMemory(buffer, bufferMemory, 0);
-
-        return {buffer, bufferMemory};
-    }
-
-    uint32_t VulkanUtil::findMemoryType(const vk::PhysicalDeviceMemoryProperties &memoryProperties, uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
-        for (int index = 0; index < memoryProperties.memoryTypeCount; index++) {
-            const vk::MemoryType &type = memoryProperties.memoryTypes[index];
-            if (typeFilter & (1 << index) && ((type.propertyFlags & properties) == properties)) {
-                return index;
-            }
-        }
-
-        throw std::runtime_error("failed to find suitable memory type !");
-    }
-
-    uint32_t VulkanUtil::findMemoryTypeExternal(const vk::PhysicalDeviceMemoryProperties &memoryProperties, uint32_t typeFilter) {
-        for (uint32_t index = 0; index < memoryProperties.memoryTypeCount; index++) {
-            if ((typeFilter & (1 << index)) != 0) {
-                return index; // 返回符合条件的内存类型索引
-            }
-        }
-
-        // 如果没有找到符合条件的内存类型，抛出异常
-        throw std::runtime_error("failed to find suitable memory type for external memory!");
-    }
-
-    void VulkanUtil::recordCopyBufferCommand(const vk::CommandBuffer &commandBuffer,
-                                             const vk::Buffer &srcBuffer,
-                                             const vk::Buffer &dstBuffer,
-                                             vk::DeviceSize size) {
-        vk::BufferCopy bufferCopy;
-        bufferCopy.setSrcOffset(0)
-                .setDstOffset(0)
-                .setSize(size);
-
-        commandBuffer.copyBuffer(srcBuffer, dstBuffer, bufferCopy);
-    }
-
-    std::pair<vk::Image, vk::DeviceMemory> VulkanUtil::createImage(
-            const vk::Device &device,
-            vk::PhysicalDeviceMemoryProperties properties,
-            uint32_t width,
-            uint32_t height,
-            uint32_t mipLevels,
-            vk::SampleCountFlagBits numSamples,
-            vk::Format format,
-            vk::ImageTiling imageTiling,
-            vk::ImageUsageFlags imageUsage,
-            vk::MemoryPropertyFlags memoryProperty) {
-
-        vk::Extent3D extent;
-        extent.setWidth(width)
-                .setHeight(height)
-                .setDepth(1);
-        vk::ImageCreateInfo imageCreateInfo;
-        imageCreateInfo.setImageType(vk::ImageType::e2D)
-                .setExtent(extent)
-                .setMipLevels(mipLevels)
-                .setArrayLayers(1)
-                .setFormat(format)
-                .setTiling(imageTiling)
-                .setInitialLayout(vk::ImageLayout::eUndefined)
-                .setUsage(imageUsage)
-                .setSharingMode(vk::SharingMode::eExclusive)
-                .setSamples(numSamples)
-                .setFlags(vk::ImageCreateFlags{});
-
-        vk::Image image = device.createImage(imageCreateInfo);
-
-        vk::MemoryRequirements memoryRequirements = device.getImageMemoryRequirements(image);
-
-        vk::MemoryAllocateInfo memoryAllocateInfo;
-
-        uint32_t memoryType = VulkanUtil::findMemoryType(properties, memoryRequirements.memoryTypeBits, memoryProperty);
-        memoryAllocateInfo
-                .setAllocationSize(memoryRequirements.size)
-                .setMemoryTypeIndex(memoryType);
-
-        vk::DeviceMemory imageMemory = device.allocateMemory(memoryAllocateInfo);
-
-        device.bindImageMemory(image, imageMemory, 0);
-
-        return {image, imageMemory};
-    }
-
-    vk::ImageView VulkanUtil::createImageView(const vk::Device &device, const vk::Image &image, vk::Format format, vk::ImageAspectFlags imageAspect, uint32_t mipLevels) {
-        vk::ImageViewCreateInfo imageViewCreateInfo{};
-        imageViewCreateInfo.setImage(image)
-                .setViewType(vk::ImageViewType::e2D)
-                .setFormat(format);
-//            .setSubresourceRange(imageSubresourceRange)
-//            .setComponents(componentMapping);
-
-        vk::ImageSubresourceRange &imageSubresourceRange = imageViewCreateInfo.subresourceRange;
-        imageSubresourceRange.setAspectMask(imageAspect)
-                .setBaseMipLevel(0)
-                .setLevelCount(mipLevels)
-                .setBaseArrayLayer(0)
-                .setLayerCount(1);
-
-        vk::ComponentMapping &componentMapping = imageViewCreateInfo.components;
-        componentMapping.setR(vk::ComponentSwizzle::eIdentity)
-                .setG(vk::ComponentSwizzle::eIdentity)
-                .setB(vk::ComponentSwizzle::eIdentity)
-                .setA(vk::ComponentSwizzle::eIdentity);
-
-        return device.createImageView(imageViewCreateInfo);
-    }
+//    void VulkanUtil::recordCopyBufferCommand(const vk::CommandBuffer &commandBuffer,
+//                                             const vk::Buffer &srcBuffer,
+//                                             const vk::Buffer &dstBuffer,
+//                                             vk::DeviceSize size) {
+//        vk::BufferCopy bufferCopy;
+//        bufferCopy.setSrcOffset(0)
+//                .setDstOffset(0)
+//                .setSize(size);
+//
+//        commandBuffer.copyBuffer(srcBuffer, dstBuffer, bufferCopy);
+//    }
 
     // 转换 SampleCountFlags 为字符串
     std::string VulkanUtil::sampleCountFlagsToString(vk::SampleCountFlags flags) {
@@ -315,28 +150,6 @@ namespace vklite {
 
     bool VulkanUtil::hasStencilComponent(vk::Format format) {
         return format == vk::Format::eD32SfloatS8Uint || format == vk::Format::eD24UnormS8Uint;
-    }
-
-    vk::Format VulkanUtil::findDepthFormat(const vk::PhysicalDevice &physicalDevice) {
-        return VulkanUtil::findSupportedFormat(
-                physicalDevice,
-                {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
-                vk::ImageTiling::eOptimal,
-                vk::FormatFeatureFlagBits::eDepthStencilAttachment
-        );
-    }
-
-    vk::Format VulkanUtil::findSupportedFormat(const vk::PhysicalDevice &physicalDevice, const std::vector<vk::Format> &candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) {
-        for (const auto &format: candidates) {
-            vk::FormatProperties properties = physicalDevice.getFormatProperties(format);
-            if (tiling == vk::ImageTiling::eLinear && (properties.linearTilingFeatures & features) == features) {
-                return format;
-            } else if (tiling == vk::ImageTiling::eOptimal && (properties.optimalTilingFeatures & features) == features) {
-                return format;
-            }
-        }
-
-        throw std::runtime_error("failed to find supported format !");
     }
 
     vk::SampleCountFlagBits VulkanUtil::uint32ToSampleCountFlagBits(uint32_t sampleCount) {
@@ -603,22 +416,6 @@ namespace vklite {
             default:
                 throw std::runtime_error("Unsupported format");
         }
-    }
-
-    vk::DescriptorPoolSize &VulkanUtil::getOrCreateDescriptorPoolSize(std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes, vk::DescriptorType type) {
-        // 查找指定类型的 DescriptorPoolSize
-        auto it = std::find_if(descriptorPoolSizes.begin(), descriptorPoolSizes.end(), [type](const vk::DescriptorPoolSize &poolSize) {
-            return poolSize.type == type;
-        });
-
-        // 如果找到，返回该对象的引用
-        if (it != descriptorPoolSizes.end()) {
-            return *it;
-        }
-
-        // 如果没有找到，创建一个新的 DescriptorPoolSize 并添加到列表中
-        descriptorPoolSizes.push_back({type, 0}); // 初始 descriptorCount 为 0
-        return descriptorPoolSizes.back();
     }
 
     uint32_t VulkanUtil::getImageFormatBytesPerPixel(vk::Format format) {

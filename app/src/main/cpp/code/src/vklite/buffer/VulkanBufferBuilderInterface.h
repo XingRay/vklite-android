@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "VulkanBufferInterface.h"
 
 namespace vklite {
@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~VulkanBufferBuilderInterface() = 0;
 
-        virtual std::unique_ptr<VulkanBufferInterface> build(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize) = 0;
+        virtual std::unique_ptr<VulkanBufferInterface> build(const Device &vulkanDevice, vk::DeviceSize bufferSize) = 0;
     };
 
 } // vklite

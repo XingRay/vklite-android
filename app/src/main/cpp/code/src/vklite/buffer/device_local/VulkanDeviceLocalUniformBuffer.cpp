@@ -6,7 +6,7 @@
 
 namespace vklite {
 
-    VulkanDeviceLocalUniformBuffer::VulkanDeviceLocalUniformBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanDeviceLocalUniformBuffer::VulkanDeviceLocalUniformBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mUniformBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer),
               mStagingBuffer(vulkanDevice, bufferSize) {
 

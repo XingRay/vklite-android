@@ -6,7 +6,7 @@
 
 namespace vklite {
 
-    VulkanDeviceLocalIndexBuffer::VulkanDeviceLocalIndexBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanDeviceLocalIndexBuffer::VulkanDeviceLocalIndexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mIndexBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer),
               mStagingBuffer(vulkanDevice, bufferSize) {
 

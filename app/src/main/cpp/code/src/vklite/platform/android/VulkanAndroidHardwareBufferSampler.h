@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/sampler/DefaultSampler.h"
 #include "AndroidHardwareBuffer.h"
 #include "VulkanAndroidHardwareBufferYcbcrConversion.h"
@@ -16,12 +16,12 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferSampler : public SamplerInterface {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
         vk::Sampler mSampler;
 
     public:
 
-        VulkanAndroidHardwareBufferSampler(const VulkanDevice &vulkanDevice,
+        VulkanAndroidHardwareBufferSampler(const Device &vulkanDevice,
                                            const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 
         ~VulkanAndroidHardwareBufferSampler() override;

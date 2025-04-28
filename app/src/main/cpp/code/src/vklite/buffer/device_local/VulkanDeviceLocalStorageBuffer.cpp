@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    VulkanDeviceLocalStorageBuffer::VulkanDeviceLocalStorageBuffer(const VulkanDevice &vulkanDevice,
+    VulkanDeviceLocalStorageBuffer::VulkanDeviceLocalStorageBuffer(const Device &vulkanDevice,
                                                                    vk::DeviceSize bufferSize,
                                                                    vk::BufferUsageFlags additionalUsageFlags)
             : mVulkanDevice(vulkanDevice),

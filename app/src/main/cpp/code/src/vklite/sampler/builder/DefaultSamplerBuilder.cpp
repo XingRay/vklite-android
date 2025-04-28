@@ -12,7 +12,7 @@ namespace vklite {
 
     DefaultSamplerBuilder::~DefaultSamplerBuilder() = default;
 
-    std::unique_ptr<SamplerInterface> DefaultSamplerBuilder::build(const VulkanDevice &vulkanDevice) {
+    std::unique_ptr<SamplerInterface> DefaultSamplerBuilder::build(const Device &vulkanDevice) {
         return std::make_unique<DefaultSampler>(vulkanDevice, mMaxLoad);
     }
 

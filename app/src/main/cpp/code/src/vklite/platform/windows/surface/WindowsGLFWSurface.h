@@ -17,16 +17,16 @@
 #include <GLFW/glfw3.h>
 
 namespace engine{
-    class WindowsVulkanSurface : public VulkanSurface {
+    class WindowsGLFWSurface : public VulkanSurface {
 
     private:
         vk::Instance mInstance;
         vk::SurfaceKHR mSurface;
 
     public:
-        WindowsVulkanSurface(const vk::Instance& instance, GLFWwindow *window);
+        WindowsGLFWSurface(const vk::Instance& instance, GLFWwindow *window);
 
-        ~WindowsVulkanSurface() override;
+        ~WindowsGLFWSurface() override;
 
         [[nodiscard]]
         vk::SurfaceKHR getSurface() const override { return mSurface; }

@@ -3,7 +3,7 @@
 //
 
 #include "VulkanAndroidInstancePlugin.h"
-#include "VulkanAndroidApi.h"
+#include "vklite/platform/android/VulkanAndroidApi.h"
 
 namespace vklite {
 
@@ -22,4 +22,5 @@ namespace vklite {
 
         vkGetImageMemoryRequirements2KHR = (PFN_vkGetImageMemoryRequirements2KHR) vkGetInstanceProcAddr(vkInstance, "vkGetImageMemoryRequirements2KHR");
     }
+
 } // vklite

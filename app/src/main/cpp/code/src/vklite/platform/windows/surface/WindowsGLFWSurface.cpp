@@ -3,12 +3,12 @@
 //
 #ifdef WIN32
 
-#include "vklite/vulkan_wrapper/platform/windows/WindowsVulkanSurface.h"
+#include "vklite/vulkan_wrapper/platform/windows/WindowsGLFWSurface.h"
 #include "vklite/Log.h"
 
 namespace vklite {
-    WindowsVulkanSurface::WindowsVulkanSurface(const vk::Instance &instance, GLFWwindow *window) : mInstance(instance) {
-        LOG_D("WindowsVulkanSurface::WindowsVulkanSurface");
+    WindowsGLFWSurface::WindowsGLFWSurface(const vk::Instance &instance, GLFWwindow *window) : mInstance(instance) {
+        LOG_D("WindowsGLFWSurface::WindowsGLFWSurface");
         VkResult result = glfwCreateWindowSurface(instance, window, nullptr, reinterpret_cast<VkSurfaceKHR *>(&mSurface));
         if (result != VK_SUCCESS) {
             LOG_E("failed to create surface on windows !");
@@ -16,8 +16,8 @@ namespace vklite {
         }
     }
 
-    WindowsVulkanSurface::~WindowsVulkanSurface() {
-        LOG_D("WindowsVulkanSurface::~WindowsVulkanSurface()");
+    WindowsGLFWSurface::~WindowsGLFWSurface() {
+        LOG_D("WindowsGLFWSurface::~WindowsGLFWSurface()");
         if (mSurface != nullptr) {
             mInstance.destroy(mSurface);
         } else {
@@ -25,10 +25,10 @@ namespace vklite {
         }
     }
 
-    std::function<std::unique_ptr<VulkanSurface>(const Instance &)> WindowsVulkanSurface::surfaceBuilder(GLFWwindow *window) {
+    std::function<std::unique_ptr<VulkanSurface>(const Instance &)> WindowsGLFWSurface::surfaceBuilder(GLFWwindow *window) {
         return [window](const Instance &instance) -> std::unique_ptr<VulkanSurface> {
-            // 创建 WindowsVulkanSurface 实例
-            return std::make_unique<WindowsVulkanSurface>(instance.getInstance(), window);
+            // 创建 WindowsGLFWSurface 实例
+            return std::make_unique<WindowsGLFWSurface>(instance.getInstance(), window);
         };
     }
 }

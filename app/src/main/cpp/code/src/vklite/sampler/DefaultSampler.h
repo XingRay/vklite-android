@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/command/VulkanCommandPool.h"
 
 #include "vklite/image/VulkanImage.h"
@@ -15,13 +15,13 @@ namespace vklite {
 
     class DefaultSampler : public SamplerInterface {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::Sampler mSampler;
 
     public:
 
-        DefaultSampler(const VulkanDevice &vulkanDevice, float maxLoad);
+        DefaultSampler(const Device &vulkanDevice, float maxLoad);
 
         ~DefaultSampler() override;
 

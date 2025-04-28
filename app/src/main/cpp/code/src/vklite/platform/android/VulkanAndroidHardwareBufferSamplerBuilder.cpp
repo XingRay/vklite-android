@@ -12,7 +12,7 @@ namespace vklite {
 
     VulkanAndroidHardwareBufferSamplerBuilder::~VulkanAndroidHardwareBufferSamplerBuilder() = default;
 
-    std::unique_ptr<SamplerInterface> VulkanAndroidHardwareBufferSamplerBuilder::build(const VulkanDevice &vulkanDevice) {
+    std::unique_ptr<SamplerInterface> VulkanAndroidHardwareBufferSamplerBuilder::build(const Device &vulkanDevice) {
         return std::make_unique<VulkanAndroidHardwareBufferSampler>(vulkanDevice, mVulkanAndroidSamplerYcbcrConversion);
     }
 

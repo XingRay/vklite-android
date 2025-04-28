@@ -13,7 +13,7 @@ namespace vklite {
         VulkanHostVisibleBuffer mVertexBuffer;
 
     public:
-        VulkanHostVisibleVertexBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize);
+        VulkanHostVisibleVertexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize);
 
         ~VulkanHostVisibleVertexBuffer();
 

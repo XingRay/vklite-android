@@ -12,11 +12,11 @@
 namespace vklite {
     class VulkanRenderPass {
     private://fields
-        const VulkanDevice& mDevice;
+        const Device& mDevice;
         vk::RenderPass mRenderPass;
 
     public://methods
-        VulkanRenderPass(const VulkanDevice &vulkanDevice, const VulkanSwapchain &vulkanSwapchain);
+        VulkanRenderPass(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain);
 
         ~VulkanRenderPass();
 

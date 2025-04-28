@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/command/VulkanCommandPool.h"
 
 namespace vklite {
@@ -17,14 +17,14 @@ namespace vklite {
      */
     class VulkanDeviceLocalBuffer {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::Buffer mBuffer;
         vk::DeviceSize mBufferSize;
         vk::DeviceMemory mDeviceMemory;
 
     public:
-        VulkanDeviceLocalBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits);
+        VulkanDeviceLocalBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits);
 
         virtual  ~VulkanDeviceLocalBuffer();
 

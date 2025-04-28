@@ -8,6 +8,9 @@
 #include "vklite/instance/InstanceBuilder.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
+#include "vklite/util/selector/Uint32Selector.h"
+#include "vklite/util/VulkanUtil.h"
+#include "vklite/device/DeviceBuilder.h"
 
 namespace test01 {
 
@@ -51,6 +54,13 @@ namespace test01 {
                 .build();
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
+
+//        mPhysicalDevice->querySurfaceSupport(*mSurface, vk::QueueFlagBits::eGraphics);
+        uint32_t sampleCount = vklite::MaxUint32Selector(4).select(mPhysicalDevice->querySupportedSampleCounts());
+        vk::SampleCountFlagBits mMsaaSamples = vklite::VulkanUtil::uint32ToSampleCountFlagBits(sampleCount);
+
+//        mDevice = vklite::DeviceBuilder().addDevicePlugin().build();
+
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))

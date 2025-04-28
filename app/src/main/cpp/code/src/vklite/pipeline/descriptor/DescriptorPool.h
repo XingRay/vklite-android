@@ -6,17 +6,17 @@
 
 #include <memory>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 
 namespace vklite {
 
     class DescriptorPool {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::DescriptorPool mDescriptorPool;
     public:
-        DescriptorPool(const VulkanDevice &vulkanDevice, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets);
+        DescriptorPool(const Device &vulkanDevice, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets);
 
         ~DescriptorPool();
 

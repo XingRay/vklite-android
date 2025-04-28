@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 
 namespace vklite {
 
@@ -16,7 +16,7 @@ namespace vklite {
      */
     class VulkanHostVisibleBuffer {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::Buffer mBuffer;
         vk::DeviceSize mBufferSize;
@@ -24,7 +24,7 @@ namespace vklite {
         void *mMappedMemoryPointer;
 
     public:
-        VulkanHostVisibleBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
+        VulkanHostVisibleBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
 
         virtual  ~VulkanHostVisibleBuffer();
 

@@ -6,18 +6,18 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 
 namespace vklite {
 
     class VulkanAndroidHardwareBufferYcbcrConversion {
     private:
-        const VulkanDevice& mVulkanDevice;
+        const Device& mVulkanDevice;
 
         vk::SamplerYcbcrConversion mSamplerYcbcrConversion;
 
     public:
-        VulkanAndroidHardwareBufferYcbcrConversion(const VulkanDevice &vulkanDevice,
+        VulkanAndroidHardwareBufferYcbcrConversion(const Device &vulkanDevice,
                                                    const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo);
 
         ~VulkanAndroidHardwareBufferYcbcrConversion();

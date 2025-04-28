@@ -17,7 +17,7 @@ namespace vklite {
     std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
         const vk::SurfaceKHR &vkSurface = surface.getSurface();
 
-        QueueFamilyIndices indices = VulkanUtil::findQueueFamilies(mPhysicalDevice, vkSurface, requiredQueueFlags);
+        QueueFamilyIndices indices = findQueueFamilies(vkSurface, requiredQueueFlags);
         if (!indices.isComplete()) {
             LOG_W("device QueueFamilyIndices is not complete !");
             return std::nullopt;
@@ -39,6 +39,60 @@ namespace vklite {
         }
 
         return surfaceSupport;
+    }
+
+    QueueFamilyIndices PhysicalDevice::findQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
+        QueueFamilyIndices indices;
+        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
+
+        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
+            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
+
+            if ((queueFamilyProperty.queueFlags & requiredFlags) == requiredFlags) {
+                LOG_D("graphicQueueFamily found, index:%d", queueFamilyIndex);
+                indices.graphicQueueFamilyIndex = queueFamilyIndex;
+            }
+
+            if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
+                LOG_D("presentQueueFamily found, index:%d", queueFamilyIndex);
+                indices.presentQueueFamilyIndex = queueFamilyIndex;
+            }
+
+            if (indices.isComplete()) {
+                break;
+            }
+        }
+
+        return indices;
+    }
+
+    std::vector<uint32_t> PhysicalDevice::findQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
+        std::vector<uint32_t> queueFamilyIndices;
+        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
+
+        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
+            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
+
+            if ((queueFamilyProperty.queueFlags & requiredFlags) == requiredFlags) {
+                queueFamilyIndices.push_back(queueFamilyIndex);
+            }
+        }
+
+        return queueFamilyIndices;
+    }
+
+    std::vector<uint32_t> PhysicalDevice::findQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const {
+        std::vector<uint32_t> queueFamilyIndices;
+        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
+
+        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
+            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
+            if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
+                queueFamilyIndices.push_back(queueFamilyIndex);
+            }
+        }
+
+        return queueFamilyIndices;
     }
 
     bool PhysicalDevice::isSupportExtensions(const std::vector<std::string> &extensions) const {
@@ -391,6 +445,67 @@ namespace vklite {
             extensionNames.push_back(property.extensionName);
         }
         return extensionNames;
+    }
+
+    uint32_t PhysicalDevice::getMaxPushConstantsSize() const {
+        vk::PhysicalDeviceProperties deviceProperties = mPhysicalDevice.getProperties();
+        return deviceProperties.limits.maxPushConstantsSize;
+    }
+
+    float PhysicalDevice::getMaxSamplerAnisotropy() const {
+        vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
+        return properties.limits.maxSamplerAnisotropy;
+    }
+
+    uint32_t PhysicalDevice::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties) const {
+        vk::PhysicalDeviceMemoryProperties memoryProperties = mPhysicalDevice.getMemoryProperties();
+
+        for (int index = 0; index < memoryProperties.memoryTypeCount; index++) {
+            const vk::MemoryType &type = memoryProperties.memoryTypes[index];
+            if (((typeFilter & (1 << index)) != 0) && ((type.propertyFlags & properties) == properties)) {
+                return index;
+            }
+        }
+
+        throw std::runtime_error("failed to find suitable memory type for typeFilter and MemoryPropertyFlags");
+    }
+
+    uint32_t PhysicalDevice::findMemoryType(uint32_t typeFilter) const {
+        vk::PhysicalDeviceMemoryProperties memoryProperties = mPhysicalDevice.getMemoryProperties();
+
+        for (uint32_t index = 0; index < memoryProperties.memoryTypeCount; index++) {
+            if ((typeFilter & (1 << index)) != 0) {
+                return index;
+            }
+        }
+
+        throw std::runtime_error("failed to find suitable memory type for typeFilter");
+    }
+
+    vk::Format PhysicalDevice::findSupportedFormat(const std::vector<vk::Format> &candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) const {
+        for (const auto &format: candidates) {
+            vk::FormatProperties properties = mPhysicalDevice.getFormatProperties(format);
+            if (tiling == vk::ImageTiling::eLinear && (properties.linearTilingFeatures & features) == features) {
+                return format;
+            } else if (tiling == vk::ImageTiling::eOptimal && (properties.optimalTilingFeatures & features) == features) {
+                return format;
+            }
+        }
+
+        throw std::runtime_error("failed to find supported format !");
+    }
+
+    vk::Format PhysicalDevice::findDepthFormat() const {
+        return findSupportedFormat(
+                {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
+                vk::ImageTiling::eOptimal,
+                vk::FormatFeatureFlagBits::eDepthStencilAttachment
+        );
+    }
+
+    bool PhysicalDevice::isSupportFormatFeature(vk::Format format, vk::FormatFeatureFlags formatFeatureFlags) const {
+        vk::FormatProperties formatProperties = mPhysicalDevice.getFormatProperties(format);
+        return (formatProperties.optimalTilingFeatures & formatFeatureFlags) == formatFeatureFlags;
     }
 
 } // vklite

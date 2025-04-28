@@ -5,20 +5,20 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/shader/VulkanShaderModule.h"
 
 namespace vklite {
 
     class ComputePipeline {
     private:
-        const VulkanDevice &mDevice;
+        const Device &mDevice;
         vk::Pipeline mPipeline;
         vk::PipelineLayout mPipelineLayout;
 
     public:
         ComputePipeline(
-                const VulkanDevice &vulkanDevice,
+                const Device &vulkanDevice,
                 const VulkanShaderModule &computeShaderModule,
                 const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
                 const std::vector<vk::PushConstantRange> &pushConstantRanges);

@@ -16,7 +16,7 @@ namespace vklite {
 
     VulkanDescriptorImmutableSamplerConfigure::~VulkanDescriptorImmutableSamplerConfigure() = default;
 
-    std::unique_ptr<ImageInfo> VulkanDescriptorImmutableSamplerConfigure::provideVulkanDescriptorImageInfo(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) {
+    std::unique_ptr<ImageInfo> VulkanDescriptorImmutableSamplerConfigure::provideVulkanDescriptorImageInfo(const Device &vulkanDevice, const VulkanCommandPool &commandPool) {
         if(mVulkanDescriptorBufferInfo!= nullptr){
             return std::move(mVulkanDescriptorBufferInfo);
         }

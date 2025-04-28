@@ -42,7 +42,7 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const VulkanDevice &vulkanDevice,
+    std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &vulkanDevice,
                                                                        const VulkanSwapchain &swapchain,
                                                                        const VulkanRenderPass &renderPass) {
 

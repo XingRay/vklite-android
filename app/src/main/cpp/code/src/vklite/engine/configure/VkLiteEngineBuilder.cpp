@@ -5,7 +5,7 @@
 #include "VkLiteEngineBuilder.h"
 #include "vklite/util/StringUtil.h"
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/util/selector/Uint32Selector.h"
 
 namespace vklite {

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/command/VulkanCommandPool.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
 #include "VulkanImageInterface.h"
@@ -14,7 +14,7 @@ namespace vklite {
 
     class VulkanImage : public VulkanImageInterface {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::Format mImageFormat;
         uint32_t mMipLevels;
@@ -29,7 +29,7 @@ namespace vklite {
         std::unique_ptr<VulkanStagingBuffer> mVulkanStagingBuffer;
 
     public:
-        VulkanImage(const VulkanDevice &vulkanDevice, uint32_t width, uint32_t height, vk::Format format);
+        VulkanImage(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format);
 
         ~VulkanImage();
 

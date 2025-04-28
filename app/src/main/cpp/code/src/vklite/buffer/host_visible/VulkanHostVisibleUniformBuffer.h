@@ -13,7 +13,7 @@ namespace vklite {
         VulkanHostVisibleBuffer mUniformBuffer;
 
     public:
-        VulkanHostVisibleUniformBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize);
+        VulkanHostVisibleUniformBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize);
 
         ~VulkanHostVisibleUniformBuffer();
 

@@ -5,13 +5,13 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/surface/Surface.h"
 
 namespace vklite {
     class VulkanSwapchain {
     private://fields
-        const VulkanDevice &mDevice;
+        const Device &mDevice;
 
         vk::SwapchainKHR mSwapChain;
 
@@ -23,7 +23,7 @@ namespace vklite {
         std::vector<vk::ImageView> mDisplayImageViews;
 
     public://methods
-        VulkanSwapchain(const VulkanDevice &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
+        VulkanSwapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
 
         ~VulkanSwapchain();
 

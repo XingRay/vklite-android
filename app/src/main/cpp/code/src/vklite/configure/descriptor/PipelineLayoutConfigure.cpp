@@ -5,7 +5,7 @@
 
 #include "PipelineLayoutConfigure.h"
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 
 namespace vklite {
 
@@ -130,7 +130,7 @@ namespace vklite {
 //        return vulkanDescriptorBindingSets;
 //    }
 
-    std::unique_ptr<PipelineLayout> PipelineLayoutConfigure::createPipelineLayout(const VulkanDevice &vulkanDevice) {
+    std::unique_ptr<PipelineLayout> PipelineLayoutConfigure::createPipelineLayout(const Device &vulkanDevice) {
         return std::make_unique<PipelineLayout>(vulkanDevice, std::move(mDescriptors), std::move(mPushConstantRanges));
     }
 

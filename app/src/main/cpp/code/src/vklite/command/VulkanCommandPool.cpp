@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    VulkanCommandPool::VulkanCommandPool(const VulkanDevice &device, uint32_t commandBufferCount)
+    VulkanCommandPool::VulkanCommandPool(const Device &device, uint32_t commandBufferCount)
             : mDevice(device) {
 
         vk::CommandPoolCreateInfo commandPoolCreateInfo{};

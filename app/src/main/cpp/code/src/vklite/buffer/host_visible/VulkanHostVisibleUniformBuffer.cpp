@@ -5,7 +5,7 @@
 #include "VulkanHostVisibleUniformBuffer.h"
 
 namespace vklite {
-    VulkanHostVisibleUniformBuffer::VulkanHostVisibleUniformBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanHostVisibleUniformBuffer::VulkanHostVisibleUniformBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mUniformBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer) {
 
     }

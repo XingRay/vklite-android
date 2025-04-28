@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    VulkanStagingBuffer::VulkanStagingBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanStagingBuffer::VulkanStagingBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mVulkanHostVisibleBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eTransferSrc) {
 
     }

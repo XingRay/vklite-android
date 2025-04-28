@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    GraphicsPipeline::GraphicsPipeline(const VulkanDevice &vulkanDevice,
+    GraphicsPipeline::GraphicsPipeline(const Device &vulkanDevice,
                                        const VulkanSwapchain &swapchain,
                                        const VulkanRenderPass &renderPass,
                                        const VulkanShaderModule &vertexShaderModule,
@@ -119,7 +119,9 @@ namespace vklite {
                         // 光栅化时的采样数, 采样数越多，抗锯齿效果越好，但性能开销也越大
                         // vk::SampleCountFlagBits::e1：禁用多重采样（默认）。
                         // vk::SampleCountFlagBits::e2、e4、e8、e16：启用多重采样
-                .setRasterizationSamples(vulkanDevice.getMsaaSamples())
+//                .setRasterizationSamples(vulkanDevice.getMsaaSamples())
+//todo: msaa samplers
+                .setRasterizationSamples(vk::SampleCountFlagBits::e1)
                         // 最小采样着色率, 仅在 sampleShadingEnable 为 vk::True 时有效
                         // 0.0：禁用采样着色, 禁用（默认）。
                         // 1.0：对每个采样点执行完整的片段着色器, 最高质量。

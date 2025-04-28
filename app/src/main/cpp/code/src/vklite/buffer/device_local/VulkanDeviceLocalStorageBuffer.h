@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/command/VulkanCommandPool.h"
 
 
@@ -16,13 +16,13 @@ namespace vklite {
 
     class VulkanDeviceLocalStorageBuffer {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         VulkanStagingBuffer mStagingBuffer;
         VulkanDeviceLocalBuffer mStorageBuffer;
 
     public:
-        VulkanDeviceLocalStorageBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlags additionalUsageFlags = vk::BufferUsageFlags{});
+        VulkanDeviceLocalStorageBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlags additionalUsageFlags = vk::BufferUsageFlags{});
 
         ~VulkanDeviceLocalStorageBuffer();
 

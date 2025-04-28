@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "VulkanImageInterface.h"
 
 namespace vklite {
@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~VulkanImageBuilderInterface() = 0;
 
-        virtual std::unique_ptr<VulkanImageInterface> build(const VulkanDevice &vulkanDevice, uint32_t width, uint32_t height, vk::Format format) = 0;
+        virtual std::unique_ptr<VulkanImageInterface> build(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format) = 0;
     };
 
 } // vklite

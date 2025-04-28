@@ -8,10 +8,9 @@
 #include <unordered_map>
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/swapchain/VulkanSwapchain.h"
 #include "vklite/VulkanRenderPass.h"
-#include "vklite/shader/VulkanShader.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
 #include "vklite/command/VulkanCommandPool.h"
@@ -29,7 +28,7 @@ namespace vklite {
 
     class GraphicsPipeline {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
@@ -43,7 +42,7 @@ namespace vklite {
 
     public:
 
-        GraphicsPipeline(const VulkanDevice &vulkanDevice,
+        GraphicsPipeline(const Device &vulkanDevice,
                          const VulkanSwapchain &swapchain,
                          const VulkanRenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,

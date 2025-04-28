@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "Descriptor.h"
 #include "DescriptorPool.h"
 
@@ -17,7 +17,7 @@ namespace vklite {
 
     class PipelineLayout {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         // [set/binding] -> Descriptor
         std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> mDescriptors;
@@ -28,7 +28,7 @@ namespace vklite {
         vk::PipelineLayout mPipelineLayout;
 
     public:
-        PipelineLayout(const VulkanDevice &vulkanDevice,
+        PipelineLayout(const Device &vulkanDevice,
                        std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> &&descriptors,
                        std::vector<vk::PushConstantRange> &&pushConstantRanges);
 

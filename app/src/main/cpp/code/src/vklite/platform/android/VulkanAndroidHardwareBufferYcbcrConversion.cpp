@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const VulkanDevice &vulkanDevice,
+    VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const Device &vulkanDevice,
                                                                                            const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo)
             : mVulkanDevice(vulkanDevice) {
 

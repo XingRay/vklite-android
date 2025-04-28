@@ -5,14 +5,14 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
     class VulkanSyncObject {
     private:
-        const VulkanDevice &mDevice;
+        const Device &mDevice;
 
         //vk::Semaphore 主要用于 GPU 之间的同步
         std::vector<vk::Semaphore> mImageAvailableSemaphores;
@@ -23,7 +23,7 @@ namespace vklite {
         std::vector<vk::Fence> mFences;
 
     public:
-        explicit VulkanSyncObject(const VulkanDevice &vulkanDevice, uint32_t count);
+        explicit VulkanSyncObject(const Device &vulkanDevice, uint32_t count);
 
         ~VulkanSyncObject();
 

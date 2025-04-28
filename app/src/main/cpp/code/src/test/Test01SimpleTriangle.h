@@ -29,6 +29,7 @@ namespace test01 {
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
+        std::unique_ptr<vklite::Device> mDevice;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

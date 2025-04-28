@@ -7,13 +7,12 @@
 
 namespace vklite {
 
-    VulkanImage::VulkanImage(const VulkanDevice &vulkanDevice, uint32_t width, uint32_t height, vk::Format format)
+    VulkanImage::VulkanImage(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format)
             : mVulkanDevice(vulkanDevice), mWidth(width), mHeight(height) {
 
         const vk::Device &device = mVulkanDevice.getDevice();
 
         mMipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
-        vk::PhysicalDeviceMemoryProperties properties = vulkanDevice.getPhysicalDevice().getMemoryProperties();
         vk::MemoryPropertyFlagBits memoryProperty = vk::MemoryPropertyFlagBits::eDeviceLocal;
 //        mImageFormat = vk::Format::eR8G8B8A8Srgb;
         mImageFormat = format;
@@ -48,7 +47,7 @@ namespace vklite {
         mImage = device.createImage(imageCreateInfo);
 
         vk::MemoryRequirements memoryRequirements = device.getImageMemoryRequirements(mImage);
-        uint32_t memoryTypeIndex = VulkanUtil::findMemoryType(properties, memoryRequirements.memoryTypeBits, memoryProperty);
+        uint32_t memoryTypeIndex = vulkanDevice.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, memoryProperty);
 
         vk::MemoryAllocateInfo memoryAllocateInfo;
         memoryAllocateInfo
@@ -59,7 +58,7 @@ namespace vklite {
 
         device.bindImageMemory(mImage, mDeviceMemory, 0);
 
-        mImageView = VulkanUtil::createImageView(device, mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
+        mImageView = mVulkanDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
         uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
         mVulkanStagingBuffer = std::make_unique<VulkanStagingBuffer>(vulkanDevice, width * height * bytesPerPixel);
@@ -181,8 +180,7 @@ namespace vklite {
     }
 
     void VulkanImage::generateMipmaps(const VulkanCommandPool &vulkanCommandPool) {
-        vk::FormatProperties formatProperties = mVulkanDevice.getPhysicalDevice().getFormatProperties(mImageFormat);
-        if (!(formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
+        if (!mVulkanDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }
 

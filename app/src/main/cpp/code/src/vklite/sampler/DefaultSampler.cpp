@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    DefaultSampler::DefaultSampler(const VulkanDevice &vulkanDevice, float maxLoad)
+    DefaultSampler::DefaultSampler(const Device &vulkanDevice, float maxLoad)
             : mVulkanDevice(vulkanDevice) {
 
         vk::SamplerCreateInfo samplerCreateInfo;
@@ -18,7 +18,7 @@ namespace vklite {
                 .setAddressModeV(vk::SamplerAddressMode::eRepeat)
                 .setAddressModeW(vk::SamplerAddressMode::eRepeat)
                 .setAnisotropyEnable(vk::True)
-                .setMaxAnisotropy(mVulkanDevice.getMaxSamplerAnisotropy())
+                .setMaxAnisotropy(mVulkanDevice.getPhysicalDevice().getMaxSamplerAnisotropy())
                 .setBorderColor(vk::BorderColor::eIntOpaqueBlack)
                         // 是否使用不归一化的坐标(x:[0~width], y:[0~height])
                         // 设置为 false 就是使用归一化坐标 (x:[0~1.0], y:[0~1.0])

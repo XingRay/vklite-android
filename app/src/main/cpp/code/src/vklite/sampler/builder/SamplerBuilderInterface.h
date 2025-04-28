@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~SamplerBuilderInterface() = 0;
 
-        virtual std::unique_ptr<SamplerInterface> build(const VulkanDevice &vulkanDevice) = 0;
+        virtual std::unique_ptr<SamplerInterface> build(const Device &vulkanDevice) = 0;
     };
 
 } // vklite

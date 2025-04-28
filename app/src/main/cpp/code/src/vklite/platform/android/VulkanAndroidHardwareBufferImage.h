@@ -9,7 +9,7 @@
 #include <android/hardware_buffer.h>
 
 #include "vklite/instance/Instance.h"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/command/VulkanCommandPool.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
 #include "vklite/image/VulkanImage.h"
@@ -22,14 +22,14 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferImage : public VulkanImageInterface {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
 
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;
         vk::ImageView mImageView;
 
     public:
-        VulkanAndroidHardwareBufferImage(const VulkanDevice &vulkanDevice,
+        VulkanAndroidHardwareBufferImage(const Device &vulkanDevice,
                                          const AndroidHardwareBuffer &androidHardwareBuffer,
                                          const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 

@@ -6,7 +6,7 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    VulkanSyncObject::VulkanSyncObject(const VulkanDevice &vulkanDevice, uint32_t count) : mDevice(vulkanDevice) {
+    VulkanSyncObject::VulkanSyncObject(const Device &vulkanDevice, uint32_t count) : mDevice(vulkanDevice) {
         vk::Device device = vulkanDevice.getDevice();
 
         vk::SemaphoreCreateInfo semaphoreCreateInfo{};

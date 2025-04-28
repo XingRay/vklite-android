@@ -5,7 +5,7 @@
 #include "VulkanDeviceLocalVertexBuffer.h"
 
 namespace vklite {
-    VulkanDeviceLocalVertexBuffer::VulkanDeviceLocalVertexBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanDeviceLocalVertexBuffer::VulkanDeviceLocalVertexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mVertexBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer),
               mStagingBuffer(vulkanDevice, bufferSize){
 

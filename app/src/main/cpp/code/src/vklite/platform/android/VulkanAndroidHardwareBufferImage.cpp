@@ -10,7 +10,7 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const VulkanDevice &vulkanDevice,
+    VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const Device &vulkanDevice,
                                                                        const AndroidHardwareBuffer &androidHardwareBuffer,
                                                                        const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
             : mVulkanDevice(vulkanDevice) {
@@ -67,8 +67,7 @@ namespace vklite {
                 .setPNext(&hardwareBufferInfo);
 
         // 获取图像的内存需求
-        vk::PhysicalDeviceMemoryProperties memProperties = mVulkanDevice.getPhysicalDevice().getMemoryProperties();
-        uint32_t memoryType = VulkanUtil::findMemoryTypeExternal(memProperties, hardwareBufferProperties.memoryTypeBits);
+        uint32_t memoryType = mVulkanDevice.getPhysicalDevice().findMemoryType(hardwareBufferProperties.memoryTypeBits);
 
         // 分配内存并绑定到图像
         vk::MemoryAllocateInfo memoryAllocateInfo{};

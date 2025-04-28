@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 #include "vklite/swapchain/VulkanSwapchain.h"
 #include "VulkanRenderPass.h"
 #include "vklite/command/VulkanCommandPool.h"
@@ -14,7 +14,7 @@ namespace vklite {
 
     class VulkanFrameBuffer {
     private:
-        const VulkanDevice &mDevice;
+        const Device &mDevice;
 
         vk::Image mColorImage;
         vk::DeviceMemory mColorDeviceMemory;
@@ -27,7 +27,7 @@ namespace vklite {
         std::vector<vk::Framebuffer> mFrameBuffers;
 
     public:
-        VulkanFrameBuffer(const VulkanDevice &device, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool);
+        VulkanFrameBuffer(const Device &device, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool);
 
         ~VulkanFrameBuffer();
 

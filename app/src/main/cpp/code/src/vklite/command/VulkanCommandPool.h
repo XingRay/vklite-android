@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 //#include "vklite/vulkan_wrapper/VulkanSwapchain.h"
 //#include "vklite/vulkan_wrapper/VulkanRenderPass.h"
 
@@ -15,14 +15,14 @@ namespace vklite {
 
     class VulkanCommandPool {
     private:
-        const VulkanDevice &mDevice;
+        const Device &mDevice;
 
         vk::CommandPool mCommandPool;
 
         std::vector<vk::CommandBuffer> mCommandBuffers;
 
     public:
-        VulkanCommandPool(const VulkanDevice &device, uint32_t commandBufferCount);
+        VulkanCommandPool(const Device &device, uint32_t commandBufferCount);
 
         ~VulkanCommandPool();
 

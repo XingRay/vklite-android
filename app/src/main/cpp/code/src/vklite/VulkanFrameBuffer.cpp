@@ -7,28 +7,32 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    VulkanFrameBuffer::VulkanFrameBuffer(const VulkanDevice &vulkanDevice, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
+
+    VulkanFrameBuffer::VulkanFrameBuffer(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
             : mDevice(vulkanDevice) {
 
         const vk::Device device = vulkanDevice.getDevice();
         vk::Format colorFormat = vulkanSwapchain.getDisplayFormat();
         vk::Extent2D displaySize = vulkanSwapchain.getDisplaySize();
 
-        std::tie(mColorImage, mColorDeviceMemory) = VulkanUtil::createImage(vulkanDevice.getDevice(), vulkanDevice.getPhysicalDevice().getMemoryProperties(), displaySize.width, displaySize.height, 1,
-                                                                            vulkanDevice.getMsaaSamples(), colorFormat,
-                                                                            vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
-                                                                            vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mColorImageView = VulkanUtil::createImageView(device, mColorImage, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+        std::tie(mColorImage, mColorDeviceMemory) = vulkanDevice.createImage(displaySize.width, displaySize.height, 1,
+                //todo: msaa samples
+                /*vulkanDevice.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
+                                                                             colorFormat,
+                                                                             vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
+                                                                             vk::MemoryPropertyFlagBits::eDeviceLocal);
+        mColorImageView = vulkanDevice.createImageView(mColorImage, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
 
-        vk::Format depthFormat = VulkanUtil::findDepthFormat(vulkanDevice.getPhysicalDevice());
+        vk::Format depthFormat = vulkanDevice.getPhysicalDevice().findDepthFormat();
 
-        std::tie(mDepthImage, mDepthDeviceMemory) = VulkanUtil::createImage(vulkanDevice.getDevice(), vulkanDevice.getPhysicalDevice().getMemoryProperties(), displaySize.width, displaySize.height, 1,
-                                                                            vulkanDevice.getMsaaSamples(),
-                                                                            depthFormat,
-                                                                            vk::ImageTiling::eOptimal,
-                                                                            vk::ImageUsageFlagBits::eDepthStencilAttachment,
-                                                                            vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mDepthImageView = VulkanUtil::createImageView(device, mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
+        std::tie(mDepthImage, mDepthDeviceMemory) = vulkanDevice.createImage(displaySize.width, displaySize.height, 1,
+                //todo: msaa samples
+                /*vulkanDevice.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
+                                                                             depthFormat,
+                                                                             vk::ImageTiling::eOptimal,
+                                                                             vk::ImageUsageFlagBits::eDepthStencilAttachment,
+                                                                             vk::MemoryPropertyFlagBits::eDeviceLocal);
+        mDepthImageView = vulkanDevice.createImageView(mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
 
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
             VulkanUtil::recordTransitionImageLayoutCommand(commandBuffer, mDepthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,

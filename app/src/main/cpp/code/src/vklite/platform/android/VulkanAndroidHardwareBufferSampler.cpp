@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferSampler::VulkanAndroidHardwareBufferSampler(const VulkanDevice &vulkanDevice,
+    VulkanAndroidHardwareBufferSampler::VulkanAndroidHardwareBufferSampler(const Device &vulkanDevice,
                                                                            const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
             : mVulkanDevice(vulkanDevice) {
 

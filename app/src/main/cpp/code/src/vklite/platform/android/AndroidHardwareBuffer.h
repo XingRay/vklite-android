@@ -6,17 +6,17 @@
 
 #include <android/hardware_buffer.h>
 
-#include "vklite/device/VulkanDevice.h"
+#include "vklite/device/Device.h"
 
 namespace vklite {
 
     class AndroidHardwareBuffer {
     private:
-        const VulkanDevice &mVulkanDevice;
+        const Device &mVulkanDevice;
         AHardwareBuffer *mHardwareBuffer;
 
     public:
-        AndroidHardwareBuffer(const VulkanDevice &vulkanDevice, AHardwareBuffer *hardwareBuffer);
+        AndroidHardwareBuffer(const Device &vulkanDevice, AHardwareBuffer *hardwareBuffer);
 
         ~AndroidHardwareBuffer();
 

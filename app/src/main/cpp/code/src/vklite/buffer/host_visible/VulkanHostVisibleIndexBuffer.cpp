@@ -5,7 +5,7 @@
 #include "VulkanHostVisibleIndexBuffer.h"
 
 namespace vklite {
-    VulkanHostVisibleIndexBuffer::VulkanHostVisibleIndexBuffer(const VulkanDevice &vulkanDevice, vk::DeviceSize bufferSize)
+    VulkanHostVisibleIndexBuffer::VulkanHostVisibleIndexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
             : mIndexBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer) {
 
     }

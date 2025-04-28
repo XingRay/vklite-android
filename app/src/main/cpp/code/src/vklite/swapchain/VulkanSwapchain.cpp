@@ -7,7 +7,7 @@
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    VulkanSwapchain::VulkanSwapchain(const VulkanDevice &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
+    VulkanSwapchain::VulkanSwapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
             : mDevice(vulkanDevice) {
         const vk::Device &device = vulkanDevice.getDevice();
 
@@ -59,7 +59,7 @@ namespace vklite {
         mDisplayImageViews.resize(mDisplayImages.size());
 
         for (int i = 0; i < mDisplayImages.size(); i++) {
-            mDisplayImageViews[i] = VulkanUtil::createImageView(device, mDisplayImages[i], mSwapChainImageFormat.format, vk::ImageAspectFlagBits::eColor, 1);
+            mDisplayImageViews[i] = vulkanDevice.createImageView(mDisplayImages[i], mSwapChainImageFormat.format, vk::ImageAspectFlagBits::eColor, 1);
         }
     }
 

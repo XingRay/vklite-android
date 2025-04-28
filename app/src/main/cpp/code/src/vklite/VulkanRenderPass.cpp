@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    VulkanRenderPass::VulkanRenderPass(const VulkanDevice &vulkanDevice, const VulkanSwapchain &vulkanSwapchain) : mDevice(vulkanDevice) {
+    VulkanRenderPass::VulkanRenderPass(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain) : mDevice(vulkanDevice) {
         bool enableMsaa = true;
         bool enableDepth = true;
 
@@ -18,13 +18,13 @@ namespace vklite {
         std::vector<vk::AttachmentReference> depthAttachmentReferences;
         std::vector<vk::AttachmentReference> msaaColorAttachmentReferences;
 
-        LOG_D("vulkanDevice.getMsaaSamples():%s", VulkanUtil::sampleCountFlagsToString(vulkanDevice.getMsaaSamples()).c_str());
-
         if (enableMsaa) {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
             msaaColorAttachmentDescription
                     .setFormat(vulkanSwapchain.getDisplayFormat())
-                    .setSamples(vulkanDevice.getMsaaSamples())
+//                    .setSamples(vulkanDevice.getMsaaSamples())
+// todo: msaa samplers
+                    .setSamples(vk::SampleCountFlagBits::e1)
                             //载入图像前将帧缓冲清0
                     .setLoadOp(vk::AttachmentLoadOp::eClear)
                             // 渲染图像之后将图像数据保存
@@ -60,11 +60,12 @@ namespace vklite {
         if (enableDepth) {
             vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;
             if (enableMsaa) {
-                sampleCountFlagBits = vulkanDevice.getMsaaSamples();
+                // msaa samplers
+//                sampleCountFlagBits = vulkanDevice.getMsaaSamples();
             }
             vk::AttachmentDescription depthAttachmentDescription{};
             depthAttachmentDescription
-                    .setFormat(findDepthFormat(vulkanDevice.getPhysicalDevice()))
+                    .setFormat(vulkanDevice.getPhysicalDevice().findDepthFormat())
                     .setSamples(sampleCountFlagBits)
                     .setLoadOp(vk::AttachmentLoadOp::eClear)
                     .setStoreOp(vk::AttachmentStoreOp::eDontCare)

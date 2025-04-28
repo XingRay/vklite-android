@@ -11,8 +11,7 @@
 #include "vklite/instance/Instance.h"
 #include "vklite/surface/Surface.h"
 #include "vklite/physical_device/PhysicalDevice.h"
-#include "vklite/device/VulkanDevice.h"
-#include "vklite/shader/VulkanShader.h"
+#include "vklite/device/Device.h"
 #include "vklite/swapchain/VulkanSwapchain.h"
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
@@ -45,7 +44,7 @@ namespace vklite {
         std::unique_ptr<Instance> mInstance;
         std::unique_ptr<Surface> mSurface;
         std::unique_ptr<PhysicalDevice> mPhysicalDevice;
-        std::unique_ptr<VulkanDevice> mVulkanDevice;
+        std::unique_ptr<Device> mVulkanDevice;
 
         std::unique_ptr<VulkanSwapchain> mSwapchain;
         std::unique_ptr<VulkanRenderPass> mRenderPass;
@@ -64,13 +63,13 @@ namespace vklite {
         VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
                      std::unique_ptr<Surface> vulkanSurface,
                      std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
-                     std::unique_ptr<VulkanDevice> vulkanDevice,
+                     std::unique_ptr<Device> vulkanDevice,
                      std::unique_ptr<VulkanCommandPool> commandPool,
                      std::unique_ptr<VulkanSwapchain> swapchain,
                      std::unique_ptr<VulkanRenderPass> renderPass,
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                      std::unique_ptr<ComputePipeline> computePipeline,
-                     std::vector<PipelineResource>&& pipelineResources,
+                     std::vector<PipelineResource> &&pipelineResources,
                      std::unique_ptr<VulkanFrameBuffer> frameBuffer,
                      std::unique_ptr<VulkanSyncObject> syncObject,
                      uint32_t frameCount);

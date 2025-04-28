@@ -6,7 +6,7 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    ComputePipeline::ComputePipeline(const VulkanDevice &vulkanDevice,
+    ComputePipeline::ComputePipeline(const Device &vulkanDevice,
                                      const VulkanShaderModule &computeShaderModule,
                                      const std::vector <vk::DescriptorSetLayout> &descriptorSetLayouts,
                                      const std::vector <vk::PushConstantRange> &pushConstantRanges)

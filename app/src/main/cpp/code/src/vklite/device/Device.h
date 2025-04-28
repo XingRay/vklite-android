@@ -9,18 +9,16 @@
 
 #include "vklite/util/selector/StringListSelector.h"
 #include "vklite/swapchain/SwapChainSupportDetail.h"
-#include "vklite/QueueFamilyIndices.h"
+#include "vklite/physical_device/QueueFamilyIndices.h"
 #include "vklite/physical_device/PhysicalDeviceSurfaceSupport.h"
 #include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
-    class VulkanDevice {
+    class Device {
     private:
-        vk::PhysicalDevice mPhysicalDevice;
+        const PhysicalDevice &mPhysicalDevice;
         vk::Device mDevice;
-
-        vk::SampleCountFlagBits mMsaaSamples = vk::SampleCountFlagBits::e1;
 
         uint32_t mGraphicQueueFamilyIndex;
         uint32_t mPresentQueueFamilyIndex;
@@ -34,22 +32,18 @@ namespace vklite {
         std::vector<vk::PresentModeKHR> mPresentModes;
 
     public:
-        VulkanDevice(const PhysicalDevice &physicalDevice,
-                     const PhysicalDeviceSurfaceSupport &surfaceSupport,
-                     const std::vector<std::string> &deviceExtensions,
-                     const std::vector<std::string> &layers,
-                     uint32_t sampleCount);
+        Device(const PhysicalDevice &physicalDevice,
+               const PhysicalDeviceSurfaceSupport &surfaceSupport,
+               const std::vector<std::string> &deviceExtensions,
+               const std::vector<std::string> &layers);
 
-        ~VulkanDevice();
-
-        [[nodiscard]]
-        vk::PhysicalDevice getPhysicalDevice() const;
+        ~Device();
 
         [[nodiscard]]
-        const vk::Device& getDevice() const;
+        const PhysicalDevice &getPhysicalDevice() const;
 
         [[nodiscard]]
-        vk::SampleCountFlagBits getMsaaSamples() const;
+        const vk::Device &getDevice() const;
 
         [[nodiscard]]
         uint32_t getGraphicQueueFamilyIndex() const;
@@ -61,10 +55,10 @@ namespace vklite {
         const std::vector<uint32_t> &getQueueFamilyIndices() const;
 
         [[nodiscard]]
-        const vk::Queue& getGraphicsQueue() const;
+        const vk::Queue &getGraphicsQueue() const;
 
         [[nodiscard]]
-        const vk::Queue& getPresentQueue() const;
+        const vk::Queue &getPresentQueue() const;
 
         [[nodiscard]]
         vk::SurfaceCapabilitiesKHR getCapabilities() const;
@@ -76,17 +70,14 @@ namespace vklite {
         std::vector<vk::PresentModeKHR> getPresentModes() const;
 
         [[nodiscard]]
-        static QueueFamilyIndices findQueueFamilies(const vk::PhysicalDevice &device, const vk::SurfaceKHR &surface);
+        std::pair<vk::Buffer, vk::DeviceMemory> createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) const;
 
         [[nodiscard]]
-        static vk::SampleCountFlagBits getMaxUsableSampleCount(const vk::PhysicalDevice &device);
-
-//        static SwapChainSupportDetail querySwapChainSupported(const vk::PhysicalDevice &device, const vk::SurfaceKHR &surface);
-
-        [[nodiscard]]
-        uint32_t getMaxPushConstantsSize()const;
+        std::pair<vk::Image, vk::DeviceMemory> createImage(uint32_t width, uint32_t height, uint32_t mipLevels, vk::SampleCountFlagBits numSamples, vk::Format format,
+                                                           vk::ImageTiling imageTiling, vk::ImageUsageFlags imageUsage, vk::MemoryPropertyFlags memoryProperty) const;
 
         [[nodiscard]]
-        float getMaxSamplerAnisotropy()const;
+        vk::ImageView createImageView(const vk::Image &image, vk::Format format, vk::ImageAspectFlags imageAspect, uint32_t mipLevels) const;
+
     };
 } // vklite

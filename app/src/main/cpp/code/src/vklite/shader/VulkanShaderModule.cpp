@@ -5,7 +5,7 @@
 #include "VulkanShaderModule.h"
 
 namespace vklite {
-    VulkanShaderModule::VulkanShaderModule(const VulkanDevice &vulkanDevice, const std::vector<char> &code)
+    VulkanShaderModule::VulkanShaderModule(const Device &vulkanDevice, const std::vector<char> &code)
             : mVulkanDevice(vulkanDevice) {
         vk::ShaderModuleCreateInfo createInfo;
         createInfo

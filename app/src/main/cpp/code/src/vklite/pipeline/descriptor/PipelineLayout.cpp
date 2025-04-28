@@ -6,7 +6,7 @@
 
 namespace vklite {
 
-    PipelineLayout::PipelineLayout(const VulkanDevice &vulkanDevice,
+    PipelineLayout::PipelineLayout(const Device &vulkanDevice,
                                    std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> &&descriptors,
                                    std::vector<vk::PushConstantRange> &&pushConstantRanges)
             : mVulkanDevice(vulkanDevice), mDescriptors(std::move(descriptors)), mPushConstantRanges(std::move(pushConstantRanges)) {
