@@ -19,11 +19,11 @@ namespace vklite {
             void *pUserData);
 
     Instance::Instance(const std::string &applicationName,
-                                   uint32_t applicationVersion,
-                                   const std::string &engineName,
-                                   uint32_t engineVersion,
-                                   const ListSelector<std::string> &extensionsSelector,
-                                   const ListSelector<std::string> &layersSelector) {
+                       uint32_t applicationVersion,
+                       const std::string &engineName,
+                       uint32_t engineVersion,
+                       const ListSelector<std::string> &extensionsSelector,
+                       const ListSelector<std::string> &layersSelector) {
         LOG_D("Instance::Instance");
         vk::DynamicLoader dl;
 
@@ -156,15 +156,16 @@ namespace vklite {
         return mEnabledLayerNames;
     }
 
-    std::vector<std::unique_ptr<VulkanPhysicalDevice>> Instance::listPhysicalDevices() const {
-        std::vector<vk::PhysicalDevice> physicalDevices = mInstance.enumeratePhysicalDevices();
+    std::vector<PhysicalDevice> Instance::listPhysicalDevices() const {
+        std::vector<vk::PhysicalDevice> vkPhysicalDevices = mInstance.enumeratePhysicalDevices();
 
-        std::vector<std::unique_ptr<VulkanPhysicalDevice>> vulkanPhysicalDevices;
-        for (const auto &device: physicalDevices) {
-            vulkanPhysicalDevices.push_back(std::make_unique<VulkanPhysicalDevice>(device));
+        std::vector<PhysicalDevice> physicalDevices;
+        physicalDevices.reserve(vkPhysicalDevices.size());
+        for (const auto &vkPhysicalDevice: vkPhysicalDevices) {
+            physicalDevices.emplace_back(vkPhysicalDevice);
         }
 
-        return vulkanPhysicalDevices;
+        return physicalDevices;
     }
 
     void Instance::setupDebugCallback() {
@@ -227,9 +228,9 @@ namespace vklite {
 
 
     vk::Result Instance::CreateDebugUtilsMessengerEXT(vk::Instance instance,
-                                                            const vk::DebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                                            const vk::AllocationCallbacks *pAllocator,
-                                                            vk::DebugUtilsMessengerEXT *pDebugMessenger) {
+                                                      const vk::DebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+                                                      const vk::AllocationCallbacks *pAllocator,
+                                                      vk::DebugUtilsMessengerEXT *pDebugMessenger) {
         auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
         if (func == nullptr) {
             return vk::Result::eErrorExtensionNotPresent;

@@ -2,36 +2,36 @@
 // Created by leixing on 2025/1/9.
 //
 
-#include "VulkanPhysicalDevice.h"
+#include "PhysicalDevice.h"
 #include "vklite/Log.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/util/StringUtil.h"
 
 namespace vklite {
-    VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::PhysicalDevice &physicalDevice) : mPhysicalDevice(physicalDevice) {
 
-    }
+    PhysicalDevice::PhysicalDevice(const vk::PhysicalDevice &physicalDevice)
+            : mPhysicalDevice(physicalDevice) {}
 
-    VulkanPhysicalDevice::~VulkanPhysicalDevice() = default;
+    PhysicalDevice::~PhysicalDevice() = default;
 
-    std::optional<VulkanPhysicalDeviceSurfaceSupport> VulkanPhysicalDevice::querySurfaceSupport(const Surface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const {
-        const vk::SurfaceKHR &surface = vulkanSurface.getSurface();
+    std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
+        const vk::SurfaceKHR &vkSurface = surface.getSurface();
 
-        QueueFamilyIndices indices = VulkanUtil::findQueueFamilies(mPhysicalDevice, surface, requiredQueueFlags);
+        QueueFamilyIndices indices = VulkanUtil::findQueueFamilies(mPhysicalDevice, vkSurface, requiredQueueFlags);
         if (!indices.isComplete()) {
             LOG_W("device QueueFamilyIndices is not complete !");
             return std::nullopt;
         }
 
-        std::optional<VulkanPhysicalDeviceSurfaceSupport> surfaceSupport = VulkanPhysicalDeviceSurfaceSupport();
+        std::optional<PhysicalDeviceSurfaceSupport> surfaceSupport = PhysicalDeviceSurfaceSupport();
 
         surfaceSupport->graphicQueueFamilyIndex = indices.graphicQueueFamilyIndex.value();
         surfaceSupport->presentQueueFamilyIndex = indices.presentQueueFamilyIndex.value();
 
         // 验证扩展可用后才尝试查询交换链支持
-        surfaceSupport->capabilities = mPhysicalDevice.getSurfaceCapabilitiesKHR(surface);
-        surfaceSupport->formats = mPhysicalDevice.getSurfaceFormatsKHR(surface);
-        surfaceSupport->presentModes = mPhysicalDevice.getSurfacePresentModesKHR(surface);
+        surfaceSupport->capabilities = mPhysicalDevice.getSurfaceCapabilitiesKHR(vkSurface);
+        surfaceSupport->formats = mPhysicalDevice.getSurfaceFormatsKHR(vkSurface);
+        surfaceSupport->presentModes = mPhysicalDevice.getSurfacePresentModesKHR(vkSurface);
 
         if (surfaceSupport->formats.empty() || surfaceSupport->presentModes.empty()) {
             LOG_D("VulkanPhysicalDeviceSurfaceSupport: formats or presentModes is empty");
@@ -41,15 +41,15 @@ namespace vklite {
         return surfaceSupport;
     }
 
-    bool VulkanPhysicalDevice::isSupportExtensions(const std::vector<std::string> extensions) const{
+    bool PhysicalDevice::isSupportExtensions(const std::vector<std::string> &extensions) const {
         return StringUtil::isContains(queryExtensionNames(), extensions);
     }
 
-    const vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice() const {
+    const vk::PhysicalDevice &PhysicalDevice::getPhysicalDevice() const {
         return mPhysicalDevice;
     }
 
-    vk::SampleCountFlagBits VulkanPhysicalDevice::queryMaxUsableSampleCount() const {
+    vk::SampleCountFlagBits PhysicalDevice::queryMaxUsableSampleCount() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         vk::PhysicalDeviceLimits &limits = properties.limits;
 
@@ -71,9 +71,9 @@ namespace vklite {
         }
     }
 
-    std::vector<uint32_t> VulkanPhysicalDevice::querySupportedSampleCounts() const {
+    std::vector<uint32_t> PhysicalDevice::querySupportedSampleCounts() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
-        vk::PhysicalDeviceLimits& limits = properties.limits;
+        vk::PhysicalDeviceLimits &limits = properties.limits;
 
         // 获取支持的 sampleCounts
         vk::SampleCountFlags counts = limits.framebufferColorSampleCounts & limits.framebufferDepthSampleCounts;
@@ -107,17 +107,17 @@ namespace vklite {
     }
 
 
-    std::string VulkanPhysicalDevice::queryName() const {
+    std::string PhysicalDevice::queryName() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         return std::string(properties.deviceName.data());
     }
 
-    vk::PhysicalDeviceType VulkanPhysicalDevice::queryType() const {
+    vk::PhysicalDeviceType PhysicalDevice::queryType() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         return properties.deviceType;
     }
 
-    void VulkanPhysicalDevice::printInfo() const {
+    void PhysicalDevice::printInfo() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
 
         LOG_D("Physical Device Properties:");
@@ -352,7 +352,7 @@ namespace vklite {
     }
 
 
-    void VulkanPhysicalDevice::printInfoWithSurface(const vk::SurfaceKHR &surface) const {
+    void PhysicalDevice::printInfoWithSurface(const vk::SurfaceKHR &surface) const {
         // 获取交换链支持详情并直接打印
         auto capabilities = mPhysicalDevice.getSurfaceCapabilitiesKHR(surface);
         LOG_D("Surface Capabilities:");
@@ -384,7 +384,7 @@ namespace vklite {
         }
     }
 
-    std::vector<std::string> VulkanPhysicalDevice::queryExtensionNames() const {
+    std::vector<std::string> PhysicalDevice::queryExtensionNames() const {
         std::vector<std::string> extensionNames;
         std::vector<vk::ExtensionProperties> properties = mPhysicalDevice.enumerateDeviceExtensionProperties();
         for (const auto &property: properties) {

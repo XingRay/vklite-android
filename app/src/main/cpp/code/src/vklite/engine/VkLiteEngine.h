@@ -10,7 +10,7 @@
 
 #include "vklite/instance/Instance.h"
 #include "vklite/surface/Surface.h"
-#include "vklite/VulkanPhysicalDevice.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/VulkanDevice.h"
 #include "vklite/shader/VulkanShader.h"
 #include "vklite/swapchain/VulkanSwapchain.h"
@@ -28,7 +28,7 @@
 #include "vklite/VulkanFrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
 #include "vklite/util/selector/StringListSelector.h"
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
+#include "vklite/physical_device/PhysicalDeviceSelector.h"
 
 
 namespace vklite {
@@ -44,7 +44,7 @@ namespace vklite {
 
         std::unique_ptr<Instance> mInstance;
         std::unique_ptr<Surface> mSurface;
-        std::unique_ptr<VulkanPhysicalDevice> mPhysicalDevice;
+        std::unique_ptr<PhysicalDevice> mPhysicalDevice;
         std::unique_ptr<VulkanDevice> mVulkanDevice;
 
         std::unique_ptr<VulkanSwapchain> mSwapchain;
@@ -63,7 +63,7 @@ namespace vklite {
     public:
         VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
                      std::unique_ptr<Surface> vulkanSurface,
-                     std::unique_ptr<VulkanPhysicalDevice> vulkanPhysicalDevice,
+                     std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<VulkanDevice> vulkanDevice,
                      std::unique_ptr<VulkanCommandPool> commandPool,
                      std::unique_ptr<VulkanSwapchain> swapchain,

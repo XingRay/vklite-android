@@ -21,7 +21,7 @@
 #include "vulkan/vulkan.hpp"
 
 #include "vklite/instance/Instance.h"
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
+#include "vklite/physical_device/PhysicalDeviceSelector.h"
 
 #include "vklite/engine/VkLiteEngine.h"
 #include "vklite/surface/SurfaceBuilder.h"
@@ -49,7 +49,7 @@ namespace vklite {
 
         uint32_t mFrameCount = 2;
 
-        std::unique_ptr<VulkanPhysicalDeviceProvider> mVulkanPhysicalDeviceProvider;
+        std::unique_ptr<PhysicalDeviceSelector> mVulkanPhysicalDeviceProvider;
         std::unique_ptr<ValueSelector<uint32_t>> mMsaaSelector;
 
         std::unique_ptr<GraphicsPipelineConfigure> mVulkanGraphicsPipelineConfigure;
@@ -113,11 +113,11 @@ namespace vklite {
         VkLiteEngineBuilder &frameCount(uint32_t frameCount);
 
         // physical device
-        VkLiteEngineBuilder &physicalDeviceAsDefault();
+//        VkLiteEngineBuilder &physicalDeviceAsDefault();
+//
+//        VkLiteEngineBuilder &physicalDevice(std::unique_ptr<PhysicalDevice> &&vulkanPhysicalDevice);
 
-        VkLiteEngineBuilder &physicalDevice(std::unique_ptr<VulkanPhysicalDevice> &&vulkanPhysicalDevice);
-
-        VkLiteEngineBuilder &physicalDeviceProvider(std::unique_ptr<VulkanPhysicalDeviceProvider> &&provider);
+        VkLiteEngineBuilder &physicalDeviceProvider(std::unique_ptr<PhysicalDeviceSelector> &&provider);
 
         // msaa
         VkLiteEngineBuilder &enableMsaa();

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
+
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/VulkanDevice.h"
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceCandidate.h"
 
 namespace vklite {
 

@@ -29,7 +29,7 @@ namespace vklite {
     }
 
 
-    bool StringUtil::isContains(std::vector<std::string> src, std::vector<std::string> target) {
+    bool StringUtil::isContains(const std::vector<std::string> &src, const std::vector<std::string> &target) {
         // 使用 std::all_of 检查 target 中的每个元素是否都在 src 中
         return std::all_of(target.begin(), target.end(), [&src](const std::string &item) {
             // 使用 std::find 在 src 中查找当前元素
@@ -37,10 +37,10 @@ namespace vklite {
         });
     }
 
-    std::vector<const char*> StringUtil::toStringPtrArray(const std::vector<std::string> &strings) {
-        std::vector<const char*> ptrArray;
+    std::vector<const char *> StringUtil::toStringPtrArray(const std::vector<std::string> &strings) {
+        std::vector<const char *> ptrArray;
         ptrArray.reserve(strings.size());  // 预分配空间
-        for (const auto &str : strings) {
+        for (const auto &str: strings) {
             ptrArray.push_back(str.c_str());  // 将 std::string 转换为 const char*
         }
         return ptrArray;

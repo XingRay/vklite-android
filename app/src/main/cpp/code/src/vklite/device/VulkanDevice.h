@@ -10,8 +10,8 @@
 #include "vklite/util/selector/StringListSelector.h"
 #include "vklite/swapchain/SwapChainSupportDetail.h"
 #include "vklite/QueueFamilyIndices.h"
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceSurfaceSupport.h"
-#include "vklite/VulkanPhysicalDevice.h"
+#include "vklite/physical_device/PhysicalDeviceSurfaceSupport.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
@@ -34,8 +34,8 @@ namespace vklite {
         std::vector<vk::PresentModeKHR> mPresentModes;
 
     public:
-        VulkanDevice(const VulkanPhysicalDevice &physicalDevice,
-                     const VulkanPhysicalDeviceSurfaceSupport &surfaceSupport,
+        VulkanDevice(const PhysicalDevice &physicalDevice,
+                     const PhysicalDeviceSurfaceSupport &surfaceSupport,
                      const std::vector<std::string> &deviceExtensions,
                      const std::vector<std::string> &layers,
                      uint32_t sampleCount);

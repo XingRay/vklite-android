@@ -12,8 +12,8 @@
 
 namespace vklite {
 
-    VulkanDevice::VulkanDevice(const VulkanPhysicalDevice &physicalDevice,
-                               const VulkanPhysicalDeviceSurfaceSupport &surfaceSupport,
+    VulkanDevice::VulkanDevice(const PhysicalDevice &physicalDevice,
+                               const PhysicalDeviceSurfaceSupport &surfaceSupport,
                                const std::vector<std::string> &deviceExtensions,
                                const std::vector<std::string> &layers,
                                uint32_t sampleCount)

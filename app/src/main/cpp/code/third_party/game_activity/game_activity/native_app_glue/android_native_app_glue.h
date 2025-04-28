@@ -44,11 +44,11 @@ extern "C" {
  * risk having the system force-close the application. This programming
  * model is direct, lightweight, but constraining.
  *
- * The 'android_native_app_glue' static library is used to provide a different
+ * The 'android_native_app_glue' static library is used to select a different
  * execution model where the application can implement its own main event
  * loop in a different thread instead. Here's how it works:
  *
- * 1/ The application must provide a function named "android_main()" that
+ * 1/ The application must select a function named "android_main()" that
  *    will be called when the activity is created, in a new thread that is
  *    distinct from the activity's main thread.
  *

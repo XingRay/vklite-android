@@ -16,7 +16,7 @@ namespace vklite {
 
     VkLiteEngine::VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
                                std::unique_ptr<Surface> vulkanSurface,
-                               std::unique_ptr<VulkanPhysicalDevice> vulkanPhysicalDevice,
+                               std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                                std::unique_ptr<VulkanDevice> vulkanDevice,
                                std::unique_ptr<VulkanCommandPool> commandPool,
                                std::unique_ptr<VulkanSwapchain> swapchain,

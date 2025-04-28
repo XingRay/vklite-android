@@ -21,7 +21,7 @@
 
 #include "vklite/instance/Instance.h"
 #include "vklite/surface/Surface.h"
-#include "vklite/VulkanPhysicalDevice.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/VulkanDevice.h"
 #include "vklite/shader/VulkanShader.h"
 #include "vklite/swapchain/VulkanSwapchain.h"
@@ -36,7 +36,7 @@
 #include "vklite/sampler/DefaultSampler.h"
 
 #include "vklite/util/selector/StringListSelector.h"
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceProvider.h"
+#include "vklite/physical_device/PhysicalDeviceSelector.h"
 
 namespace test10 {
 
@@ -69,7 +69,7 @@ namespace test10 {
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
-        std::unique_ptr<vklite::VulkanPhysicalDevice> mPhysicalDevice;
+        std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
         std::unique_ptr<vklite::VulkanDevice> mDevice;
 
         std::unique_ptr<vklite::VulkanSwapchain> mSwapchain;

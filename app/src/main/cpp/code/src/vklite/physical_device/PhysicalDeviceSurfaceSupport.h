@@ -11,7 +11,7 @@
 
 namespace vklite {
 
-    class VulkanPhysicalDeviceSurfaceSupport {
+    class PhysicalDeviceSurfaceSupport {
     public:
         uint32_t graphicQueueFamilyIndex;
         uint32_t presentQueueFamilyIndex;

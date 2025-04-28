@@ -7,24 +7,25 @@
 #include "vulkan/vulkan.hpp"
 #include <optional>
 
-#include "vklite/configure/physical_device/VulkanPhysicalDeviceSurfaceSupport.h"
+#include "PhysicalDeviceSurfaceSupport.h"
 #include "vklite/surface/Surface.h"
 
 namespace vklite {
 
-    class VulkanPhysicalDevice {
+    class PhysicalDevice {
     private:
         vk::PhysicalDevice mPhysicalDevice;
 
     public:
 
-        explicit VulkanPhysicalDevice(const vk::PhysicalDevice &physicalDevice);
+        explicit PhysicalDevice(const vk::PhysicalDevice &physicalDevice);
 
-        ~VulkanPhysicalDevice();
+        ~PhysicalDevice();
 
-        std::optional<VulkanPhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &vulkanSurface, vk::QueueFlags requiredQueueFlags) const;
+        [[nodiscard]]
+        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
 
-        bool isSupportExtensions(const std::vector<std::string> extensions) const;
+        bool isSupportExtensions(const std::vector<std::string> &extensions) const;
 
         [[nodiscard]]
         const vk::PhysicalDevice &getPhysicalDevice() const;

@@ -370,7 +370,7 @@ enum GameTextInputType : unsigned int {
     TYPE_MASK_VARIATION = 0x00000ff0,
 
     /**
-     * Mask of bits that provide addition bit flags
+     * Mask of bits that select addition bit flags
      * of options.
      */
     TYPE_MASK_FLAGS = 0x00fff000,
@@ -503,7 +503,7 @@ enum GameTextInputType : unsigned int {
      * Flag for {@link #TYPE_CLASS_TEXT}: Let the IME know the text conversion suggestions are
      * required by the application. Text conversion suggestion is for the transliteration languages
      * which has pronunciation characters and target characters. When the user is typing the
-     * pronunciation charactes, the IME could provide the possible target characters to the user.
+     * pronunciation charactes, the IME could select the possible target characters to the user.
      * When this flag is set, the IME should insert the text conversion suggestions through
      * {@link Builder#setTextConversionSuggestions(List)} and
      * the {@link TextAttribute} with initialized with the text conversion suggestions is provided
@@ -632,7 +632,7 @@ enum GameTextInputType : unsigned int {
 
     /**
      * Flag of {@link #TYPE_CLASS_NUMBER}: the number is decimal, allowing
-     * a decimal point to provide fractional values.
+     * a decimal point to select fractional values.
      */
     TYPE_NUMBER_FLAG_DECIMAL = 0x00002000,
 
@@ -724,10 +724,10 @@ enum GameTextInputType : unsigned int {
 
 enum GameTextInputActionType : unsigned int {
     /**
-     * Set of bits in {@link #imeOptions} that provide alternative actions
-     * associated with the "enter" key.  This both helps the IME provide
+     * Set of bits in {@link #imeOptions} that select alternative actions
+     * associated with the "enter" key.  This both helps the IME select
      * better feedback about what the enter key will do, and also allows it
-     * to provide alternative mechanisms for providing that command.
+     * to select alternative mechanisms for providing that command.
      */
     IME_MASK_ACTION = 0x000000ff,
 
@@ -836,7 +836,7 @@ enum GameTextInputImeOptions : unsigned int {
      * Flag of {@link #imeOptions}: used to specify that there is something
      * interesting that a forward navigation can focus on. This is like using
      * {@link #IME_ACTION_NEXT}, except allows the IME to be multiline (with
-     * an enter key) as well as provide forward navigation.  Note that some
+     * an enter key) as well as select forward navigation.  Note that some
      * IMEs may not be able to do this, especially when running on a small
      * screen where there is little space.  In that case it does not need to
      * present a UI for this option.  Like {@link #IME_ACTION_NEXT}, if the

@@ -111,17 +111,17 @@ namespace vklite {
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceAsDefault() {
-        mVulkanPhysicalDeviceProvider = std::make_unique<DefaultVulkanPhysicalDeviceProvider>();
-        return *this;
-    }
+//    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceAsDefault() {
+//        mVulkanPhysicalDeviceProvider = std::make_unique<DefaultVulkanPhysicalDeviceProvider>();
+//        return *this;
+//    }
+//
+//    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDevice(std::unique_ptr<PhysicalDevice> &&vulkanPhysicalDevice) {
+//        mVulkanPhysicalDeviceProvider = std::make_unique<SimpleVulkanPhysicalDeviceSelector>(std::move(vulkanPhysicalDevice));
+//        return *this;
+//    }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDevice(std::unique_ptr<VulkanPhysicalDevice> &&vulkanPhysicalDevice) {
-        mVulkanPhysicalDeviceProvider = std::make_unique<SimpleVulkanPhysicalDeviceProvider>(std::move(vulkanPhysicalDevice));
-        return *this;
-    }
-
-    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceProvider(std::unique_ptr<VulkanPhysicalDeviceProvider> &&provider) {
+    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceProvider(std::unique_ptr<PhysicalDeviceSelector> &&provider) {
         mVulkanPhysicalDeviceProvider = std::move(provider);
         return *this;
     }
@@ -164,72 +164,74 @@ namespace vklite {
     std::unique_ptr<VkLiteEngine> VkLiteEngineBuilder::build() {
         // instance
         std::unique_ptr<Instance> instance = std::make_unique<Instance>(mApplicationName,
-                                                                                    mApplicationVersion,
-                                                                                    mEngineName,
-                                                                                    mEngineVersion,
-                                                                                    *mExtensionsSelector,
-                                                                                    *mLayersSelector);
+                                                                        mApplicationVersion,
+                                                                        mEngineName,
+                                                                        mEngineVersion,
+                                                                        *mExtensionsSelector,
+                                                                        *mLayersSelector);
 
         // surface
         std::unique_ptr<Surface> surface = mSurfaceBuilder->build(*instance);
 
         // select physical device
-        std::unique_ptr<VulkanPhysicalDeviceCandidate> candidate = std::move(mVulkanPhysicalDeviceProvider->provide(*instance, *surface, mDeviceExtensions));
-        std::unique_ptr<VulkanPhysicalDevice> &vulkanPhysicalDevice = candidate->getPhysicalDevice();
+//        std::unique_ptr<PhysicalDeviceCandidate> candidate = std::move(mVulkanPhysicalDeviceProvider->select(*instance, *surface, mDeviceExtensions));
+//        std::unique_ptr<PhysicalDevice> &vulkanPhysicalDevice = candidate->getPhysicalDevice();
 
         // logical device
         uint32_t sampleCount = 0;
         if (mMsaaSelector != nullptr) {
-            sampleCount = mMsaaSelector->select(vulkanPhysicalDevice->querySupportedSampleCounts());
+//            sampleCount = mMsaaSelector->select(vulkanPhysicalDevice->querySupportedSampleCounts());
         }
-        std::unique_ptr<VulkanDevice> vulkanDevice = std::make_unique<VulkanDevice>(*vulkanPhysicalDevice,
-                                                                                    candidate->getSurfaceSupport().value(),
-                                                                                    mDeviceExtensions,
-                                                                                    instance->getEnabledLayers(),
-                                                                                    sampleCount);
+//        std::unique_ptr<VulkanDevice> vulkanDevice = std::make_unique<VulkanDevice>(*vulkanPhysicalDevice,
+//                                                                                    candidate->getSurfaceSupport().value(),
+//                                                                                    mDeviceExtensions,
+//                                                                                    instance->getEnabledLayers(),
+//                                                                                    sampleCount);
 
         // swapchain
-        vk::Extent2D currentExtent = vulkanDevice->getCapabilities().currentExtent;
-        LOG_D("currentExtent:[%d x %d]", currentExtent.width, currentExtent.height);
-        std::unique_ptr<VulkanSwapchain> swapchain = std::make_unique<VulkanSwapchain>(*vulkanDevice, *surface, currentExtent.width, currentExtent.height);
+//        vk::Extent2D currentExtent = vulkanDevice->getCapabilities().currentExtent;
+//        LOG_D("currentExtent:[%d x %d]", currentExtent.width, currentExtent.height);
+//        std::unique_ptr<VulkanSwapchain> swapchain = std::make_unique<VulkanSwapchain>(*vulkanDevice, *surface, currentExtent.width, currentExtent.height);
+//
+//        // command pool
+//        std::unique_ptr<VulkanCommandPool> commandPool = std::make_unique<VulkanCommandPool>(*vulkanDevice, mFrameCount);
+//
+//        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*vulkanDevice, *swapchain);
+//
+//        std::unique_ptr<GraphicsPipeline> vulkanGraphicsPipeline = nullptr;
+//        if (mVulkanGraphicsPipelineConfigure != nullptr) {
+//            LOG_D("create VulkanGraphicsPipeline");
+//            vulkanGraphicsPipeline = mVulkanGraphicsPipelineConfigure->build(*vulkanDevice, *swapchain, *renderPass);
+//        }
+//
+//        std::unique_ptr<ComputePipeline> vulkanComputePipeline = nullptr;
+//        if (mVulkanComputePipelineConfigure != nullptr) {
+//            LOG_D("create VulkanGraphicsPipeline");
+//            vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*vulkanDevice, *swapchain, *renderPass, *vulkanShader);
+//        }
+//
+//        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);
+//
+//        LOG_D("create VulkanFrameBuffer");
+//        std::unique_ptr<VulkanFrameBuffer> frameBuffer = std::make_unique<VulkanFrameBuffer>(*vulkanDevice, *swapchain, *renderPass, *commandPool);
+//        LOG_D("create VulkanSyncObject");
+//        std::unique_ptr<VulkanSyncObject> syncObject = std::make_unique<VulkanSyncObject>(*vulkanDevice, mFrameCount);
+//
+//        return std::make_unique<VkLiteEngine>(std::move(instance),
+//                                              std::move(surface),
+//                                              std::move(vulkanPhysicalDevice),
+//                                              std::move(vulkanDevice),
+//                                              std::move(commandPool),
+//                                              std::move(swapchain),
+//                                              std::move(renderPass),
+//                                              std::move(vulkanGraphicsPipeline),
+//                                              std::move(vulkanComputePipeline),
+//                                              std::move(pipelineResources),
+//                                              std::move(frameBuffer),
+//                                              std::move(syncObject),
+//                                              mFrameCount);
 
-        // command pool
-        std::unique_ptr<VulkanCommandPool> commandPool = std::make_unique<VulkanCommandPool>(*vulkanDevice, mFrameCount);
-
-        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*vulkanDevice, *swapchain);
-
-        std::unique_ptr<GraphicsPipeline> vulkanGraphicsPipeline = nullptr;
-        if (mVulkanGraphicsPipelineConfigure != nullptr) {
-            LOG_D("create VulkanGraphicsPipeline");
-            vulkanGraphicsPipeline = mVulkanGraphicsPipelineConfigure->build(*vulkanDevice, *swapchain, *renderPass);
-        }
-
-        std::unique_ptr<ComputePipeline> vulkanComputePipeline = nullptr;
-        if (mVulkanComputePipelineConfigure != nullptr) {
-            LOG_D("create VulkanGraphicsPipeline");
-            vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*vulkanDevice, *swapchain, *renderPass, *vulkanShader);
-        }
-
-        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);
-
-        LOG_D("create VulkanFrameBuffer");
-        std::unique_ptr<VulkanFrameBuffer> frameBuffer = std::make_unique<VulkanFrameBuffer>(*vulkanDevice, *swapchain, *renderPass, *commandPool);
-        LOG_D("create VulkanSyncObject");
-        std::unique_ptr<VulkanSyncObject> syncObject = std::make_unique<VulkanSyncObject>(*vulkanDevice, mFrameCount);
-
-        return std::make_unique<VkLiteEngine>(std::move(instance),
-                                              std::move(surface),
-                                              std::move(vulkanPhysicalDevice),
-                                              std::move(vulkanDevice),
-                                              std::move(commandPool),
-                                              std::move(swapchain),
-                                              std::move(renderPass),
-                                              std::move(vulkanGraphicsPipeline),
-                                              std::move(vulkanComputePipeline),
-                                              std::move(pipelineResources),
-                                              std::move(frameBuffer),
-                                              std::move(syncObject),
-                                              mFrameCount);
+        return nullptr;
     }
 
 } // vklite

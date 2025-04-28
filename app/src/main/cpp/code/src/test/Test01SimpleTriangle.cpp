@@ -7,6 +7,7 @@
 #include "vklite/engine/configure/VkLiteEngineBuilder.h"
 #include "vklite/instance/InstanceBuilder.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
+#include "vklite/physical_device/PhysicalDeviceSelector.h"
 
 namespace test01 {
 
@@ -48,9 +49,8 @@ namespace test01 {
                 .extensions({}, std::move(instanceExtensions))
                 .layers({}, std::move(layers))
                 .build();
-
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
-
+        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))

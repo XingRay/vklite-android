@@ -13,7 +13,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/util/selector/Selector.h"
-#include "vklite/VulkanPhysicalDevice.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
@@ -46,7 +46,7 @@ namespace vklite {
         const std::vector<std::string> &getEnabledLayers() const;
 
         [[nodiscard]]
-        std::vector<std::unique_ptr<VulkanPhysicalDevice>> listPhysicalDevices() const;
+        std::vector<PhysicalDevice> listPhysicalDevices() const;
 
     private:
         void setupDebugCallback();
