@@ -6,15 +6,6 @@
 
 namespace vklite {
 
-    PhysicalDeviceScoreCalculator::PhysicalDeviceScoreCalculator()
-            : mGeometryShaderScore(10),
-              mSamplerAnisotropyScore(10),
-              mIntegratedGpuScore(10),
-              mDiscreteGpuScore(20),
-              mVirtualGpuScore(15),
-              mCpuScore(5),
-              mOtherDeviceTypeScore(0) {}
-
     PhysicalDeviceScoreCalculator::PhysicalDeviceScoreCalculator(
             uint32_t geometryShaderScore,
             uint32_t samplerAnisotropyScore,
@@ -23,14 +14,18 @@ namespace vklite {
             uint32_t virtualGpuScore,
             uint32_t cpuScore,
             uint32_t otherDeviceTypeScore
-    )
-            : mGeometryShaderScore(geometryShaderScore),
-              mSamplerAnisotropyScore(samplerAnisotropyScore),
-              mIntegratedGpuScore(integratedGpuScore),
-              mDiscreteGpuScore(discreteGpuScore),
-              mVirtualGpuScore(virtualGpuScore),
-              mCpuScore(cpuScore),
-              mOtherDeviceTypeScore(otherDeviceTypeScore) {}
+    ) : mGeometryShaderScore(geometryShaderScore),
+        mSamplerAnisotropyScore(samplerAnisotropyScore) {
+
+        mPhysicalDeviceTypeScore.try_emplace(vk::PhysicalDeviceType::eIntegratedGpu, integratedGpuScore);
+        mPhysicalDeviceTypeScore.try_emplace(vk::PhysicalDeviceType::eDiscreteGpu, discreteGpuScore);
+        mPhysicalDeviceTypeScore.try_emplace(vk::PhysicalDeviceType::eVirtualGpu, virtualGpuScore);
+        mPhysicalDeviceTypeScore.try_emplace(vk::PhysicalDeviceType::eCpu, cpuScore);
+        mPhysicalDeviceTypeScore.try_emplace(vk::PhysicalDeviceType::eOther, otherDeviceTypeScore);
+    }
+
+    PhysicalDeviceScoreCalculator::PhysicalDeviceScoreCalculator()
+            : PhysicalDeviceScoreCalculator(10, 10, 10, 20, 15, 5, 0) {}
 
     PhysicalDeviceScoreCalculator::~PhysicalDeviceScoreCalculator() = default;
 
@@ -50,25 +45,7 @@ namespace vklite {
             score += mSamplerAnisotropyScore;
         }
 
-        switch (properties.deviceType) {
-            case vk::PhysicalDeviceType::eIntegratedGpu:
-                score += mIntegratedGpuScore;
-                break;
-            case vk::PhysicalDeviceType::eDiscreteGpu:
-                score += mDiscreteGpuScore;
-                break;
-            case vk::PhysicalDeviceType::eVirtualGpu:
-                score += mVirtualGpuScore;
-                break;
-            case vk::PhysicalDeviceType::eCpu:
-                score += mCpuScore;
-                break;
-            case vk::PhysicalDeviceType::eOther:
-            default:
-                score += mOtherDeviceTypeScore;
-                break;
-        }
-
+        score += mPhysicalDeviceTypeScore.at(properties.deviceType);
         return score;
     }
 

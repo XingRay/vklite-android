@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <unordered_map>
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/physical_device/PhysicalDevice.h"
@@ -18,11 +19,7 @@ namespace vklite {
         uint32_t mSamplerAnisotropyScore;   // 各向异性过滤加分
 
         // device type score
-        uint32_t mIntegratedGpuScore;       // 核显加分
-        uint32_t mDiscreteGpuScore;         // 独显加分
-        uint32_t mVirtualGpuScore;          // 虚拟GPU加分
-        uint32_t mCpuScore;                 // CPU加分
-        uint32_t mOtherDeviceTypeScore;     // 其他类型设备加分
+        std::unordered_map<vk::PhysicalDeviceType, uint32_t> mPhysicalDeviceTypeScore;
 
     public:
         PhysicalDeviceScoreCalculator();

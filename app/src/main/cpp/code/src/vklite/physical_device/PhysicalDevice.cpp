@@ -125,6 +125,41 @@ namespace vklite {
         }
     }
 
+    std::vector<vk::SampleCountFlagBits> PhysicalDevice::querySupportedSampleCountFlagBits() const {
+        vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
+        vk::PhysicalDeviceLimits &limits = properties.limits;
+
+        // 获取支持的 sampleCounts
+        vk::SampleCountFlags counts = limits.framebufferColorSampleCounts & limits.framebufferDepthSampleCounts;
+
+        std::vector<vk::SampleCountFlagBits> sampleCountFlagBits;
+
+        // 检查每个可能的 sampleCount 是否支持
+        if (counts & vk::SampleCountFlagBits::e64) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e64);
+        }
+        if (counts & vk::SampleCountFlagBits::e32) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e32);
+        }
+        if (counts & vk::SampleCountFlagBits::e16) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e16);
+        }
+        if (counts & vk::SampleCountFlagBits::e8) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e8);
+        }
+        if (counts & vk::SampleCountFlagBits::e4) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e4);
+        }
+        if (counts & vk::SampleCountFlagBits::e2) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e2);
+        }
+        if (counts & vk::SampleCountFlagBits::e1) {
+            sampleCountFlagBits.push_back(vk::SampleCountFlagBits::e1);
+        }
+
+        return sampleCountFlagBits;
+    }
+
     std::vector<uint32_t> PhysicalDevice::querySupportedSampleCounts() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         vk::PhysicalDeviceLimits &limits = properties.limits;
@@ -163,7 +198,7 @@ namespace vklite {
 
     std::string PhysicalDevice::queryName() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
-        return std::string(properties.deviceName.data());
+        return {properties.deviceName.data()};
     }
 
     vk::PhysicalDeviceType PhysicalDevice::queryType() const {
@@ -439,9 +474,10 @@ namespace vklite {
     }
 
     std::vector<std::string> PhysicalDevice::queryExtensionNames() const {
-        std::vector<std::string> extensionNames;
         std::vector<vk::ExtensionProperties> properties = mPhysicalDevice.enumerateDeviceExtensionProperties();
-        for (const auto &property: properties) {
+        std::vector<std::string> extensionNames;
+        extensionNames.reserve(properties.size());
+        for (const vk::ExtensionProperties &property: properties) {
             extensionNames.push_back(property.extensionName);
         }
         return extensionNames;

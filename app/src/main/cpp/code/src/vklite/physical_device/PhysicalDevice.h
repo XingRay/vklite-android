@@ -45,6 +45,9 @@ namespace vklite {
         vk::SampleCountFlagBits queryMaxUsableSampleCount() const;
 
         [[nodiscard]]
+        std::vector<vk::SampleCountFlagBits> querySupportedSampleCountFlagBits() const;
+
+        [[nodiscard]]
         std::vector<uint32_t> querySupportedSampleCounts() const;
 
         [[nodiscard]]
