@@ -7,6 +7,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/util/selector/Uint32Selector.h"
+#include "vklite/util/selector/MaxUint32Selector.h"
 
 namespace vklite {
 

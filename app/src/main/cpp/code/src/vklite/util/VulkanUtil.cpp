@@ -173,6 +173,29 @@ namespace vklite {
         }
     }
 
+    uint32_t VulkanUtil::sampleCountFlagBitsToUint32(vk::SampleCountFlagBits sampleCountFlagBits) {
+        switch (sampleCountFlagBits) {
+
+            case vk::SampleCountFlagBits::e1:
+                return 1;
+            case vk::SampleCountFlagBits::e2:
+                return 2;
+            case vk::SampleCountFlagBits::e4:
+                return 4;
+            case vk::SampleCountFlagBits::e8:
+                return 8;
+            case vk::SampleCountFlagBits::e16:
+                return 16;
+            case vk::SampleCountFlagBits::e32:
+                return 32;
+            case vk::SampleCountFlagBits::e64:
+                return 64;
+
+            default:
+                throw std::invalid_argument("Unsupported SampleCountFlagBits");
+        }
+    }
+
 
     uint32_t VulkanUtil::getFormatSize(vk::Format format) {
         switch (format) {

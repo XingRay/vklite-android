@@ -8,7 +8,7 @@
 #include <functional>
 #include <string>
 
-#include "vklite/util/selector/Selector.h"
+#include "vklite/util/selector/ListSelector.h"
 
 namespace vklite {
 

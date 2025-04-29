@@ -1,5 +1,5 @@
 //
-// Created by leixing on 2025/1/11.
+// Created by leixing on 2025/4/29.
 //
 
 #pragma once
@@ -17,12 +17,4 @@ namespace vklite {
         virtual T select(const std::vector<T> &candidates) const = 0;
     };
 
-    template<typename T>
-    class ListSelector {
-    public:
-        virtual ~ListSelector() = default;
-
-        [[nodiscard]]
-        virtual std::vector<T> select(const std::vector<T> &candidates) const = 0;
-    };
-}
+} // vklite

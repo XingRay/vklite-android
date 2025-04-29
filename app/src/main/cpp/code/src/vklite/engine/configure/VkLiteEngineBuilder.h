@@ -28,7 +28,7 @@
 #include "vklite/configure/pipeline/GraphicsPipelineConfigure.h"
 #include "vklite/configure/pipeline/ComputePipelineConfigure.h"
 #include "vklite/pipeline_resource/configure/PipelineResourceConfigure.h"
-#include "vklite/util/selector/Selector.h"
+#include "vklite/util/selector/ValueSelector.h"
 
 namespace vklite {
 

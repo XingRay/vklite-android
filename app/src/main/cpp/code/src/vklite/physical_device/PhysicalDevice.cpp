@@ -125,7 +125,7 @@ namespace vklite {
         }
     }
 
-    std::vector<vk::SampleCountFlagBits> PhysicalDevice::querySupportedSampleCountFlagBits() const {
+    std::vector<vk::SampleCountFlagBits> PhysicalDevice::querySampleCountFlagBits() const {
         vk::PhysicalDeviceProperties properties = mPhysicalDevice.getProperties();
         vk::PhysicalDeviceLimits &limits = properties.limits;
 

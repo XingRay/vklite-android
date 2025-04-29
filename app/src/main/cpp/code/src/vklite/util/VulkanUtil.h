@@ -33,9 +33,13 @@ namespace vklite {
 
         static vk::SampleCountFlagBits uint32ToSampleCountFlagBits(uint32_t sampleCount);
 
+        static uint32_t sampleCountFlagBitsToUint32(vk::SampleCountFlagBits sampleCountFlagBits);
+
         static uint32_t getFormatSize(vk::Format format);
 
         static uint32_t getImageFormatBytesPerPixel(vk::Format format);
+
+
     };
 
 } // vklite

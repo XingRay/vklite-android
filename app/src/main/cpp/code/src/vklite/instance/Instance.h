@@ -12,7 +12,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/util/selector/Selector.h"
+#include "vklite/util/selector/ListSelector.h"
 #include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {

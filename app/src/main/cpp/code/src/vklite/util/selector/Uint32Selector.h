@@ -7,7 +7,7 @@
 #include <vector>
 #include <functional>
 
-#include "vklite/util/selector/Selector.h"
+#include "vklite/util/selector/ValueSelector.h"
 
 
 namespace vklite {
@@ -25,20 +25,7 @@ namespace vklite {
         uint32_t select(const std::vector<uint32_t> &candidates) const override;
     };
 
-    class MaxUint32Selector : public ValueSelector<uint32_t> {
-    private:
-        uint32_t mMaxLimit;
 
-    public:
-        MaxUint32Selector();
-
-        MaxUint32Selector(uint32_t maxLimit);
-
-        ~MaxUint32Selector() override;
-
-        [[nodiscard]]
-        uint32_t select(const std::vector<uint32_t> &candidates) const override;
-    };
 
     class LambdaUint32Selector : public ValueSelector<uint32_t> {
     private:
