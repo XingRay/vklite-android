@@ -11,6 +11,7 @@
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/device/DeviceBuilder.h"
+#include "vklite/platform/android/device/AndroidDevicePlugin.h"
 
 namespace test01 {
 
@@ -29,36 +30,47 @@ namespace test01 {
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         };
 
-        std::vector<std::string> layers = {
+        std::vector<std::string> instanceLayers = {
                 "VK_LAYER_KHRONOS_validation"
         };
 
-        std::vector<std::string> deviceExtensions = {
+        std::vector<const char *> deviceExtensions = {
                 VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
+        std::vector<const char *> deviceLayers = {
+                "VK_LAYER_KHRONOS_validation"
         };
 
         std::vector<char> vertexShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
         std::vector<char> fragmentShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
         std::vector<Vertex> vertices = {
-                {{1.0f,  -1.0f, 0.0f}},
+                {{1.0f, -1.0f, 0.0f}},
                 {{-1.0f, -1.0f, 0.0f}},
-                {{0.0f,  1.0f,  0.0f}},
+                {{0.0f, 1.0f, 0.0f}},
         };
 
         std::vector<uint32_t> indices = {0, 1, 2};
 
         mInstance = vklite::InstanceBuilder()
                 .extensions({}, std::move(instanceExtensions))
-                .layers({}, std::move(layers))
+                .layers({}, std::move(instanceLayers))
                 .build();
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
 //        mPhysicalDevice->querySurfaceSupport(*mSurface, vk::QueueFlagBits::eGraphics);
-        vk::SampleCountFlagBits mMsaaSamples = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
+        vk::SampleCountFlagBits mMsaaSamples = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
-//        mDevice = vklite::DeviceBuilder().addDevicePlugin().build();
+        mDevice = vklite::DeviceBuilder()
+                .extensions(std::move(deviceExtensions))
+                .layers(std::move(deviceLayers))
+                .addGraphicQueueIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
+                .addPresentQueueIndex(queueFamilyIndices.presentQueueFamilyIndex.value())
+                .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
+                .build(*mPhysicalDevice);
 
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}

@@ -2,12 +2,12 @@
 // Created by leixing on 2024/12/24.
 //
 
-#include "VulkanSwapchain.h"
+#include "Swapchain.h"
 #include "vklite/Log.h"
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    VulkanSwapchain::VulkanSwapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
+    Swapchain::Swapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
             : mDevice(vulkanDevice) {
         const vk::Device &device = vulkanDevice.getDevice();
 
@@ -63,7 +63,7 @@ namespace vklite {
         }
     }
 
-    VulkanSwapchain::~VulkanSwapchain() {
+    Swapchain::~Swapchain() {
         LOG_D("VulkanSwapchain::~VulkanSwapchain");
         vk::Device device = mDevice.getDevice();
         // 通过 getSwapchainImagesKHR 获取的对象, 不是create的对象,不需要destroy, swapchain 会自动销毁
@@ -78,35 +78,35 @@ namespace vklite {
         device.destroy(mSwapChain);
     }
 
-    const vk::SwapchainKHR &VulkanSwapchain::getSwapChain() const {
+    const vk::SwapchainKHR &Swapchain::getSwapChain() const {
         return mSwapChain;
     }
 
-    vk::Format VulkanSwapchain::getDisplayFormat() const {
+    vk::Format Swapchain::getDisplayFormat() const {
         return mSwapChainImageFormat.format;
     }
 
-    vk::SurfaceFormatKHR VulkanSwapchain::getSurfaceFormat() const {
+    vk::SurfaceFormatKHR Swapchain::getSurfaceFormat() const {
         return mSwapChainImageFormat;
     }
 
-    uint32_t VulkanSwapchain::getImageCount() const {
+    uint32_t Swapchain::getImageCount() const {
         return mDisplayImages.size();
     }
 
-    vk::Extent2D VulkanSwapchain::getDisplaySize() const {
+    vk::Extent2D Swapchain::getDisplaySize() const {
         return mDisplaySize;
     }
 
-    const std::vector<vk::Image> &VulkanSwapchain::getDisplayImages() const {
+    const std::vector<vk::Image> &Swapchain::getDisplayImages() const {
         return mDisplayImages;
     }
 
-    const std::vector<vk::ImageView> &VulkanSwapchain::getDisplayImageViews() const {
+    const std::vector<vk::ImageView> &Swapchain::getDisplayImageViews() const {
         return mDisplayImageViews;
     }
 
-    vk::SurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats) {
+    vk::SurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats) {
         for (const auto &availableFormat: availableFormats) {
             if (availableFormat.format == vk::Format::eR8G8B8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
                 return availableFormat;
@@ -120,7 +120,7 @@ namespace vklite {
         return availableFormats[0];
     }
 
-    vk::PresentModeKHR VulkanSwapchain::choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes) {
+    vk::PresentModeKHR Swapchain::choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes) {
         for (const auto &availablePresentMode: availablePresentModes) {
             if (availablePresentMode == vk::PresentModeKHR::eMailbox) {
                 return availablePresentMode;
@@ -129,7 +129,7 @@ namespace vklite {
         return vk::PresentModeKHR::eFifo;
     }
 
-    vk::Extent2D VulkanSwapchain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height) {
+    vk::Extent2D Swapchain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height) {
         if (capability.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
             return capability.currentExtent;
         }

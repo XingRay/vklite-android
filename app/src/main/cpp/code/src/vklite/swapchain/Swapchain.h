@@ -9,7 +9,7 @@
 #include "vklite/surface/Surface.h"
 
 namespace vklite {
-    class VulkanSwapchain {
+    class Swapchain {
     private://fields
         const Device &mDevice;
 
@@ -23,9 +23,9 @@ namespace vklite {
         std::vector<vk::ImageView> mDisplayImageViews;
 
     public://methods
-        VulkanSwapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
+        Swapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
 
-        ~VulkanSwapchain();
+        ~Swapchain();
 
         [[nodiscard]]
         const vk::SwapchainKHR &getSwapChain() const;

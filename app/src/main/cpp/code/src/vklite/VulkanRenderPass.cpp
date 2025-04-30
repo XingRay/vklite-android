@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    VulkanRenderPass::VulkanRenderPass(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain) : mDevice(vulkanDevice) {
+    VulkanRenderPass::VulkanRenderPass(const Device &vulkanDevice, const Swapchain &vulkanSwapchain) : mDevice(vulkanDevice) {
         bool enableMsaa = true;
         bool enableDepth = true;
 

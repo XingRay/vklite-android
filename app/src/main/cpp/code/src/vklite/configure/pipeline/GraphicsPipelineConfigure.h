@@ -73,7 +73,7 @@ namespace vklite {
     private:
         [[nodiscard]]
         std::unique_ptr<GraphicsPipeline> build(const Device &vulkanDevice,
-                                                const VulkanSwapchain &swapchain,
+                                                const Swapchain &swapchain,
                                                 const VulkanRenderPass &renderPass);
     };
 

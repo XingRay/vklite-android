@@ -30,9 +30,34 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<Device> DeviceBuilder::build(const PhysicalDevice &physicalDevice) {
+    DeviceBuilder &DeviceBuilder::extensions(std::vector<const char *> &&extensions) {
+        mExtensions = std::move(extensions);
+        return *this;
+    }
 
-        return nullptr;
+    DeviceBuilder &DeviceBuilder::layers(std::vector<const char *> &&layers) {
+        mLayers = std::move(layers);
+        return *this;
+    }
+
+    DeviceBuilder &DeviceBuilder::enableSamplerAnisotropy() {
+        mPhysicalDeviceFeatures.setSamplerAnisotropy(vk::True);
+        return *this;
+    }
+
+    DeviceBuilder &DeviceBuilder::enableSampleRateShading() {
+        mPhysicalDeviceFeatures.setSampleRateShading(vk::True);
+        return *this;
+    }
+
+    std::unique_ptr<Device> DeviceBuilder::build(const PhysicalDevice &physicalDevice) {
+        std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> queueFamilyIndicesMap;
+        queueFamilyIndicesMap.try_emplace(vk::QueueFlagBits::eGraphics, std::move(mGraphicQueueIndices));
+        queueFamilyIndicesMap.try_emplace(vk::QueueFlagBits::eCompute, std::move(mComputeQueueIndices));
+
+        return std::make_unique<Device>(physicalDevice, queueFamilyIndicesMap, mPresentQueueIndices,
+                                        std::move(mExtensions), std::move(mLayers),
+                                        mPhysicalDeviceFeatures, std::move(mDevicePlugins));
     }
 
 } // vklite

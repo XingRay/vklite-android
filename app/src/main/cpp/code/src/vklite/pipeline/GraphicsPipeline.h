@@ -9,7 +9,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/swapchain/VulkanSwapchain.h"
+#include "vklite/swapchain/Swapchain.h"
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
@@ -43,7 +43,7 @@ namespace vklite {
     public:
 
         GraphicsPipeline(const Device &vulkanDevice,
-                         const VulkanSwapchain &swapchain,
+                         const Swapchain &swapchain,
                          const VulkanRenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,
                          const VulkanShaderModule &fragmentShaderModule,

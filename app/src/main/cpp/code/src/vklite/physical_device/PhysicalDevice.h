@@ -27,13 +27,13 @@ namespace vklite {
         std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
 
         [[nodiscard]]
-        QueueFamilyIndices findQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
+        QueueFamilyIndices queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
 
         [[nodiscard]]
-        std::vector<uint32_t> findQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const;
+        std::vector<uint32_t> queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const;
 
         [[nodiscard]]
-        std::vector<uint32_t> findQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const;
+        std::vector<uint32_t> queryQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const;
 
         [[nodiscard]]
         bool isSupportExtensions(const std::vector<std::string> &extensions) const;
@@ -83,6 +83,9 @@ namespace vklite {
 
         [[nodiscard]]
         bool isSupportFormatFeature(vk::Format format, vk::FormatFeatureFlags formatFeatureFlags) const;
+
+        [[nodiscard]]
+        vk::SampleCountFlagBits selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit = std::numeric_limits<uint32_t>::max());
     };
 
 } // vklite

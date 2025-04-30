@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    VulkanFrameBuffer::VulkanFrameBuffer(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
+    VulkanFrameBuffer::VulkanFrameBuffer(const Device &vulkanDevice, const Swapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
             : mDevice(vulkanDevice) {
 
         const vk::Device device = vulkanDevice.getDevice();

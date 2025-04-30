@@ -12,7 +12,7 @@
 #include "vklite/surface/Surface.h"
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
-#include "vklite/swapchain/VulkanSwapchain.h"
+#include "vklite/swapchain/Swapchain.h"
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
 #include "vklite/pipeline/ComputePipeline.h"
@@ -46,7 +46,7 @@ namespace vklite {
         std::unique_ptr<PhysicalDevice> mPhysicalDevice;
         std::unique_ptr<Device> mVulkanDevice;
 
-        std::unique_ptr<VulkanSwapchain> mSwapchain;
+        std::unique_ptr<Swapchain> mSwapchain;
         std::unique_ptr<VulkanRenderPass> mRenderPass;
 
         std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
@@ -65,7 +65,7 @@ namespace vklite {
                      std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<Device> vulkanDevice,
                      std::unique_ptr<VulkanCommandPool> commandPool,
-                     std::unique_ptr<VulkanSwapchain> swapchain,
+                     std::unique_ptr<Swapchain> swapchain,
                      std::unique_ptr<VulkanRenderPass> renderPass,
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                      std::unique_ptr<ComputePipeline> computePipeline,

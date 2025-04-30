@@ -43,7 +43,7 @@ namespace vklite {
     }
 
     std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &vulkanDevice,
-                                                                       const VulkanSwapchain &swapchain,
+                                                                       const Swapchain &swapchain,
                                                                        const VulkanRenderPass &renderPass) {
 
         // shader code

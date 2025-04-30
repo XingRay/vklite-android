@@ -12,6 +12,7 @@
 #include "vklite/physical_device/QueueFamilyIndices.h"
 #include "vklite/physical_device/PhysicalDeviceSurfaceSupport.h"
 #include "vklite/physical_device/PhysicalDevice.h"
+#include "vklite/device/DevicePlugin.h"
 
 namespace vklite {
 
@@ -20,12 +21,19 @@ namespace vklite {
         const PhysicalDevice &mPhysicalDevice;
         vk::Device mDevice;
 
-        uint32_t mGraphicQueueFamilyIndex;
-        uint32_t mPresentQueueFamilyIndex;
+        std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> mQueueFamilyIndicesMap;
+        std::vector<uint32_t> mPresentQueueFamilyIndices;
+
         std::vector<uint32_t> mQueueFamilyIndices;
 
         vk::Queue mGraphicsQueue;
+        uint32_t mGraphicQueueFamilyIndex;
+
         vk::Queue mPresentQueue;
+        uint32_t mPresentQueueFamilyIndex;
+
+        vk::Queue mComputeQueue;
+        uint32_t mComputeQueueFamilyIndex;
 
         vk::SurfaceCapabilitiesKHR mCapabilities;
         std::vector<vk::SurfaceFormatKHR> mFormats;
@@ -33,9 +41,12 @@ namespace vklite {
 
     public:
         Device(const PhysicalDevice &physicalDevice,
-               const PhysicalDeviceSurfaceSupport &surfaceSupport,
-               const std::vector<std::string> &deviceExtensions,
-               const std::vector<std::string> &layers);
+               std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> &queueFamilyIndicesMap,
+               std::vector<uint32_t> &presentQueueFamilyIndices,
+               std::vector<const char *> &&extensions,
+               std::vector<const char *> &&layers,
+               const vk::PhysicalDeviceFeatures &physicalDeviceFeatures,
+               const std::vector<std::unique_ptr<DevicePlugin>> &devicePlugins);
 
         ~Device();
 

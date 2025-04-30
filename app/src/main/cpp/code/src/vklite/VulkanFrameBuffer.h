@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/swapchain/VulkanSwapchain.h"
+#include "vklite/swapchain/Swapchain.h"
 #include "VulkanRenderPass.h"
 #include "vklite/command/VulkanCommandPool.h"
 
@@ -27,7 +27,7 @@ namespace vklite {
         std::vector<vk::Framebuffer> mFrameBuffers;
 
     public:
-        VulkanFrameBuffer(const Device &device, const VulkanSwapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool);
+        VulkanFrameBuffer(const Device &device, const Swapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool);
 
         ~VulkanFrameBuffer();
 

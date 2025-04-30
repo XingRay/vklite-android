@@ -6,6 +6,7 @@
 #include "vklite/Log.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/util/StringUtil.h"
+#include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 
 namespace vklite {
 
@@ -17,7 +18,7 @@ namespace vklite {
     std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
         const vk::SurfaceKHR &vkSurface = surface.getSurface();
 
-        QueueFamilyIndices indices = findQueueFamilies(vkSurface, requiredQueueFlags);
+        QueueFamilyIndices indices = queryQueueFamilies(vkSurface, requiredQueueFlags);
         if (!indices.isComplete()) {
             LOG_W("device QueueFamilyIndices is not complete !");
             return std::nullopt;
@@ -41,7 +42,7 @@ namespace vklite {
         return surfaceSupport;
     }
 
-    QueueFamilyIndices PhysicalDevice::findQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
+    QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
         QueueFamilyIndices indices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
 
@@ -66,7 +67,7 @@ namespace vklite {
         return indices;
     }
 
-    std::vector<uint32_t> PhysicalDevice::findQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
+    std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
         std::vector<uint32_t> queueFamilyIndices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
 
@@ -81,7 +82,7 @@ namespace vklite {
         return queueFamilyIndices;
     }
 
-    std::vector<uint32_t> PhysicalDevice::findQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const {
+    std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const {
         std::vector<uint32_t> queueFamilyIndices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
 
@@ -542,6 +543,10 @@ namespace vklite {
     bool PhysicalDevice::isSupportFormatFeature(vk::Format format, vk::FormatFeatureFlags formatFeatureFlags) const {
         vk::FormatProperties formatProperties = mPhysicalDevice.getFormatProperties(format);
         return (formatProperties.optimalTilingFeatures & formatFeatureFlags) == formatFeatureFlags;
+    }
+
+    vk::SampleCountFlagBits PhysicalDevice::selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit) {
+        return MaxMsaaSampleCountSelector(maxLimit).select(querySampleCountFlagBits());
     }
 
 } // vklite

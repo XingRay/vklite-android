@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/swapchain/VulkanSwapchain.h"
+#include "vklite/swapchain/Swapchain.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -16,7 +16,7 @@ namespace vklite {
         vk::RenderPass mRenderPass;
 
     public://methods
-        VulkanRenderPass(const Device &vulkanDevice, const VulkanSwapchain &vulkanSwapchain);
+        VulkanRenderPass(const Device &vulkanDevice, const Swapchain &vulkanSwapchain);
 
         ~VulkanRenderPass();
 
