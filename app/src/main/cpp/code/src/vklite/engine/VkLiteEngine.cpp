@@ -15,7 +15,7 @@
 namespace vklite {
 
     VkLiteEngine::VkLiteEngine(std::unique_ptr<Instance> instance,
-                               std::unique_ptr<Surface> vulkanSurface,
+                               std::unique_ptr<Surface> surface,
                                std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                                std::unique_ptr<Device> device,
                                std::unique_ptr<CommandPool> commandPool,
@@ -29,7 +29,7 @@ namespace vklite {
                                uint32_t frameCount) {
 
         mInstance = std::move(instance);
-        mSurface = std::move(vulkanSurface);
+        mSurface = std::move(surface);
         mPhysicalDevice = std::move(vulkanPhysicalDevice);
         mDevice = std::move(device);
         mCommandPool = std::move(commandPool);

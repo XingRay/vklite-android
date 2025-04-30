@@ -4,13 +4,9 @@
 
 #include "Test01SimpleTriangle.h"
 #include "FileUtil.h"
-#include "vklite/engine/configure/VkLiteEngineBuilder.h"
-#include "vklite/instance/InstanceBuilder.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
-#include "vklite/physical_device/PhysicalDeviceSelector.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/util/VulkanUtil.h"
-#include "vklite/device/DeviceBuilder.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
 
 namespace test01 {
@@ -46,9 +42,9 @@ namespace test01 {
         std::vector<char> fragmentShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
         std::vector<Vertex> vertices = {
-                {{1.0f, -1.0f, 0.0f}},
+                {{1.0f,  -1.0f, 0.0f}},
                 {{-1.0f, -1.0f, 0.0f}},
-                {{0.0f, 1.0f, 0.0f}},
+                {{0.0f,  1.0f,  0.0f}},
         };
 
         std::vector<uint32_t> indices = {0, 1, 2};
@@ -64,6 +60,10 @@ namespace test01 {
         vk::SampleCountFlagBits mMsaaSamples = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
+        vk::SurfaceCapabilitiesKHR mSurfaceCapabilities;
+        std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
+        std::vector<vk::PresentModeKHR> mPresentModes;
+
         mDevice = vklite::DeviceBuilder()
                 .extensions(std::move(deviceExtensions))
                 .layers(std::move(deviceLayers))
@@ -72,6 +72,8 @@ namespace test01 {
                 .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
                 .build(*mPhysicalDevice);
 
+        vk::Extent2D currentExtent = mPhysicalDevice->getCapabilities(*mSurface).currentExtent;
+//        mSwapchain = std::make_unique<vklite::Swapchain>(*mDevice, *mSurface, currentExtent.width, currentExtent.height);
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))

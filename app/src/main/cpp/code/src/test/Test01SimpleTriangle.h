@@ -7,8 +7,7 @@
 #include "vklite/Log.h"
 #include "test/common/TestBase.h"
 
-#include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/surface/AndroidSurface.h"
+#include "vklite/vklite.h"
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "test/common/glm.h"
@@ -29,7 +28,13 @@ namespace test01 {
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
+
+        vk::SurfaceCapabilitiesKHR mSurfaceCapabilities;
+        std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
+        std::vector<vk::PresentModeKHR> mPresentModes;
+
         std::unique_ptr<vklite::Device> mDevice;
+        std::unique_ptr<vklite::Swapchain> mSwapchain;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

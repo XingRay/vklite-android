@@ -7,7 +7,7 @@
 #include <chrono>
 #include <thread>
 
-#include "vklite/engine/configure/VkLiteEngineBuilder.h"
+#include "vklite/engine/VkLiteEngineBuilder.h"
 #include "FileUtil.h"
 
 namespace std {

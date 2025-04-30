@@ -166,18 +166,6 @@ namespace vklite {
         return mPresentQueue;
     }
 
-    vk::SurfaceCapabilitiesKHR Device::getCapabilities() const {
-        return mCapabilities;
-    }
-
-    std::vector<vk::SurfaceFormatKHR> Device::getFormats() const {
-        return mFormats;
-    }
-
-    std::vector<vk::PresentModeKHR> Device::getPresentModes() const {
-        return mPresentModes;
-    }
-
     std::pair<vk::Buffer, vk::DeviceMemory> Device::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) const {
 
         vk::BufferCreateInfo bufferCreateInfo{};

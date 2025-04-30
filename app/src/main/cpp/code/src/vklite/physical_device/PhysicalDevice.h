@@ -7,7 +7,6 @@
 #include "vulkan/vulkan.hpp"
 #include <optional>
 
-#include "PhysicalDeviceSurfaceSupport.h"
 #include "vklite/surface/Surface.h"
 #include "vklite/physical_device/QueueFamilyIndices.h"
 
@@ -23,8 +22,8 @@ namespace vklite {
 
         ~PhysicalDevice();
 
-        [[nodiscard]]
-        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
+//        [[nodiscard]]
+//        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
 
         [[nodiscard]]
         QueueFamilyIndices queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
@@ -85,7 +84,16 @@ namespace vklite {
         bool isSupportFormatFeature(vk::Format format, vk::FormatFeatureFlags formatFeatureFlags) const;
 
         [[nodiscard]]
-        vk::SampleCountFlagBits selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit = std::numeric_limits<uint32_t>::max());
+        vk::SampleCountFlagBits selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit = std::numeric_limits<uint32_t>::max()) const;
+
+        [[nodiscard]]
+        vk::SurfaceCapabilitiesKHR getCapabilities(const Surface &surface) const;
+
+        [[nodiscard]]
+        std::vector<vk::SurfaceFormatKHR> getFormats(const Surface &surface) const;
+
+        [[nodiscard]]
+        std::vector<vk::PresentModeKHR> getPresentModes(const Surface &surface) const;
     };
 
 } // vklite

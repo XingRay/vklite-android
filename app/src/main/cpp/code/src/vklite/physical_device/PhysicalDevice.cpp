@@ -15,32 +15,27 @@ namespace vklite {
 
     PhysicalDevice::~PhysicalDevice() = default;
 
-    std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
-        const vk::SurfaceKHR &vkSurface = surface.getSurface();
-
-        QueueFamilyIndices indices = queryQueueFamilies(vkSurface, requiredQueueFlags);
-        if (!indices.isComplete()) {
-            LOG_W("device QueueFamilyIndices is not complete !");
-            return std::nullopt;
-        }
-
-        std::optional<PhysicalDeviceSurfaceSupport> surfaceSupport = PhysicalDeviceSurfaceSupport();
-
-        surfaceSupport->graphicQueueFamilyIndex = indices.graphicQueueFamilyIndex.value();
-        surfaceSupport->presentQueueFamilyIndex = indices.presentQueueFamilyIndex.value();
-
-        // 验证扩展可用后才尝试查询交换链支持
-        surfaceSupport->capabilities = mPhysicalDevice.getSurfaceCapabilitiesKHR(vkSurface);
-        surfaceSupport->formats = mPhysicalDevice.getSurfaceFormatsKHR(vkSurface);
-        surfaceSupport->presentModes = mPhysicalDevice.getSurfacePresentModesKHR(vkSurface);
-
-        if (surfaceSupport->formats.empty() || surfaceSupport->presentModes.empty()) {
-            LOG_D("VulkanPhysicalDeviceSurfaceSupport: formats or presentModes is empty");
-            return std::nullopt;
-        }
-
-        return surfaceSupport;
-    }
+//    std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
+//        const vk::SurfaceKHR &vkSurface = surface.getSurface();
+//
+//        QueueFamilyIndices indices = queryQueueFamilies(vkSurface, requiredQueueFlags);
+//        if (!indices.isComplete()) {
+//            LOG_W("device QueueFamilyIndices is not complete !");
+//            return std::nullopt;
+//        }
+//
+//        std::optional<PhysicalDeviceSurfaceSupport> surfaceSupport = PhysicalDeviceSurfaceSupport();
+//
+//        surfaceSupport->graphicQueueFamilyIndex = indices.graphicQueueFamilyIndex.value();
+//        surfaceSupport->presentQueueFamilyIndex = indices.presentQueueFamilyIndex.value();
+//
+//        if (surfaceSupport->formats.empty() || surfaceSupport->presentModes.empty()) {
+//            LOG_D("VulkanPhysicalDeviceSurfaceSupport: formats or presentModes is empty");
+//            return std::nullopt;
+//        }
+//
+//        return surfaceSupport;
+//    }
 
     QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
         QueueFamilyIndices indices;
@@ -545,8 +540,20 @@ namespace vklite {
         return (formatProperties.optimalTilingFeatures & formatFeatureFlags) == formatFeatureFlags;
     }
 
-    vk::SampleCountFlagBits PhysicalDevice::selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit) {
+    vk::SampleCountFlagBits PhysicalDevice::selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit) const {
         return MaxMsaaSampleCountSelector(maxLimit).select(querySampleCountFlagBits());
+    }
+
+    vk::SurfaceCapabilitiesKHR PhysicalDevice::getCapabilities(const Surface &surface) const {
+        return mPhysicalDevice.getSurfaceCapabilitiesKHR(surface.getSurface());
+    }
+
+    std::vector<vk::SurfaceFormatKHR> PhysicalDevice::getFormats(const Surface &surface) const {
+        return mPhysicalDevice.getSurfaceFormatsKHR(surface.getSurface());
+    }
+
+    std::vector<vk::PresentModeKHR> PhysicalDevice::getPresentModes(const Surface &surface) const {
+        return mPhysicalDevice.getSurfacePresentModesKHR(surface.getSurface());
     }
 
 } // vklite

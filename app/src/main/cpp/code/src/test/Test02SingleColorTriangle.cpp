@@ -4,7 +4,7 @@
 
 #include "Test02SingleColorTriangle.h"
 #include "FileUtil.h"
-#include "vklite/engine/configure/VkLiteEngineBuilder.h"
+#include "vklite/engine/VkLiteEngineBuilder.h"
 
 namespace test02 {
 

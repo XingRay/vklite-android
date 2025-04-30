@@ -5,7 +5,7 @@
 #include "Test03ColoredTriangle.h"
 #include "FileUtil.h"
 #include "vklite/util/VulkanUtil.h"
-#include "vklite/engine/configure/VkLiteEngineBuilder.h"
+#include "vklite/engine/VkLiteEngineBuilder.h"
 
 namespace test03 {
 

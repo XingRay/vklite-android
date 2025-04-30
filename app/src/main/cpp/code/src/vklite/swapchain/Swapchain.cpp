@@ -7,23 +7,19 @@
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    Swapchain::Swapchain(const Device &device, const Surface &vulkanSurface, uint32_t width, uint32_t height)
-            : mDevice(device) {
+    Swapchain::Swapchain(const Device &device, const Surface &surface,
+                         const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
+                         vk::Extent2D displaySize,
+                         vk::SurfaceFormatKHR imageFormat,
+                         vk::PresentModeKHR presentMode)
+            : mDevice(device), mDisplaySize(displaySize), mSwapChainImageFormat(imageFormat) {
         const vk::Device &vkDevice = device.getDevice();
 
-        vk::SurfaceCapabilitiesKHR capabilities = device.getCapabilities();
-        std::vector<vk::SurfaceFormatKHR> formats = device.getFormats();
-        std::vector<vk::PresentModeKHR> presentModes = device.getPresentModes();
-
-        mDisplaySize = chooseSwapExtent(capabilities, width, height);
-        mSwapChainImageFormat = chooseSwapSurfaceFormat(formats);
-        vk::PresentModeKHR presentMode = choosePresentMode(presentModes);
-
-        LOG_D("capabilities.minImageCount:%d, maxImageCount:%d", capabilities.minImageCount, capabilities.maxImageCount);
-        uint32_t imageCount = capabilities.minImageCount + 1;
+        LOG_D("capabilities.minImageCount:%d, maxImageCount:%d", surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+        uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
         // capabilities.maxImageCount == 0 表示不做限制
-        if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount) {
-            imageCount = capabilities.maxImageCount;
+        if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount) {
+            imageCount = surfaceCapabilities.maxImageCount;
         }
         LOG_D("imageCount: %d", imageCount);
 
@@ -36,7 +32,7 @@ namespace vklite {
         }
 
         vk::SwapchainCreateInfoKHR swapchainCreateInfo = vk::SwapchainCreateInfoKHR{}
-                .setSurface(vulkanSurface.getSurface())
+                .setSurface(surface.getSurface())
                 .setMinImageCount(imageCount)
                 .setImageFormat(mSwapChainImageFormat.format)
                 .setImageColorSpace(mSwapChainImageFormat.colorSpace)
@@ -46,7 +42,7 @@ namespace vklite {
 //                .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment| vk::ImageUsageFlagBits::eTransferDst)
                 .setImageSharingMode(sharingMode)
                 .setQueueFamilyIndices(queueFamilyIndices)
-                .setPreTransform(capabilities.currentTransform)
+                .setPreTransform(surfaceCapabilities.currentTransform)
                 .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eOpaque)
 //                .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eInherit)
                 .setPresentMode(presentMode)
@@ -104,39 +100,5 @@ namespace vklite {
 
     const std::vector<vk::ImageView> &Swapchain::getDisplayImageViews() const {
         return mDisplayImageViews;
-    }
-
-    vk::SurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats) {
-        for (const auto &availableFormat: availableFormats) {
-            if (availableFormat.format == vk::Format::eR8G8B8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-                return availableFormat;
-            }
-
-//            if (availableFormat.format == vk::Format::eR8G8B8A8Unorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-//                return availableFormat;
-//            }
-        }
-
-        return availableFormats[0];
-    }
-
-    vk::PresentModeKHR Swapchain::choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes) {
-        for (const auto &availablePresentMode: availablePresentModes) {
-            if (availablePresentMode == vk::PresentModeKHR::eMailbox) {
-                return availablePresentMode;
-            }
-        }
-        return vk::PresentModeKHR::eFifo;
-    }
-
-    vk::Extent2D Swapchain::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height) {
-        if (capability.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
-            return capability.currentExtent;
-        }
-
-        return vk::Extent2D{
-                std::clamp(width, capability.minImageExtent.width, capability.maxImageExtent.width),
-                std::clamp(height, capability.minImageExtent.height, capability.maxImageExtent.height),
-        };
     }
 }

@@ -9,6 +9,7 @@
 #include "vklite/surface/Surface.h"
 
 namespace vklite {
+
     class Swapchain {
     private://fields
         const Device &mDevice;
@@ -23,7 +24,11 @@ namespace vklite {
         std::vector<vk::ImageView> mDisplayImageViews;
 
     public://methods
-        Swapchain(const Device &device, const Surface &vulkanSurface, uint32_t width, uint32_t height);
+        Swapchain(const Device &device, const Surface &surface,
+                  const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
+                  vk::Extent2D displaySize,
+                  vk::SurfaceFormatKHR imageFormat,
+                  vk::PresentModeKHR presentMode);
 
         ~Swapchain();
 
@@ -47,13 +52,5 @@ namespace vklite {
 
         [[nodiscard]]
         const std::vector<vk::ImageView> &getDisplayImageViews() const;
-
-    private:
-
-        static vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats);
-
-        static vk::PresentModeKHR choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes);
-
-        static vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height);
     };
 }

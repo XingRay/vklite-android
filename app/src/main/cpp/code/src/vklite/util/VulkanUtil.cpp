@@ -452,4 +452,38 @@ namespace vklite {
         }
     }
 
+    vk::Extent2D VulkanUtil::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height) {
+        if (capability.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+            return capability.currentExtent;
+        }
+
+        return vk::Extent2D{
+                std::clamp(width, capability.minImageExtent.width, capability.maxImageExtent.width),
+                std::clamp(height, capability.minImageExtent.height, capability.maxImageExtent.height),
+        };
+    }
+
+    vk::SurfaceFormatKHR VulkanUtil::chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats) {
+        for (const auto &availableFormat: availableFormats) {
+            if (availableFormat.format == vk::Format::eR8G8B8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+                return availableFormat;
+            }
+
+//            if (availableFormat.format == vk::Format::eR8G8B8A8Unorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+//                return availableFormat;
+//            }
+        }
+
+        return availableFormats[0];
+    }
+
+    vk::PresentModeKHR VulkanUtil::choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes) {
+        for (const auto &availablePresentMode: availablePresentModes) {
+            if (availablePresentMode == vk::PresentModeKHR::eMailbox) {
+                return availablePresentMode;
+            }
+        }
+        return vk::PresentModeKHR::eFifo;
+    }
+
 } // vklite

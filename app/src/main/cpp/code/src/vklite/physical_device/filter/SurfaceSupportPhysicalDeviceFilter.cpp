@@ -12,7 +12,8 @@ namespace vklite {
     SurfaceSupportPhysicalDeviceFilter::~SurfaceSupportPhysicalDeviceFilter() = default;
 
     bool SurfaceSupportPhysicalDeviceFilter::test(const PhysicalDevice &physicalDevice) const {
-        return physicalDevice.querySurfaceSupport(mSurface, mQueueFlags).has_value();
+        QueueFamilyIndices indices = physicalDevice.queryQueueFamilies(mSurface.getSurface(), mQueueFlags);
+        return indices.isComplete();
     }
 
 } // vklite

@@ -39,7 +39,11 @@ namespace vklite {
 
         static uint32_t getImageFormatBytesPerPixel(vk::Format format);
 
+        static vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height);
 
+        static vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR> &availableFormats);
+
+        static vk::PresentModeKHR choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes);
     };
 
 } // vklite

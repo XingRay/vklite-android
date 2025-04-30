@@ -6,7 +6,7 @@
 #include "FileUtil.h"
 
 #include "stb_image.h"
-#include "vklite/engine/configure/VkLiteEngineBuilder.h"
+#include "vklite/engine/VkLiteEngineBuilder.h"
 #include "image/StbImage.h"
 
 namespace test05 {

@@ -10,7 +10,6 @@
 #include "vklite/util/selector/StringListSelector.h"
 #include "vklite/swapchain/SwapChainSupportDetail.h"
 #include "vklite/physical_device/QueueFamilyIndices.h"
-#include "vklite/physical_device/PhysicalDeviceSurfaceSupport.h"
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/DevicePlugin.h"
 
@@ -34,10 +33,6 @@ namespace vklite {
 
         vk::Queue mComputeQueue;
         uint32_t mComputeQueueFamilyIndex;
-
-        vk::SurfaceCapabilitiesKHR mCapabilities;
-        std::vector<vk::SurfaceFormatKHR> mFormats;
-        std::vector<vk::PresentModeKHR> mPresentModes;
 
     public:
         Device(const PhysicalDevice &physicalDevice,
@@ -70,15 +65,6 @@ namespace vklite {
 
         [[nodiscard]]
         const vk::Queue &getPresentQueue() const;
-
-        [[nodiscard]]
-        vk::SurfaceCapabilitiesKHR getCapabilities() const;
-
-        [[nodiscard]]
-        std::vector<vk::SurfaceFormatKHR> getFormats() const;
-
-        [[nodiscard]]
-        std::vector<vk::PresentModeKHR> getPresentModes() const;
 
         [[nodiscard]]
         std::pair<vk::Buffer, vk::DeviceMemory> createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties) const;

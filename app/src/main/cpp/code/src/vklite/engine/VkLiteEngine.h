@@ -61,7 +61,7 @@ namespace vklite {
 
     public:
         VkLiteEngine(std::unique_ptr<Instance> instance,
-                     std::unique_ptr<Surface> vulkanSurface,
+                     std::unique_ptr<Surface> surface,
                      std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<Device> device,
                      std::unique_ptr<CommandPool> commandPool,
