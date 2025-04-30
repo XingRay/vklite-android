@@ -20,11 +20,11 @@ namespace vklite {
     private:
 
         // set ImageInfo
-        std::unique_ptr<ImageInfo> mVulkanDescriptorBufferInfo;
+        std::unique_ptr<ImageInfo> mDescriptorBufferInfo;
 
         //create ImageInfo
-        std::unique_ptr<VulkanImageBuilderInterface> mVulkanImageBuilder;
-        std::unique_ptr<SamplerBuilderInterface> mVulkanSamplerBuilder;
+        std::unique_ptr<VulkanImageBuilderInterface> mImageBuilder;
+        std::unique_ptr<SamplerBuilderInterface> mSamplerBuilder;
 
         // image data
         std::shared_ptr<ImageInterface> mImage;

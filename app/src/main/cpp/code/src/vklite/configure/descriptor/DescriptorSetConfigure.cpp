@@ -18,7 +18,7 @@ namespace vklite {
     }
 
 //    const std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> &DescriptorSetConfigure::getVulkanDescriptorBindingConfigures() {
-//        return mVulkanDescriptorBindingConfigures;
+//        return mDescriptorBindingConfigures;
 //    }
 
     DescriptorSetConfigure &DescriptorSetConfigure::set(uint32_t set) {
@@ -28,12 +28,12 @@ namespace vklite {
 
     // todo
 //    DescriptorSetConfigure &DescriptorSetConfigure::addVulkanDescriptor(std::unique_ptr<VulkanDescriptorBindingConfigure> &&vulkanDescriptor) {
-//        mVulkanDescriptorBindingConfigures.push_back(std::move(vulkanDescriptor));
+//        mDescriptorBindingConfigures.push_back(std::move(vulkanDescriptor));
 //        return *this;
 //    }
 
 //    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount) {
-//        mVulkanDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eUniformBuffer, descriptorCount, shaderStageFlagBits));
+//        mDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eUniformBuffer, descriptorCount, shaderStageFlagBits));
 //        return *this;
 //    }
 
@@ -41,12 +41,12 @@ namespace vklite {
 //        VulkanUniformConfigure config{};
 //        configure(config);
 //
-//        mVulkanDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
+//        mDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
 //        return *this;
 //    }
 
 //    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount) {
-//        mVulkanDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eCombinedImageSampler, descriptorCount, shaderStageFlagBits));
+//        mDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eCombinedImageSampler, descriptorCount, shaderStageFlagBits));
 //        return *this;
 //    }
 
@@ -54,7 +54,7 @@ namespace vklite {
 //        VulkanSamplerConfigure config{};
 //        configure(config);
 //
-//        mVulkanDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
+//        mDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
 //        return *this;
 //    }
 //
@@ -62,17 +62,17 @@ namespace vklite {
 //        VulkanImmutableSamplerConfigure config{};
 //        configure(config);
 //
-//        mVulkanDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
+//        mDescriptorBindingConfigures[config.mBinding] = std::move(config.createVulkanDescriptorBindingConfigure());
 //        return *this;
 //    }
 
 //    DescriptorSetConfigure &DescriptorSetConfigure::addImmutableSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount) {
-//        mVulkanDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eCombinedImageSampler, descriptorCount, shaderStageFlagBits));
+//        mDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eCombinedImageSampler, descriptorCount, shaderStageFlagBits));
 //        return *this;
 //    }
 
 //    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount) {
-//        mVulkanDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eStorageBuffer, descriptorCount, shaderStageFlagBits));
+//        mDescriptorBindingConfigures.push_back(std::make_unique<VulkanDescriptorBindingConfigure>(binding, vk::DescriptorType::eStorageBuffer, descriptorCount, shaderStageFlagBits));
 //        return *this;
 //    }
 
@@ -100,13 +100,13 @@ namespace vklite {
 //    }
 
 //    std::unique_ptr<VulkanDescriptorBindingSet> DescriptorSetConfigure::createVulkanDescriptorBindingSet(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
-//        if (mVulkanDescriptorBindingConfigures.empty()) {
+//        if (mDescriptorBindingConfigures.empty()) {
 //            return nullptr;
 //        }
 //
 //        std::unique_ptr<VulkanDescriptorBindingSet> vulkanDescriptorBindingSet = std::make_unique<VulkanDescriptorBindingSet>();
 //
-//        for (const auto &entry: mVulkanDescriptorBindingConfigures) {
+//        for (const auto &entry: mDescriptorBindingConfigures) {
 //            uint32_t binding = entry.first;
 //            const std::unique_ptr<VulkanDescriptorBindingConfigure> &vulkanDescriptorBindingConfigure = entry.second;
 //
@@ -120,9 +120,9 @@ namespace vklite {
 //    std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() {
 //
 //        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
-//        descriptorSetLayoutBindings.reserve(mVulkanDescriptorBindingConfigures.size());
+//        descriptorSetLayoutBindings.reserve(mDescriptorBindingConfigures.size());
 //
-//        for (const auto &entry: mVulkanDescriptorBindingConfigures) {
+//        for (const auto &entry: mDescriptorBindingConfigures) {
 //            uint32_t binding = entry.first;
 //            const std::unique_ptr<VulkanDescriptorBindingConfigure> &vulkanDescriptorConfigure = entry.second;
 //
@@ -130,7 +130,7 @@ namespace vklite {
 //            descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
 //        }
 //
-////        for (const VulkanUniformConfigure &vulkanUniformConfigure: mVulkanUniformConfigures) {
+////        for (const VulkanUniformConfigure &vulkanUniformConfigure: mUniformConfigures) {
 ////            vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding = vulkanUniformConfigure.createDescriptorSetLayoutBinding();
 ////            descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
 ////        }

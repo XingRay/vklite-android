@@ -14,7 +14,7 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferImageBuilder : public VulkanImageBuilderInterface {
     private:
-        const VulkanAndroidHardwareBufferYcbcrConversion &mVulkanAndroidSamplerYcbcrConversion;
+        const VulkanAndroidHardwareBufferYcbcrConversion &mAndroidSamplerYcbcrConversion;
         const AndroidHardwareBuffer &mAndroidHardwareBuffer;
 
     public:

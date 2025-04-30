@@ -61,7 +61,7 @@ namespace vklite {
         mImageView = mDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
         uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
-        mVulkanStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
+        mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
     VulkanImage::~VulkanImage() {
@@ -148,9 +148,9 @@ namespace vklite {
     }
 
     void VulkanImage::update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) {
-        mVulkanStagingBuffer->updateBuffer(data, size);
+        mStagingBuffer->updateBuffer(data, size);
         vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordCommandCopyFromBuffer(commandBuffer, mVulkanStagingBuffer->getBuffer());
+            recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
         });
     }
 

@@ -9,18 +9,18 @@
 namespace vklite {
 
     VulkanStagingBuffer::VulkanStagingBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mVulkanHostVisibleBuffer(device, bufferSize, vk::BufferUsageFlagBits::eTransferSrc) {
+            : mHostVisibleBuffer(device, bufferSize, vk::BufferUsageFlagBits::eTransferSrc) {
 
     }
 
     VulkanStagingBuffer::~VulkanStagingBuffer() = default;
 
     const vk::Buffer &VulkanStagingBuffer::getBuffer() const {
-        return mVulkanHostVisibleBuffer.getBuffer();
+        return mHostVisibleBuffer.getBuffer();
     }
 
     void VulkanStagingBuffer::updateBuffer(const void *data, uint32_t size) {
-        mVulkanHostVisibleBuffer.updateBuffer(data, size);
+        mHostVisibleBuffer.updateBuffer(data, size);
     }
 
 } // vklite

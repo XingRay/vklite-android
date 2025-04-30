@@ -7,7 +7,7 @@
 namespace vklite {
 
     BufferInfo::BufferInfo(const std::shared_ptr<VulkanBufferInterface> &vulkanBuffer, uint32_t offset, uint32_t range)
-            : mVulkanBuffer(vulkanBuffer), mOffset(offset), mRange(range) {}
+            : mBuffer(vulkanBuffer), mOffset(offset), mRange(range) {}
 
     BufferInfo::BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer, uint32_t range)
             : BufferInfo(buffer, 0, range) {}
@@ -18,7 +18,7 @@ namespace vklite {
     BufferInfo::~BufferInfo() = default;
 
     const std::shared_ptr<VulkanBufferInterface> &BufferInfo::getVulkanBuffer() const {
-        return mVulkanBuffer;
+        return mBuffer;
     }
 
     uint32_t BufferInfo::getOffset() const {
@@ -30,14 +30,14 @@ namespace vklite {
     }
 
     void BufferInfo::update(const VulkanCommandPool &commandPool, const void *data, uint32_t size) {
-        mVulkanBuffer->update(commandPool, data, size);
+        mBuffer->update(commandPool, data, size);
     }
 
     [[nodiscard]]
     vk::DescriptorBufferInfo BufferInfo::createDescriptorBufferInfo() const {
         vk::DescriptorBufferInfo descriptorBufferInfo{};
         descriptorBufferInfo
-                .setBuffer(mVulkanBuffer->getBuffer())
+                .setBuffer(mBuffer->getBuffer())
                 .setOffset(mOffset)
                 .setRange(mRange);
         return descriptorBufferInfo;

@@ -113,17 +113,17 @@ namespace vklite {
     }
 
 //    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceAsDefault() {
-//        mVulkanPhysicalDeviceProvider = std::make_unique<DefaultVulkanPhysicalDeviceProvider>();
+//        mPhysicalDeviceProvider = std::make_unique<DefaultVulkanPhysicalDeviceProvider>();
 //        return *this;
 //    }
 //
 //    VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDevice(std::unique_ptr<PhysicalDevice> &&vulkanPhysicalDevice) {
-//        mVulkanPhysicalDeviceProvider = std::make_unique<SimpleVulkanPhysicalDeviceSelector>(std::move(vulkanPhysicalDevice));
+//        mPhysicalDeviceProvider = std::make_unique<SimpleVulkanPhysicalDeviceSelector>(std::move(vulkanPhysicalDevice));
 //        return *this;
 //    }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::physicalDeviceProvider(std::unique_ptr<PhysicalDeviceSelector> &&provider) {
-        mVulkanPhysicalDeviceProvider = std::move(provider);
+        mPhysicalDeviceProvider = std::move(provider);
         return *this;
     }
 
@@ -153,8 +153,8 @@ namespace vklite {
     }
 
     VkLiteEngineBuilder &VkLiteEngineBuilder::graphicsPipeline(const std::function<void(GraphicsPipelineConfigure &)> &configure) {
-        mVulkanGraphicsPipelineConfigure = std::make_unique<GraphicsPipelineConfigure>();
-        configure(*mVulkanGraphicsPipelineConfigure);
+        mGraphicsPipelineConfigure = std::make_unique<GraphicsPipelineConfigure>();
+        configure(*mGraphicsPipelineConfigure);
         return *this;
     }
 
@@ -175,7 +175,7 @@ namespace vklite {
         std::unique_ptr<Surface> surface = mSurfaceBuilder->build(*instance);
 
         // select physical device
-//        std::unique_ptr<PhysicalDeviceCandidate> candidate = std::move(mVulkanPhysicalDeviceProvider->select(*instance, *surface, mDeviceExtensions));
+//        std::unique_ptr<PhysicalDeviceCandidate> candidate = std::move(mPhysicalDeviceProvider->select(*instance, *surface, mDeviceExtensions));
 //        std::unique_ptr<PhysicalDevice> &vulkanPhysicalDevice = candidate->getPhysicalDevice();
 
         // logical device
@@ -200,15 +200,15 @@ namespace vklite {
 //        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*device, *swapchain);
 //
 //        std::unique_ptr<GraphicsPipeline> vulkanGraphicsPipeline = nullptr;
-//        if (mVulkanGraphicsPipelineConfigure != nullptr) {
+//        if (mGraphicsPipelineConfigure != nullptr) {
 //            LOG_D("create VulkanGraphicsPipeline");
-//            vulkanGraphicsPipeline = mVulkanGraphicsPipelineConfigure->build(*device, *swapchain, *renderPass);
+//            vulkanGraphicsPipeline = mGraphicsPipelineConfigure->build(*device, *swapchain, *renderPass);
 //        }
 //
 //        std::unique_ptr<ComputePipeline> vulkanComputePipeline = nullptr;
-//        if (mVulkanComputePipelineConfigure != nullptr) {
+//        if (mComputePipelineConfigure != nullptr) {
 //            LOG_D("create VulkanGraphicsPipeline");
-//            vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*device, *swapchain, *renderPass, *vulkanShader);
+//            vulkanComputePipeline = mComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*device, *swapchain, *renderPass, *vulkanShader);
 //        }
 //
 //        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);

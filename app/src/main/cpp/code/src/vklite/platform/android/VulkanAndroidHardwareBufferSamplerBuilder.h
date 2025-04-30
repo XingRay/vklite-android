@@ -13,7 +13,7 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferSamplerBuilder : public SamplerBuilderInterface {
     private:
-        const VulkanAndroidHardwareBufferYcbcrConversion &mVulkanAndroidSamplerYcbcrConversion;
+        const VulkanAndroidHardwareBufferYcbcrConversion &mAndroidSamplerYcbcrConversion;
 
     public:
 

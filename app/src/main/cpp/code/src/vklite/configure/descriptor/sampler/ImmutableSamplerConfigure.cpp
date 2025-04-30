@@ -34,7 +34,7 @@ namespace vklite {
 
 //    std::unique_ptr<VulkanDescriptorBindingConfigure> ImmutableSamplerConfigure::createVulkanDescriptorBindingConfigure() {
 //        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-//                                                                  std::move(mVulkanDescriptorImmutableSamplerConfigure));
+//                                                                  std::move(mDescriptorImmutableSamplerConfigure));
 //    }
 
 } // vklite

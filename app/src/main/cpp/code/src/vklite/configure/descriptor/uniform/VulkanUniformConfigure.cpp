@@ -33,12 +33,12 @@ namespace vklite {
     }
 
     VulkanUniformConfigure &VulkanUniformConfigure::setUniformBuffer(uint32_t capacity, const void *data, uint32_t size) {
-        mVulkanDescriptorBufferInfoConfigure = std::make_unique<VulkanDescriptorBufferInfoConfigure>(std::make_unique<VulkanUniformBufferBuilder>(), capacity, data, size);
+        mDescriptorBufferInfoConfigure = std::make_unique<VulkanDescriptorBufferInfoConfigure>(std::make_unique<VulkanUniformBufferBuilder>(), capacity, data, size);
         return *this;
     }
 
     VulkanUniformConfigure &VulkanUniformConfigure::setUniformBuffer(std::unique_ptr<BufferInfo> &&bufferInfo) {
-        mVulkanDescriptorBufferInfoConfigure = std::make_unique<VulkanDescriptorBufferInfoConfigure>(std::move(bufferInfo));
+        mDescriptorBufferInfoConfigure = std::make_unique<VulkanDescriptorBufferInfoConfigure>(std::move(bufferInfo));
         return *this;
     }
 
@@ -78,7 +78,7 @@ namespace vklite {
 
     std::unique_ptr<VulkanDescriptorBindingConfigure> VulkanUniformConfigure::createVulkanDescriptorBindingConfigure() {
 //        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eUniformBuffer, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-//                                                                  std::move(mVulkanDescriptorBufferInfoConfigure));
+//                                                                  std::move(mDescriptorBufferInfoConfigure));
         return nullptr;
     }
 

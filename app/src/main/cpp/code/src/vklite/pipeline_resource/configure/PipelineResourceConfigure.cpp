@@ -17,27 +17,27 @@ namespace vklite {
     PipelineResourceConfigure &PipelineResourceConfigure::index(const std::function<void(IndexBufferConfigure &)> &configure) {
         IndexBufferConfigure config{};
         configure(config);
-        mVulkanIndexConfigure = config;
+        mIndexConfigure = config;
         return *this;
     }
 
     PipelineResourceConfigure &PipelineResourceConfigure::index(uint32_t capacity) {
-        mVulkanIndexConfigure.setIndexBuffer(capacity);
+        mIndexConfigure.setIndexBuffer(capacity);
         return *this;
     }
 
     PipelineResourceConfigure &PipelineResourceConfigure::index(uint32_t capacity, std::vector<uint32_t> &&indices) {
-        mVulkanIndexConfigure.setIndexBuffer(capacity, std::move(indices));
+        mIndexConfigure.setIndexBuffer(capacity, std::move(indices));
         return *this;
     }
 
     PipelineResourceConfigure &PipelineResourceConfigure::index(std::vector<uint32_t> &&indices) {
-        mVulkanIndexConfigure.setIndexBuffer(std::move(indices));
+        mIndexConfigure.setIndexBuffer(std::move(indices));
         return *this;
     }
 
     PipelineResourceConfigure &PipelineResourceConfigure::index(const std::shared_ptr<VulkanDeviceLocalIndexBuffer> &indexBuffer) {
-        mVulkanIndexConfigure.setIndexBuffer(indexBuffer);
+        mIndexConfigure.setIndexBuffer(indexBuffer);
         return *this;
     }
 

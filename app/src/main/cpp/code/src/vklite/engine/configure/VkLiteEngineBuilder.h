@@ -49,11 +49,11 @@ namespace vklite {
 
         uint32_t mFrameCount = 2;
 
-        std::unique_ptr<PhysicalDeviceSelector> mVulkanPhysicalDeviceProvider;
+        std::unique_ptr<PhysicalDeviceSelector> mPhysicalDeviceProvider;
         std::unique_ptr<ValueSelector<uint32_t>> mMsaaSelector;
 
-        std::unique_ptr<GraphicsPipelineConfigure> mVulkanGraphicsPipelineConfigure;
-        std::unique_ptr<ComputePipelineConfigure> mVulkanComputePipelineConfigure;
+        std::unique_ptr<GraphicsPipelineConfigure> mGraphicsPipelineConfigure;
+        std::unique_ptr<ComputePipelineConfigure> mComputePipelineConfigure;
 
         std::unique_ptr<PipelineResourceConfigure> mPipelineResourceConfigure;
 

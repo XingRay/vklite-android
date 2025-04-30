@@ -83,17 +83,17 @@ namespace vklite {
 
 //        template<typename T>
 //        GraphicsPipeline &updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, uint32_t index, const std::vector<T> &data) {
-//            if (index >= mVulkanVertexBuffers.size()) {
-//                LOG_E("index out of range, index:%d, size:%zu", index, mVulkanVertexBuffers.size());
+//            if (index >= mVertexBuffers.size()) {
+//                LOG_E("index out of range, index:%d, size:%zu", index, mVertexBuffers.size());
 //
 //                // Format the error message using std::to_string
 //                std::string errorMessage = "updateVertexBuffer: index out of range, index:" +
 //                                           std::to_string(index) +
 //                                           ", size:" +
-//                                           std::to_string(mVulkanVertexBuffers.size());
+//                                           std::to_string(mVertexBuffers.size());
 //                throw std::runtime_error(errorMessage);
 //            }
-//            mVulkanVertexBuffers[index]->update(vulkanCommandPool, data.data(), data.size() * sizeof(T));
+//            mVertexBuffers[index]->update(vulkanCommandPool, data.data(), data.size() * sizeof(T));
 //
 //            return *this;
 //        }

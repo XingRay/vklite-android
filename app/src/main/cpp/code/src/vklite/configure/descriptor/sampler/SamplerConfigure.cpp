@@ -36,7 +36,7 @@ namespace vklite {
     }
 
     SamplerConfigure &SamplerConfigure::setImage(std::unique_ptr<vklite::ImageInterface> &&image) {
-        mVulkanDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
+        mDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
                 std::make_unique<VulkanImageBuilder>(),
                 std::make_unique<DefaultSamplerBuilder>(),
                 std::move(image)
@@ -46,7 +46,7 @@ namespace vklite {
 
 //    std::unique_ptr<VulkanDescriptorBindingConfigure> SamplerConfigure::createVulkanDescriptorBindingConfigure() {
 //        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-//                                                                  std::move(mVulkanDescriptorImageInfoConfigure));
+//                                                                  std::move(mDescriptorImageInfoConfigure));
 //    }
 
 } // vklite

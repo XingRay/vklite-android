@@ -32,7 +32,7 @@ namespace vklite {
         mSurface = std::move(vulkanSurface);
         mPhysicalDevice = std::move(vulkanPhysicalDevice);
         mDevice = std::move(device);
-        mVulkanCommandPool = std::move(commandPool);
+        mCommandPool = std::move(commandPool);
         mSwapchain = std::move(swapchain);
         mRenderPass = std::move(renderPass);
         mGraphicsPipeline = std::move(graphicsPipeline);
@@ -58,7 +58,7 @@ namespace vklite {
         if (mDevice == nullptr) {
             throw std::runtime_error("mDevice == nullptr");
         }
-        if (mVulkanCommandPool == nullptr) {
+        if (mCommandPool == nullptr) {
             throw std::runtime_error("mCommandPool == nullptr");
         }
         if (mSwapchain == nullptr) {
@@ -84,7 +84,7 @@ namespace vklite {
     VkLiteEngine::~VkLiteEngine() {
         LOG_D("~VkLiteEngine()");
 
-        mVulkanCommandPool.reset();
+        mCommandPool.reset();
 
         mSyncObject.reset();
 
@@ -109,7 +109,7 @@ namespace vklite {
     }
 
     const VulkanCommandPool &VkLiteEngine::getVulkanCommandPool() const {
-        return *mVulkanCommandPool;
+        return *mCommandPool;
     }
 
     uint32_t VkLiteEngine::getCurrentFrameIndex() const {
@@ -143,7 +143,7 @@ namespace vklite {
     }
 
     VkLiteEngine &VkLiteEngine::updateVertexBuffer(uint32_t index, const void *data, size_t size) {
-//        getGraphicsPipeline().updateVertexBuffer(*mVulkanCommandPool, data, size);
+//        getGraphicsPipeline().updateVertexBuffer(*mCommandPool, data, size);
         return *this;
     }
 
@@ -153,12 +153,12 @@ namespace vklite {
     }
 
     VkLiteEngine &VkLiteEngine::updateIndexBuffer(const std::vector<uint32_t> &indices) {
-//        getGraphicsPipeline().updateIndexBuffer(*mVulkanCommandPool, indices);
+//        getGraphicsPipeline().updateIndexBuffer(*mCommandPool, indices);
         return *this;
     }
 
     VkLiteEngine &VkLiteEngine::updateUniformBuffer(uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
-//        getGraphicsPipeline().updateUniformBuffer(*mVulkanCommandPool, frameIndex, set, binding, data, size);
+//        getGraphicsPipeline().updateUniformBuffer(*mCommandPool, frameIndex, set, binding, data, size);
         return *this;
     }
 
@@ -211,7 +211,7 @@ namespace vklite {
                 .setPInheritanceInfo(nullptr);
 
 
-        vk::CommandBuffer commandBuffer = mVulkanCommandPool->getCommandBuffers()[mCurrentFrameIndex];
+        vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
 

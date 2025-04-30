@@ -23,7 +23,7 @@ namespace vklite {
         /**
          * index buffer
          */
-        IndexBufferConfigure mVulkanIndexConfigure;
+        IndexBufferConfigure mIndexConfigure;
 
     public:
         PipelineResourceConfigure();

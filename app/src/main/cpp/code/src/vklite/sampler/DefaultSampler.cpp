@@ -29,7 +29,7 @@ namespace vklite {
                 .setMipLodBias(0.0f)
                 .setMinLod(0.0f)
                         // 测试： 强制使用高等级 mipmap （更模糊）
-                        //.setMinLod(static_cast<float >(mVulkanImage.getMipLevels() / 2))
+                        //.setMinLod(static_cast<float >(mImage.getMipLevels() / 2))
                 .setMaxLod(maxLoad);
 
         mSampler = mDevice.getDevice().createSampler(samplerCreateInfo);

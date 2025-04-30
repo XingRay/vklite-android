@@ -19,18 +19,18 @@ namespace vklite {
     class VulkanDescriptorBufferInfoConfigure {
     private:
         // set bufferInfo
-        std::unique_ptr<BufferInfo> mVulkanDescriptorBufferInfo;
+        std::unique_ptr<BufferInfo> mDescriptorBufferInfo;
 
         // create Buffer
-        std::unique_ptr<VulkanBufferBuilderInterface> mVulkanBufferBuilder;
-        vk::DeviceSize mVulkanBufferCapacity;
+        std::unique_ptr<VulkanBufferBuilderInterface> mBufferBuilder;
+        vk::DeviceSize mBufferCapacity;
 
         // create bufferInfo
-        uint32_t mVulkanBufferOffset;
-        uint32_t mVulkanBufferRange;
+        uint32_t mBufferOffset;
+        uint32_t mBufferRange;
 
         // update buffer
-        std::vector<uint8_t> mVulkanBufferData;
+        std::vector<uint8_t> mBufferData;
 
     public:
 

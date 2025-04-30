@@ -78,7 +78,7 @@ namespace test10 {
         std::unique_ptr<vklite::VulkanCommandPool> mCommandPool;
         std::unique_ptr<vklite::VulkanFrameBuffer> mFrameBuffer;
 
-//        std::vector<std::unique_ptr<vklite::VulkanVertexBuffer>> mVulkanVertexBuffers;
+//        std::vector<std::unique_ptr<vklite::VulkanVertexBuffer>> mVertexBuffers;
         std::vector<vk::Buffer> mVertexBuffers;
         std::vector<vk::DeviceSize> mVertexBufferOffsets;
 

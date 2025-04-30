@@ -10,19 +10,19 @@ namespace vklite {
                                                                        vk::ShaderStageFlags shaderStageFlags,
                                                                        std::unique_ptr<VulkanDescriptorBufferInfoConfigure> &&vulkanDescriptorBufferInfoConfigure)
             : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
-              mVulkanDescriptorBufferInfoConfigure(std::move(vulkanDescriptorBufferInfoConfigure)) {}
+              mDescriptorBufferInfoConfigure(std::move(vulkanDescriptorBufferInfoConfigure)) {}
 
     DescriptorSlotConfigure::DescriptorSlotConfigure(uint32_t binding, vk::DescriptorType descriptorType, uint32_t descriptorOffset, uint32_t descriptorRange,
                                                                        vk::ShaderStageFlags shaderStageFlags,
                                                                        std::unique_ptr<VulkanDescriptorImageInfoConfigure> &&vulkanDescriptorImageInfoConfigure)
             : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
-              mVulkanDescriptorImageInfoConfigure(std::move(vulkanDescriptorImageInfoConfigure)) {}
+              mDescriptorImageInfoConfigure(std::move(vulkanDescriptorImageInfoConfigure)) {}
 
     DescriptorSlotConfigure::DescriptorSlotConfigure(uint32_t binding, vk::DescriptorType descriptorType, uint32_t descriptorOffset, uint32_t descriptorRange,
                                                                        vk::ShaderStageFlags shaderStageFlags,
                                                                        std::unique_ptr<VulkanDescriptorImmutableSamplerConfigure> &&vulkanDescriptorImmutableSamplerConfigure)
             : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
-              mVulkanDescriptorImmutableSamplerConfigure(std::move(vulkanDescriptorImmutableSamplerConfigure)) {}
+              mDescriptorImmutableSamplerConfigure(std::move(vulkanDescriptorImmutableSamplerConfigure)) {}
 
     DescriptorSlotConfigure::~DescriptorSlotConfigure() = default;
 
@@ -59,12 +59,12 @@ namespace vklite {
                 .setDescriptorCount(mDescriptorRange)
                 .setStageFlags(mShaderStageFlags);
 
-        if (mVulkanDescriptorImmutableSamplerConfigure!= nullptr) {
+        if (mDescriptorImmutableSamplerConfigure!= nullptr) {
             std::vector<vk::Sampler> samplers;
 //            for (const std::unique_ptr<VulkanSamplerInterface> &vulkanSampler: mImmutableSamplers) {
 //                samplers.push_back(vulkanSampler->getSampler());
 //            }
-//            mVulkanDescriptorImmutableSamplerConfigure
+//            mDescriptorImmutableSamplerConfigure
             descriptorSetLayoutBinding
                     .setDescriptorCount(samplers.size())
                     .setPImmutableSamplers(samplers.data());
@@ -76,9 +76,9 @@ namespace vklite {
 //    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
 //        std::unique_ptr<VulkanDescriptorBinding> vulkanDescriptorBinding = std::make_unique<VulkanDescriptorBinding>(mDescriptorType, mDescriptorOffset, mDescriptorRange);
 //        if (mDescriptorType == vk::DescriptorType::eUniformBuffer) {
-//            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mVulkanDescriptorBufferInfoConfigure->provideVulkanDescriptorBufferInfo(device, commandPool));
+//            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mDescriptorBufferInfoConfigure->provideVulkanDescriptorBufferInfo(device, commandPool));
 //        } else if (mDescriptorType == vk::DescriptorType::eCombinedImageSampler) {
-//            vulkanDescriptorBinding->setVulkanDescriptorImageInfo(mVulkanDescriptorImageInfoConfigure->provideVulkanDescriptorImageInfo(device, commandPool));
+//            vulkanDescriptorBinding->setVulkanDescriptorImageInfo(mDescriptorImageInfoConfigure->provideVulkanDescriptorImageInfo(device, commandPool));
 //        } else {
 //            throw std::runtime_error("unknown descriptor type.");
 //        }

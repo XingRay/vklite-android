@@ -194,7 +194,7 @@ namespace vklite {
         mPipeline = pipeline;
 
         // vertex buffers
-//        for (const std::shared_ptr<VulkanDeviceLocalVertexBuffer> &vulkanVertexBuffer: mVulkanVertexBuffers) {
+//        for (const std::shared_ptr<VulkanDeviceLocalVertexBuffer> &vulkanVertexBuffer: mVertexBuffers) {
 //            if (vulkanVertexBuffer != nullptr) {
 //                mVertexBuffers.push_back(vulkanVertexBuffer->getBuffer());
 //            } else {
@@ -249,8 +249,8 @@ namespace vklite {
 //    }
 //
 //    GraphicsPipeline &GraphicsPipeline::createVertexBuffer(uint32_t binding, size_t size) {
-//        mVulkanVertexBuffers[binding] = std::make_shared<VulkanDeviceLocalVertexBuffer>(mDevice, size);
-//        mVertexBuffers[binding] = mVulkanVertexBuffers.back()->getBuffer();
+//        mVertexBuffers[binding] = std::make_shared<VulkanDeviceLocalVertexBuffer>(mDevice, size);
+//        mVertexBuffers[binding] = mVertexBuffers.back()->getBuffer();
 //        mVertexBufferOffsets[binding] = 0;
 //
 //        return *this;
@@ -261,17 +261,17 @@ namespace vklite {
 //    }
 //
 //    GraphicsPipeline &GraphicsPipeline::updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size) {
-//        if (index >= mVulkanVertexBuffers.size()) {
-//            LOG_E("index out of range, index:%d, size:%zu", index, mVulkanVertexBuffers.size());
+//        if (index >= mVertexBuffers.size()) {
+//            LOG_E("index out of range, index:%d, size:%zu", index, mVertexBuffers.size());
 //
 //            // Format the error message using std::to_string
 //            std::string errorMessage = "updateVertexBuffer: index out of range, index:" +
 //                                       std::to_string(index) +
 //                                       ", size:" +
-//                                       std::to_string(mVulkanVertexBuffers.size());
+//                                       std::to_string(mVertexBuffers.size());
 //            throw std::runtime_error(errorMessage);
 //        }
-//        mVulkanVertexBuffers[index]->update(vulkanCommandPool, data, size);
+//        mVertexBuffers[index]->update(vulkanCommandPool, data, size);
 //
 //        return *this;
 //    }
@@ -289,7 +289,7 @@ namespace vklite {
 //    }
 
 //    GraphicsPipeline &GraphicsPipeline::updateUniformBuffer(const VulkanCommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
-//        mVulkanDescriptorBindingSets[frameIndex]->updateUniformBuffer(commandPool, set, binding, data, size);
+//        mDescriptorBindingSets[frameIndex]->updateUniformBuffer(commandPool, set, binding, data, size);
 //        return *this;
 //    }
 //

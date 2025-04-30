@@ -21,7 +21,7 @@ namespace vklite {
     private:
         uint32_t mSet;
         // binding -> BindingConfigure
-//        std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> mVulkanDescriptorBindingConfigures;
+//        std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> mDescriptorBindingConfigures;
 
     public:
 

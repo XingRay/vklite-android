@@ -54,7 +54,7 @@ namespace vklite {
 
         std::vector<PipelineResource> mPipelineResources;
 
-        std::unique_ptr<VulkanCommandPool> mVulkanCommandPool;
+        std::unique_ptr<VulkanCommandPool> mCommandPool;
         std::unique_ptr<VulkanFrameBuffer> mFrameBuffer;
 
         std::unique_ptr<VulkanSyncObject> mSyncObject;
@@ -108,7 +108,7 @@ namespace vklite {
 
         template<typename T>
         VkLiteEngine &updateVertexBuffer(uint32_t index, const std::vector<T> &data) {
-//            getGraphicsPipeline().updateVertexBuffer(*mVulkanCommandPool, data.data(), data.size() * sizeof(T));
+//            getGraphicsPipeline().updateVertexBuffer(*mCommandPool, data.data(), data.size() * sizeof(T));
             return *this;
         }
 
@@ -120,7 +120,7 @@ namespace vklite {
 
         template<class T>
         VkLiteEngine &updateUniformBuffer(uint32_t frameIndex, uint32_t set, uint32_t binding, const T &data) {
-//            getGraphicsPipeline().updateUniformBuffer(*mVulkanCommandPool, frameIndex, set, binding, static_cast<const void *>(&data), sizeof(T));
+//            getGraphicsPipeline().updateUniformBuffer(*mCommandPool, frameIndex, set, binding, static_cast<const void *>(&data), sizeof(T));
             return *this;
         }
 

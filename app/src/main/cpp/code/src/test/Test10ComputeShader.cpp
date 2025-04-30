@@ -94,10 +94,10 @@ namespace test10 {
 //                                                             FixStringListSelector(layers));
 //        mSurface = std::make_unique<vklite::AndroidVulkanSurface>(mInstance->getInstance(), mApp.window);
 //
-//        std::unique_ptr<vklite::VulkanPhysicalDeviceProvider> mVulkanPhysicalDeviceProvider = std::make_unique<vklite::DefaultVulkanPhysicalDeviceProvider>
+//        std::unique_ptr<vklite::VulkanPhysicalDeviceProvider> mPhysicalDeviceProvider = std::make_unique<vklite::DefaultVulkanPhysicalDeviceProvider>
 //                (*mInstance, *mSurface, deviceExtensions, vklite::VulkanPhysicalDeviceScoreConfig{}, vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute);
 //
-//        std::unique_ptr<vklite::VulkanPhysicalDeviceCandidate> vulkanPhysicalDeviceCandidate = mVulkanPhysicalDeviceProvider->provide();
+//        std::unique_ptr<vklite::VulkanPhysicalDeviceCandidate> vulkanPhysicalDeviceCandidate = mPhysicalDeviceProvider->provide();
 //
 //        std::unique_ptr<vklite::VulkanPhysicalDevice> &vulkanPhysicalDevice = vulkanPhysicalDeviceCandidate->getPhysicalDevice();
 //        vklite::VulkanPhysicalDeviceSurfaceSupport vulkanPhysicalDeviceSurfaceSupport = vulkanPhysicalDeviceCandidate->getSurfaceSupport().value();

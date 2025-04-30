@@ -11,16 +11,16 @@ namespace vklite {
     VulkanDescriptorBindingSets::~VulkanDescriptorBindingSets() = default;
 
 //    const std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingSet>> &VulkanDescriptorBindingSets::getVulkanDescriptorBindingSets() const {
-//        return mVulkanDescriptorBindingSets;
+//        return mDescriptorBindingSets;
 //    }
 //
 //    VulkanDescriptorBindingSets &VulkanDescriptorBindingSets::set(uint32_t set, std::unique_ptr<VulkanDescriptorBindingSet> &&vulkanDescriptorBindingSet) {
-//        mVulkanDescriptorBindingSets[set] = std::move(vulkanDescriptorBindingSet);
+//        mDescriptorBindingSets[set] = std::move(vulkanDescriptorBindingSet);
 //        return *this;
 //    }
 //
 //    VulkanDescriptorBindingSets &VulkanDescriptorBindingSets::updateUniformBuffer(const VulkanCommandPool& commandPool, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
-//        mVulkanDescriptorBindingSets[set]->updateUniformBuffer(commandPool, binding, data, size);
+//        mDescriptorBindingSets[set]->updateUniformBuffer(commandPool, binding, data, size);
 //        return *this;
 //    }
 

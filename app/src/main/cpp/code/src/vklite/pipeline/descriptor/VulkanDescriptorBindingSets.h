@@ -15,7 +15,7 @@ namespace vklite {
     class VulkanDescriptorBindingSets {
     private:
         // set -> VulkanDescriptorBindingSet
-//        std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingSet>> mVulkanDescriptorBindingSets;
+//        std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingSet>> mDescriptorBindingSets;
 
     public:
         VulkanDescriptorBindingSets();

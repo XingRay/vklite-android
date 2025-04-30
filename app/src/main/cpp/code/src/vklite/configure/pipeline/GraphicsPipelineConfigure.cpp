@@ -33,7 +33,7 @@ namespace vklite {
     //    GraphicsPipelineConfigure &GraphicsPipelineConfigure::addDescriptorSet(const std::function<void(VulkanDescriptorSetConfigure &)> &configure) {
 //        std::unique_ptr<VulkanDescriptorSetConfigure> config = std::make_unique<VulkanDescriptorSetConfigure>();
 //        configure(*config);
-//        mVulkanDescriptorSetConfigures.addVulkanDescriptorSetConfigure(std::move(config));
+//        mDescriptorSetConfigures.addVulkanDescriptorSetConfigure(std::move(config));
 //        return *this;
 //    }
 
@@ -54,18 +54,18 @@ namespace vklite {
         std::unique_ptr<VertexBufferDescription> vertexBufferDescription = mVertexConfigure.createVertexBufferDescription();
 
         // descriptor -> uniform / sampler ...
-//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mVulkanDescriptorSetConfigures.createDescriptorSetLayouts(device);
+//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mDescriptorSetConfigures.createDescriptorSetLayouts(device);
 
         //        std::unique_ptr<VulkanDescriptorPool> vulkanDescriptorPool = std::make_unique<VulkanDescriptorPool>(device,
-//                                                                                                            mVulkanDescriptorSetConfigures.createDescriptorPoolSizes(frameCount),
-//                                                                                                            mVulkanDescriptorSetConfigures.getSetCount(frameCount));
+//                                                                                                            mDescriptorSetConfigures.createDescriptorPoolSizes(frameCount),
+//                                                                                                            mDescriptorSetConfigures.getSetCount(frameCount));
 
         std::unique_ptr<PipelineLayout> pipelineLayout = mPipelineLayoutConfigure.createPipelineLayout(device);
 
         // frame -> set -> binding
 //        std::vector<std::unique_ptr<VulkanDescriptorBindingSets>> vulkanDescriptorBindingSets;
 //        for (uint32_t frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-//            std::unique_ptr<VulkanDescriptorBindingSets> bindingSetsOfFrame = mVulkanDescriptorSetConfigures.createVulkanDescriptorBindingSets(device, commandPool);
+//            std::unique_ptr<VulkanDescriptorBindingSets> bindingSetsOfFrame = mDescriptorSetConfigures.createVulkanDescriptorBindingSets(device, commandPool);
 //            vulkanDescriptorBindingSets.push_back(std::move(bindingSetsOfFrame));
 //        }
 

@@ -25,7 +25,7 @@ namespace vklite {
         uint32_t mDescriptorRange;
         vk::ShaderStageFlags mShaderStageFlags;
 
-        std::unique_ptr<VulkanDescriptorBufferInfoConfigure> mVulkanDescriptorBufferInfoConfigure;
+        std::unique_ptr<VulkanDescriptorBufferInfoConfigure> mDescriptorBufferInfoConfigure;
 
     public:
         VulkanUniformConfigure();

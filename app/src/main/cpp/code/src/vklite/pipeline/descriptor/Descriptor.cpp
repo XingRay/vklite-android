@@ -69,25 +69,25 @@ namespace vklite {
     }
 
 //    const std::unique_ptr<VulkanDescriptorBufferInfo> &Descriptor::getVulkanDescriptorBufferInfo() const {
-//        return mVulkanDescriptorBufferInfo;
+//        return mDescriptorBufferInfo;
 //    }
 //
 //    Descriptor &Descriptor::setVulkanDescriptorBufferInfo(std::unique_ptr<VulkanDescriptorBufferInfo> &&vulkanDescriptorBufferInfo) {
-//        mVulkanDescriptorBufferInfo = std::move(vulkanDescriptorBufferInfo);
+//        mDescriptorBufferInfo = std::move(vulkanDescriptorBufferInfo);
 //        return *this;
 //    }
 //
 //    const std::unique_ptr<VulkanDescriptorImageInfo> &Descriptor::getVulkanDescriptorImageInfo() const {
-//        return mVulkanDescriptorImageInfo;
+//        return mDescriptorImageInfo;
 //    }
 //
 //    Descriptor &Descriptor::setVulkanDescriptorImageInfo(std::unique_ptr<VulkanDescriptorImageInfo> &&vulkanDescriptorImageInfo) {
-//        mVulkanDescriptorImageInfo = std::move(vulkanDescriptorImageInfo);
+//        mDescriptorImageInfo = std::move(vulkanDescriptorImageInfo);
 //        return *this;
 //    }
 //
 //    Descriptor &Descriptor::updateUniformBuffer(const VulkanCommandPool &commandPool, const void *data, uint32_t size) {
-//        mVulkanDescriptorBufferInfo->update(commandPool, data, size);
+//        mDescriptorBufferInfo->update(commandPool, data, size);
 //        return *this;
 //    }
 

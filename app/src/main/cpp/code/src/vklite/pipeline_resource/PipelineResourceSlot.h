@@ -15,10 +15,10 @@ namespace vklite {
     class PipelineResourceSlot {
     private:
         // buffer info
-        std::unique_ptr<BufferInfo> mVulkanDescriptorBufferInfo;
+        std::unique_ptr<BufferInfo> mDescriptorBufferInfo;
 
         // image info
-        std::unique_ptr<ImageInfo> mVulkanDescriptorImageInfo;
+        std::unique_ptr<ImageInfo> mDescriptorImageInfo;
 
         // immutable sampler
         std::unique_ptr<ImageInfo> mImmutableSamplerInfo;

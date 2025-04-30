@@ -15,7 +15,7 @@ namespace vklite {
 
     class BufferInfo {
     private:
-        std::shared_ptr<VulkanBufferInterface> mVulkanBuffer;
+        std::shared_ptr<VulkanBufferInterface> mBuffer;
         uint32_t mOffset;
         uint32_t mRange;
 

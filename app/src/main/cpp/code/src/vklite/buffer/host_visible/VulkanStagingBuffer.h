@@ -10,7 +10,7 @@ namespace vklite {
 
     class VulkanStagingBuffer {
     private:
-        VulkanHostVisibleBuffer mVulkanHostVisibleBuffer;
+        VulkanHostVisibleBuffer mHostVisibleBuffer;
 
     public:
         VulkanStagingBuffer(const Device &device, vk::DeviceSize bufferSize);

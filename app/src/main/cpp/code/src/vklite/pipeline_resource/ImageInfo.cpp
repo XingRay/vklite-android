@@ -8,25 +8,25 @@ namespace vklite {
 
     ImageInfo::ImageInfo(std::unique_ptr<VulkanImageInterface> &&vulkanImage,
                                                          std::unique_ptr<SamplerInterface> &&vulkanSampler)
-            : mVulkanImage(std::move(vulkanImage)),
-              mVulkanSampler(std::move(vulkanSampler)) {}
+            : mImage(std::move(vulkanImage)),
+              mSampler(std::move(vulkanSampler)) {}
 
     ImageInfo::~ImageInfo() = default;
 
     const std::unique_ptr<VulkanImageInterface> &ImageInfo::getVulkanImage() const {
-        return mVulkanImage;
+        return mImage;
     }
 
     const std::unique_ptr<SamplerInterface> &ImageInfo::getVulkanSampler() const {
-        return mVulkanSampler;
+        return mSampler;
     }
 
     [[nodiscard]]
     vk::DescriptorImageInfo ImageInfo::createDescriptorImageInfo() const {
         vk::DescriptorImageInfo descriptorImageInfo{};
         descriptorImageInfo
-                .setSampler(mVulkanSampler->getSampler())
-                .setImageView(mVulkanImage->getImageView())
+                .setSampler(mSampler->getSampler())
+                .setImageView(mImage->getImageView())
                         // todo: set by field
                 .setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 

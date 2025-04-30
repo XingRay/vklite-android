@@ -10,21 +10,21 @@ namespace vklite {
             std::unique_ptr<VulkanImageBuilderInterface> &&vulkanImageBuilder,
             std::unique_ptr<SamplerBuilderInterface> &&vulkanSamplerBuilder,
             std::unique_ptr<vklite::ImageInterface> &&image)
-            : mVulkanImageBuilder(std::move(vulkanImageBuilder)),
-              mVulkanSamplerBuilder(std::move(vulkanSamplerBuilder)),
+            : mImageBuilder(std::move(vulkanImageBuilder)),
+              mSamplerBuilder(std::move(vulkanSamplerBuilder)),
               mImage(std::move(image)) {}
 
     VulkanDescriptorImmutableSamplerConfigure::~VulkanDescriptorImmutableSamplerConfigure() = default;
 
     std::unique_ptr<ImageInfo> VulkanDescriptorImmutableSamplerConfigure::provideVulkanDescriptorImageInfo(const Device &device, const VulkanCommandPool &commandPool) {
-        if(mVulkanDescriptorBufferInfo!= nullptr){
-            return std::move(mVulkanDescriptorBufferInfo);
+        if(mDescriptorBufferInfo!= nullptr){
+            return std::move(mDescriptorBufferInfo);
         }
 
-        std::unique_ptr<VulkanImageInterface> vulkanImage = mVulkanImageBuilder->build(device, mImage->getWidth(), mImage->getHeight(), mImage->getFormat());
+        std::unique_ptr<VulkanImageInterface> vulkanImage = mImageBuilder->build(device, mImage->getWidth(), mImage->getHeight(), mImage->getFormat());
         vulkanImage->transitionImageLayout(commandPool);
         vulkanImage->update(commandPool, mImage->getPixels(), mImage->getPixelBytes());
-        std::unique_ptr<SamplerInterface> sampler = mVulkanSamplerBuilder->build(device);
+        std::unique_ptr<SamplerInterface> sampler = mSamplerBuilder->build(device);
         return std::make_unique<ImageInfo>(std::move(vulkanImage), std::move(sampler));
     }
 
