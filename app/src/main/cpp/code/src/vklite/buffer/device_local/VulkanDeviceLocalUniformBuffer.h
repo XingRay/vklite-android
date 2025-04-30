@@ -6,7 +6,7 @@
 
 #include "VulkanDeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/buffer/VulkanBufferInterface.h"
 
 namespace vklite {
@@ -37,10 +37,10 @@ namespace vklite {
             recordCommandUpdate(commandBuffer, data.data(), data.size() * sizeof(T));
         }
 
-        void update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
+        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
 
         template<class T>
-        void update(const VulkanCommandPool &vulkanCommandPool, const std::vector<T> &data) {
+        void update(const CommandPool &vulkanCommandPool, const std::vector<T> &data) {
             update(vulkanCommandPool, data.data(), data.size() * sizeof(T));
         }
 

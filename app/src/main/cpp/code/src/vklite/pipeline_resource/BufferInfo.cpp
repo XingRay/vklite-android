@@ -29,7 +29,7 @@ namespace vklite {
         return mRange;
     }
 
-    void BufferInfo::update(const VulkanCommandPool &commandPool, const void *data, uint32_t size) {
+    void BufferInfo::update(const CommandPool &commandPool, const void *data, uint32_t size) {
         mBuffer->update(commandPool, data, size);
     }
 

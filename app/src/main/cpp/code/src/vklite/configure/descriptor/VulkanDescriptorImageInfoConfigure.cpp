@@ -16,7 +16,7 @@ namespace vklite {
 
     VulkanDescriptorImageInfoConfigure::~VulkanDescriptorImageInfoConfigure() = default;
 
-    std::unique_ptr<ImageInfo> VulkanDescriptorImageInfoConfigure::provideVulkanDescriptorImageInfo(const Device &device, const VulkanCommandPool &commandPool) {
+    std::unique_ptr<ImageInfo> VulkanDescriptorImageInfoConfigure::provideVulkanDescriptorImageInfo(const Device &device, const CommandPool &commandPool) {
         if(mDescriptorBufferInfo!= nullptr){
             return std::move(mDescriptorBufferInfo);
         }

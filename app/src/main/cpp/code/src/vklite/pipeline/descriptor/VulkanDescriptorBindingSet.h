@@ -25,7 +25,7 @@ namespace vklite {
 //
 //        VulkanDescriptorBindingSet &set(uint32_t binding, std::unique_ptr<VulkanDescriptorBinding> &&vulkanDescriptorBinding);
 //
-//        VulkanDescriptorBindingSet &updateUniformBuffer(const VulkanCommandPool& commandPool, uint32_t binding, const void *data, uint32_t size);
+//        VulkanDescriptorBindingSet &updateUniformBuffer(const CommandPool& commandPool, uint32_t binding, const void *data, uint32_t size);
     };
 
 } // vklite

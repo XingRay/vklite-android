@@ -112,7 +112,7 @@ namespace vklite {
 //        return mPipelineLayoutConfigure.size() * frameCount;
 //    }
 //
-//    std::unique_ptr<VulkanDescriptorBindingSets> PipelineLayoutConfigure::createVulkanDescriptorBindingSets(const VulkanDevice &device, const VulkanCommandPool &commandPool) const {
+//    std::unique_ptr<VulkanDescriptorBindingSets> PipelineLayoutConfigure::createVulkanDescriptorBindingSets(const VulkanDevice &device, const CommandPool &commandPool) const {
 //        if (mPipelineLayoutConfigure.empty()) {
 //            return nullptr;
 //        }

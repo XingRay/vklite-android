@@ -26,7 +26,7 @@
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanVertexBuffer.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanIndexBuffer.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanUniformBuffer.h"
@@ -75,7 +75,7 @@ namespace test10 {
         std::unique_ptr<vklite::VulkanRenderPass> mRenderPass;
 
 //        std::unique_ptr<vklite::VulkanPipeline> mPipeline;
-        std::unique_ptr<vklite::VulkanCommandPool> mCommandPool;
+        std::unique_ptr<vklite::CommandPool> mCommandPool;
         std::unique_ptr<vklite::VulkanFrameBuffer> mFrameBuffer;
 
 //        std::vector<std::unique_ptr<vklite::VulkanVertexBuffer>> mVertexBuffers;

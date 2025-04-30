@@ -73,7 +73,7 @@ namespace vklite {
         return descriptorSetLayoutBinding;
     }
 
-//    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
+//    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &device, const CommandPool &commandPool) {
 //        std::unique_ptr<VulkanDescriptorBinding> vulkanDescriptorBinding = std::make_unique<VulkanDescriptorBinding>(mDescriptorType, mDescriptorOffset, mDescriptorRange);
 //        if (mDescriptorType == vk::DescriptorType::eUniformBuffer) {
 //            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mDescriptorBufferInfoConfigure->provideVulkanDescriptorBufferInfo(device, commandPool));

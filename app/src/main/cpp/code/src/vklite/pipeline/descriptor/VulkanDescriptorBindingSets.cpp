@@ -19,7 +19,7 @@ namespace vklite {
 //        return *this;
 //    }
 //
-//    VulkanDescriptorBindingSets &VulkanDescriptorBindingSets::updateUniformBuffer(const VulkanCommandPool& commandPool, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
+//    VulkanDescriptorBindingSets &VulkanDescriptorBindingSets::updateUniformBuffer(const CommandPool& commandPool, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
 //        mDescriptorBindingSets[set]->updateUniformBuffer(commandPool, binding, data, size);
 //        return *this;
 //    }

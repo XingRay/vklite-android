@@ -12,7 +12,7 @@
 #include "vklite/pipeline_resource/BufferInfo.h"
 #include "vklite/buffer/VulkanBufferBuilderInterface.h"
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -64,7 +64,7 @@ namespace vklite {
         ~VulkanDescriptorBufferInfoConfigure();
 
         [[nodiscard]]
-        std::unique_ptr<BufferInfo> provideVulkanDescriptorBufferInfo(const Device &device, const VulkanCommandPool &commandPool);
+        std::unique_ptr<BufferInfo> provideVulkanDescriptorBufferInfo(const Device &device, const CommandPool &commandPool);
 
     private:
         VulkanDescriptorBufferInfoConfigure &copyData(const void *data, uint32_t size);

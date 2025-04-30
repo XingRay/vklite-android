@@ -162,11 +162,11 @@ namespace vklite {
         return 0;
     }
 
-    void VulkanAndroidHardwareBufferImage::transitionImageLayout(const VulkanCommandPool &commandPool) {
+    void VulkanAndroidHardwareBufferImage::transitionImageLayout(const CommandPool &commandPool) {
 
     }
 
-    void VulkanAndroidHardwareBufferImage::update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void VulkanAndroidHardwareBufferImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
 
     }
 

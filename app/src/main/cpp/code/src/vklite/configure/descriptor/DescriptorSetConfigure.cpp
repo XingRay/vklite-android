@@ -99,7 +99,7 @@ namespace vklite {
 //        return mUniformSet;
 //    }
 
-//    std::unique_ptr<VulkanDescriptorBindingSet> DescriptorSetConfigure::createVulkanDescriptorBindingSet(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
+//    std::unique_ptr<VulkanDescriptorBindingSet> DescriptorSetConfigure::createVulkanDescriptorBindingSet(const VulkanDevice &device, const CommandPool &commandPool) {
 //        if (mDescriptorBindingConfigures.empty()) {
 //            return nullptr;
 //        }

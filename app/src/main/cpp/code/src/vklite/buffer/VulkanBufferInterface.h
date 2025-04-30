@@ -7,7 +7,7 @@
 #include <cstdint>
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -25,7 +25,7 @@ namespace vklite {
         [[nodiscard]]
         virtual const vk::Buffer &getBuffer() const = 0;
 
-        virtual void update(const VulkanCommandPool &commandPool, const void *data, uint32_t size) = 0;
+        virtual void update(const CommandPool &commandPool, const void *data, uint32_t size) = 0;
     };
 
 } // vklite

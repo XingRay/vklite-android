@@ -13,7 +13,7 @@
 
 namespace vklite {
 
-    class VulkanCommandPool {
+    class CommandPool {
     private:
         const Device &mDevice;
 
@@ -22,9 +22,9 @@ namespace vklite {
         std::vector<vk::CommandBuffer> mCommandBuffers;
 
     public:
-        VulkanCommandPool(const Device &device, uint32_t commandBufferCount);
+        CommandPool(const Device &device, uint32_t commandBufferCount);
 
-        ~VulkanCommandPool();
+        ~CommandPool();
 
         const vk::CommandPool &getCommandPool() const;
 

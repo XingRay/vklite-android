@@ -13,7 +13,7 @@
 #include "vklite/VulkanRenderPass.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalIndexBuffer.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
@@ -72,17 +72,17 @@ namespace vklite {
 //
 //        GraphicsPipeline &createVertexBuffer(uint32_t binding, size_t size);
 //
-//        GraphicsPipeline &updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, const void *data, size_t size);
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, const void *data, size_t size);
 //
-//        GraphicsPipeline &updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size);
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size);
 //
 //        template<typename T>
-//        GraphicsPipeline &updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, const std::vector<T> &data) {
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, const std::vector<T> &data) {
 //            return updateVertexBuffer(vulkanCommandPool, 0, data);
 //        }
 
 //        template<typename T>
-//        GraphicsPipeline &updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, uint32_t index, const std::vector<T> &data) {
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, uint32_t index, const std::vector<T> &data) {
 //            if (index >= mVertexBuffers.size()) {
 //                LOG_E("index out of range, index:%d, size:%zu", index, mVertexBuffers.size());
 //
@@ -100,9 +100,9 @@ namespace vklite {
 
 //        GraphicsPipeline &createIndexBuffer(size_t size);
 //
-//        GraphicsPipeline &updateIndexBuffer(const VulkanCommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices);
+//        GraphicsPipeline &updateIndexBuffer(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices);
 
-//        GraphicsPipeline &updateUniformBuffer(const VulkanCommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size);
+//        GraphicsPipeline &updateUniformBuffer(const CommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size);
 
 //        GraphicsPipeline &setDescriptorBindingBufferInfo(uint32_t frameIndex, uint32_t set, uint32_t binding, std::unique_ptr<BufferInfo> &&vulkanBufferInfo);
 //

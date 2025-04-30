@@ -41,7 +41,7 @@ namespace vklite {
 //        VertexBindingConfigure &setVertexBuffer(const std::shared_ptr<VulkanDeviceLocalVertexBuffer> &buffer);
 //
 //        [[nodiscard]]
-//        std::shared_ptr<VulkanDeviceLocalVertexBuffer> createVertexBuffer(const VulkanDevice &device, const VulkanCommandPool &commandPool) const;
+//        std::shared_ptr<VulkanDeviceLocalVertexBuffer> createVertexBuffer(const VulkanDevice &device, const CommandPool &commandPool) const;
     };
 
 } // vklite

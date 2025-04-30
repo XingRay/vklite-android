@@ -37,7 +37,7 @@ namespace vklite {
         mIndexBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
     }
 
-    void VulkanDeviceLocalIndexBuffer::update(const VulkanCommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
+    void VulkanDeviceLocalIndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 

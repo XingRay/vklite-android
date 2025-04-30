@@ -9,7 +9,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/buffer/VulkanBufferInterface.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -37,7 +37,7 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getRange() const;
 
-        void update(const VulkanCommandPool &commandPool, const void *data, uint32_t size);
+        void update(const CommandPool &commandPool, const void *data, uint32_t size);
 
         [[nodiscard]]
         vk::DescriptorBufferInfo createDescriptorBufferInfo() const;

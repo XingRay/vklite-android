@@ -256,11 +256,11 @@ namespace vklite {
 //        return *this;
 //    }
 //
-//    GraphicsPipeline &GraphicsPipeline::updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, const void *data, size_t size) {
+//    GraphicsPipeline &GraphicsPipeline::updateVertexBuffer(const CommandPool &vulkanCommandPool, const void *data, size_t size) {
 //        return updateVertexBuffer(vulkanCommandPool, 0, data, size);
 //    }
 //
-//    GraphicsPipeline &GraphicsPipeline::updateVertexBuffer(const VulkanCommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size) {
+//    GraphicsPipeline &GraphicsPipeline::updateVertexBuffer(const CommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size) {
 //        if (index >= mVertexBuffers.size()) {
 //            LOG_E("index out of range, index:%d, size:%zu", index, mVertexBuffers.size());
 //
@@ -283,12 +283,12 @@ namespace vklite {
 //        return *this;
 //    }
 //
-//    GraphicsPipeline &GraphicsPipeline::updateIndexBuffer(const VulkanCommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
+//    GraphicsPipeline &GraphicsPipeline::updateIndexBuffer(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
 //        mIndexBuffer->update(vulkanCommandPool, indices);
 //        return *this;
 //    }
 
-//    GraphicsPipeline &GraphicsPipeline::updateUniformBuffer(const VulkanCommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
+//    GraphicsPipeline &GraphicsPipeline::updateUniformBuffer(const CommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size) {
 //        mDescriptorBindingSets[frameIndex]->updateUniformBuffer(commandPool, set, binding, data, size);
 //        return *this;
 //    }

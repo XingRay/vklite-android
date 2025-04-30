@@ -101,7 +101,7 @@ namespace vklite {
         return mHeight;
     }
 
-    void VulkanImage::transitionImageLayout(const VulkanCommandPool &commandPool) {
+    void VulkanImage::transitionImageLayout(const CommandPool &commandPool) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
             recordCommandTransitionImageLayout(commandBuffer);
         });
@@ -147,7 +147,7 @@ namespace vklite {
         );
     }
 
-    void VulkanImage::update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void VulkanImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
         mStagingBuffer->updateBuffer(data, size);
         vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
@@ -179,7 +179,7 @@ namespace vklite {
         commandBuffer.copyBufferToImage(buffer, mImage, vk::ImageLayout::eTransferDstOptimal, regions);
     }
 
-    void VulkanImage::generateMipmaps(const VulkanCommandPool &vulkanCommandPool) {
+    void VulkanImage::generateMipmaps(const CommandPool &vulkanCommandPool) {
         if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }

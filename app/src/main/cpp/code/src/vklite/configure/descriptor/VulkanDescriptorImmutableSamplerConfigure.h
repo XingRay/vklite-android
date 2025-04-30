@@ -9,7 +9,7 @@
 #include "vklite/ImageInterface.h"
 
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/image/VulkanImageBuilderInterface.h"
 #include "vklite/sampler/SamplerInterface.h"
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"
@@ -39,7 +39,7 @@ namespace vklite {
 
         ~VulkanDescriptorImmutableSamplerConfigure();
 
-        std::unique_ptr<ImageInfo> provideVulkanDescriptorImageInfo(const Device &device, const VulkanCommandPool &commandPool);
+        std::unique_ptr<ImageInfo> provideVulkanDescriptorImageInfo(const Device &device, const CommandPool &commandPool);
     };
 
 } // vklite

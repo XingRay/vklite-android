@@ -86,7 +86,7 @@ namespace vklite {
 //        return *this;
 //    }
 //
-//    Descriptor &Descriptor::updateUniformBuffer(const VulkanCommandPool &commandPool, const void *data, uint32_t size) {
+//    Descriptor &Descriptor::updateUniformBuffer(const CommandPool &commandPool, const void *data, uint32_t size) {
 //        mDescriptorBufferInfo->update(commandPool, data, size);
 //        return *this;
 //    }

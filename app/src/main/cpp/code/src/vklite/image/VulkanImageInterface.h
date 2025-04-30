@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -26,9 +26,9 @@ namespace vklite {
         [[nodiscard]]
         virtual uint32_t getMipLevels() const = 0;
 
-        virtual void transitionImageLayout(const VulkanCommandPool &commandPool) = 0;
+        virtual void transitionImageLayout(const CommandPool &commandPool) = 0;
 
-        virtual void update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) = 0;
+        virtual void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) = 0;
     };
 
 } // vklite

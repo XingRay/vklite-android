@@ -6,7 +6,7 @@
 
 #include "VulkanDeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -33,7 +33,7 @@ namespace vklite {
 
         void recordCommandUpdate(const vk::CommandBuffer& commandBuffer, const std::vector<uint32_t>& indices);
 
-        void update(const VulkanCommandPool& vulkanCommandPool, const std::vector<uint32_t>& indices);
+        void update(const CommandPool& vulkanCommandPool, const std::vector<uint32_t>& indices);
     };
 
 } // vklite

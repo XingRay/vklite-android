@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 #include "vklite/image/VulkanImage.h"
 #include "SamplerInterface.h"

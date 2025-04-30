@@ -31,7 +31,7 @@ namespace vklite {
         mUniformBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
     }
 
-    void VulkanDeviceLocalUniformBuffer::update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void VulkanDeviceLocalUniformBuffer::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
         mStagingBuffer.updateBuffer(data, size);
         mUniformBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
     }

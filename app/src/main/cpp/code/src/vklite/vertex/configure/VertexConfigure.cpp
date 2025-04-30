@@ -64,7 +64,7 @@ namespace vklite {
         return vertexInputAttributeDescriptions;
     }
 
-//    std::vector<std::shared_ptr<VulkanDeviceLocalVertexBuffer>> VertexConfigure::createVertexBuffers(const VulkanDevice &device, const VulkanCommandPool &commandPool) const {
+//    std::vector<std::shared_ptr<VulkanDeviceLocalVertexBuffer>> VertexConfigure::createVertexBuffers(const VulkanDevice &device, const CommandPool &commandPool) const {
 //        std::vector<std::shared_ptr<VulkanDeviceLocalVertexBuffer>> vertexBuffers{};
 //
 //        for (const VertexConfigure &configure: mVertexConfigures) {

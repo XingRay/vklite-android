@@ -103,9 +103,9 @@ namespace test01 {
     void Test01SimpleTriangle::init() {
 //        mVkLiteEngine->getGraphicsPipeline()
 //                .createVertexBuffer(vertices.size() * sizeof(Vertex))
-//                .updateVertexBuffer(mVkLiteEngine->getVulkanCommandPool(), vertices)
+//                .updateVertexBuffer(mVkLiteEngine->getCommandPool(), vertices)
 //                .createIndexBuffer(indices.size() * sizeof(uint32_t))
-//                .updateIndexBuffer(mVkLiteEngine->getVulkanCommandPool(), indices);
+//                .updateIndexBuffer(mVkLiteEngine->getCommandPool(), indices);
 
 //        (*mVkLiteEngine)
 //                .createVertexBuffer(vertices.size() * sizeof(Vertex))

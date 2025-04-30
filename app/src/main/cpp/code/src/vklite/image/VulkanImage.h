@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
 #include "VulkanImageInterface.h"
 
@@ -54,15 +54,15 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getHeight() const;
 
-        void transitionImageLayout(const VulkanCommandPool &commandPool) override;
+        void transitionImageLayout(const CommandPool &commandPool) override;
 
         void recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer);
 
-        void update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
+        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
 
         void recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer);
 
-        void generateMipmaps(const VulkanCommandPool &vulkanCommandPool);
+        void generateMipmaps(const CommandPool &vulkanCommandPool);
 
         void recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
     };

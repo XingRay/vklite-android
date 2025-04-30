@@ -2,12 +2,12 @@
 // Created by leixing on 2024/12/30.
 //
 
-#include "VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
-    VulkanCommandPool::VulkanCommandPool(const Device &device, uint32_t commandBufferCount)
+    CommandPool::CommandPool(const Device &device, uint32_t commandBufferCount)
             : mDevice(device) {
 
         vk::CommandPoolCreateInfo commandPoolCreateInfo{};
@@ -27,21 +27,21 @@ namespace vklite {
         mCommandBuffers = mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo);
     }
 
-    VulkanCommandPool::~VulkanCommandPool() {
-        LOG_D("VulkanCommandPool::~VulkanCommandPool()");
+    CommandPool::~CommandPool() {
+        LOG_D("CommandPool::~CommandPool()");
         mDevice.getDevice().freeCommandBuffers(mCommandPool, mCommandBuffers);
         mDevice.getDevice().destroy(mCommandPool);
     }
 
-    const vk::CommandPool &VulkanCommandPool::getCommandPool() const {
+    const vk::CommandPool &CommandPool::getCommandPool() const {
         return mCommandPool;
     }
 
-    const std::vector<vk::CommandBuffer> &VulkanCommandPool::getCommandBuffers() const {
+    const std::vector<vk::CommandBuffer> &CommandPool::getCommandBuffers() const {
         return mCommandBuffers;
     }
 
-    vk::CommandBuffer VulkanCommandPool::allocateCommand() const {
+    vk::CommandBuffer CommandPool::allocateCommand() const {
         vk::CommandBufferAllocateInfo commandBufferAllocateInfo{};
         commandBufferAllocateInfo
                 .setLevel(vk::CommandBufferLevel::ePrimary)
@@ -51,7 +51,7 @@ namespace vklite {
         return mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo)[0];
     }
 
-    std::vector<vk::CommandBuffer> VulkanCommandPool::allocateCommands(uint32_t count) const {
+    std::vector<vk::CommandBuffer> CommandPool::allocateCommands(uint32_t count) const {
         vk::CommandBufferAllocateInfo commandBufferAllocateInfo{};
         commandBufferAllocateInfo
                 .setLevel(vk::CommandBufferLevel::ePrimary)
@@ -61,7 +61,7 @@ namespace vklite {
         return mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo);
     }
 
-    void VulkanCommandPool::submitCommand(const vk::CommandBuffer &commandBuffer) const {
+    void CommandPool::submitCommand(const vk::CommandBuffer &commandBuffer) const {
         vk::SubmitInfo submitInfo{};
         submitInfo.setCommandBufferCount(1)
                 .setPCommandBuffers(&commandBuffer);
@@ -72,13 +72,13 @@ namespace vklite {
         mDevice.getDevice().freeCommandBuffers(mCommandPool, commandBuffer);
     }
 
-    void VulkanCommandPool::submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const {
+    void CommandPool::submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const {
         vk::CommandBuffer commandBuffer = allocateCommand();
         recordCommand(commandBuffer, vk::CommandBufferUsageFlagBits::eOneTimeSubmit, command);
         submitCommand(commandBuffer);
     }
 
-    void VulkanCommandPool::recordCommand(const vk::CommandBuffer &commandBuffer, vk::CommandBufferUsageFlagBits usage, const std::function<void(const vk::CommandBuffer &)> &command) {
+    void CommandPool::recordCommand(const vk::CommandBuffer &commandBuffer, vk::CommandBufferUsageFlagBits usage, const std::function<void(const vk::CommandBuffer &)> &command) {
         vk::CommandBufferBeginInfo commandBufferBeginInfo;
         commandBufferBeginInfo
                 .setFlags(usage)

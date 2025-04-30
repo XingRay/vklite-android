@@ -54,7 +54,7 @@ namespace vklite {
 //        return descriptorSetLayoutBinding;
 //    }
 
-//    std::shared_ptr<VulkanDeviceLocalUniformBuffer> VulkanUniformConfigure::createUniformBuffer(const VulkanDevice &device, const VulkanCommandPool &commandPool) const {
+//    std::shared_ptr<VulkanDeviceLocalUniformBuffer> VulkanUniformConfigure::createUniformBuffer(const VulkanDevice &device, const CommandPool &commandPool) const {
 //        if (mBuffer != nullptr) {
 //            return mBuffer;
 //        }

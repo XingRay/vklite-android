@@ -195,7 +195,7 @@ namespace vklite {
 //        std::unique_ptr<VulkanSwapchain> swapchain = std::make_unique<VulkanSwapchain>(*device, *surface, currentExtent.width, currentExtent.height);
 //
 //        // command pool
-//        std::unique_ptr<VulkanCommandPool> commandPool = std::make_unique<VulkanCommandPool>(*device, mFrameCount);
+//        std::unique_ptr<CommandPool> commandPool = std::make_unique<CommandPool>(*device, mFrameCount);
 //
 //        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*device, *swapchain);
 //

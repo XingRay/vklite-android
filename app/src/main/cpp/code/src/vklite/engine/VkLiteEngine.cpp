@@ -18,7 +18,7 @@ namespace vklite {
                                std::unique_ptr<Surface> vulkanSurface,
                                std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                                std::unique_ptr<Device> device,
-                               std::unique_ptr<VulkanCommandPool> commandPool,
+                               std::unique_ptr<CommandPool> commandPool,
                                std::unique_ptr<Swapchain> swapchain,
                                std::unique_ptr<VulkanRenderPass> renderPass,
                                std::unique_ptr<GraphicsPipeline> graphicsPipeline,
@@ -108,7 +108,7 @@ namespace vklite {
         return mDevice->getDevice();
     }
 
-    const VulkanCommandPool &VkLiteEngine::getVulkanCommandPool() const {
+    const CommandPool &VkLiteEngine::getCommandPool() const {
         return *mCommandPool;
     }
 

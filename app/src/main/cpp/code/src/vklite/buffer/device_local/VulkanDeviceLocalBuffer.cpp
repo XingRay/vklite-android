@@ -48,13 +48,13 @@ namespace vklite {
         recordCommandCopyFrom(commandBuffer, srcBuffer, 0, 0, mBufferSize);
     }
 
-    void VulkanDeviceLocalBuffer::copyFrom(const VulkanCommandPool &vulkanCommandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset) {
+    void VulkanDeviceLocalBuffer::copyFrom(const CommandPool &vulkanCommandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset) {
         vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordCommandCopyFrom(commandBuffer, srcBuffer, srcOffset, copyDataSize, dstOffset);
         });
     }
 
-    void VulkanDeviceLocalBuffer::copyFrom(const VulkanCommandPool &vulkanCommandPool, vk::Buffer srcBuffer) {
+    void VulkanDeviceLocalBuffer::copyFrom(const CommandPool &vulkanCommandPool, vk::Buffer srcBuffer) {
         vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordCommandCopyFrom(commandBuffer, srcBuffer);
         });

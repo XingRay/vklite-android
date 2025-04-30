@@ -8,7 +8,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 
@@ -41,9 +41,9 @@ namespace vklite {
 
         void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer);
 
-        void copyFrom(const VulkanCommandPool &vulkanCommandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset);
+        void copyFrom(const CommandPool &vulkanCommandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset);
 
-        void copyFrom(const VulkanCommandPool &vulkanCommandPool, vk::Buffer srcBuffer);
+        void copyFrom(const CommandPool &vulkanCommandPool, vk::Buffer srcBuffer);
     };
 
 } // vklite

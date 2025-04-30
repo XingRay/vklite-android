@@ -10,7 +10,7 @@
 
 #include "vklite/instance/Instance.h"
 #include "vklite/device/Device.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
 #include "vklite/image/VulkanImage.h"
 
@@ -47,9 +47,9 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getMipLevels() const override;
 
-        void transitionImageLayout(const VulkanCommandPool &commandPool) override;
+        void transitionImageLayout(const CommandPool &commandPool) override;
 
-        void update(const VulkanCommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
+        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
 
     };
 

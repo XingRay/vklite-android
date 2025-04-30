@@ -17,7 +17,7 @@
 #include "vklite/pipeline/GraphicsPipeline.h"
 #include "vklite/pipeline/ComputePipeline.h"
 #include "vklite/pipeline_resource/PipelineResource.h"
-#include "vklite/command/VulkanCommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalVertexBuffer.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleVertexBuffer.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalIndexBuffer.h"
@@ -54,7 +54,7 @@ namespace vklite {
 
         std::vector<PipelineResource> mPipelineResources;
 
-        std::unique_ptr<VulkanCommandPool> mCommandPool;
+        std::unique_ptr<CommandPool> mCommandPool;
         std::unique_ptr<VulkanFrameBuffer> mFrameBuffer;
 
         std::unique_ptr<VulkanSyncObject> mSyncObject;
@@ -64,7 +64,7 @@ namespace vklite {
                      std::unique_ptr<Surface> vulkanSurface,
                      std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<Device> device,
-                     std::unique_ptr<VulkanCommandPool> commandPool,
+                     std::unique_ptr<CommandPool> commandPool,
                      std::unique_ptr<Swapchain> swapchain,
                      std::unique_ptr<VulkanRenderPass> renderPass,
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
@@ -83,7 +83,7 @@ namespace vklite {
         vk::Device getVKDevice() const;
 
         [[nodiscard]]
-        const VulkanCommandPool &getVulkanCommandPool() const;
+        const CommandPool &getCommandPool() const;
 
         [[nodiscard]]
         uint32_t getCurrentFrameIndex() const;
