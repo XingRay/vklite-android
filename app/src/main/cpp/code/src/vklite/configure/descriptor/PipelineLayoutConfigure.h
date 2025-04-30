@@ -32,7 +32,7 @@ namespace vklite {
         PipelineLayoutConfigure &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
 
         [[nodiscard]]
-        std::unique_ptr<PipelineLayout> createPipelineLayout(const Device &vulkanDevice);
+        std::unique_ptr<PipelineLayout> createPipelineLayout(const Device &device);
     };
 
 } // vklite

@@ -15,7 +15,7 @@ namespace vklite {
         uint32_t mIndicesCount;
 
     public:
-        VulkanHostVisibleIndexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize);
+        VulkanHostVisibleIndexBuffer(const Device &device, vk::DeviceSize bufferSize);
 
         ~VulkanHostVisibleIndexBuffer();
 

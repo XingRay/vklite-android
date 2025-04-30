@@ -23,7 +23,7 @@ namespace vklite {
         std::vector<vk::Fence> mFences;
 
     public:
-        explicit VulkanSyncObject(const Device &vulkanDevice, uint32_t count);
+        explicit VulkanSyncObject(const Device &device, uint32_t count);
 
         ~VulkanSyncObject();
 

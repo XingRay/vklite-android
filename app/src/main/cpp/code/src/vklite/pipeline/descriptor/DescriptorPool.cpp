@@ -6,8 +6,8 @@
 
 namespace vklite {
 
-    DescriptorPool::DescriptorPool(const Device &vulkanDevice, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets)
-            : mVulkanDevice(vulkanDevice) {
+    DescriptorPool::DescriptorPool(const Device &device, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets)
+            : mVulkanDevice(device) {
 
         vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;
         descriptorPoolCreateInfo

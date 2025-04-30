@@ -65,7 +65,7 @@ namespace vklite {
         vk::DescriptorSetLayoutBinding createDescriptorSetLayoutBinding() const;
 
 //        [[nodiscard]]
-//        std::unique_ptr<VulkanDescriptorBinding> createVulkanDescriptorBinding(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool);
+//        std::unique_ptr<VulkanDescriptorBinding> createVulkanDescriptorBinding(const VulkanDevice &device, const VulkanCommandPool &commandPool);
     };
 
 } // vklite

@@ -7,9 +7,9 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const Device &vulkanDevice,
+    VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const Device &device,
                                                                                            const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo)
-            : mVulkanDevice(vulkanDevice) {
+            : mVulkanDevice(device) {
 
         vk::ExternalFormatANDROID externalFormat;
         if (formatInfo.format == vk::Format::eUndefined) {
@@ -35,7 +35,7 @@ namespace vklite {
                 .setChromaFilter(vk::Filter::eNearest)
                 .setForceExplicitReconstruction(false);
 
-        CALL_VK(vkCreateSamplerYcbcrConversion(vulkanDevice.getDevice(), reinterpret_cast<VkSamplerYcbcrConversionCreateInfo *>(&conversionCreateInfo), nullptr,
+        CALL_VK(vkCreateSamplerYcbcrConversion(device.getDevice(), reinterpret_cast<VkSamplerYcbcrConversionCreateInfo *>(&conversionCreateInfo), nullptr,
                                                reinterpret_cast<VkSamplerYcbcrConversion *>(&mSamplerYcbcrConversion)));
 
     }

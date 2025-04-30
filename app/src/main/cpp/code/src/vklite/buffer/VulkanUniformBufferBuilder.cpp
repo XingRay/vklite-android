@@ -10,9 +10,9 @@ namespace vklite {
 
     VulkanUniformBufferBuilder::~VulkanUniformBufferBuilder() = default;
 
-    std::unique_ptr<VulkanBufferInterface> VulkanUniformBufferBuilder::build(const Device &vulkanDevice, vk::DeviceSize bufferSize) {
-        VulkanDeviceLocalUniformBuffer buffer(vulkanDevice, bufferSize);
-        return std::make_unique<VulkanDeviceLocalUniformBuffer>(vulkanDevice, bufferSize);
+    std::unique_ptr<VulkanBufferInterface> VulkanUniformBufferBuilder::build(const Device &device, vk::DeviceSize bufferSize) {
+        VulkanDeviceLocalUniformBuffer buffer(device, bufferSize);
+        return std::make_unique<VulkanDeviceLocalUniformBuffer>(device, bufferSize);
     }
 
 } // vklite

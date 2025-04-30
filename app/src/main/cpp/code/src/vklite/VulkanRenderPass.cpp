@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    VulkanRenderPass::VulkanRenderPass(const Device &vulkanDevice, const Swapchain &vulkanSwapchain) : mDevice(vulkanDevice) {
+    VulkanRenderPass::VulkanRenderPass(const Device &device, const Swapchain &vulkanSwapchain) : mDevice(device) {
         bool enableMsaa = true;
         bool enableDepth = true;
 
@@ -22,7 +22,7 @@ namespace vklite {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
             msaaColorAttachmentDescription
                     .setFormat(vulkanSwapchain.getDisplayFormat())
-//                    .setSamples(vulkanDevice.getMsaaSamples())
+//                    .setSamples(device.getMsaaSamples())
 // todo: msaa samplers
                     .setSamples(vk::SampleCountFlagBits::e1)
                             //载入图像前将帧缓冲清0
@@ -61,11 +61,11 @@ namespace vklite {
             vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;
             if (enableMsaa) {
                 // msaa samplers
-//                sampleCountFlagBits = vulkanDevice.getMsaaSamples();
+//                sampleCountFlagBits = device.getMsaaSamples();
             }
             vk::AttachmentDescription depthAttachmentDescription{};
             depthAttachmentDescription
-                    .setFormat(vulkanDevice.getPhysicalDevice().findDepthFormat())
+                    .setFormat(device.getPhysicalDevice().findDepthFormat())
                     .setSamples(sampleCountFlagBits)
                     .setLoadOp(vk::AttachmentLoadOp::eClear)
                     .setStoreOp(vk::AttachmentStoreOp::eDontCare)
@@ -164,7 +164,7 @@ namespace vklite {
                 .setSubpasses(subPassDescriptions)
                 .setDependencies(subPassDependencies);
 
-        mRenderPass = vulkanDevice.getDevice().createRenderPass(renderPassCreateInfo);
+        mRenderPass = device.getDevice().createRenderPass(renderPassCreateInfo);
     }
 
     VulkanRenderPass::~VulkanRenderPass() {

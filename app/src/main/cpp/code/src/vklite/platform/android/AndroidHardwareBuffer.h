@@ -16,7 +16,7 @@ namespace vklite {
         AHardwareBuffer *mHardwareBuffer;
 
     public:
-        AndroidHardwareBuffer(const Device &vulkanDevice, AHardwareBuffer *hardwareBuffer);
+        AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer);
 
         ~AndroidHardwareBuffer();
 

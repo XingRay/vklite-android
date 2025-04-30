@@ -6,8 +6,8 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    VulkanSyncObject::VulkanSyncObject(const Device &vulkanDevice, uint32_t count) : mDevice(vulkanDevice) {
-        vk::Device device = vulkanDevice.getDevice();
+    VulkanSyncObject::VulkanSyncObject(const Device &device, uint32_t count) : mDevice(device) {
+        vk::Device vkDevice = device.getDevice();
 
         vk::SemaphoreCreateInfo semaphoreCreateInfo{};
         vk::FenceCreateInfo fenceCreateInfo{};
@@ -15,9 +15,9 @@ namespace vklite {
         fenceCreateInfo.setFlags(vk::FenceCreateFlagBits::eSignaled);
 
         for (int i = 0; i < count; i++) {
-            mImageAvailableSemaphores.push_back(device.createSemaphore(semaphoreCreateInfo));
-            mRenderFinishedSemaphores.push_back(device.createSemaphore(semaphoreCreateInfo));
-            mFences.push_back(device.createFence(fenceCreateInfo));
+            mImageAvailableSemaphores.push_back(vkDevice.createSemaphore(semaphoreCreateInfo));
+            mRenderFinishedSemaphores.push_back(vkDevice.createSemaphore(semaphoreCreateInfo));
+            mFences.push_back(vkDevice.createFence(fenceCreateInfo));
         }
     }
 

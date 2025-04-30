@@ -36,7 +36,7 @@ namespace vklite {
         return *this;
     }
 
-    std::shared_ptr<VulkanDeviceLocalIndexBuffer> IndexBufferConfigure::createIndexBuffer(const Device &vulkanDevice, const VulkanCommandPool &commandPool) const {
+    std::shared_ptr<VulkanDeviceLocalIndexBuffer> IndexBufferConfigure::createIndexBuffer(const Device &device, const VulkanCommandPool &commandPool) const {
         if (mIndexBuffer != nullptr) {
             return mIndexBuffer;
         }
@@ -45,7 +45,7 @@ namespace vklite {
             return nullptr;
         }
 
-        std::shared_ptr<VulkanDeviceLocalIndexBuffer> buffer = std::make_shared<VulkanDeviceLocalIndexBuffer>(vulkanDevice, mCreateBufferCapacity);
+        std::shared_ptr<VulkanDeviceLocalIndexBuffer> buffer = std::make_shared<VulkanDeviceLocalIndexBuffer>(device, mCreateBufferCapacity);
         if (!mCreateBufferIndices.empty()) {
             buffer->update(commandPool, mCreateBufferIndices);
         }

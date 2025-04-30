@@ -99,7 +99,7 @@ namespace vklite {
 //        return mUniformSet;
 //    }
 
-//    std::unique_ptr<VulkanDescriptorBindingSet> DescriptorSetConfigure::createVulkanDescriptorBindingSet(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) {
+//    std::unique_ptr<VulkanDescriptorBindingSet> DescriptorSetConfigure::createVulkanDescriptorBindingSet(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
 //        if (mVulkanDescriptorBindingConfigures.empty()) {
 //            return nullptr;
 //        }
@@ -110,7 +110,7 @@ namespace vklite {
 //            uint32_t binding = entry.first;
 //            const std::unique_ptr<VulkanDescriptorBindingConfigure> &vulkanDescriptorBindingConfigure = entry.second;
 //
-//            vulkanDescriptorBindingSet->set(binding, vulkanDescriptorBindingConfigure->createVulkanDescriptorBinding(vulkanDevice, commandPool));
+//            vulkanDescriptorBindingSet->set(binding, vulkanDescriptorBindingConfigure->createVulkanDescriptorBinding(device, commandPool));
 //        }
 //
 //
@@ -138,7 +138,7 @@ namespace vklite {
 //        return descriptorSetLayoutBindings;
 //    }
 
-//    vk::DescriptorSetLayout DescriptorSetConfigure::createDescriptorSetLayout(const VulkanDevice &vulkanDevice) {
+//    vk::DescriptorSetLayout DescriptorSetConfigure::createDescriptorSetLayout(const VulkanDevice &device) {
 //
 //        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings = createDescriptorSetLayoutBindings();
 //
@@ -146,7 +146,7 @@ namespace vklite {
 //        descriptorSetLayoutCreateInfo
 //                .setBindings(descriptorSetLayoutBindings);
 //
-//        return vulkanDevice.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+//        return device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
 //    }
 
 } // vklite

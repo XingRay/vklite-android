@@ -42,7 +42,7 @@ namespace vklite {
 
     public:
 
-        GraphicsPipeline(const Device &vulkanDevice,
+        GraphicsPipeline(const Device &device,
                          const Swapchain &swapchain,
                          const VulkanRenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,

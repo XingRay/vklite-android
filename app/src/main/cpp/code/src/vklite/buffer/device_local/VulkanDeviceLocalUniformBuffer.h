@@ -17,7 +17,7 @@ namespace vklite {
         VulkanStagingBuffer mStagingBuffer;
 
     public:
-        VulkanDeviceLocalUniformBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize);
+        VulkanDeviceLocalUniformBuffer(const Device &device, vk::DeviceSize bufferSize);
 
         ~VulkanDeviceLocalUniformBuffer() override;
 

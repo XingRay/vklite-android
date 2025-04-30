@@ -29,7 +29,7 @@ namespace vklite {
         std::unique_ptr<VulkanStagingBuffer> mVulkanStagingBuffer;
 
     public:
-        VulkanImage(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format);
+        VulkanImage(const Device &device, uint32_t width, uint32_t height, vk::Format format);
 
         ~VulkanImage();
 

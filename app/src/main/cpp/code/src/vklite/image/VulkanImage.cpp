@@ -7,10 +7,10 @@
 
 namespace vklite {
 
-    VulkanImage::VulkanImage(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format)
-            : mVulkanDevice(vulkanDevice), mWidth(width), mHeight(height) {
+    VulkanImage::VulkanImage(const Device &device, uint32_t width, uint32_t height, vk::Format format)
+            : mVulkanDevice(device), mWidth(width), mHeight(height) {
 
-        const vk::Device &device = mVulkanDevice.getDevice();
+        const vk::Device &vkDevice = mVulkanDevice.getDevice();
 
         mMipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
         vk::MemoryPropertyFlagBits memoryProperty = vk::MemoryPropertyFlagBits::eDeviceLocal;
@@ -44,24 +44,24 @@ namespace vklite {
                         //用于稀疏纹理相关的标志位
                 .setFlags(vk::ImageCreateFlags{});
 
-        mImage = device.createImage(imageCreateInfo);
+        mImage = vkDevice.createImage(imageCreateInfo);
 
-        vk::MemoryRequirements memoryRequirements = device.getImageMemoryRequirements(mImage);
-        uint32_t memoryTypeIndex = vulkanDevice.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, memoryProperty);
+        vk::MemoryRequirements memoryRequirements = vkDevice.getImageMemoryRequirements(mImage);
+        uint32_t memoryTypeIndex = device.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, memoryProperty);
 
         vk::MemoryAllocateInfo memoryAllocateInfo;
         memoryAllocateInfo
                 .setAllocationSize(memoryRequirements.size)
                 .setMemoryTypeIndex(memoryTypeIndex);
 
-        mDeviceMemory = device.allocateMemory(memoryAllocateInfo);
+        mDeviceMemory = vkDevice.allocateMemory(memoryAllocateInfo);
 
-        device.bindImageMemory(mImage, mDeviceMemory, 0);
+        vkDevice.bindImageMemory(mImage, mDeviceMemory, 0);
 
         mImageView = mVulkanDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
         uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
-        mVulkanStagingBuffer = std::make_unique<VulkanStagingBuffer>(vulkanDevice, width * height * bytesPerPixel);
+        mVulkanStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
     VulkanImage::~VulkanImage() {

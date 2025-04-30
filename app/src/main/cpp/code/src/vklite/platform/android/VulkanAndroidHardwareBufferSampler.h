@@ -21,7 +21,7 @@ namespace vklite {
 
     public:
 
-        VulkanAndroidHardwareBufferSampler(const Device &vulkanDevice,
+        VulkanAndroidHardwareBufferSampler(const Device &device,
                                            const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 
         ~VulkanAndroidHardwareBufferSampler() override;

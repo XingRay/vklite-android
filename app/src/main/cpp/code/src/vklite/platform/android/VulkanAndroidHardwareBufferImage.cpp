@@ -10,11 +10,11 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const Device &vulkanDevice,
+    VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const Device &device,
                                                                        const AndroidHardwareBuffer &androidHardwareBuffer,
                                                                        const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
-            : mVulkanDevice(vulkanDevice) {
-        vk::Device device = mVulkanDevice.getDevice();
+            : mVulkanDevice(device) {
+        vk::Device vkDevice = mVulkanDevice.getDevice();
 
         AHardwareBuffer_Desc hardwareBufferDescription = androidHardwareBuffer.getAndroidHardwareBufferDescription();
         vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties = androidHardwareBuffer.getAndroidHardwareBufferProperties();
@@ -48,7 +48,7 @@ namespace vklite {
                 .setQueueFamilyIndices({})
                 .setInitialLayout(vk::ImageLayout::eUndefined);
 
-        mImage = device.createImage(imageCreateInfo);
+        mImage = vkDevice.createImage(imageCreateInfo);
 
         /**
          * Dedicated: "专用的" / "专属于"
@@ -76,7 +76,7 @@ namespace vklite {
                 .setMemoryTypeIndex(memoryType)
                 .setPNext(&memoryDedicatedAllocateInfo);
 
-        mDeviceMemory = device.allocateMemory(memoryAllocateInfo);
+        mDeviceMemory = vkDevice.allocateMemory(memoryAllocateInfo);
 
         vk::BindImageMemoryInfo bindImageMemoryInfo;
         bindImageMemoryInfo
@@ -85,7 +85,7 @@ namespace vklite {
                 .setMemoryOffset(0);
 
         //device.bindImageMemory2KHR(bindImageMemoryInfo); // link error
-        vkBindImageMemory2KHR(device, 1, reinterpret_cast<VkBindImageMemoryInfo *>(&bindImageMemoryInfo));
+        vkBindImageMemory2KHR(vkDevice, 1, reinterpret_cast<VkBindImageMemoryInfo *>(&bindImageMemoryInfo));
 
         vk::ImageMemoryRequirementsInfo2 imageMemoryRequirementsInfo{};
         imageMemoryRequirementsInfo
@@ -96,7 +96,7 @@ namespace vklite {
         memoryRequirements.pNext = &memoryDedicatedRequirements;
 
 //        device.getImageMemoryRequirements2KHR(&imageMemoryRequirementsInfo, &memoryRequirements); //link error
-        vkGetImageMemoryRequirements2KHR(device,
+        vkGetImageMemoryRequirements2KHR(vkDevice,
                                          reinterpret_cast<const VkImageMemoryRequirementsInfo2 *>(&imageMemoryRequirementsInfo),
                                          reinterpret_cast<VkMemoryRequirements2 *>(&memoryRequirements));
 
@@ -133,7 +133,7 @@ namespace vklite {
                 .setComponents(componentMapping)
                 .setSubresourceRange(imageSubresourceRange);
 
-        mImageView = device.createImageView(imageViewCreateInfo);
+        mImageView = vkDevice.createImageView(imageViewCreateInfo);
     }
 
     VulkanAndroidHardwareBufferImage::~VulkanAndroidHardwareBufferImage() {

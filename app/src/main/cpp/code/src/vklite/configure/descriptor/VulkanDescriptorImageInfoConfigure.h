@@ -37,7 +37,7 @@ namespace vklite {
 
         ~VulkanDescriptorImageInfoConfigure();
 
-        std::unique_ptr<ImageInfo> provideVulkanDescriptorImageInfo(const Device &vulkanDevice, const VulkanCommandPool &commandPool);
+        std::unique_ptr<ImageInfo> provideVulkanDescriptorImageInfo(const Device &device, const VulkanCommandPool &commandPool);
     };
 
 } // vklite

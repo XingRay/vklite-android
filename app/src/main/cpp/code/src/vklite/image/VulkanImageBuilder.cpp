@@ -14,7 +14,7 @@ namespace vklite {
 
     }
 
-    std::unique_ptr<VulkanImageInterface> VulkanImageBuilder::build(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format) {
-        return std::make_unique<VulkanImage>(vulkanDevice, width, height, format);
+    std::unique_ptr<VulkanImageInterface> VulkanImageBuilder::build(const Device &device, uint32_t width, uint32_t height, vk::Format format) {
+        return std::make_unique<VulkanImage>(device, width, height, format);
     }
 } // vklite

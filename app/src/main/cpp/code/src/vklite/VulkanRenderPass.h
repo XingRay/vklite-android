@@ -16,7 +16,7 @@ namespace vklite {
         vk::RenderPass mRenderPass;
 
     public://methods
-        VulkanRenderPass(const Device &vulkanDevice, const Swapchain &vulkanSwapchain);
+        VulkanRenderPass(const Device &device, const Swapchain &vulkanSwapchain);
 
         ~VulkanRenderPass();
 

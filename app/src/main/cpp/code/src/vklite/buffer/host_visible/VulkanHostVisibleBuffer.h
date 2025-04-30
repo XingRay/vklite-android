@@ -24,7 +24,7 @@ namespace vklite {
         void *mMappedMemoryPointer;
 
     public:
-        VulkanHostVisibleBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
+        VulkanHostVisibleBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
 
         virtual  ~VulkanHostVisibleBuffer();
 

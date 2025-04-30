@@ -42,37 +42,37 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &vulkanDevice,
+    std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &device,
                                                                        const Swapchain &swapchain,
                                                                        const VulkanRenderPass &renderPass) {
 
         // shader code
-        VulkanShaderModule vertexShaderModule = VulkanShaderModule(vulkanDevice, mVertexShaderCode);
-        VulkanShaderModule fragmentShaderModule = VulkanShaderModule(vulkanDevice, mFragmentShaderCode);
+        VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);
+        VulkanShaderModule fragmentShaderModule = VulkanShaderModule(device, mFragmentShaderCode);
 
         // vertex buffer description
         std::unique_ptr<VertexBufferDescription> vertexBufferDescription = mVertexConfigure.createVertexBufferDescription();
 
         // descriptor -> uniform / sampler ...
-//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mVulkanDescriptorSetConfigures.createDescriptorSetLayouts(vulkanDevice);
+//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mVulkanDescriptorSetConfigures.createDescriptorSetLayouts(device);
 
-        //        std::unique_ptr<VulkanDescriptorPool> vulkanDescriptorPool = std::make_unique<VulkanDescriptorPool>(vulkanDevice,
+        //        std::unique_ptr<VulkanDescriptorPool> vulkanDescriptorPool = std::make_unique<VulkanDescriptorPool>(device,
 //                                                                                                            mVulkanDescriptorSetConfigures.createDescriptorPoolSizes(frameCount),
 //                                                                                                            mVulkanDescriptorSetConfigures.getSetCount(frameCount));
 
-        std::unique_ptr<PipelineLayout> pipelineLayout = mPipelineLayoutConfigure.createPipelineLayout(vulkanDevice);
+        std::unique_ptr<PipelineLayout> pipelineLayout = mPipelineLayoutConfigure.createPipelineLayout(device);
 
         // frame -> set -> binding
 //        std::vector<std::unique_ptr<VulkanDescriptorBindingSets>> vulkanDescriptorBindingSets;
 //        for (uint32_t frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-//            std::unique_ptr<VulkanDescriptorBindingSets> bindingSetsOfFrame = mVulkanDescriptorSetConfigures.createVulkanDescriptorBindingSets(vulkanDevice, commandPool);
+//            std::unique_ptr<VulkanDescriptorBindingSets> bindingSetsOfFrame = mVulkanDescriptorSetConfigures.createVulkanDescriptorBindingSets(device, commandPool);
 //            vulkanDescriptorBindingSets.push_back(std::move(bindingSetsOfFrame));
 //        }
 
 //        // push constant
 //        std::vector<vk::PushConstantRange> pushConstantRanges = mPushConstantConfigures.createPushConstantRanges();
 //        // 检查总大小是否超出设备限制
-//        uint32_t maxPushConstantsSize = vulkanDevice.getMaxPushConstantsSize();
+//        uint32_t maxPushConstantsSize = device.getMaxPushConstantsSize();
 //        uint32_t totalPushConstantSize = pipelineLayout->calcTotalPushConstantSize();
 //        if (totalPushConstantSize > maxPushConstantsSize) {
 //            throw std::runtime_error(
@@ -81,7 +81,7 @@ namespace vklite {
 //            );
 //        }
 
-        return std::make_unique<GraphicsPipeline>(vulkanDevice,
+        return std::make_unique<GraphicsPipeline>(device,
                                                   swapchain,
                                                   renderPass,
                                                   vertexShaderModule,

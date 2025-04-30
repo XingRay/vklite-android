@@ -33,7 +33,7 @@ namespace vklite {
 //        return *this;
 //    }
 
-//    std::vector<vk::DescriptorSetLayout> PipelineLayoutConfigure::createDescriptorSetLayouts(const VulkanDevice &vulkanDevice) const {
+//    std::vector<vk::DescriptorSetLayout> PipelineLayoutConfigure::createDescriptorSetLayouts(const VulkanDevice &device) const {
 //        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
 //
 //        for (const auto &entry: mPipelineLayoutConfigure) {
@@ -75,7 +75,7 @@ namespace vklite {
 //            descriptorSetLayoutCreateInfo
 //                    .setBindings(descriptorSetLayoutBindings);
 //
-//            vk::DescriptorSetLayout descriptorSetLayout = vulkanDevice.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+//            vk::DescriptorSetLayout descriptorSetLayout = device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
 //            descriptorSetLayouts.push_back(descriptorSetLayout);
 //        }
 //
@@ -112,7 +112,7 @@ namespace vklite {
 //        return mPipelineLayoutConfigure.size() * frameCount;
 //    }
 //
-//    std::unique_ptr<VulkanDescriptorBindingSets> PipelineLayoutConfigure::createVulkanDescriptorBindingSets(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) const {
+//    std::unique_ptr<VulkanDescriptorBindingSets> PipelineLayoutConfigure::createVulkanDescriptorBindingSets(const VulkanDevice &device, const VulkanCommandPool &commandPool) const {
 //        if (mPipelineLayoutConfigure.empty()) {
 //            return nullptr;
 //        }
@@ -123,15 +123,15 @@ namespace vklite {
 //            uint32_t set = entry.first;
 //            const std::unique_ptr<VulkanDescriptorSetConfigure> &vulkanDescriptorSetConfigure = entry.second;
 //
-//            std::unique_ptr<VulkanDescriptorBindingSet> vulkanDescriptorBindingSet = vulkanDescriptorSetConfigure->createVulkanDescriptorBindingSet(vulkanDevice, commandPool);
+//            std::unique_ptr<VulkanDescriptorBindingSet> vulkanDescriptorBindingSet = vulkanDescriptorSetConfigure->createVulkanDescriptorBindingSet(device, commandPool);
 //            vulkanDescriptorBindingSets->set(set, std::move(vulkanDescriptorBindingSet));
 //        }
 //
 //        return vulkanDescriptorBindingSets;
 //    }
 
-    std::unique_ptr<PipelineLayout> PipelineLayoutConfigure::createPipelineLayout(const Device &vulkanDevice) {
-        return std::make_unique<PipelineLayout>(vulkanDevice, std::move(mDescriptors), std::move(mPushConstantRanges));
+    std::unique_ptr<PipelineLayout> PipelineLayoutConfigure::createPipelineLayout(const Device &device) {
+        return std::make_unique<PipelineLayout>(device, std::move(mDescriptors), std::move(mPushConstantRanges));
     }
 
 

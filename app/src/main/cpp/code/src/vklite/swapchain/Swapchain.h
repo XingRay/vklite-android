@@ -23,7 +23,7 @@ namespace vklite {
         std::vector<vk::ImageView> mDisplayImageViews;
 
     public://methods
-        Swapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height);
+        Swapchain(const Device &device, const Surface &vulkanSurface, uint32_t width, uint32_t height);
 
         ~Swapchain();
 

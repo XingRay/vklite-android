@@ -6,8 +6,8 @@
 #include "vklite/VkCheck.h"
 
 namespace vklite {
-    AndroidHardwareBuffer::AndroidHardwareBuffer(const Device &vulkanDevice, AHardwareBuffer *hardwareBuffer)
-            : mVulkanDevice(vulkanDevice), mHardwareBuffer(hardwareBuffer) {
+    AndroidHardwareBuffer::AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer)
+            : mVulkanDevice(device), mHardwareBuffer(hardwareBuffer) {
 
     }
 

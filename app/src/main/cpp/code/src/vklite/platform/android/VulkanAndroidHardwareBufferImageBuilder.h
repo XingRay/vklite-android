@@ -23,7 +23,7 @@ namespace vklite {
 
         ~VulkanAndroidHardwareBufferImageBuilder() override;
 
-        std::unique_ptr<VulkanImageInterface> build(const Device &vulkanDevice, uint32_t width, uint32_t height, vk::Format format) override;
+        std::unique_ptr<VulkanImageInterface> build(const Device &device, uint32_t width, uint32_t height, vk::Format format) override;
     };
 
 } // vklite

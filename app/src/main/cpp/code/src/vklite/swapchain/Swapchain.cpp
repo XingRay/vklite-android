@@ -7,13 +7,13 @@
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    Swapchain::Swapchain(const Device &vulkanDevice, const Surface &vulkanSurface, uint32_t width, uint32_t height)
-            : mDevice(vulkanDevice) {
-        const vk::Device &device = vulkanDevice.getDevice();
+    Swapchain::Swapchain(const Device &device, const Surface &vulkanSurface, uint32_t width, uint32_t height)
+            : mDevice(device) {
+        const vk::Device &vkDevice = device.getDevice();
 
-        vk::SurfaceCapabilitiesKHR capabilities = vulkanDevice.getCapabilities();
-        std::vector<vk::SurfaceFormatKHR> formats = vulkanDevice.getFormats();
-        std::vector<vk::PresentModeKHR> presentModes = vulkanDevice.getPresentModes();
+        vk::SurfaceCapabilitiesKHR capabilities = device.getCapabilities();
+        std::vector<vk::SurfaceFormatKHR> formats = device.getFormats();
+        std::vector<vk::PresentModeKHR> presentModes = device.getPresentModes();
 
         mDisplaySize = chooseSwapExtent(capabilities, width, height);
         mSwapChainImageFormat = chooseSwapSurfaceFormat(formats);
@@ -27,7 +27,7 @@ namespace vklite {
         }
         LOG_D("imageCount: %d", imageCount);
 
-        std::vector<uint32_t> queueFamilyIndices = vulkanDevice.getQueueFamilyIndices();
+        std::vector<uint32_t> queueFamilyIndices = device.getQueueFamilyIndices();
         vk::SharingMode sharingMode;
         if (queueFamilyIndices.size() == 1) {
             sharingMode = vk::SharingMode::eExclusive;
@@ -53,13 +53,13 @@ namespace vklite {
                 .setClipped(vk::True)
                 .setOldSwapchain(nullptr);
 
-        mSwapChain = device.createSwapchainKHR(swapchainCreateInfo);
-        mDisplayImages = device.getSwapchainImagesKHR(mSwapChain);
+        mSwapChain = vkDevice.createSwapchainKHR(swapchainCreateInfo);
+        mDisplayImages = vkDevice.getSwapchainImagesKHR(mSwapChain);
         LOG_D("mDisplayImages.szie: %ld", mDisplayImages.size());
         mDisplayImageViews.resize(mDisplayImages.size());
 
         for (int i = 0; i < mDisplayImages.size(); i++) {
-            mDisplayImageViews[i] = vulkanDevice.createImageView(mDisplayImages[i], mSwapChainImageFormat.format, vk::ImageAspectFlagBits::eColor, 1);
+            mDisplayImageViews[i] = device.createImageView(mDisplayImages[i], mSwapChainImageFormat.format, vk::ImageAspectFlagBits::eColor, 1);
         }
     }
 

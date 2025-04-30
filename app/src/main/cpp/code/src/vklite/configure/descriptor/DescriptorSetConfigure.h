@@ -52,12 +52,12 @@ namespace vklite {
 
 //        DescriptorSetConfigure &addStorage(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
 
-        std::unique_ptr<VulkanDescriptorBindingSet> createVulkanDescriptorBindingSet(const Device &vulkanDevice, const VulkanCommandPool &commandPool);
+        std::unique_ptr<VulkanDescriptorBindingSet> createVulkanDescriptorBindingSet(const Device &device, const VulkanCommandPool &commandPool);
 
     private:
 //        std::vector<vk::DescriptorSetLayoutBinding> createDescriptorSetLayoutBindings();
 
-//        vk::DescriptorSetLayout createDescriptorSetLayout(const VulkanDevice &vulkanDevice);
+//        vk::DescriptorSetLayout createDescriptorSetLayout(const VulkanDevice &device);
     };
 
 } // vklite

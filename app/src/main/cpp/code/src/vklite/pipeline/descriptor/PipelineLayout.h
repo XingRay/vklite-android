@@ -28,7 +28,7 @@ namespace vklite {
         vk::PipelineLayout mPipelineLayout;
 
     public:
-        PipelineLayout(const Device &vulkanDevice,
+        PipelineLayout(const Device &device,
                        std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> &&descriptors,
                        std::vector<vk::PushConstantRange> &&pushConstantRanges);
 

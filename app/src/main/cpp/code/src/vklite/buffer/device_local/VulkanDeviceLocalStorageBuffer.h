@@ -22,7 +22,7 @@ namespace vklite {
         VulkanDeviceLocalBuffer mStorageBuffer;
 
     public:
-        VulkanDeviceLocalStorageBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlags additionalUsageFlags = vk::BufferUsageFlags{});
+        VulkanDeviceLocalStorageBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags additionalUsageFlags = vk::BufferUsageFlags{});
 
         ~VulkanDeviceLocalStorageBuffer();
 

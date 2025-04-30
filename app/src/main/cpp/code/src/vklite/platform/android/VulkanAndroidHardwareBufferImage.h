@@ -29,7 +29,7 @@ namespace vklite {
         vk::ImageView mImageView;
 
     public:
-        VulkanAndroidHardwareBufferImage(const Device &vulkanDevice,
+        VulkanAndroidHardwareBufferImage(const Device &device,
                                          const AndroidHardwareBuffer &androidHardwareBuffer,
                                          const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 

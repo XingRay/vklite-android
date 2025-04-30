@@ -8,11 +8,11 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferSampler::VulkanAndroidHardwareBufferSampler(const Device &vulkanDevice,
+    VulkanAndroidHardwareBufferSampler::VulkanAndroidHardwareBufferSampler(const Device &device,
                                                                            const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
-            : mVulkanDevice(vulkanDevice) {
+            : mVulkanDevice(device) {
 
-        vk::Device device = vulkanDevice.getDevice();
+        vk::Device vkDevice = device.getDevice();
 
         vk::SamplerCreateInfo samplerCreateInfo;
         vk::SamplerYcbcrConversionInfo conversionInfo;
@@ -37,7 +37,7 @@ namespace vklite {
                 .setBorderColor(vk::BorderColor::eFloatOpaqueWhite)
                 .setUnnormalizedCoordinates(false);
 
-        mSampler = device.createSampler(samplerCreateInfo);
+        mSampler = vkDevice.createSampler(samplerCreateInfo);
     }
 
     VulkanAndroidHardwareBufferSampler::~VulkanAndroidHardwareBufferSampler() {

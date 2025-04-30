@@ -6,10 +6,10 @@
 
 namespace vklite {
 
-    PipelineLayout::PipelineLayout(const Device &vulkanDevice,
+    PipelineLayout::PipelineLayout(const Device &device,
                                    std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> &&descriptors,
                                    std::vector<vk::PushConstantRange> &&pushConstantRanges)
-            : mVulkanDevice(vulkanDevice), mDescriptors(std::move(descriptors)), mPushConstantRanges(std::move(pushConstantRanges)) {
+            : mVulkanDevice(device), mDescriptors(std::move(descriptors)), mPushConstantRanges(std::move(pushConstantRanges)) {
 
         std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = createDescriptorSetLayouts();
 
@@ -18,7 +18,7 @@ namespace vklite {
                 .setSetLayouts(descriptorSetLayouts)
                 .setPushConstantRanges(mPushConstantRanges);
 
-        mPipelineLayout = vulkanDevice.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
+        mPipelineLayout = device.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
     }
 
     PipelineLayout::~PipelineLayout() {

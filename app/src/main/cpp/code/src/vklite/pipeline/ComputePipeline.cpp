@@ -6,12 +6,12 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    ComputePipeline::ComputePipeline(const Device &vulkanDevice,
+    ComputePipeline::ComputePipeline(const Device &device,
                                      const VulkanShaderModule &computeShaderModule,
                                      const std::vector <vk::DescriptorSetLayout> &descriptorSetLayouts,
                                      const std::vector <vk::PushConstantRange> &pushConstantRanges)
-            : mDevice(vulkanDevice) {
-        vk::Device device = vulkanDevice.getDevice();
+            : mDevice(device) {
+        vk::Device vkDevice = device.getDevice();
 
         vk::PipelineShaderStageCreateInfo computeShaderStageInfo{};
         computeShaderStageInfo
@@ -24,14 +24,14 @@ namespace vklite {
                 .setSetLayouts(descriptorSetLayouts)
                 .setPushConstantRanges(pushConstantRanges);
 
-        mPipelineLayout = vulkanDevice.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
+        mPipelineLayout = device.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
 
         vk::ComputePipelineCreateInfo computePipelineCreateInfo{};
         computePipelineCreateInfo
                 .setLayout(mPipelineLayout)
                 .setStage(computeShaderStageInfo);
 
-        auto [result, pipeline] = device.createComputePipeline(nullptr, computePipelineCreateInfo);
+        auto [result, pipeline] = vkDevice.createComputePipeline(nullptr, computePipelineCreateInfo);
         if (result != vk::Result::eSuccess) {
             throw std::runtime_error("createComputePipeline failed");
         }

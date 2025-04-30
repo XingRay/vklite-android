@@ -64,7 +64,7 @@ namespace vklite {
         ~VulkanDescriptorBufferInfoConfigure();
 
         [[nodiscard]]
-        std::unique_ptr<BufferInfo> provideVulkanDescriptorBufferInfo(const Device &vulkanDevice, const VulkanCommandPool &commandPool);
+        std::unique_ptr<BufferInfo> provideVulkanDescriptorBufferInfo(const Device &device, const VulkanCommandPool &commandPool);
 
     private:
         VulkanDescriptorBufferInfoConfigure &copyData(const void *data, uint32_t size);

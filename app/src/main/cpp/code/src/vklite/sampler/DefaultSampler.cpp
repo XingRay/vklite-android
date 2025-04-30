@@ -7,8 +7,8 @@
 
 namespace vklite {
 
-    DefaultSampler::DefaultSampler(const Device &vulkanDevice, float maxLoad)
-            : mVulkanDevice(vulkanDevice) {
+    DefaultSampler::DefaultSampler(const Device &device, float maxLoad)
+            : mVulkanDevice(device) {
 
         vk::SamplerCreateInfo samplerCreateInfo;
         samplerCreateInfo

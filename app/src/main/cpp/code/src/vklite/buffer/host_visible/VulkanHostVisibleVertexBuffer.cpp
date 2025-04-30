@@ -5,8 +5,8 @@
 #include "VulkanHostVisibleVertexBuffer.h"
 
 namespace vklite {
-    VulkanHostVisibleVertexBuffer::VulkanHostVisibleVertexBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize)
-            : mVertexBuffer(vulkanDevice, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer) {
+    VulkanHostVisibleVertexBuffer::VulkanHostVisibleVertexBuffer(const Device &device, vk::DeviceSize bufferSize)
+            : mVertexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer) {
 
     }
 

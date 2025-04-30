@@ -183,45 +183,45 @@ namespace vklite {
         if (mMsaaSelector != nullptr) {
 //            sampleCount = mMsaaSelector->select(vulkanPhysicalDevice->querySupportedSampleCounts());
         }
-//        std::unique_ptr<VulkanDevice> vulkanDevice = std::make_unique<VulkanDevice>(*vulkanPhysicalDevice,
+//        std::unique_ptr<VulkanDevice> device = std::make_unique<VulkanDevice>(*vulkanPhysicalDevice,
 //                                                                                    candidate->getSurfaceSupport().value(),
 //                                                                                    mDeviceExtensions,
 //                                                                                    instance->getEnabledLayers(),
 //                                                                                    sampleCount);
 
         // swapchain
-//        vk::Extent2D currentExtent = vulkanDevice->getCapabilities().currentExtent;
+//        vk::Extent2D currentExtent = device->getCapabilities().currentExtent;
 //        LOG_D("currentExtent:[%d x %d]", currentExtent.width, currentExtent.height);
-//        std::unique_ptr<VulkanSwapchain> swapchain = std::make_unique<VulkanSwapchain>(*vulkanDevice, *surface, currentExtent.width, currentExtent.height);
+//        std::unique_ptr<VulkanSwapchain> swapchain = std::make_unique<VulkanSwapchain>(*device, *surface, currentExtent.width, currentExtent.height);
 //
 //        // command pool
-//        std::unique_ptr<VulkanCommandPool> commandPool = std::make_unique<VulkanCommandPool>(*vulkanDevice, mFrameCount);
+//        std::unique_ptr<VulkanCommandPool> commandPool = std::make_unique<VulkanCommandPool>(*device, mFrameCount);
 //
-//        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*vulkanDevice, *swapchain);
+//        std::unique_ptr<VulkanRenderPass> renderPass = std::make_unique<VulkanRenderPass>(*device, *swapchain);
 //
 //        std::unique_ptr<GraphicsPipeline> vulkanGraphicsPipeline = nullptr;
 //        if (mVulkanGraphicsPipelineConfigure != nullptr) {
 //            LOG_D("create VulkanGraphicsPipeline");
-//            vulkanGraphicsPipeline = mVulkanGraphicsPipelineConfigure->build(*vulkanDevice, *swapchain, *renderPass);
+//            vulkanGraphicsPipeline = mVulkanGraphicsPipelineConfigure->build(*device, *swapchain, *renderPass);
 //        }
 //
 //        std::unique_ptr<ComputePipeline> vulkanComputePipeline = nullptr;
 //        if (mVulkanComputePipelineConfigure != nullptr) {
 //            LOG_D("create VulkanGraphicsPipeline");
-//            vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*vulkanDevice, *swapchain, *renderPass, *vulkanShader);
+//            vulkanComputePipeline = mVulkanComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*device, *swapchain, *renderPass, *vulkanShader);
 //        }
 //
 //        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);
 //
 //        LOG_D("create VulkanFrameBuffer");
-//        std::unique_ptr<VulkanFrameBuffer> frameBuffer = std::make_unique<VulkanFrameBuffer>(*vulkanDevice, *swapchain, *renderPass, *commandPool);
+//        std::unique_ptr<VulkanFrameBuffer> frameBuffer = std::make_unique<VulkanFrameBuffer>(*device, *swapchain, *renderPass, *commandPool);
 //        LOG_D("create VulkanSyncObject");
-//        std::unique_ptr<VulkanSyncObject> syncObject = std::make_unique<VulkanSyncObject>(*vulkanDevice, mFrameCount);
+//        std::unique_ptr<VulkanSyncObject> syncObject = std::make_unique<VulkanSyncObject>(*device, mFrameCount);
 //
 //        return std::make_unique<VkLiteEngine>(std::move(instance),
 //                                              std::move(surface),
 //                                              std::move(vulkanPhysicalDevice),
-//                                              std::move(vulkanDevice),
+//                                              std::move(device),
 //                                              std::move(commandPool),
 //                                              std::move(swapchain),
 //                                              std::move(renderPass),

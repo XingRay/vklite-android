@@ -73,12 +73,12 @@ namespace vklite {
         return descriptorSetLayoutBinding;
     }
 
-//    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) {
+//    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &device, const VulkanCommandPool &commandPool) {
 //        std::unique_ptr<VulkanDescriptorBinding> vulkanDescriptorBinding = std::make_unique<VulkanDescriptorBinding>(mDescriptorType, mDescriptorOffset, mDescriptorRange);
 //        if (mDescriptorType == vk::DescriptorType::eUniformBuffer) {
-//            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mVulkanDescriptorBufferInfoConfigure->provideVulkanDescriptorBufferInfo(vulkanDevice, commandPool));
+//            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mVulkanDescriptorBufferInfoConfigure->provideVulkanDescriptorBufferInfo(device, commandPool));
 //        } else if (mDescriptorType == vk::DescriptorType::eCombinedImageSampler) {
-//            vulkanDescriptorBinding->setVulkanDescriptorImageInfo(mVulkanDescriptorImageInfoConfigure->provideVulkanDescriptorImageInfo(vulkanDevice, commandPool));
+//            vulkanDescriptorBinding->setVulkanDescriptorImageInfo(mVulkanDescriptorImageInfoConfigure->provideVulkanDescriptorImageInfo(device, commandPool));
 //        } else {
 //            throw std::runtime_error("unknown descriptor type.");
 //        }

@@ -7,16 +7,16 @@
 
 namespace vklite {
 
-    GraphicsPipeline::GraphicsPipeline(const Device &vulkanDevice,
+    GraphicsPipeline::GraphicsPipeline(const Device &device,
                                        const Swapchain &swapchain,
                                        const VulkanRenderPass &renderPass,
                                        const VulkanShaderModule &vertexShaderModule,
                                        const VulkanShaderModule &fragmentShaderModule,
                                        const VertexBufferDescription &vertexBufferDescription,
                                        std::unique_ptr<PipelineLayout> &&pipelineLayout)
-            : mVulkanDevice(vulkanDevice), mPipelineLayout(std::move(pipelineLayout)) {
+            : mVulkanDevice(device), mPipelineLayout(std::move(pipelineLayout)) {
 
-        vk::Device device = vulkanDevice.getDevice();
+        vk::Device vkDevice = device.getDevice();
 
         // input assembler
         vk::PipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo;
@@ -119,7 +119,7 @@ namespace vklite {
                         // 光栅化时的采样数, 采样数越多，抗锯齿效果越好，但性能开销也越大
                         // vk::SampleCountFlagBits::e1：禁用多重采样（默认）。
                         // vk::SampleCountFlagBits::e2、e4、e8、e16：启用多重采样
-//                .setRasterizationSamples(vulkanDevice.getMsaaSamples())
+//                .setRasterizationSamples(device.getMsaaSamples())
 //todo: msaa samplers
                 .setRasterizationSamples(vk::SampleCountFlagBits::e1)
                         // 最小采样着色率, 仅在 sampleShadingEnable 为 vk::True 时有效
@@ -187,7 +187,7 @@ namespace vklite {
                 .setBasePipelineHandle(nullptr)
                 .setBasePipelineIndex(-1);
 
-        auto [result, pipeline] = device.createGraphicsPipeline(nullptr, graphicsPipelineCreateInfo);
+        auto [result, pipeline] = vkDevice.createGraphicsPipeline(nullptr, graphicsPipelineCreateInfo);
         if (result != vk::Result::eSuccess) {
             throw std::runtime_error("createGraphicsPipelines failed");
         }

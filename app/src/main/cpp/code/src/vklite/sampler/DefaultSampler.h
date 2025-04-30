@@ -21,7 +21,7 @@ namespace vklite {
 
     public:
 
-        DefaultSampler(const Device &vulkanDevice, float maxLoad);
+        DefaultSampler(const Device &device, float maxLoad);
 
         ~DefaultSampler() override;
 

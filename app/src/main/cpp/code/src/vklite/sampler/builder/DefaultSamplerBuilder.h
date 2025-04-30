@@ -20,7 +20,7 @@ namespace vklite {
 
         DefaultSamplerBuilder &setMaxLoad(float maxLoad);
 
-        std::unique_ptr<SamplerInterface> build(const Device &vulkanDevice) override;
+        std::unique_ptr<SamplerInterface> build(const Device &device) override;
 
     };
 

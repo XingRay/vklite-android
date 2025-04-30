@@ -40,7 +40,7 @@ namespace vklite {
 //        return *this;
 //    }
 //
-//    std::shared_ptr<VulkanDeviceLocalVertexBuffer> VertexBindingConfigure::createVertexBuffer(const VulkanDevice &vulkanDevice, const VulkanCommandPool &commandPool) const {
+//    std::shared_ptr<VulkanDeviceLocalVertexBuffer> VertexBindingConfigure::createVertexBuffer(const VulkanDevice &device, const VulkanCommandPool &commandPool) const {
 //        if (mBuffer != nullptr) {
 //            return mBuffer;
 //        }
@@ -49,7 +49,7 @@ namespace vklite {
 //            return nullptr;
 //        }
 //
-//        std::shared_ptr<VulkanDeviceLocalVertexBuffer> buffer = std::make_shared<VulkanDeviceLocalVertexBuffer>(vulkanDevice, mCreateBufferCapacity);
+//        std::shared_ptr<VulkanDeviceLocalVertexBuffer> buffer = std::make_shared<VulkanDeviceLocalVertexBuffer>(device, mCreateBufferCapacity);
 //        if (!mCreateBufferData.empty()) {
 //            buffer->update(commandPool, mCreateBufferData);
 //        }

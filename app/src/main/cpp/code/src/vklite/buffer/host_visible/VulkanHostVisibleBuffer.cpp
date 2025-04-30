@@ -9,11 +9,11 @@
 
 namespace vklite {
 
-    VulkanHostVisibleBuffer::VulkanHostVisibleBuffer(const Device &vulkanDevice, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits)
-            : mVulkanDevice(vulkanDevice), mBufferSize(bufferSize) {
-        std::tie(mBuffer, mDeviceMemory) = vulkanDevice.createBuffer(bufferSize, bufferUsageFlagBits,
+    VulkanHostVisibleBuffer::VulkanHostVisibleBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits)
+            : mVulkanDevice(device), mBufferSize(bufferSize) {
+        std::tie(mBuffer, mDeviceMemory) = device.createBuffer(bufferSize, bufferUsageFlagBits,
                                                                      vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
-        mMappedMemoryPointer = vulkanDevice.getDevice().mapMemory(mDeviceMemory, 0, bufferSize, vk::MemoryMapFlags{});
+        mMappedMemoryPointer = device.getDevice().mapMemory(mDeviceMemory, 0, bufferSize, vk::MemoryMapFlags{});
     }
 
     vklite::VulkanHostVisibleBuffer::~VulkanHostVisibleBuffer() {

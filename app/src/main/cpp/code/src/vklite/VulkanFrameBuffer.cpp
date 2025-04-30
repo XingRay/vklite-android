@@ -8,31 +8,31 @@
 
 namespace vklite {
 
-    VulkanFrameBuffer::VulkanFrameBuffer(const Device &vulkanDevice, const Swapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
-            : mDevice(vulkanDevice) {
+    VulkanFrameBuffer::VulkanFrameBuffer(const Device &device, const Swapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const VulkanCommandPool &commandPool)
+            : mDevice(device) {
 
-        const vk::Device device = vulkanDevice.getDevice();
+        const vk::Device vkDevice = device.getDevice();
         vk::Format colorFormat = vulkanSwapchain.getDisplayFormat();
         vk::Extent2D displaySize = vulkanSwapchain.getDisplaySize();
 
-        std::tie(mColorImage, mColorDeviceMemory) = vulkanDevice.createImage(displaySize.width, displaySize.height, 1,
+        std::tie(mColorImage, mColorDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
                 //todo: msaa samples
-                /*vulkanDevice.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
+                /*device.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
                                                                              colorFormat,
                                                                              vk::ImageTiling::eOptimal, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
                                                                              vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mColorImageView = vulkanDevice.createImageView(mColorImage, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+        mColorImageView = device.createImageView(mColorImage, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
 
-        vk::Format depthFormat = vulkanDevice.getPhysicalDevice().findDepthFormat();
+        vk::Format depthFormat = device.getPhysicalDevice().findDepthFormat();
 
-        std::tie(mDepthImage, mDepthDeviceMemory) = vulkanDevice.createImage(displaySize.width, displaySize.height, 1,
+        std::tie(mDepthImage, mDepthDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
                 //todo: msaa samples
-                /*vulkanDevice.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
+                /*device.getMsaaSamples(),*/vk::SampleCountFlagBits::e1,
                                                                              depthFormat,
                                                                              vk::ImageTiling::eOptimal,
                                                                              vk::ImageUsageFlagBits::eDepthStencilAttachment,
                                                                              vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mDepthImageView = vulkanDevice.createImageView(mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
+        mDepthImageView = device.createImageView(mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
 
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
             VulkanUtil::recordTransitionImageLayoutCommand(commandBuffer, mDepthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
@@ -56,7 +56,7 @@ namespace vklite {
                     .setHeight(displaySize.height)
                     .setLayers(1);
 
-            mFrameBuffers[i] = device.createFramebuffer(framebufferCreateInfo);
+            mFrameBuffers[i] = vkDevice.createFramebuffer(framebufferCreateInfo);
         }
     }
 
