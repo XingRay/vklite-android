@@ -10,13 +10,13 @@
 namespace vklite {
 
     VulkanDeviceLocalBuffer::VulkanDeviceLocalBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits)
-            : mVulkanDevice(device), mBufferSize(bufferSize) {
+            : mDevice(device), mBufferSize(bufferSize) {
         std::tie(mBuffer, mDeviceMemory) = device.createBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferDst | bufferUsageFlagBits,
                                                                      vk::MemoryPropertyFlagBits::eDeviceLocal);
     }
 
     vklite::VulkanDeviceLocalBuffer::~VulkanDeviceLocalBuffer() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.unmapMemory(mDeviceMemory);
         device.destroy(mBuffer);

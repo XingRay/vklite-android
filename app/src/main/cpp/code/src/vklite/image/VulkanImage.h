@@ -14,7 +14,7 @@ namespace vklite {
 
     class VulkanImage : public VulkanImageInterface {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::Format mImageFormat;
         uint32_t mMipLevels;

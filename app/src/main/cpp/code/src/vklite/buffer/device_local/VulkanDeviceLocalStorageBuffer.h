@@ -16,7 +16,7 @@ namespace vklite {
 
     class VulkanDeviceLocalStorageBuffer {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         VulkanStagingBuffer mStagingBuffer;
         VulkanDeviceLocalBuffer mStorageBuffer;

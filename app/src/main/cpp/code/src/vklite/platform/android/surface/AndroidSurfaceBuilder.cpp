@@ -12,8 +12,8 @@ namespace vklite {
 
     AndroidSurfaceBuilder::~AndroidSurfaceBuilder() = default;
 
-    std::unique_ptr<Surface> AndroidSurfaceBuilder::build(const Instance &vulkanInstance) const {
-        return std::make_unique<AndroidSurface>(vulkanInstance, mWindow);
+    std::unique_ptr<Surface> AndroidSurfaceBuilder::build(const Instance &instance) const {
+        return std::make_unique<AndroidSurface>(instance, mWindow);
     }
 
 } // vklite

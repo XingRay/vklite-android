@@ -7,14 +7,14 @@
 
 namespace vklite {
     AndroidHardwareBuffer::AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer)
-            : mVulkanDevice(device), mHardwareBuffer(hardwareBuffer) {
+            : mDevice(device), mHardwareBuffer(hardwareBuffer) {
 
     }
 
     AndroidHardwareBuffer::~AndroidHardwareBuffer() = default;
 
     vk::AndroidHardwareBufferPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferProperties() const {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
         vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
@@ -25,7 +25,7 @@ namespace vklite {
     }
 
     vk::AndroidHardwareBufferFormatPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferFormatProperties() const {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
         vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;

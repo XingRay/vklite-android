@@ -22,7 +22,7 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferImage : public VulkanImageInterface {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;

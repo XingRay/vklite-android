@@ -90,7 +90,7 @@ namespace vklite {
 //        }
 //
 //        if (!writeDescriptorSets.empty()) {
-//            mVulkanDevice.getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
+//            mDevice.getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 //        }
 //    }
 

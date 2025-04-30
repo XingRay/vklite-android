@@ -9,7 +9,7 @@ namespace vklite {
 
     VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const Device &device,
                                                                                            const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo)
-            : mVulkanDevice(device) {
+            : mDevice(device) {
 
         vk::ExternalFormatANDROID externalFormat;
         if (formatInfo.format == vk::Format::eUndefined) {
@@ -41,7 +41,7 @@ namespace vklite {
     }
 
     VulkanAndroidHardwareBufferYcbcrConversion::~VulkanAndroidHardwareBufferYcbcrConversion() {
-        const vk::Device &device = mVulkanDevice.getDevice();
+        const vk::Device &device = mDevice.getDevice();
 
         // device.destroySamplerYcbcrConversion(mConversion); // link error
         vkDestroySamplerYcbcrConversion(device, mSamplerYcbcrConversion, nullptr);

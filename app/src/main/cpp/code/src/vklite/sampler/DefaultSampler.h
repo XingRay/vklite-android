@@ -15,7 +15,7 @@ namespace vklite {
 
     class DefaultSampler : public SamplerInterface {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::Sampler mSampler;
 

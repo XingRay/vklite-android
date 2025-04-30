@@ -13,8 +13,8 @@ namespace vklite {
     VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const Device &device,
                                                                        const AndroidHardwareBuffer &androidHardwareBuffer,
                                                                        const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
-            : mVulkanDevice(device) {
-        vk::Device vkDevice = mVulkanDevice.getDevice();
+            : mDevice(device) {
+        vk::Device vkDevice = mDevice.getDevice();
 
         AHardwareBuffer_Desc hardwareBufferDescription = androidHardwareBuffer.getAndroidHardwareBufferDescription();
         vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties = androidHardwareBuffer.getAndroidHardwareBufferProperties();
@@ -67,7 +67,7 @@ namespace vklite {
                 .setPNext(&hardwareBufferInfo);
 
         // 获取图像的内存需求
-        uint32_t memoryType = mVulkanDevice.getPhysicalDevice().findMemoryType(hardwareBufferProperties.memoryTypeBits);
+        uint32_t memoryType = mDevice.getPhysicalDevice().findMemoryType(hardwareBufferProperties.memoryTypeBits);
 
         // 分配内存并绑定到图像
         vk::MemoryAllocateInfo memoryAllocateInfo{};
@@ -137,7 +137,7 @@ namespace vklite {
     }
 
     VulkanAndroidHardwareBufferImage::~VulkanAndroidHardwareBufferImage() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.destroyImageView(mImageView);
         device.destroyImage(mImage);

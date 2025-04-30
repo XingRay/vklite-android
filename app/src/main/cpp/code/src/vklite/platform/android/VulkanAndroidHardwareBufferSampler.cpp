@@ -10,7 +10,7 @@ namespace vklite {
 
     VulkanAndroidHardwareBufferSampler::VulkanAndroidHardwareBufferSampler(const Device &device,
                                                                            const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
-            : mVulkanDevice(device) {
+            : mDevice(device) {
 
         vk::Device vkDevice = device.getDevice();
 
@@ -41,7 +41,7 @@ namespace vklite {
     }
 
     VulkanAndroidHardwareBufferSampler::~VulkanAndroidHardwareBufferSampler() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.destroySampler(mSampler);
     }

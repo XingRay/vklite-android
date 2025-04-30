@@ -12,7 +12,7 @@ namespace vklite {
 
     class VulkanAndroidHardwareBufferYcbcrConversion {
     private:
-        const Device& mVulkanDevice;
+        const Device& mDevice;
 
         vk::SamplerYcbcrConversion mSamplerYcbcrConversion;
 

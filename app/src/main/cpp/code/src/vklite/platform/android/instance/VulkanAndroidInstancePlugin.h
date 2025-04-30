@@ -18,7 +18,7 @@ namespace vklite {
 
         ~VulkanAndroidInstancePlugin() override;
 
-        void onInstanceCreated(const Instance &vulkanInstance) override;
+        void onInstanceCreated(const Instance &instance) override;
     };
 
 } // vklite

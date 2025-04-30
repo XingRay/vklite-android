@@ -7,7 +7,7 @@
 namespace vklite {
 
     DescriptorPool::DescriptorPool(const Device &device, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets)
-            : mVulkanDevice(device) {
+            : mDevice(device) {
 
         vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;
         descriptorPoolCreateInfo
@@ -15,11 +15,11 @@ namespace vklite {
                 .setMaxSets(maxSets)
                 .setFlags(vk::DescriptorPoolCreateFlags{});
 
-        mDescriptorPool = mVulkanDevice.getDevice().createDescriptorPool(descriptorPoolCreateInfo);
+        mDescriptorPool = mDevice.getDevice().createDescriptorPool(descriptorPoolCreateInfo);
     }
 
     DescriptorPool::~DescriptorPool() {
-        mVulkanDevice.getDevice().destroy(mDescriptorPool);
+        mDevice.getDevice().destroy(mDescriptorPool);
     }
 
     const vk::DescriptorPool &DescriptorPool::getDescriptorPool() const {
@@ -32,7 +32,7 @@ namespace vklite {
                 .setDescriptorPool(mDescriptorPool)
                 .setSetLayouts(descriptorSetLayouts);
 
-        return mVulkanDevice.getDevice().allocateDescriptorSets(allocateInfo);
+        return mDevice.getDevice().allocateDescriptorSets(allocateInfo);
     }
 
 } // vklite

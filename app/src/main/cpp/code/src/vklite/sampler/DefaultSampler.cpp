@@ -8,7 +8,7 @@
 namespace vklite {
 
     DefaultSampler::DefaultSampler(const Device &device, float maxLoad)
-            : mVulkanDevice(device) {
+            : mDevice(device) {
 
         vk::SamplerCreateInfo samplerCreateInfo;
         samplerCreateInfo
@@ -18,7 +18,7 @@ namespace vklite {
                 .setAddressModeV(vk::SamplerAddressMode::eRepeat)
                 .setAddressModeW(vk::SamplerAddressMode::eRepeat)
                 .setAnisotropyEnable(vk::True)
-                .setMaxAnisotropy(mVulkanDevice.getPhysicalDevice().getMaxSamplerAnisotropy())
+                .setMaxAnisotropy(mDevice.getPhysicalDevice().getMaxSamplerAnisotropy())
                 .setBorderColor(vk::BorderColor::eIntOpaqueBlack)
                         // 是否使用不归一化的坐标(x:[0~width], y:[0~height])
                         // 设置为 false 就是使用归一化坐标 (x:[0~1.0], y:[0~1.0])
@@ -32,11 +32,11 @@ namespace vklite {
                         //.setMinLod(static_cast<float >(mVulkanImage.getMipLevels() / 2))
                 .setMaxLod(maxLoad);
 
-        mSampler = mVulkanDevice.getDevice().createSampler(samplerCreateInfo);
+        mSampler = mDevice.getDevice().createSampler(samplerCreateInfo);
     }
 
     DefaultSampler::~DefaultSampler() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.destroy(mSampler);
     }

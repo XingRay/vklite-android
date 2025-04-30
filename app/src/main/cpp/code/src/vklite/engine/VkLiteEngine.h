@@ -44,7 +44,7 @@ namespace vklite {
         std::unique_ptr<Instance> mInstance;
         std::unique_ptr<Surface> mSurface;
         std::unique_ptr<PhysicalDevice> mPhysicalDevice;
-        std::unique_ptr<Device> mVulkanDevice;
+        std::unique_ptr<Device> mDevice;
 
         std::unique_ptr<Swapchain> mSwapchain;
         std::unique_ptr<VulkanRenderPass> mRenderPass;
@@ -60,7 +60,7 @@ namespace vklite {
         std::unique_ptr<VulkanSyncObject> mSyncObject;
 
     public:
-        VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
+        VkLiteEngine(std::unique_ptr<Instance> instance,
                      std::unique_ptr<Surface> vulkanSurface,
                      std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                      std::unique_ptr<Device> device,

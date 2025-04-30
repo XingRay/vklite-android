@@ -14,7 +14,7 @@ namespace vklite {
                                        const VulkanShaderModule &fragmentShaderModule,
                                        const VertexBufferDescription &vertexBufferDescription,
                                        std::unique_ptr<PipelineLayout> &&pipelineLayout)
-            : mVulkanDevice(device), mPipelineLayout(std::move(pipelineLayout)) {
+            : mDevice(device), mPipelineLayout(std::move(pipelineLayout)) {
 
         vk::Device vkDevice = device.getDevice();
 
@@ -220,7 +220,7 @@ namespace vklite {
 
     GraphicsPipeline::~GraphicsPipeline() {
         LOG_D("GraphicsPipeline::~GraphicsPipeline");
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
         device.destroy(mPipeline);
     }
 
@@ -249,7 +249,7 @@ namespace vklite {
 //    }
 //
 //    GraphicsPipeline &GraphicsPipeline::createVertexBuffer(uint32_t binding, size_t size) {
-//        mVulkanVertexBuffers[binding] = std::make_shared<VulkanDeviceLocalVertexBuffer>(mVulkanDevice, size);
+//        mVulkanVertexBuffers[binding] = std::make_shared<VulkanDeviceLocalVertexBuffer>(mDevice, size);
 //        mVertexBuffers[binding] = mVulkanVertexBuffers.back()->getBuffer();
 //        mVertexBufferOffsets[binding] = 0;
 //
@@ -278,7 +278,7 @@ namespace vklite {
 //
 //    GraphicsPipeline &GraphicsPipeline::createIndexBuffer(size_t size) {
 //        mIndexBuffer.reset();
-//        mIndexBuffer = std::make_unique<VulkanDeviceLocalIndexBuffer>(mVulkanDevice, size);
+//        mIndexBuffer = std::make_unique<VulkanDeviceLocalIndexBuffer>(mDevice, size);
 //
 //        return *this;
 //    }
@@ -367,7 +367,7 @@ namespace vklite {
 //        }
 //
 //        if (!writeDescriptorSets.empty()) {
-//            mVulkanDevice.getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
+//            mDevice.getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 //        }
 //    }
 

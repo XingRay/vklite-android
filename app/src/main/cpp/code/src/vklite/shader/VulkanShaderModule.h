@@ -11,7 +11,7 @@
 namespace vklite {
 
     class VulkanShaderModule {
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::ShaderModule mShaderModule;
 

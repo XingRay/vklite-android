@@ -17,7 +17,7 @@ namespace vklite {
      */
     class VulkanDeviceLocalBuffer {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::Buffer mBuffer;
         vk::DeviceSize mBufferSize;

@@ -12,7 +12,7 @@ namespace vklite {
 
     class AndroidHardwareBuffer {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
         AHardwareBuffer *mHardwareBuffer;
 
     public:

@@ -6,7 +6,7 @@
 
 namespace vklite {
     VulkanShaderModule::VulkanShaderModule(const Device &device, const std::vector<char> &code)
-            : mVulkanDevice(device) {
+            : mDevice(device) {
         vk::ShaderModuleCreateInfo createInfo;
         createInfo
                 .setCodeSize(code.size())
@@ -16,7 +16,7 @@ namespace vklite {
     }
 
     VulkanShaderModule::~VulkanShaderModule() {
-        mVulkanDevice.getDevice().destroy(mShaderModule);
+        mDevice.getDevice().destroy(mShaderModule);
     }
 
     const vk::ShaderModule &VulkanShaderModule::getShaderModule() const {

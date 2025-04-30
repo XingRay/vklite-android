@@ -28,7 +28,7 @@ namespace vklite {
 
     class GraphicsPipeline {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;

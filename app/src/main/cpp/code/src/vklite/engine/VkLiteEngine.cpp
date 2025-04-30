@@ -14,7 +14,7 @@
 
 namespace vklite {
 
-    VkLiteEngine::VkLiteEngine(std::unique_ptr<Instance> vulkanInstance,
+    VkLiteEngine::VkLiteEngine(std::unique_ptr<Instance> instance,
                                std::unique_ptr<Surface> vulkanSurface,
                                std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
                                std::unique_ptr<Device> device,
@@ -28,10 +28,10 @@ namespace vklite {
                                std::unique_ptr<VulkanSyncObject> syncObject,
                                uint32_t frameCount) {
 
-        mInstance = std::move(vulkanInstance);
+        mInstance = std::move(instance);
         mSurface = std::move(vulkanSurface);
         mPhysicalDevice = std::move(vulkanPhysicalDevice);
-        mVulkanDevice = std::move(device);
+        mDevice = std::move(device);
         mVulkanCommandPool = std::move(commandPool);
         mSwapchain = std::move(swapchain);
         mRenderPass = std::move(renderPass);
@@ -55,7 +55,7 @@ namespace vklite {
         if (mPhysicalDevice == nullptr) {
             throw std::runtime_error("mPhysicalDevice == nullptr");
         }
-        if (mVulkanDevice == nullptr) {
+        if (mDevice == nullptr) {
             throw std::runtime_error("mDevice == nullptr");
         }
         if (mVulkanCommandPool == nullptr) {
@@ -95,7 +95,7 @@ namespace vklite {
 
         mRenderPass.reset();
         mSwapchain.reset();
-        mVulkanDevice.reset();
+        mDevice.reset();
         mSurface.reset();
         mInstance.reset();
     }
@@ -105,7 +105,7 @@ namespace vklite {
     }
 
     vk::Device VkLiteEngine::getVKDevice() const {
-        return mVulkanDevice->getDevice();
+        return mDevice->getDevice();
     }
 
     const VulkanCommandPool &VkLiteEngine::getVulkanCommandPool() const {
@@ -176,7 +176,7 @@ namespace vklite {
     }
 
     void VkLiteEngine::drawFrame() {
-        const vk::Device device = mVulkanDevice->getDevice();
+        const vk::Device device = mDevice->getDevice();
         vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
         vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
         vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
@@ -265,7 +265,7 @@ namespace vklite {
                 .setSignalSemaphores(signalSemaphores);
 
         std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
-        mVulkanDevice->getGraphicsQueue().submit(submitInfos, fence);
+        mDevice->getGraphicsQueue().submit(submitInfos, fence);
 
         std::array<vk::SwapchainKHR, 1> swapChains = {mSwapchain->getSwapChain()};
         std::array<uint32_t, 1> imageIndices = {imageIndex};
@@ -280,7 +280,7 @@ namespace vklite {
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
         // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
         try {
-            result = mVulkanDevice->getPresentQueue().presentKHR(presentInfo);
+            result = mDevice->getPresentQueue().presentKHR(presentInfo);
         } catch (const vk::OutOfDateKHRError &e) {
             LOG_E("mPresentQueue.presentKHR => OutOfDateKHRError");
             result = vk::Result::eErrorOutOfDateKHR;

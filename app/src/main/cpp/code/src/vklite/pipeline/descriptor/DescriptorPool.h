@@ -12,7 +12,7 @@ namespace vklite {
 
     class DescriptorPool {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         vk::DescriptorPool mDescriptorPool;
     public:

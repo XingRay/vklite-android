@@ -17,7 +17,7 @@ namespace vklite {
 
     class PipelineLayout {
     private:
-        const Device &mVulkanDevice;
+        const Device &mDevice;
 
         // [set/binding] -> Descriptor
         std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> mDescriptors;

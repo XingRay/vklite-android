@@ -8,9 +8,9 @@
 namespace vklite {
 
     VulkanImage::VulkanImage(const Device &device, uint32_t width, uint32_t height, vk::Format format)
-            : mVulkanDevice(device), mWidth(width), mHeight(height) {
+            : mDevice(device), mWidth(width), mHeight(height) {
 
-        const vk::Device &vkDevice = mVulkanDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
         mMipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
         vk::MemoryPropertyFlagBits memoryProperty = vk::MemoryPropertyFlagBits::eDeviceLocal;
@@ -58,14 +58,14 @@ namespace vklite {
 
         vkDevice.bindImageMemory(mImage, mDeviceMemory, 0);
 
-        mImageView = mVulkanDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
+        mImageView = mDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
         uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
         mVulkanStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
     VulkanImage::~VulkanImage() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.destroy(mImageView);
         device.destroy(mImage);
@@ -180,7 +180,7 @@ namespace vklite {
     }
 
     void VulkanImage::generateMipmaps(const VulkanCommandPool &vulkanCommandPool) {
-        if (!mVulkanDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
+        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }
 

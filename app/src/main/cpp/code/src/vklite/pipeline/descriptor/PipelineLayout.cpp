@@ -9,7 +9,7 @@ namespace vklite {
     PipelineLayout::PipelineLayout(const Device &device,
                                    std::unique_ptr<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>> &&descriptors,
                                    std::vector<vk::PushConstantRange> &&pushConstantRanges)
-            : mVulkanDevice(device), mDescriptors(std::move(descriptors)), mPushConstantRanges(std::move(pushConstantRanges)) {
+            : mDevice(device), mDescriptors(std::move(descriptors)), mPushConstantRanges(std::move(pushConstantRanges)) {
 
         std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = createDescriptorSetLayouts();
 
@@ -22,7 +22,7 @@ namespace vklite {
     }
 
     PipelineLayout::~PipelineLayout() {
-        vk::Device device = mVulkanDevice.getDevice();
+        vk::Device device = mDevice.getDevice();
 
         device.destroy(mPipelineLayout);
     }
@@ -32,7 +32,7 @@ namespace vklite {
     }
 
     std::vector<vk::DescriptorSetLayout> PipelineLayout::createDescriptorSetLayouts() const {
-        const vk::Device &device = mVulkanDevice.getDevice();
+        const vk::Device &device = mDevice.getDevice();
         std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
 
         for (const auto &setEntry: *mDescriptors) {
@@ -96,7 +96,7 @@ namespace vklite {
             }
         }
 
-        return std::make_unique<DescriptorPool>(mVulkanDevice, descriptorPoolSizes, (*mDescriptors).size() * frameCount);
+        return std::make_unique<DescriptorPool>(mDevice, descriptorPoolSizes, (*mDescriptors).size() * frameCount);
     }
 
     uint32_t PipelineLayout::calcTotalPushConstantSize() const {
