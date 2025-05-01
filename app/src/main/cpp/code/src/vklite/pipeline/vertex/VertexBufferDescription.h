@@ -8,8 +8,6 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/buffer/device_local/VulkanDeviceLocalVertexBuffer.h"
-
 namespace vklite {
 
     class VertexBufferDescription {

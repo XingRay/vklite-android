@@ -14,14 +14,14 @@
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/buffer/device_local/VulkanDeviceLocalIndexBuffer.h"
+#include "vklite/index_buffer/IndexBuffer.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
 #include "vklite/pipeline/descriptor/VulkanDescriptorBindingSets.h"
 #include "vklite/pipeline/resource/BufferInfo.h"
 #include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/pipeline/descriptor/PipelineLayout.h"
-#include "vklite/vertex/description/VertexBufferDescription.h"
+#include "vklite/pipeline/vertex/VertexBufferDescription.h"
 #include "vklite/pipeline/resource/PipelineResource.h"
 
 namespace vklite {

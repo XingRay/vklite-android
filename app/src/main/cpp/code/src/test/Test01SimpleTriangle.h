@@ -44,6 +44,8 @@ namespace test01 {
         std::unique_ptr<vklite::SyncObject> mSyncObject;
         std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
         std::vector<vklite::PipelineResource> mPipelineResources;
+        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
+        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

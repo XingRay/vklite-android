@@ -7,8 +7,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "vklite/vertex/buffer/VertexBufferConfigure.h"
-#include "vklite/configure/index_buffer/IndexBufferConfigure.h"
+//#include "vklite/vertex/buffer/VertexBufferConfigure.h"
+#include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/pipeline/resource/PipelineResource.h"
 
 namespace vklite {
@@ -19,11 +19,11 @@ namespace vklite {
         /**
          * vertex buffer
          */
-        VertexBufferConfigure mVertexBufferConfigure;
+//        VertexBufferConfigure mVertexBufferConfigure;
         /**
          * index buffer
          */
-        IndexBufferConfigure mIndexConfigure;
+        IndexBufferBuilder mIndexConfigure;
 
     public:
         PipelineResourceBuilder();
@@ -33,7 +33,7 @@ namespace vklite {
         /**
          * index
          */
-        PipelineResourceBuilder &index(const std::function<void(IndexBufferConfigure &)> &configure);
+        PipelineResourceBuilder &index(const std::function<void(IndexBufferBuilder &)> &configure);
 
         PipelineResourceBuilder &index(uint32_t capacity);
 
@@ -41,10 +41,10 @@ namespace vklite {
 
         PipelineResourceBuilder &index(std::vector<uint32_t> &&indices);
 
-        PipelineResourceBuilder &index(const std::shared_ptr<VulkanDeviceLocalIndexBuffer> &indexBuffer);
+        PipelineResourceBuilder &index(const std::shared_ptr<IndexBuffer> &indexBuffer);
 
         [[nodiscard]]
-        std::vector<PipelineResource> createPipelineResources(uint32_t frameCount);
+        std::vector<PipelineResource> build(uint32_t frameCount);
     };
 
 } // vklite

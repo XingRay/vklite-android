@@ -5,11 +5,11 @@
 #pragma once
 
 #include "GraphicsPipeline.h"
-#include "vklite/vertex/configure/VertexConfigure.h"
-#include "vklite/configure/index_buffer/IndexBufferConfigure.h"
+#include "vklite/pipeline/vertex/VertexConfigure.h"
+#include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/configure/push_constants/PushConstantConfigures.h"
 #include "vklite/configure/descriptor/PipelineLayoutConfigure.h"
-#include "vklite/vertex/configure/VertexBindingConfigure.h"
+#include "vklite/pipeline/vertex/VertexBindingConfigure.h"
 
 namespace vklite {
 

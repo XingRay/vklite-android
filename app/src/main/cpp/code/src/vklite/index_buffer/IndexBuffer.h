@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "VulkanDeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/VulkanDeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
-    class VulkanDeviceLocalIndexBuffer {
+    class IndexBuffer {
     private:
         VulkanDeviceLocalBuffer mIndexBuffer;
         uint32_t mIndicesCount;
@@ -18,9 +18,9 @@ namespace vklite {
         VulkanStagingBuffer mStagingBuffer;
 
     public:
-        VulkanDeviceLocalIndexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        IndexBuffer(const Device &device, vk::DeviceSize bufferSize);
 
-        ~VulkanDeviceLocalIndexBuffer();
+        ~IndexBuffer();
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;

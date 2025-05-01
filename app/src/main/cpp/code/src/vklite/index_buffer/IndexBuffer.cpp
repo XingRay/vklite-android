@@ -2,34 +2,34 @@
 // Created by leixing on 2025/3/13.
 //
 
-#include "VulkanDeviceLocalIndexBuffer.h"
+#include "IndexBuffer.h"
 
 namespace vklite {
 
-    VulkanDeviceLocalIndexBuffer::VulkanDeviceLocalIndexBuffer(const Device &device, vk::DeviceSize bufferSize)
+    IndexBuffer::IndexBuffer(const Device &device, vk::DeviceSize bufferSize)
             : mIndexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer),
               mStagingBuffer(device, bufferSize) {
 
     }
 
-    VulkanDeviceLocalIndexBuffer::~VulkanDeviceLocalIndexBuffer() = default;
+    IndexBuffer::~IndexBuffer() = default;
 
     [[nodiscard]]
-    const vk::Buffer &VulkanDeviceLocalIndexBuffer::getBuffer() const {
+    const vk::Buffer &IndexBuffer::getBuffer() const {
         return mIndexBuffer.getBuffer();
     }
 
     [[nodiscard]]
-    const vk::DeviceMemory &VulkanDeviceLocalIndexBuffer::getDeviceMemory() const {
+    const vk::DeviceMemory &IndexBuffer::getDeviceMemory() const {
         return mIndexBuffer.getDeviceMemory();
     }
 
     [[nodiscard]]
-    uint32_t VulkanDeviceLocalIndexBuffer::getIndicesCount() const {
+    uint32_t IndexBuffer::getIndicesCount() const {
         return mIndicesCount;
     }
 
-    void VulkanDeviceLocalIndexBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
+    void IndexBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 
@@ -37,7 +37,7 @@ namespace vklite {
         mIndexBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
     }
 
-    void VulkanDeviceLocalIndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
+    void IndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 

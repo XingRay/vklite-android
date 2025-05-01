@@ -4,21 +4,21 @@
 
 #pragma once
 
-#include "VulkanDeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/VulkanDeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
-    class VulkanDeviceLocalVertexBuffer {
+    class VertexBuffer {
     private:
         VulkanDeviceLocalBuffer mVertexBuffer;
         VulkanStagingBuffer mStagingBuffer;
 
     public:
-        VulkanDeviceLocalVertexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        VertexBuffer(const Device &device, vk::DeviceSize bufferSize);
 
-        ~VulkanDeviceLocalVertexBuffer();
+        ~VertexBuffer();
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;

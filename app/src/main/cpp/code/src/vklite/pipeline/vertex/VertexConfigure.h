@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #include "VertexBindingConfigure.h"
-#include "vklite/vertex/description/VertexBufferDescription.h"
+#include "VertexBufferDescription.h"
 
 namespace vklite {
 

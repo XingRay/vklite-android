@@ -81,7 +81,14 @@ namespace test01 {
                 .build(*mDevice);
 
         mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
-
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
                 .build(*mDevice, *mSwapchain, *mRenderPass);
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
@@ -137,8 +144,9 @@ namespace test01 {
         vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
         vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
         vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
+        std::array<vk::Fence, 1> waitFences = {fence};
 
-        vk::Result result = device.waitForFences(1, &fence, vk::True, std::numeric_limits<uint64_t>::max());
+        vk::Result result = device.waitForFences(waitFences, vk::True, std::numeric_limits<uint64_t>::max());
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
@@ -167,11 +175,9 @@ namespace test01 {
                 .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
                 .setPInheritanceInfo(nullptr);
 
-
         vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
-
 
         vk::Extent2D displaySize = mSwapchain->getDisplaySize();
         vk::Rect2D renderArea{};
@@ -261,7 +267,6 @@ namespace test01 {
     // 清理操作
     void Test01SimpleTriangle::cleanup() {
         LOG_I("Cleaning up %s", getName().c_str());
-//        mVkLiteEngine.reset();
     }
 
 } // test
