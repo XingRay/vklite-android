@@ -6,7 +6,7 @@
 
 #include "VulkanDeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/VulkanBufferInterface.h"
 
 namespace vklite {

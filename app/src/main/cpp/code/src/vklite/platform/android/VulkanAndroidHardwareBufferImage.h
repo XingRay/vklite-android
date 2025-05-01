@@ -10,7 +10,7 @@
 
 #include "vklite/instance/Instance.h"
 #include "vklite/device/Device.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
 #include "vklite/image/VulkanImage.h"
 

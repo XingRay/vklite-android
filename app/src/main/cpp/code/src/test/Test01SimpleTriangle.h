@@ -35,6 +35,7 @@ namespace test01 {
 
         std::unique_ptr<vklite::Device> mDevice;
         std::unique_ptr<vklite::Swapchain> mSwapchain;
+        std::unique_ptr<vklite::CommandPool> mCommandPool;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

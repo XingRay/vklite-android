@@ -9,7 +9,7 @@
 #include "vklite/ImageInterface.h"
 
 #include "vklite/device/Device.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_pool/CommandPool.h"
 #include "vklite/image/VulkanImageBuilderInterface.h"
 #include "vklite/sampler/SamplerInterface.h"
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"

@@ -69,8 +69,7 @@ namespace test01 {
                 .build(*mPhysicalDevice);
 
         mSwapchain = vklite::SwapchainBuilder().build(*mDevice, *mSurface);
-        
-//        mSwapchain = std::make_unique<vklite::Swapchain>(*mDevice, *mSurface, currentExtent.width, currentExtent.height);
+        mCommandPool = vklite::CommandPoolBuilder().build(*mDevice);
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))

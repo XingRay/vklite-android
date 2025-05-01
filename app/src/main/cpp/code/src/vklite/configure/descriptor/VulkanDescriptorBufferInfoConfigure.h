@@ -12,7 +12,7 @@
 #include "vklite/pipeline_resource/BufferInfo.h"
 #include "vklite/buffer/VulkanBufferBuilderInterface.h"
 #include "vklite/device/Device.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
