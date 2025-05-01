@@ -23,7 +23,10 @@ namespace test01 {
 
         const android_app &mApp;
         const int mFrameCount = 2;
-//        std::unique_ptr<vklite::VkLiteEngine> mVkLiteEngine;
+        uint32_t mCurrentFrameIndex = 0;
+        bool mFrameBufferResized = false;
+        const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
+        const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
@@ -39,6 +42,8 @@ namespace test01 {
         std::unique_ptr<vklite::RenderPass> mRenderPass;
         std::unique_ptr<vklite::FrameBuffer> mFrameBuffer;
         std::unique_ptr<vklite::SyncObject> mSyncObject;
+        std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
+        std::vector<vklite::PipelineResource> mPipelineResources;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

@@ -152,13 +152,13 @@ namespace vklite {
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::graphicsPipeline(const std::function<void(GraphicsPipelineConfigure &)> &configure) {
-        mGraphicsPipelineConfigure = std::make_unique<GraphicsPipelineConfigure>();
+    VkLiteEngineBuilder &VkLiteEngineBuilder::graphicsPipeline(const std::function<void(GraphicsPipelineBuilder &)> &configure) {
+        mGraphicsPipelineConfigure = std::make_unique<GraphicsPipelineBuilder>();
         configure(*mGraphicsPipelineConfigure);
         return *this;
     }
 
-    VkLiteEngineBuilder &VkLiteEngineBuilder::computePipeline(const std::function<void(ComputePipelineConfigure &)> &configure) {
+    VkLiteEngineBuilder &VkLiteEngineBuilder::computePipeline(const std::function<void(ComputePipelineBuilder &)> &configure) {
         return *this;
     }
 

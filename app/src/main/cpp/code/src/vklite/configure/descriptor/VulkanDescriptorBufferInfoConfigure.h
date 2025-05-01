@@ -9,7 +9,7 @@
 #include <vector>
 #include <functional>
 
-#include "vklite/pipeline_resource/BufferInfo.h"
+#include "vklite/pipeline/resource/BufferInfo.h"
 #include "vklite/buffer/VulkanBufferBuilderInterface.h"
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"

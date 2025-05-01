@@ -25,7 +25,7 @@
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/render_pass/RenderPass.h"
-#include "vklite/pipeline/GraphicsPipeline.h"
+#include "vklite/pipeline/graphics_pipeline/GraphicsPipeline.h"
 #include "vklite/command_pool/CommandPool.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanVertexBuffer.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanIndexBuffer.h"

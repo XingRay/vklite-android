@@ -25,9 +25,9 @@
 
 #include "vklite/engine/VkLiteEngine.h"
 #include "vklite/surface/SurfaceBuilder.h"
-#include "vklite/configure/pipeline/GraphicsPipelineConfigure.h"
-#include "vklite/configure/pipeline/ComputePipelineConfigure.h"
-#include "vklite/pipeline_resource/configure/PipelineResourceConfigure.h"
+#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
+#include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
+#include "vklite/pipeline/resource/PipelineResourceBuilder.h"
 #include "vklite/util/selector/ValueSelector.h"
 
 namespace vklite {
@@ -52,10 +52,10 @@ namespace vklite {
         std::unique_ptr<PhysicalDeviceSelector> mPhysicalDeviceProvider;
         std::unique_ptr<ValueSelector<uint32_t>> mMsaaSelector;
 
-        std::unique_ptr<GraphicsPipelineConfigure> mGraphicsPipelineConfigure;
-        std::unique_ptr<ComputePipelineConfigure> mComputePipelineConfigure;
+        std::unique_ptr<GraphicsPipelineBuilder> mGraphicsPipelineConfigure;
+        std::unique_ptr<ComputePipelineBuilder> mComputePipelineConfigure;
 
-        std::unique_ptr<PipelineResourceConfigure> mPipelineResourceConfigure;
+        std::unique_ptr<PipelineResourceBuilder> mPipelineResourceConfigure;
 
 //        // shader
 //        std::vector<char> mComputeShaderCode;
@@ -131,10 +131,10 @@ namespace vklite {
         VkLiteEngineBuilder &enableMsaa(const std::function<uint32_t(const std::vector<uint32_t> &)> &selector);
 
         // graphics pipeline
-        VkLiteEngineBuilder &graphicsPipeline(const std::function<void(GraphicsPipelineConfigure &)> &configure);
+        VkLiteEngineBuilder &graphicsPipeline(const std::function<void(GraphicsPipelineBuilder &)> &configure);
 
         // compute pipeline
-        VkLiteEngineBuilder &computePipeline(const std::function<void(ComputePipelineConfigure &)> &configure);
+        VkLiteEngineBuilder &computePipeline(const std::function<void(ComputePipelineBuilder &)> &configure);
 
         std::unique_ptr<VkLiteEngine> build();
 

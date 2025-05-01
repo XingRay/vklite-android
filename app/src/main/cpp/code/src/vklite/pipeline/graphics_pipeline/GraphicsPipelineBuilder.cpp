@@ -2,28 +2,28 @@
 // Created by leixing on 2025/3/7.
 //
 
-#include "GraphicsPipelineConfigure.h"
+#include "GraphicsPipelineBuilder.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/VulkanDescriptorBindingSets.h"
 
 namespace vklite {
 
-    GraphicsPipelineConfigure::GraphicsPipelineConfigure() = default;
+    GraphicsPipelineBuilder::GraphicsPipelineBuilder() = default;
 
-    GraphicsPipelineConfigure::~GraphicsPipelineConfigure() = default;
+    GraphicsPipelineBuilder::~GraphicsPipelineBuilder() = default;
 
 
-    GraphicsPipelineConfigure &GraphicsPipelineConfigure::vertexShaderCode(std::vector<char> &&code) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::vertexShaderCode(std::vector<char> &&code) {
         mVertexShaderCode = std::move(code);
         return *this;
     }
 
-    GraphicsPipelineConfigure &GraphicsPipelineConfigure::fragmentShaderCode(std::vector<char> &&code) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::fragmentShaderCode(std::vector<char> &&code) {
         mFragmentShaderCode = std::move(code);
         return *this;
     }
 
-    GraphicsPipelineConfigure &GraphicsPipelineConfigure::addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure) {
         VertexBindingConfigure config{};
         configure(config);
         mVertexConfigure.add(std::move(config));
@@ -37,14 +37,14 @@ namespace vklite {
 //        return *this;
 //    }
 
-    GraphicsPipelineConfigure &GraphicsPipelineConfigure::addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits) {
 //        mPushConstantConfigures.addPushConstantConfigures(PushConstantConfigure(size, offset, stageFlagBits));
         return *this;
     }
 
-    std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &device,
-                                                                       const Swapchain &swapchain,
-                                                                       const RenderPass &renderPass) {
+    std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::build(const Device &device,
+                                                                     const Swapchain &swapchain,
+                                                                     const RenderPass &renderPass) {
 
         // shader code
         VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);

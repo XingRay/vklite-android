@@ -18,11 +18,11 @@
 #include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
 #include "vklite/pipeline/descriptor/VulkanDescriptorBindingSets.h"
-#include "vklite/pipeline_resource/BufferInfo.h"
-#include "vklite/pipeline_resource/ImageInfo.h"
+#include "vklite/pipeline/resource/BufferInfo.h"
+#include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/pipeline/descriptor/PipelineLayout.h"
 #include "vklite/vertex/description/VertexBufferDescription.h"
-#include "vklite/pipeline_resource/PipelineResource.h"
+#include "vklite/pipeline/resource/PipelineResource.h"
 
 namespace vklite {
 

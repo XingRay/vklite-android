@@ -14,7 +14,7 @@
 #include "vklite/sampler/SamplerInterface.h"
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"
 
-#include "vklite/pipeline_resource/ImageInfo.h"
+#include "vklite/pipeline/resource/ImageInfo.h"
 
 namespace vklite {
 

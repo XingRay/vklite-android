@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vklite/pipeline/GraphicsPipeline.h"
+#include "GraphicsPipeline.h"
 #include "vklite/vertex/configure/VertexConfigure.h"
 #include "vklite/configure/index_buffer/IndexBufferConfigure.h"
 #include "vklite/configure/push_constants/PushConstantConfigures.h"
@@ -13,10 +13,7 @@
 
 namespace vklite {
 
-    class VkLiteEngineBuilder;
-
-    class GraphicsPipelineConfigure {
-        friend VkLiteEngineBuilder;
+    class GraphicsPipelineBuilder {
 
     private:
         /**
@@ -36,24 +33,24 @@ namespace vklite {
         PipelineLayoutConfigure mPipelineLayoutConfigure;
 
     public:
-        explicit GraphicsPipelineConfigure();
+        explicit GraphicsPipelineBuilder();
 
-        ~GraphicsPipelineConfigure();
+        ~GraphicsPipelineBuilder();
 
         /**
          *
          * shader code
          *
          */
-        GraphicsPipelineConfigure &vertexShaderCode(std::vector<char> &&code);
+        GraphicsPipelineBuilder &vertexShaderCode(std::vector<char> &&code);
 
-        GraphicsPipelineConfigure &fragmentShaderCode(std::vector<char> &&code);
+        GraphicsPipelineBuilder &fragmentShaderCode(std::vector<char> &&code);
 
 
         /**
          * vertex
          */
-        GraphicsPipelineConfigure &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
+        GraphicsPipelineBuilder &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
 
         /**
          *
@@ -68,9 +65,8 @@ namespace vklite {
         /**
          * push constant
          */
-        GraphicsPipelineConfigure &addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits);
+        GraphicsPipelineBuilder &addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits);
 
-    private:
         [[nodiscard]]
         std::unique_ptr<GraphicsPipeline> build(const Device &device,
                                                 const Swapchain &swapchain,

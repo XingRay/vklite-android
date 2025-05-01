@@ -8,8 +8,8 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/pipeline_resource/BufferInfo.h"
-#include "vklite/pipeline_resource/ImageInfo.h"
+#include "vklite/pipeline/resource/BufferInfo.h"
+#include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {

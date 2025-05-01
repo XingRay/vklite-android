@@ -5,15 +5,15 @@
 #pragma once
 #include <memory>
 
-#include "vklite/pipeline/ComputePipeline.h"
+#include "ComputePipeline.h"
 
 namespace vklite {
 
-    class ComputePipelineConfigure {
+    class ComputePipelineBuilder {
 
     public:
-        ComputePipelineConfigure();
-        ~ComputePipelineConfigure();
+        ComputePipelineBuilder();
+        ~ComputePipelineBuilder();
 
         std::unique_ptr<ComputePipeline> build();
 
