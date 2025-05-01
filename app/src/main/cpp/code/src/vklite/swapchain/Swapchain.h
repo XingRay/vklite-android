@@ -13,17 +13,14 @@ namespace vklite {
     class Swapchain {
     private://fields
         const Device &mDevice;
-
-        vk::SwapchainKHR mSwapChain;
-
         vk::Extent2D mDisplaySize;
         vk::SurfaceFormatKHR mSwapChainImageFormat;
 
-        // array of frame buffers and views
+        vk::SwapchainKHR mSwapChain;
         std::vector<vk::Image> mDisplayImages;
         std::vector<vk::ImageView> mDisplayImageViews;
 
-    public://methods
+    public:
         Swapchain(const Device &device, const Surface &surface,
                   const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
                   vk::Extent2D displaySize,

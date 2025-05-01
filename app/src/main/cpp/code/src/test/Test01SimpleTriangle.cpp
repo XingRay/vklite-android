@@ -60,10 +60,6 @@ namespace test01 {
         vk::SampleCountFlagBits mMsaaSamples = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
-        vk::SurfaceCapabilitiesKHR mSurfaceCapabilities;
-        std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
-        std::vector<vk::PresentModeKHR> mPresentModes;
-
         mDevice = vklite::DeviceBuilder()
                 .extensions(std::move(deviceExtensions))
                 .layers(std::move(deviceLayers))
@@ -72,7 +68,8 @@ namespace test01 {
                 .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
                 .build(*mPhysicalDevice);
 
-        vk::Extent2D currentExtent = mPhysicalDevice->getCapabilities(*mSurface).currentExtent;
+        mSwapchain = vklite::SwapchainBuilder().build(*mDevice, *mSurface);
+        
 //        mSwapchain = std::make_unique<vklite::Swapchain>(*mDevice, *mSurface, currentExtent.width, currentExtent.height);
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}

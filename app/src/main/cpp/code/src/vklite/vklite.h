@@ -7,5 +7,6 @@
 #include "vklite/instance/InstanceBuilder.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
 #include "vklite/device/DeviceBuilder.h"
-#include "vklite/swapchain/Swapchain.h"
+#include "vklite/swapchain/SwapchainBuilder.h"
+
 
