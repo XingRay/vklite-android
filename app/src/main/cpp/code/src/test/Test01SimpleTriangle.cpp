@@ -56,8 +56,7 @@ namespace test01 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-//        mPhysicalDevice->querySurfaceSupport(*mSurface, vk::QueueFlagBits::eGraphics);
-        vk::SampleCountFlagBits mMsaaSamples = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vk::SampleCountFlagBits sampleCountFlagBits = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -70,7 +69,16 @@ namespace test01 {
 
         mSwapchain = vklite::SwapchainBuilder().build(*mDevice, *mSurface);
         mCommandPool = vklite::CommandPoolBuilder().build(*mDevice);
+        mRenderPass = vklite::RenderPassBuilder().build(*mDevice, *mSwapchain);
+        mFrameBuffer = vklite::FrameBufferBuilder()
+                .displaySize(mSwapchain->getDisplaySize())
+                .displayFormat(mSwapchain->getDisplayFormat())
+                .sampleCountFlagBits(sampleCountFlagBits)
+                .build(*mDevice, *mRenderPass, *mCommandPool, mSwapchain->getDisplayImageViews());
 
+        mSyncObject = vklite::SyncObjectBuilder()
+                .frameCount(mFrameCount)
+                .build(*mDevice);
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))
 //                .extensions({}, std::move(instanceExtensions))

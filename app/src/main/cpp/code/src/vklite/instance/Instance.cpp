@@ -3,8 +3,8 @@
 //
 
 #include "Instance.h"
-#include "vklite/VkCheck.h"
-#include "vklite/VkCheckCpp.h"
+#include "vklite/util/VkCheck.h"
+#include "vklite/util/VkCheckCpp.h"
 #include "vklite/Log.h"
 #include "vklite/util/StringUtil.h"
 

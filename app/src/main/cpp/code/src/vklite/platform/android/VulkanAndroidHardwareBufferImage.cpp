@@ -3,8 +3,8 @@
 //
 #include "VulkanAndroidHardwareBufferImage.h"
 
-#include "vklite/VkCheckCpp.h"
-#include "vklite/VkCheck.h"
+#include "vklite/util/VkCheckCpp.h"
+#include "vklite/util/VkCheck.h"
 #include "vklite/util/VulkanUtil.h"
 #include "VulkanAndroidApi.h"
 

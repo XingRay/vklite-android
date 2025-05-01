@@ -8,8 +8,8 @@
 
 #include "VkLiteEngine.h"
 #include "vklite/util/selector/StringListSelector.h"
-#include "vklite/VkCheckCpp.h"
-#include "vklite/VkCheck.h"
+#include "vklite/util/VkCheckCpp.h"
+#include "vklite/util/VkCheck.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -20,12 +20,12 @@ namespace vklite {
                                std::unique_ptr<Device> device,
                                std::unique_ptr<CommandPool> commandPool,
                                std::unique_ptr<Swapchain> swapchain,
-                               std::unique_ptr<VulkanRenderPass> renderPass,
+                               std::unique_ptr<RenderPass> renderPass,
                                std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                                std::unique_ptr<ComputePipeline> computePipeline,
                                std::vector<PipelineResource>&& pipelineResources,
-                               std::unique_ptr<VulkanFrameBuffer> frameBuffer,
-                               std::unique_ptr<VulkanSyncObject> syncObject,
+                               std::unique_ptr<FrameBuffer> frameBuffer,
+                               std::unique_ptr<SyncObject> syncObject,
                                uint32_t frameCount) {
 
         mInstance = std::move(instance);

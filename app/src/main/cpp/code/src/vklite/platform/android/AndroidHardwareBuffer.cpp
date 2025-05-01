@@ -3,7 +3,7 @@
 //
 
 #include "AndroidHardwareBuffer.h"
-#include "vklite/VkCheck.h"
+#include "vklite/util/VkCheck.h"
 
 namespace vklite {
     AndroidHardwareBuffer::AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer)

@@ -44,7 +44,7 @@ namespace vklite {
 
     std::unique_ptr<GraphicsPipeline> GraphicsPipelineConfigure::build(const Device &device,
                                                                        const Swapchain &swapchain,
-                                                                       const VulkanRenderPass &renderPass) {
+                                                                       const RenderPass &renderPass) {
 
         // shader code
         VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);

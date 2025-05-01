@@ -23,7 +23,8 @@ namespace vklite {
 
         CommandPoolBuilder &frameCount(uint32_t frameCount);
 
-        std::unique_ptr<CommandPool> build(const Device& device);
+        [[nodiscard]]
+        std::unique_ptr<CommandPool> build(const Device &device);
     };
 
 } // vklite

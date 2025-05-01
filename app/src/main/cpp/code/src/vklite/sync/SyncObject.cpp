@@ -2,11 +2,11 @@
 // Created by leixing on 2024/12/31.
 //
 
-#include "VulkanSyncObject.h"
+#include "SyncObject.h"
 #include "vklite/Log.h"
 
 namespace vklite {
-    VulkanSyncObject::VulkanSyncObject(const Device &device, uint32_t count) : mDevice(device) {
+    SyncObject::SyncObject(const Device &device, uint32_t count) : mDevice(device) {
         vk::Device vkDevice = device.getDevice();
 
         vk::SemaphoreCreateInfo semaphoreCreateInfo{};
@@ -21,7 +21,7 @@ namespace vklite {
         }
     }
 
-    VulkanSyncObject::~VulkanSyncObject() {
+    SyncObject::~SyncObject() {
         LOG_D("VulkanSyncObject::~VulkanSyncObject");
         vk::Device device = mDevice.getDevice();
         for (const auto &semaphore: mImageAvailableSemaphores) {
@@ -35,24 +35,24 @@ namespace vklite {
         }
     }
 
-    const vk::Semaphore &VulkanSyncObject::getImageAvailableSemaphore(uint32_t index) const {
+    const vk::Semaphore &SyncObject::getImageAvailableSemaphore(uint32_t index) const {
         return mImageAvailableSemaphores[index];
     }
 
-    const vk::Semaphore &VulkanSyncObject::getRenderFinishedSemaphore(uint32_t index) const {
+    const vk::Semaphore &SyncObject::getRenderFinishedSemaphore(uint32_t index) const {
         return mRenderFinishedSemaphores[index];
     }
 
-    vk::Fence VulkanSyncObject::getFence(uint32_t index) const {
+    vk::Fence SyncObject::getFence(uint32_t index) const {
         return mFences[index];
     }
 
-    vk::Result VulkanSyncObject::resetFence(uint32_t index) {
+    vk::Result SyncObject::resetFence(uint32_t index) {
         vk::Device device = mDevice.getDevice();
         return device.resetFences(1, &mFences[index]);
     }
 
-    vk::Result VulkanSyncObject::waitFence(uint32_t index) {
+    vk::Result SyncObject::waitFence(uint32_t index) {
         vk::Device device = mDevice.getDevice();
         return device.waitForFences(1, &mFences[index], vk::True, std::numeric_limits<uint64_t>::max());
     }

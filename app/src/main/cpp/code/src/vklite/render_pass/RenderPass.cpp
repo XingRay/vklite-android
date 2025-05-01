@@ -2,13 +2,13 @@
 // Created by leixing on 2024/12/26.
 //
 
-#include "VulkanRenderPass.h"
+#include "RenderPass.h"
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
-    VulkanRenderPass::VulkanRenderPass(const Device &device, const Swapchain &vulkanSwapchain) : mDevice(device) {
-        bool enableMsaa = true;
+    RenderPass::RenderPass(const Device &device, const Swapchain &swapchain, vk::SampleCountFlagBits sampleCountFlagBits) : mDevice(device) {
+        bool enableMsaa = sampleCountFlagBits != vk::SampleCountFlagBits::e1;
         bool enableDepth = true;
 
         std::vector<vk::AttachmentDescription> attachments;
@@ -21,7 +21,7 @@ namespace vklite {
         if (enableMsaa) {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
             msaaColorAttachmentDescription
-                    .setFormat(vulkanSwapchain.getDisplayFormat())
+                    .setFormat(swapchain.getDisplayFormat())
 //                    .setSamples(device.getMsaaSamples())
 // todo: msaa samplers
                     .setSamples(vk::SampleCountFlagBits::e1)
@@ -58,11 +58,6 @@ namespace vklite {
         }
 
         if (enableDepth) {
-            vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;
-            if (enableMsaa) {
-                // msaa samplers
-//                sampleCountFlagBits = device.getMsaaSamples();
-            }
             vk::AttachmentDescription depthAttachmentDescription{};
             depthAttachmentDescription
                     .setFormat(device.getPhysicalDevice().findDepthFormat())
@@ -87,7 +82,7 @@ namespace vklite {
 
         vk::AttachmentDescription presentColorAttachmentDescription{};
         presentColorAttachmentDescription
-                .setFormat(vulkanSwapchain.getDisplayFormat())
+                .setFormat(swapchain.getDisplayFormat())
                 .setSamples(vk::SampleCountFlagBits::e1)
                 .setLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .setStoreOp(vk::AttachmentStoreOp::eStore)
@@ -167,16 +162,16 @@ namespace vklite {
         mRenderPass = device.getDevice().createRenderPass(renderPassCreateInfo);
     }
 
-    VulkanRenderPass::~VulkanRenderPass() {
+    RenderPass::~RenderPass() {
         LOG_D("VulkanRenderPass::~VulkanRenderPass");
         mDevice.getDevice().destroy(mRenderPass);
     }
 
-    const vk::RenderPass &VulkanRenderPass::getRenderPass() const {
+    const vk::RenderPass &RenderPass::getRenderPass() const {
         return mRenderPass;
     }
 
-    vk::Format VulkanRenderPass::findDepthFormat(const vk::PhysicalDevice &physicalDevice) {
+    vk::Format RenderPass::findDepthFormat(const vk::PhysicalDevice &physicalDevice) {
         return findSupportedFormat(
                 physicalDevice,
                 {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
@@ -185,7 +180,7 @@ namespace vklite {
         );
     }
 
-    vk::Format VulkanRenderPass::findSupportedFormat(const vk::PhysicalDevice &physicalDevice, const std::vector<vk::Format> &candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) {
+    vk::Format RenderPass::findSupportedFormat(const vk::PhysicalDevice &physicalDevice, const std::vector<vk::Format> &candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features) {
         for (const auto &format: candidates) {
             vk::FormatProperties properties = physicalDevice.getFormatProperties(format);
             if (tiling == vk::ImageTiling::eLinear && (properties.linearTilingFeatures & features) == features) {

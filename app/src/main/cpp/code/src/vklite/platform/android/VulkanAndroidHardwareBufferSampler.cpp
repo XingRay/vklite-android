@@ -3,7 +3,7 @@
 //
 
 #include "VulkanAndroidHardwareBufferSampler.h"
-#include "vklite/VkCheck.h"
+#include "vklite/util/VkCheck.h"
 #include "vklite/Log.h"
 
 namespace vklite {

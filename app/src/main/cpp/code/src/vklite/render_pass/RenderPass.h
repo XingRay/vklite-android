@@ -10,15 +10,15 @@
 #include "vklite/Log.h"
 
 namespace vklite {
-    class VulkanRenderPass {
+    class RenderPass {
     private://fields
         const Device& mDevice;
         vk::RenderPass mRenderPass;
 
     public://methods
-        VulkanRenderPass(const Device &device, const Swapchain &vulkanSwapchain);
+        RenderPass(const Device &device, const Swapchain &swapchain, vk::SampleCountFlagBits sampleCountFlagBits);
 
-        ~VulkanRenderPass();
+        ~RenderPass();
 
         [[nodiscard]]
         const vk::RenderPass &getRenderPass() const;

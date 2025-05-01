@@ -13,7 +13,7 @@
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
-#include "vklite/VulkanRenderPass.h"
+#include "vklite/render_pass/RenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
 #include "vklite/pipeline/ComputePipeline.h"
 #include "vklite/pipeline_resource/PipelineResource.h"
@@ -23,8 +23,8 @@
 #include "vklite/buffer/device_local/VulkanDeviceLocalIndexBuffer.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
-#include "vklite/VulkanSyncObject.h"
-#include "vklite/VulkanFrameBuffer.h"
+#include "vklite/sync/SyncObject.h"
+#include "vklite/frame_buffer/FrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
 #include "vklite/util/selector/StringListSelector.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
@@ -47,7 +47,7 @@ namespace vklite {
         std::unique_ptr<Device> mDevice;
 
         std::unique_ptr<Swapchain> mSwapchain;
-        std::unique_ptr<VulkanRenderPass> mRenderPass;
+        std::unique_ptr<RenderPass> mRenderPass;
 
         std::unique_ptr<GraphicsPipeline> mGraphicsPipeline;
         std::unique_ptr<ComputePipeline> mComputePipeline;
@@ -55,9 +55,9 @@ namespace vklite {
         std::vector<PipelineResource> mPipelineResources;
 
         std::unique_ptr<CommandPool> mCommandPool;
-        std::unique_ptr<VulkanFrameBuffer> mFrameBuffer;
+        std::unique_ptr<FrameBuffer> mFrameBuffer;
 
-        std::unique_ptr<VulkanSyncObject> mSyncObject;
+        std::unique_ptr<SyncObject> mSyncObject;
 
     public:
         VkLiteEngine(std::unique_ptr<Instance> instance,
@@ -66,12 +66,12 @@ namespace vklite {
                      std::unique_ptr<Device> device,
                      std::unique_ptr<CommandPool> commandPool,
                      std::unique_ptr<Swapchain> swapchain,
-                     std::unique_ptr<VulkanRenderPass> renderPass,
+                     std::unique_ptr<RenderPass> renderPass,
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                      std::unique_ptr<ComputePipeline> computePipeline,
                      std::vector<PipelineResource> &&pipelineResources,
-                     std::unique_ptr<VulkanFrameBuffer> frameBuffer,
-                     std::unique_ptr<VulkanSyncObject> syncObject,
+                     std::unique_ptr<FrameBuffer> frameBuffer,
+                     std::unique_ptr<SyncObject> syncObject,
                      uint32_t frameCount);
 
         ~VkLiteEngine();

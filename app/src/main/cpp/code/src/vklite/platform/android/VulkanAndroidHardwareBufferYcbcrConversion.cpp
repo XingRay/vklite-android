@@ -3,7 +3,7 @@
 //
 
 #include "VulkanAndroidHardwareBufferYcbcrConversion.h"
-#include "vklite/VkCheck.h"
+#include "vklite/util/VkCheck.h"
 
 namespace vklite {
 

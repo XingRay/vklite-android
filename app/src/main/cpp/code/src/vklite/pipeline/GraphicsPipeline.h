@@ -10,7 +10,7 @@
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
-#include "vklite/VulkanRenderPass.h"
+#include "vklite/render_pass/RenderPass.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
 #include "vklite/command_pool/CommandPool.h"
@@ -44,7 +44,7 @@ namespace vklite {
 
         GraphicsPipeline(const Device &device,
                          const Swapchain &swapchain,
-                         const VulkanRenderPass &renderPass,
+                         const RenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,
                          const VulkanShaderModule &fragmentShaderModule,
                          const VertexBufferDescription &vertexBufferDescription,

@@ -22,7 +22,7 @@ namespace test01 {
     private:
 
         const android_app &mApp;
-
+        const int mFrameCount = 2;
 //        std::unique_ptr<vklite::VkLiteEngine> mVkLiteEngine;
 
         std::unique_ptr<vklite::Instance> mInstance;
@@ -36,6 +36,9 @@ namespace test01 {
         std::unique_ptr<vklite::Device> mDevice;
         std::unique_ptr<vklite::Swapchain> mSwapchain;
         std::unique_ptr<vklite::CommandPool> mCommandPool;
+        std::unique_ptr<vklite::RenderPass> mRenderPass;
+        std::unique_ptr<vklite::FrameBuffer> mFrameBuffer;
+        std::unique_ptr<vklite::SyncObject> mSyncObject;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

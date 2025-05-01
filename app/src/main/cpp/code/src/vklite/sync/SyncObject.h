@@ -10,7 +10,7 @@
 
 namespace vklite {
 
-    class VulkanSyncObject {
+    class SyncObject {
     private:
         const Device &mDevice;
 
@@ -23,9 +23,9 @@ namespace vklite {
         std::vector<vk::Fence> mFences;
 
     public:
-        explicit VulkanSyncObject(const Device &device, uint32_t count);
+        explicit SyncObject(const Device &device, uint32_t count);
 
-        ~VulkanSyncObject();
+        ~SyncObject();
 
         [[nodiscard]]
         const vk::Semaphore &getImageAvailableSemaphore(uint32_t index) const;

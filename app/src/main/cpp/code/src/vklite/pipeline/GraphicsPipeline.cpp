@@ -9,7 +9,7 @@ namespace vklite {
 
     GraphicsPipeline::GraphicsPipeline(const Device &device,
                                        const Swapchain &swapchain,
-                                       const VulkanRenderPass &renderPass,
+                                       const RenderPass &renderPass,
                                        const VulkanShaderModule &vertexShaderModule,
                                        const VulkanShaderModule &fragmentShaderModule,
                                        const VertexBufferDescription &vertexBufferDescription,

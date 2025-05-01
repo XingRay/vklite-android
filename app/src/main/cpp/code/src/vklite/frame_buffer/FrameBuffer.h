@@ -7,12 +7,12 @@
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
-#include "VulkanRenderPass.h"
+#include "vklite/render_pass/RenderPass.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
-    class VulkanFrameBuffer {
+    class FrameBuffer {
     private:
         const Device &mDevice;
 
@@ -27,9 +27,13 @@ namespace vklite {
         std::vector<vk::Framebuffer> mFrameBuffers;
 
     public:
-        VulkanFrameBuffer(const Device &device, const Swapchain &vulkanSwapchain, const VulkanRenderPass &vulkanRenderPass, const CommandPool &commandPool);
+        FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
+                    const std::vector<vk::ImageView> &displayImageViews,
+                    vk::Format displayFormat,
+                    vk::Extent2D displaySize,
+                    vk::SampleCountFlagBits sampleCountFlagBits);
 
-        ~VulkanFrameBuffer();
+        ~FrameBuffer();
 
         [[nodiscard]]
         const std::vector<vk::Framebuffer> &getFrameBuffers() const;

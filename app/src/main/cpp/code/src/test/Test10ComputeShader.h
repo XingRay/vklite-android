@@ -24,14 +24,14 @@
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
-#include "vklite/VulkanRenderPass.h"
+#include "vklite/render_pass/RenderPass.h"
 #include "vklite/pipeline/GraphicsPipeline.h"
 #include "vklite/command_pool/CommandPool.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanVertexBuffer.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanIndexBuffer.h"
 //#include "vklite/vulkan_wrapper/buffer/VulkanUniformBuffer.h"
-#include "vklite/VulkanSyncObject.h"
-#include "vklite/VulkanFrameBuffer.h"
+#include "vklite/sync/SyncObject.h"
+#include "vklite/frame_buffer/FrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
 
 #include "vklite/util/selector/StringListSelector.h"
@@ -72,11 +72,11 @@ namespace test10 {
         std::unique_ptr<vklite::Device> mDevice;
 
         std::unique_ptr<vklite::Swapchain> mSwapchain;
-        std::unique_ptr<vklite::VulkanRenderPass> mRenderPass;
+        std::unique_ptr<vklite::RenderPass> mRenderPass;
 
 //        std::unique_ptr<vklite::VulkanPipeline> mPipeline;
         std::unique_ptr<vklite::CommandPool> mCommandPool;
-        std::unique_ptr<vklite::VulkanFrameBuffer> mFrameBuffer;
+        std::unique_ptr<vklite::FrameBuffer> mFrameBuffer;
 
 //        std::vector<std::unique_ptr<vklite::VulkanVertexBuffer>> mVertexBuffers;
         std::vector<vk::Buffer> mVertexBuffers;
@@ -84,7 +84,7 @@ namespace test10 {
 
 //        std::unique_ptr<vklite::VulkanIndexBuffer> mIndexBuffer;
 
-        std::unique_ptr<vklite::VulkanSyncObject> mSyncObject;
+        std::unique_ptr<vklite::SyncObject> mSyncObject;
 
         // shader
         std::vector<char> mVertexShaderCode;
