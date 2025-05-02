@@ -3,12 +3,13 @@
 //
 
 #include "PipelineResource.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
-    PipelineResource::PipelineResource() {
-
-    }
+    PipelineResource::PipelineResource()
+            : mVertexBufferOffsets({}),
+              mVertexBuffers({}) {}
 
     PipelineResource::~PipelineResource() {
 
@@ -30,13 +31,13 @@ namespace vklite {
         return mIndicesCount;
     }
 
-    const std::vector<vk::DescriptorSet> &PipelineResource::getDescriptorSets() const {
-        return mDescriptorSets;
-    }
-
-    const std::vector<PushConstant> &PipelineResource::getPushConstants() const {
-        return mPushConstants;
-    }
+//    const std::vector<vk::DescriptorSet> &PipelineResource::getDescriptorSets() const {
+//        return mDescriptorSets;
+//    }
+//
+//    const std::vector<PushConstant> &PipelineResource::getPushConstants() const {
+//        return mPushConstants;
+//    }
 
 //    void PipelineResource::updateDescriptorSets(std::vector<vk::WriteDescriptorSet>& writeDescriptorSets) {
 //        for (const auto &setsEntry: vulkanDescriptorBindingSetOfFrame->getVulkanDescriptorBindingSets()) {
@@ -93,5 +94,20 @@ namespace vklite {
 //            mDevice.getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 //        }
 //    }
+
+    void PipelineResource::addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
+//        LOG_D("before mVertexBuffers.push_back");
+        mVertexBuffers.push_back(buffer);
+//        LOG_D("after mVertexBuffers.push_back");
+
+//        LOG_D("before mVertexBufferOffsets.push_back");
+        mVertexBufferOffsets.push_back(offset);
+//        LOG_D("after mVertexBufferOffsets.push_back");
+    }
+
+    void PipelineResource::setIndexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
+        mIndexBuffer = buffer;
+        mIndexBufferOffset = offset;
+    }
 
 } // vklite

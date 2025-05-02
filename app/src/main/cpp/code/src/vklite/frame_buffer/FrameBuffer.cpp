@@ -8,13 +8,13 @@
 
 namespace vklite {
 
-    FrameBuffer::FrameBuffer(const Device &device, const RenderPass &renderPass,const CommandPool &commandPool,
+    FrameBuffer::FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
                              const std::vector<vk::ImageView> &displayImageViews,
                              vk::Format displayFormat,
                              vk::Extent2D displaySize,
                              vk::SampleCountFlagBits sampleCountFlagBits)
             : mDevice(device) {
-
+        LOG_D("FrameBuffer::FrameBuffer");
         std::tie(mColorImage, mColorDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
                                                                        sampleCountFlagBits,
                                                                        displayFormat,
@@ -60,7 +60,7 @@ namespace vklite {
     }
 
     FrameBuffer::~FrameBuffer() {
-        LOG_D("VulkanFrameBuffer::~VulkanFrameBuffer()");
+        LOG_D("FrameBuffer::~FrameBuffer");
         vk::Device device = mDevice.getDevice();
 
         for (const auto &frameBuffer: mFrameBuffers) {

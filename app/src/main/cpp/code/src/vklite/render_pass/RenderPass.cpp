@@ -8,6 +8,7 @@
 namespace vklite {
 
     RenderPass::RenderPass(const Device &device, const Swapchain &swapchain, vk::SampleCountFlagBits sampleCountFlagBits) : mDevice(device) {
+        LOG_D("RenderPass::RenderPass");
         bool enableMsaa = sampleCountFlagBits != vk::SampleCountFlagBits::e1;
         bool enableDepth = true;
 
@@ -22,9 +23,7 @@ namespace vklite {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
             msaaColorAttachmentDescription
                     .setFormat(swapchain.getDisplayFormat())
-//                    .setSamples(device.getMsaaSamples())
-// todo: msaa samplers
-                    .setSamples(vk::SampleCountFlagBits::e1)
+                    .setSamples(sampleCountFlagBits)
                             //载入图像前将帧缓冲清0
                     .setLoadOp(vk::AttachmentLoadOp::eClear)
                             // 渲染图像之后将图像数据保存
@@ -163,7 +162,7 @@ namespace vklite {
     }
 
     RenderPass::~RenderPass() {
-        LOG_D("VulkanRenderPass::~VulkanRenderPass");
+        LOG_D("RenderPass::~RenderPass");
         mDevice.getDevice().destroy(mRenderPass);
     }
 

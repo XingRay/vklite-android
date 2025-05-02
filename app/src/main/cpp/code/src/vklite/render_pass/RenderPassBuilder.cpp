@@ -11,7 +11,7 @@ namespace vklite {
 
     RenderPassBuilder::~RenderPassBuilder() = default;
 
-    RenderPassBuilder &RenderPassBuilder::sampleCount(vk::SampleCountFlagBits sampleCountFlagBits) {
+    RenderPassBuilder &RenderPassBuilder::sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits) {
         mSampleCountFlagBits = sampleCountFlagBits;
         return *this;
     }

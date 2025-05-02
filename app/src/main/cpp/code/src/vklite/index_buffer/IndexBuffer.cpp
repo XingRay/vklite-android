@@ -29,20 +29,24 @@ namespace vklite {
         return mIndicesCount;
     }
 
-    void IndexBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
+    IndexBuffer &IndexBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 
         mStagingBuffer.updateBuffer(indices.data(), size);
         mIndexBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
+
+        return *this;
     }
 
-    void IndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
+    IndexBuffer &IndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 
         mStagingBuffer.updateBuffer(indices.data(), size);
         mIndexBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
+
+        return *this;
     }
 
 } // vklite

@@ -20,19 +20,18 @@ namespace vklite {
     private:
 
         std::vector<vk::Buffer> mVertexBuffers;
-
         std::vector<vk::DeviceSize> mVertexBufferOffsets;
 
         vk::Buffer mIndexBuffer;
-
+        vk::DeviceSize mIndexBufferOffset;
         uint32_t mIndicesCount;
 
         // set -> binding -> offset -> slot
-        std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::unordered_map<uint32_t, PipelineResourceSlot>>> mPipelineResourceSlots;
-
-        std::vector<vk::DescriptorSet> mDescriptorSets;
-
-        std::vector<PushConstant> mPushConstants;
+//        std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::unordered_map<uint32_t, PipelineResourceSlot>>> mPipelineResourceSlots;
+//
+//        std::vector<vk::DescriptorSet> mDescriptorSets;
+//
+//        std::vector<PushConstant> mPushConstants;
 
     public:
 
@@ -52,12 +51,15 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getIndicesCount() const;
 
-        [[nodiscard]]
-        const std::vector<vk::DescriptorSet> &getDescriptorSets() const;
+//        [[nodiscard]]
+//        const std::vector<vk::DescriptorSet> &getDescriptorSets() const;
+//
+//        [[nodiscard]]
+//        const std::vector<PushConstant> &getPushConstants() const;
 
-        [[nodiscard]]
-        const std::vector<PushConstant> &getPushConstants() const;
+        void addVertexBuffer(vk::Buffer buffer, vk::DeviceSize  offset);
 
+        void setIndexBuffer(vk::Buffer buffer, vk::DeviceSize  offset);
     };
 
 } // vklite

@@ -21,7 +21,6 @@
 #include "vklite/pipeline/resource/BufferInfo.h"
 #include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/pipeline/descriptor/PipelineLayout.h"
-#include "vklite/pipeline/vertex/VertexBufferDescription.h"
 #include "vklite/pipeline/resource/PipelineResource.h"
 
 namespace vklite {
@@ -47,9 +46,9 @@ namespace vklite {
                          const RenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,
                          const VulkanShaderModule &fragmentShaderModule,
-                         const VertexBufferDescription &vertexBufferDescription,
-                         std::unique_ptr<PipelineLayout> &&pipelineLayout/*,
-                         std::vector<PipelineResource>&& pipelineResources*/);
+                         const std::vector<vk::VertexInputBindingDescription> &vertexInputBindingDescriptions,
+                         const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
+                         std::unique_ptr<PipelineLayout> &&pipelineLayout);
 
         ~GraphicsPipeline();
 

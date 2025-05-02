@@ -6,42 +6,31 @@
 
 #include <cstdint>
 #include <vector>
+#include <functional>
 
-//#include "vklite/vertex/buffer/VertexBufferConfigure.h"
-#include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/pipeline/resource/PipelineResource.h"
+#include "vklite/vertex_buffer/VertexBuffer.h"
+#include "vklite/index_buffer/IndexBuffer.h"
 
 namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-
-        /**
-         * vertex buffer
-         */
-//        VertexBufferConfigure mVertexBufferConfigure;
-        /**
-         * index buffer
-         */
-        IndexBufferBuilder mIndexConfigure;
+        std::function<VertexBuffer &(uint32_t)> mVertexBufferProvider;
+        std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
 
     public:
         PipelineResourceBuilder();
 
         ~PipelineResourceBuilder();
 
-        /**
-         * index
-         */
-        PipelineResourceBuilder &index(const std::function<void(IndexBufferBuilder &)> &configure);
+        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider);
 
-        PipelineResourceBuilder &index(uint32_t capacity);
+        PipelineResourceBuilder &vertexBuffer(VertexBuffer &vertexBuffer);
 
-        PipelineResourceBuilder &index(uint32_t capacity, std::vector<uint32_t> &&indices);
+        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> indexBufferProvider);
 
-        PipelineResourceBuilder &index(std::vector<uint32_t> &&indices);
-
-        PipelineResourceBuilder &index(const std::shared_ptr<IndexBuffer> &indexBuffer);
+        PipelineResourceBuilder &indexBuffer(IndexBuffer &indexBuffer);
 
         [[nodiscard]]
         std::vector<PipelineResource> build(uint32_t frameCount);

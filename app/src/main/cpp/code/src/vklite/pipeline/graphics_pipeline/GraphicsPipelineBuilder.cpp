@@ -51,7 +51,8 @@ namespace vklite {
         VulkanShaderModule fragmentShaderModule = VulkanShaderModule(device, mFragmentShaderCode);
 
         // vertex buffer description
-        std::unique_ptr<VertexBufferDescription> vertexBufferDescription = mVertexConfigure.createVertexBufferDescription();
+        std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
+        std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions = mVertexConfigure.createVertexInputAttributeDescriptions();
 
         // descriptor -> uniform / sampler ...
 //        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mDescriptorSetConfigures.createDescriptorSetLayouts(device);
@@ -86,7 +87,8 @@ namespace vklite {
                                                   renderPass,
                                                   vertexShaderModule,
                                                   fragmentShaderModule,
-                                                  *vertexBufferDescription,
+                                                  vertexInputBindingDescriptions,
+                                                  vertexInputAttributeDescriptions,
                                                   std::move(pipelineLayout));
     }
 

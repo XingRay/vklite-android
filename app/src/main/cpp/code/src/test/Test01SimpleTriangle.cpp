@@ -68,8 +68,12 @@ namespace test01 {
                 .build(*mPhysicalDevice);
 
         mSwapchain = vklite::SwapchainBuilder().build(*mDevice, *mSurface);
-        mCommandPool = vklite::CommandPoolBuilder().build(*mDevice);
-        mRenderPass = vklite::RenderPassBuilder().build(*mDevice, *mSwapchain);
+        mCommandPool = vklite::CommandPoolBuilder()
+                .frameCount(mFrameCount)
+                .build(*mDevice);
+        mRenderPass = vklite::RenderPassBuilder()
+                .sampleCountFlagBits(sampleCountFlagBits)
+                .build(*mDevice, *mSwapchain);
         mFrameBuffer = vklite::FrameBufferBuilder()
                 .displaySize(mSwapchain->getDisplaySize())
                 .displayFormat(mSwapchain->getDisplayFormat())
@@ -90,6 +94,23 @@ namespace test01 {
                             .addAttribute(0, ShaderFormat::Vec3);
                 })
                 .build(*mDevice, *mSwapchain, *mRenderPass);
+
+        mIndexBuffer = vklite::IndexBufferBuilder()
+                .bufferSize(indices.size() * sizeof(uint32_t))
+                .build(*mDevice);
+        mIndexBuffer->update(*mCommandPool, indices);
+
+        mVertexBuffer = vklite::VertexBufferBuilder()
+                .bufferSize(vertices.size() * sizeof(Vertex))
+                .build(*mDevice);
+        mVertexBuffer->update(*mCommandPool, vertices);
+
+        mPipelineResources = vklite::PipelineResourceBuilder()
+                .indexBuffer(*mIndexBuffer)
+                .vertexBuffer(*mVertexBuffer)
+                .build(mFrameCount);
+
+        LOG_D("test created ");
 
 //        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))
@@ -189,6 +210,9 @@ namespace test01 {
         vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(mDepthStencil)};
         std::array<vk::ClearValue, 2> clearValues = {colorClearValue, depthStencilClearValue};
 
+        LOG_D("imageIndex: %d", imageIndex);
+        LOG_D("mFrameBuffer->getFrameBuffers().size: %ld", mFrameBuffer->getFrameBuffers().size());
+
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
@@ -203,9 +227,11 @@ namespace test01 {
          * 子流程的渲染命令通过次级命令缓冲区（Secondary Command Buffer）记录。
          * 适用于复杂的渲染流程，可以将渲染命令分散到多个次级命令缓冲区中，以提高代码的模块化和复用性。
          */
+        LOG_D("before commandBuffer.beginRenderPass");
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
+        LOG_D("after commandBuffer.beginRenderPass");
 
-        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
 
         commandBuffer.endRenderPass();
         commandBuffer.end();
@@ -237,8 +263,6 @@ namespace test01 {
                 .setWaitSemaphores(signalSemaphores)
                 .setSwapchains(swapChains)
                 .setImageIndices(imageIndices);
-
-//    std::cout << "presentKHR, mFrameBufferResized:" << mFrameBufferResized << std::endl;
 
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
         // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result

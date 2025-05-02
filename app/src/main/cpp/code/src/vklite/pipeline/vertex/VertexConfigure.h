@@ -8,7 +8,6 @@
 #include <unordered_map>
 
 #include "VertexBindingConfigure.h"
-#include "VertexBufferDescription.h"
 
 namespace vklite {
 
@@ -17,7 +16,7 @@ namespace vklite {
         /**
          * vertex
          */
-         // binding -> VertexBindingConfigure
+        // binding -> VertexBindingConfigure
         std::unordered_map<uint32_t, VertexBindingConfigure> mVertexBindingConfigures;
 
     public:
@@ -25,19 +24,14 @@ namespace vklite {
 
         ~VertexConfigure();
 
-        VertexConfigure &add(VertexBindingConfigure&& vertexConfigure);
-
-        [[nodiscard]]
-        std::unique_ptr<VertexBufferDescription> createVertexBufferDescription() const;
-
-    private:
+        VertexConfigure &add(VertexBindingConfigure &&vertexConfigure);
 
         [[nodiscard]]
         std::vector<vk::VertexInputBindingDescription> createVertexInputBindingDescriptions() const;
 
         [[nodiscard]]
         std::vector<vk::VertexInputAttributeDescription> createVertexInputAttributeDescriptions() const;
-        
+
     };
 
 } // vklite

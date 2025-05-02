@@ -12,7 +12,8 @@ namespace vklite {
                                        const RenderPass &renderPass,
                                        const VulkanShaderModule &vertexShaderModule,
                                        const VulkanShaderModule &fragmentShaderModule,
-                                       const VertexBufferDescription &vertexBufferDescription,
+                                       const std::vector<vk::VertexInputBindingDescription> &vertexInputBindingDescriptions,
+                                       const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
                                        std::unique_ptr<PipelineLayout> &&pipelineLayout)
             : mDevice(device), mPipelineLayout(std::move(pipelineLayout)) {
 
@@ -60,8 +61,8 @@ namespace vklite {
         // vertex shader
         vk::PipelineVertexInputStateCreateInfo vertexInputStateCreateInfo;
         vertexInputStateCreateInfo
-                .setVertexBindingDescriptions(vertexBufferDescription.getVertexInputBindingDescriptions())
-                .setVertexAttributeDescriptions(vertexBufferDescription.getVertexInputAttributeDescriptions());
+                .setVertexBindingDescriptions(vertexInputBindingDescriptions)
+                .setVertexAttributeDescriptions(vertexInputAttributeDescriptions);
 
         vk::PipelineShaderStageCreateInfo vertexShaderStageCreateInfo;
         vertexShaderStageCreateInfo
@@ -384,6 +385,7 @@ namespace vklite {
 
         // vertex buffer
         /**
+         * firstBinding: shader 代码中 location 值即为绑定点, 参数给出多个buffer时, 对用连续的多个绑定点, 如 location = 1 2
          * offsets 参数仅指定顶点数据的起始位置，
          * 读取的数据量由绘制命令（如 vkCmdDraw 或 vkCmdDrawIndexed）的顶点数量决定，结合顶点输入绑定描述中的 stride 参数隐式计算总字节数
          * 总字节数 = vertexCount × stride
@@ -391,23 +393,23 @@ namespace vklite {
          * 起始位置：offsets[0]（如 256 字节）
          * 结束位置：offsets[0] + vertexCount × stride（如 256 + 3×20 = 316 字节）
          */
-        commandBuffer.bindVertexBuffers(0, pipelineResource.getVertexBuffers(), pipelineResource.getVertexBufferOffsets());
+//        commandBuffer.bindVertexBuffers(0, pipelineResource.getVertexBuffers(), pipelineResource.getVertexBufferOffsets());
 
         // index buffer
-        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
+//        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
 
         // uniform/sampler/storage/...
-        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);
+//        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);
 
         // push constants
-        const std::vector<PushConstant> &pushConstants = pipelineResource.getPushConstants();
-        for (const PushConstant &pushConstant: pushConstants) {
-            commandBuffer.pushConstants(mPipelineLayout->getPipelineLayout(),
-                                        pushConstant.getStageFlags(),
-                                        pushConstant.getOffset(),
-                                        pushConstant.getSize(),
-                                        pushConstant.getData());
-        }
+//        const std::vector<PushConstant> &pushConstants = pipelineResource.getPushConstants();
+//        for (const PushConstant &pushConstant: pushConstants) {
+//            commandBuffer.pushConstants(mPipelineLayout->getPipelineLayout(),
+//                                        pushConstant.getStageFlags(),
+//                                        pushConstant.getOffset(),
+//                                        pushConstant.getSize(),
+//                                        pushConstant.getData());
+//        }
 
         // draw call
         /**

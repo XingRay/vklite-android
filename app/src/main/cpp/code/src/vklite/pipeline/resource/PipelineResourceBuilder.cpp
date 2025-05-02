@@ -6,44 +6,48 @@
 
 namespace vklite {
 
-    PipelineResourceBuilder::PipelineResourceBuilder() {
+    PipelineResourceBuilder::PipelineResourceBuilder() = default;
 
-    }
+    PipelineResourceBuilder::~PipelineResourceBuilder() = default;
 
-    PipelineResourceBuilder::~PipelineResourceBuilder() {
-
-    }
-
-    PipelineResourceBuilder &PipelineResourceBuilder::index(const std::function<void(IndexBufferBuilder &)> &configure) {
-        IndexBufferBuilder config{};
-        configure(config);
-        mIndexConfigure = config;
+    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider) {
+        mVertexBufferProvider = vertexBufferProvider;
         return *this;
     }
 
-//    PipelineResourceBuilder &PipelineResourceBuilder::index(uint32_t capacity) {
-//        mIndexConfigure.setIndexBuffer(capacity);
-//        return *this;
-//    }
-//
-//    PipelineResourceBuilder &PipelineResourceBuilder::index(uint32_t capacity, std::vector<uint32_t> &&indices) {
-//        mIndexConfigure.setIndexBuffer(capacity, std::move(indices));
-//        return *this;
-//    }
-//
-//    PipelineResourceBuilder &PipelineResourceBuilder::index(std::vector<uint32_t> &&indices) {
-//        mIndexConfigure.setIndexBuffer(std::move(indices));
-//        return *this;
-//    }
-//
-//    PipelineResourceBuilder &PipelineResourceBuilder::index(const std::shared_ptr<IndexBuffer> &indexBuffer) {
-//        mIndexConfigure.setIndexBuffer(indexBuffer);
-//        return *this;
-//    }
+    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(VertexBuffer &vertexBuffer) {
+        mVertexBufferProvider = [&vertexBuffer](uint32_t frameIndex) -> VertexBuffer & {
+            return vertexBuffer;
+        };
+        return *this;
+    }
+
+    PipelineResourceBuilder &PipelineResourceBuilder::indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> indexBufferProvider) {
+        mIndexBufferProvider = indexBufferProvider;
+        return *this;
+    }
+
+    PipelineResourceBuilder &PipelineResourceBuilder::indexBuffer(IndexBuffer &indexBuffer) {
+        mIndexBufferProvider = [&indexBuffer](uint32_t frameIndex) -> IndexBuffer & {
+            return indexBuffer;
+        };
+        return *this;
+    }
+
+    [[nodiscard]]
+    std::vector<PipelineResource> build(uint32_t frameCount);
 
     std::vector<PipelineResource> PipelineResourceBuilder::build(uint32_t frameCount) {
         std::vector<PipelineResource> pipelineResources;
-
+//        pipelineResources.reserve(frameCount);
+        pipelineResources.resize(frameCount);
+        for(int frameIndex=0; frameIndex < frameCount; frameIndex++){
+//            pipelineResources.emplace_back(); // 添加新元素
+//            PipelineResource& pipelineResource = pipelineResources.back();
+            PipelineResource& pipelineResource = pipelineResources[frameIndex];
+            pipelineResource.addVertexBuffer(mVertexBufferProvider(frameIndex).getBuffer(), 0);
+            pipelineResource.setIndexBuffer(mIndexBufferProvider(frameIndex).getBuffer(), 0);
+        }
 
         return pipelineResources;
     }
