@@ -19,7 +19,7 @@ namespace vklite {
 
         ~RenderPassBuilder();
 
-        RenderPassBuilder& sampleCountFlagBits(vk::SampleCountFlagBits mSampleCountFlagBits);
+        RenderPassBuilder &sampleCountFlagBits(vk::SampleCountFlagBits mSampleCountFlagBits);
 
         std::unique_ptr<RenderPass> build(const Device &device, const Swapchain &swapchain);
     };

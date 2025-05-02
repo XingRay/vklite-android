@@ -67,13 +67,17 @@ namespace test01 {
                 .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
                 .build(*mPhysicalDevice);
 
-        mSwapchain = vklite::SwapchainBuilder().build(*mDevice, *mSurface);
+        mSwapchain = vklite::SwapchainBuilder()
+                .build(*mDevice, *mSurface);
+
         mCommandPool = vklite::CommandPoolBuilder()
                 .frameCount(mFrameCount)
                 .build(*mDevice);
+
         mRenderPass = vklite::RenderPassBuilder()
                 .sampleCountFlagBits(sampleCountFlagBits)
                 .build(*mDevice, *mSwapchain);
+
         mFrameBuffer = vklite::FrameBufferBuilder()
                 .displaySize(mSwapchain->getDisplaySize())
                 .displayFormat(mSwapchain->getDisplayFormat())

@@ -3,6 +3,7 @@
 //
 
 #include "PhysicalDeviceSelector.h"
+#include "vklite/physical_device/filter/SurfaceSupportPhysicalDeviceFilter.h"
 
 namespace vklite {
 
@@ -54,7 +55,9 @@ namespace vklite {
 
     std::unique_ptr<PhysicalDeviceSelector> PhysicalDeviceSelector::makeDefault(const Surface &surface, vk::QueueFlags queueFlags) {
         std::unique_ptr<PhysicalDeviceScoreCalculator> calculator = std::make_unique<PhysicalDeviceScoreCalculator>();
-        return std::make_unique<PhysicalDeviceSelector>(std::move(calculator));
+        std::unique_ptr<PhysicalDeviceSelector> deviceSelector = std::make_unique<PhysicalDeviceSelector>(std::move(calculator));
+        deviceSelector->addPhysicalDeviceFilter(std::make_unique<SurfaceSupportPhysicalDeviceFilter>(surface, queueFlags));
+        return deviceSelector;
     }
 
 } // vklite

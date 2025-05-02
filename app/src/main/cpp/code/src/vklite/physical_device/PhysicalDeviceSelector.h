@@ -35,7 +35,7 @@ namespace vklite {
         // static
     public:
         static std::unique_ptr<PhysicalDeviceSelector> makeDefault(const Surface &surface,
-                                                                   vk::QueueFlags queueFlags = vk::QueueFlagBits::eGraphics);
+                                                  vk::QueueFlags queueFlags = vk::QueueFlagBits::eGraphics);
     };
 
 
