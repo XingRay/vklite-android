@@ -15,12 +15,12 @@ namespace vklite {
             : mDevice(device) {
         LOG_D("RenderPass::RenderPass");
 
-        std::vector<vk::AttachmentDescription> attachments;
+        std::vector<vk::AttachmentDescription> attachmentDescriptions;
         uint32_t index = 0;
 
-        std::vector<vk::AttachmentReference> presentColorAttachmentReferences;
-        std::vector<vk::AttachmentReference> depthAttachmentReferences;
         std::vector<vk::AttachmentReference> msaaColorAttachmentReferences;
+        std::vector<vk::AttachmentReference> depthAttachmentReferences;
+        std::vector<vk::AttachmentReference> presentColorAttachmentReferences;
 
         if (enableMsaa) {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
@@ -47,7 +47,7 @@ namespace vklite {
                             // 这个特殊值的警告是图像的内容不能保证被保留，但这并不重要，因为我们无论如何要清除
                     .setInitialLayout(vk::ImageLayout::eUndefined)
                     .setFinalLayout(vk::ImageLayout::eColorAttachmentOptimal);
-            attachments.push_back(msaaColorAttachmentDescription);
+            attachmentDescriptions.push_back(msaaColorAttachmentDescription);
 
             vk::AttachmentReference msaaColorAttachmentReference{};
             msaaColorAttachmentReference
@@ -70,7 +70,7 @@ namespace vklite {
                     .setStencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                     .setInitialLayout(vk::ImageLayout::eUndefined)
                     .setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
-            attachments.push_back(depthAttachmentDescription);
+            attachmentDescriptions.push_back(depthAttachmentDescription);
 
             vk::AttachmentReference depthAttachmentReference{};
             depthAttachmentReference
@@ -92,7 +92,7 @@ namespace vklite {
                 .setStencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                 .setInitialLayout(vk::ImageLayout::eUndefined)
                 .setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
-        attachments.push_back(presentColorAttachmentDescription);
+        attachmentDescriptions.push_back(presentColorAttachmentDescription);
 
         vk::AttachmentReference presentColorAttachmentReference{};
         presentColorAttachmentReference
@@ -119,16 +119,16 @@ namespace vklite {
                     .setPDepthStencilAttachment(&depthAttachmentReferences[0]);
         }
 
-        std::array<vk::SubpassDescription, 1> subPassDescriptions{subPassDescription};
+        std::array<vk::SubpassDescription, 1> subpassDescriptions{subPassDescription};
 
 //        std::vector<vk::SubpassDependency> subPassDependencies;
 //
 //        vk::SubpassDependency startingPass{};
 //        startingPass
 //                .setSrcSubpass(vk::SubpassExternal)
-//                .setDstSubpass(0)
 //                .setSrcStageMask(vk::PipelineStageFlagBits::eBottomOfPipe)
 //                .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
+//                .setDstSubpass(0)
 //                .setSrcAccessMask(vk::AccessFlagBits::eMemoryRead)
 //                .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
 //                .setDependencyFlags(vk::DependencyFlagBits::eByRegion);
@@ -137,29 +137,29 @@ namespace vklite {
 //        vk::SubpassDependency endingPass;
 //        endingPass
 //                .setSrcSubpass(0)
-//                .setDstSubpass(vk::SubpassExternal)
 //                .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-//                .setDstStageMask(vk::PipelineStageFlagBits::eBottomOfPipe)
 //                .setSrcAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+//                .setDstSubpass(vk::SubpassExternal)
+//                .setDstStageMask(vk::PipelineStageFlagBits::eBottomOfPipe)
 //                .setDstAccessMask(vk::AccessFlagBits::eMemoryRead)
 //                .setDependencyFlags(vk::DependencyFlagBits::eByRegion);
 //        subPassDependencies.push_back(endingPass);
 
         vk::SubpassDependency subPassDependency = vk::SubpassDependency{}
                 .setSrcSubpass(vk::SubpassExternal)
-                .setDstSubpass(0)
                 .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
                 .setSrcAccessMask(vk::AccessFlagBits::eNone)
+                .setDstSubpass(0)
                 .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
                 .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-        std::array<vk::SubpassDependency, 1> subPassDependencies = {subPassDependency};
+        std::array<vk::SubpassDependency, 1> subpassDependencies = {subPassDependency};
 
         vk::RenderPassCreateInfo renderPassCreateInfo{};
         renderPassCreateInfo
                 .setFlags(vk::RenderPassCreateFlags{})
-                .setAttachments(attachments)
-                .setSubpasses(subPassDescriptions)
-                .setDependencies(subPassDependencies);
+                .setAttachments(attachmentDescriptions)
+                .setSubpasses(subpassDescriptions)
+                .setDependencies(subpassDependencies);
 
         mRenderPass = device.getDevice().createRenderPass(renderPassCreateInfo);
     }
