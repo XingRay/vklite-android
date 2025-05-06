@@ -34,7 +34,8 @@ namespace vklite {
         mDepthImageView = device.createImageView(mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
 
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
-            VulkanUtil::recordTransitionImageLayoutCommand(commandBuffer, mDepthImage, depthFormat, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
+            VulkanUtil::recordTransitionImageLayoutCommand(commandBuffer, mDepthImage, depthFormat, vk::ImageLayout::eUndefined,
+                                                           vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
                                                            vk::QueueFamilyIgnored, vk::QueueFamilyIgnored);
         });
 

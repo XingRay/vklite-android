@@ -10,13 +10,18 @@
 #include "vklite/Log.h"
 
 namespace vklite {
+
     class RenderPass {
+
     private://fields
-        const Device& mDevice;
+        const Device &mDevice;
         vk::RenderPass mRenderPass;
 
     public://methods
-        RenderPass(const Device &device, const Swapchain &swapchain, vk::SampleCountFlagBits sampleCountFlagBits);
+        RenderPass(const Device &device, const Swapchain &swapchain,
+                   bool enableMsaa,
+                   vk::SampleCountFlagBits sampleCountFlagBits,
+                   bool enableDepth);
 
         ~RenderPass();
 

@@ -34,19 +34,22 @@ namespace vklite {
         return *this;
     }
 
-    [[nodiscard]]
-    std::vector<PipelineResource> build(uint32_t frameCount);
+    PipelineResourceBuilder &PipelineResourceBuilder::indicesCount(uint32_t indicesCount) {
+        mIndicesCount = indicesCount;
+        return *this;
+    }
 
     std::vector<PipelineResource> PipelineResourceBuilder::build(uint32_t frameCount) {
         std::vector<PipelineResource> pipelineResources;
 //        pipelineResources.reserve(frameCount);
         pipelineResources.resize(frameCount);
-        for(int frameIndex=0; frameIndex < frameCount; frameIndex++){
+        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
 //            pipelineResources.emplace_back(); // 添加新元素
 //            PipelineResource& pipelineResource = pipelineResources.back();
-            PipelineResource& pipelineResource = pipelineResources[frameIndex];
+            PipelineResource &pipelineResource = pipelineResources[frameIndex];
             pipelineResource.addVertexBuffer(mVertexBufferProvider(frameIndex).getBuffer(), 0);
             pipelineResource.setIndexBuffer(mIndexBufferProvider(frameIndex).getBuffer(), 0);
+            pipelineResource.indicesCount(mIndicesCount);
         }
 
         return pipelineResources;

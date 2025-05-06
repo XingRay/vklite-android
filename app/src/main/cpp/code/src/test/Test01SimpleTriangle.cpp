@@ -56,7 +56,7 @@ namespace test01 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-        vk::SampleCountFlagBits sampleCountFlagBits = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;//mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -75,7 +75,9 @@ namespace test01 {
                 .build(*mDevice);
 
         mRenderPass = vklite::RenderPassBuilder()
+                .enableMsaa()
                 .sampleCountFlagBits(sampleCountFlagBits)
+                .enableDepth()
                 .build(*mDevice, *mSwapchain);
 
         mFrameBuffer = vklite::FrameBufferBuilder()
@@ -110,8 +112,9 @@ namespace test01 {
         mVertexBuffer->update(*mCommandPool, vertices);
 
         mPipelineResources = vklite::PipelineResourceBuilder()
-                .indexBuffer(*mIndexBuffer)
                 .vertexBuffer(*mVertexBuffer)
+                .indexBuffer(*mIndexBuffer)
+                .indicesCount(indices.size())
                 .build(mFrameCount);
 
         LOG_D("test created ");
@@ -214,9 +217,6 @@ namespace test01 {
         vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(mDepthStencil)};
         std::array<vk::ClearValue, 2> clearValues = {colorClearValue, depthStencilClearValue};
 
-        LOG_D("imageIndex: %d", imageIndex);
-        LOG_D("mFrameBuffer->getFrameBuffers().size: %ld", mFrameBuffer->getFrameBuffers().size());
-
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
@@ -231,11 +231,9 @@ namespace test01 {
          * 子流程的渲染命令通过次级命令缓冲区（Secondary Command Buffer）记录。
          * 适用于复杂的渲染流程，可以将渲染命令分散到多个次级命令缓冲区中，以提高代码的模块化和复用性。
          */
-        LOG_D("before commandBuffer.beginRenderPass");
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
-        LOG_D("after commandBuffer.beginRenderPass");
 
-//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
 
         commandBuffer.endRenderPass();
         commandBuffer.end();

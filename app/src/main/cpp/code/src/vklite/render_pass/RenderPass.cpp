@@ -7,10 +7,11 @@
 
 namespace vklite {
 
-    RenderPass::RenderPass(const Device &device, const Swapchain &swapchain, vk::SampleCountFlagBits sampleCountFlagBits) : mDevice(device) {
+    RenderPass::RenderPass(const Device &device, const Swapchain &swapchain,
+                           bool enableMsaa,
+                           vk::SampleCountFlagBits sampleCountFlagBits,
+                           bool enableDepth) : mDevice(device) {
         LOG_D("RenderPass::RenderPass");
-        bool enableMsaa = sampleCountFlagBits != vk::SampleCountFlagBits::e1;
-        bool enableDepth = true;
 
         std::vector<vk::AttachmentDescription> attachments;
         uint32_t index = 0;

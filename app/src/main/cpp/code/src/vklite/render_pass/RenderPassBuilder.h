@@ -12,12 +12,19 @@ namespace vklite {
 
     class RenderPassBuilder {
     private:
+        bool mEnableMsaa;
         vk::SampleCountFlagBits mSampleCountFlagBits;
+
+        bool mEnableDepth;
 
     public:
         RenderPassBuilder();
 
         ~RenderPassBuilder();
+
+        RenderPassBuilder & enableMsaa();
+
+        RenderPassBuilder & enableDepth();
 
         RenderPassBuilder &sampleCountFlagBits(vk::SampleCountFlagBits mSampleCountFlagBits);
 

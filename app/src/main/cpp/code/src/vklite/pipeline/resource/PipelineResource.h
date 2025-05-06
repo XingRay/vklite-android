@@ -57,9 +57,11 @@ namespace vklite {
 //        [[nodiscard]]
 //        const std::vector<PushConstant> &getPushConstants() const;
 
-        void addVertexBuffer(vk::Buffer buffer, vk::DeviceSize  offset);
+        void addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
 
-        void setIndexBuffer(vk::Buffer buffer, vk::DeviceSize  offset);
+        void setIndexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
+
+        void indicesCount(uint32_t indicesCount);
     };
 
 } // vklite

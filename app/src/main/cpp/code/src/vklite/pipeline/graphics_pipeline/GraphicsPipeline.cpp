@@ -393,10 +393,10 @@ namespace vklite {
          * 起始位置：offsets[0]（如 256 字节）
          * 结束位置：offsets[0] + vertexCount × stride（如 256 + 3×20 = 316 字节）
          */
-//        commandBuffer.bindVertexBuffers(0, pipelineResource.getVertexBuffers(), pipelineResource.getVertexBufferOffsets());
+        commandBuffer.bindVertexBuffers(0, pipelineResource.getVertexBuffers(), pipelineResource.getVertexBufferOffsets());
 
         // index buffer
-//        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
+        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
 
         // uniform/sampler/storage/...
 //        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);

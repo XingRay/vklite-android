@@ -110,4 +110,8 @@ namespace vklite {
         mIndexBufferOffset = offset;
     }
 
+    void PipelineResource::indicesCount(uint32_t indicesCount) {
+        mIndicesCount = indicesCount;
+    }
+
 } // vklite
