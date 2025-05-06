@@ -18,7 +18,8 @@ namespace vklite {
         vk::RenderPass mRenderPass;
 
     public://methods
-        RenderPass(const Device &device, const Swapchain &swapchain,
+        RenderPass(const Device &device,
+                   vk::Format displayFormat,
                    bool enableMsaa,
                    vk::SampleCountFlagBits sampleCountFlagBits,
                    bool enableDepth);

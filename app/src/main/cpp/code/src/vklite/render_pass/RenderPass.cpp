@@ -7,10 +7,12 @@
 
 namespace vklite {
 
-    RenderPass::RenderPass(const Device &device, const Swapchain &swapchain,
+    RenderPass::RenderPass(const Device &device,
+                           vk::Format displayFormat,
                            bool enableMsaa,
                            vk::SampleCountFlagBits sampleCountFlagBits,
-                           bool enableDepth) : mDevice(device) {
+                           bool enableDepth)
+            : mDevice(device) {
         LOG_D("RenderPass::RenderPass");
 
         std::vector<vk::AttachmentDescription> attachments;
@@ -23,7 +25,7 @@ namespace vklite {
         if (enableMsaa) {
             vk::AttachmentDescription msaaColorAttachmentDescription{};
             msaaColorAttachmentDescription
-                    .setFormat(swapchain.getDisplayFormat())
+                    .setFormat(displayFormat)
                     .setSamples(sampleCountFlagBits)
                             //载入图像前将帧缓冲清0
                     .setLoadOp(vk::AttachmentLoadOp::eClear)
@@ -82,7 +84,7 @@ namespace vklite {
 
         vk::AttachmentDescription presentColorAttachmentDescription{};
         presentColorAttachmentDescription
-                .setFormat(swapchain.getDisplayFormat())
+                .setFormat(displayFormat)
                 .setSamples(vk::SampleCountFlagBits::e1)
                 .setLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .setStoreOp(vk::AttachmentStoreOp::eStore)

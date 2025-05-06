@@ -17,16 +17,19 @@ namespace vklite {
 
         bool mEnableDepth;
 
+        vk::Format mDisplayFormat;
     public:
         RenderPassBuilder();
 
         ~RenderPassBuilder();
 
-        RenderPassBuilder & enableMsaa();
+        RenderPassBuilder &enableMsaa();
 
-        RenderPassBuilder & enableDepth();
+        RenderPassBuilder &enableDepth();
 
         RenderPassBuilder &sampleCountFlagBits(vk::SampleCountFlagBits mSampleCountFlagBits);
+
+        RenderPassBuilder &displayFormat(vk::Format displayFormat);
 
         std::unique_ptr<RenderPass> build(const Device &device, const Swapchain &swapchain);
     };

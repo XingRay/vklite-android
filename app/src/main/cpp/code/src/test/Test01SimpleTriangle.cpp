@@ -75,6 +75,7 @@ namespace test01 {
                 .build(*mDevice);
 
         mRenderPass = vklite::RenderPassBuilder()
+                .displayFormat(mSwapchain->getDisplayFormat())
                 .enableMsaa()
                 .sampleCountFlagBits(sampleCountFlagBits)
                 .enableDepth()

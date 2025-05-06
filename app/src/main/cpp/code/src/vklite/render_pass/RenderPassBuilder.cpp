@@ -26,8 +26,13 @@ namespace vklite {
         return *this;
     }
 
+    RenderPassBuilder &RenderPassBuilder::displayFormat(vk::Format displayFormat) {
+        mDisplayFormat = displayFormat;
+        return *this;
+    }
+
     std::unique_ptr<RenderPass> RenderPassBuilder::build(const Device &device, const Swapchain &swapchain) {
-        return std::make_unique<RenderPass>(device, swapchain, mEnableMsaa, mSampleCountFlagBits, mEnableDepth);
+        return std::make_unique<RenderPass>(device, mDisplayFormat, mEnableMsaa, mSampleCountFlagBits, mEnableDepth);
     }
 
 } // vklite
