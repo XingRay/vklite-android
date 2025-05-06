@@ -8,11 +8,11 @@
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
-#include "VulkanImageInterface.h"
+#include "ImageInterface.h"
 
 namespace vklite {
 
-    class VulkanImage : public VulkanImageInterface {
+    class Image : public ImageInterface {
     private:
         const Device &mDevice;
 
@@ -29,9 +29,9 @@ namespace vklite {
         std::unique_ptr<VulkanStagingBuffer> mStagingBuffer;
 
     public:
-        VulkanImage(const Device &device, uint32_t width, uint32_t height, vk::Format format);
+        Image(const Device &device, uint32_t width, uint32_t height, vk::Format format);
 
-        ~VulkanImage();
+        ~Image();
 
         [[nodiscard]]
         const vk::Image &getImage() const override;

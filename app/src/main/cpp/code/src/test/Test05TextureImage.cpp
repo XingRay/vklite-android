@@ -45,7 +45,7 @@ namespace test05 {
 
         std::vector<uint32_t> indices = {0, 2, 1, 1, 2, 3};
 
-        std::unique_ptr<vklite::ImageInterface> image = image::StbImage::loadImage("/storage/emulated/0/01.png");
+        std::unique_ptr<image::ImageInterface> image = image::StbImage::loadImage("/storage/emulated/0/01.png");
 
 //        std::unique_ptr<vklite::VkLiteEngine> engine = vklite::VkLiteEngineBuilder{}
 //                .layers({}, std::move(layers))

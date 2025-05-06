@@ -5,23 +5,23 @@
 #pragma once
 
 #include <memory>
-#include "vklite/image/VulkanImageInterface.h"
+#include "vklite/image/ImageInterface.h"
 #include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
 
     class ImageInfo {
     private:
-        std::unique_ptr<VulkanImageInterface> mImage;
+        std::unique_ptr<ImageInterface> mImage;
         std::unique_ptr<SamplerInterface> mSampler;
 
     public:
-        ImageInfo(std::unique_ptr<VulkanImageInterface> &&vulkanImage,
+        ImageInfo(std::unique_ptr<ImageInterface> &&vulkanImage,
                   std::unique_ptr<SamplerInterface> &&vulkanSampler);
 
         ~ImageInfo();
 
-        const std::unique_ptr<VulkanImageInterface> &getVulkanImage() const;
+        const std::unique_ptr<ImageInterface> &getVulkanImage() const;
 
         const std::unique_ptr<SamplerInterface> &getVulkanSampler() const;
 

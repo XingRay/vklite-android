@@ -31,7 +31,7 @@ namespace vklite {
 
         RenderPassBuilder &displayFormat(vk::Format displayFormat);
 
-        std::unique_ptr<RenderPass> build(const Device &device, const Swapchain &swapchain);
+        std::unique_ptr<RenderPass> build(const Device &device);
     };
 
 } // vklite

@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<RenderPass> RenderPassBuilder::build(const Device &device, const Swapchain &swapchain) {
+    std::unique_ptr<RenderPass> RenderPassBuilder::build(const Device &device) {
         return std::make_unique<RenderPass>(device, mDisplayFormat, mEnableMsaa, mSampleCountFlagBits, mEnableDepth);
     }
 

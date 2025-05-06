@@ -12,15 +12,15 @@
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
-#include "vklite/image/VulkanImage.h"
+#include "vklite/image/Image.h"
 
 #include "AndroidHardwareBuffer.h"
 #include "VulkanAndroidHardwareBufferYcbcrConversion.h"
-#include "vklite/image/VulkanImageInterface.h"
+#include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
-    class VulkanAndroidHardwareBufferImage : public VulkanImageInterface {
+    class VulkanAndroidHardwareBufferImage : public ImageInterface {
     private:
         const Device &mDevice;
 

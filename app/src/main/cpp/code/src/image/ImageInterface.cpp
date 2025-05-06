@@ -2,9 +2,9 @@
 // Created by leixing on 2025/4/8.
 //
 
-#include "vklite/ImageInterface.h"
+#include "ImageInterface.h"
 
-namespace vklite {
+namespace image {
 
     ImageInterface::ImageInterface() = default;
 

@@ -14,7 +14,7 @@ namespace vklite {
 
     VulkanAndroidHardwareBufferImageBuilder::~VulkanAndroidHardwareBufferImageBuilder() = default;
 
-    std::unique_ptr<VulkanImageInterface> VulkanAndroidHardwareBufferImageBuilder::build(const Device &device, uint32_t width, uint32_t height, vk::Format format) {
+    std::unique_ptr<ImageInterface> VulkanAndroidHardwareBufferImageBuilder::build(const Device &device, uint32_t width, uint32_t height, vk::Format format) {
         return std::make_unique<VulkanAndroidHardwareBufferImage>(device, mAndroidHardwareBuffer, mAndroidSamplerYcbcrConversion);
     }
 

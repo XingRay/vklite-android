@@ -8,7 +8,7 @@
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
 
-#include "vklite/image/VulkanImage.h"
+#include "vklite/image/Image.h"
 #include "SamplerInterface.h"
 
 namespace vklite {

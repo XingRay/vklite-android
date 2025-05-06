@@ -7,12 +7,12 @@
 #include <memory>
 #include <string>
 
-#include "vklite/ImageInterface.h"
+#include "ImageInterface.h"
 #include "stb_image.h"
 
 namespace image {
 
-    class StbImage : public vklite::ImageInterface {
+    class StbImage : public ImageInterface {
     private:
         uint32_t mWidth;
         uint32_t mHeight;

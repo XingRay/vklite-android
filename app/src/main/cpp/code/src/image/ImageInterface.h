@@ -8,7 +8,7 @@
 
 #include "vulkan/vulkan.hpp"
 
-namespace vklite {
+namespace image {
 
     class ImageInterface {
     private:

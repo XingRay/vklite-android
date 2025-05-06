@@ -2,12 +2,12 @@
 // Created by leixing on 2025/3/13.
 //
 
-#include "VulkanImage.h"
+#include "Image.h"
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
-    VulkanImage::VulkanImage(const Device &device, uint32_t width, uint32_t height, vk::Format format)
+    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format)
             : mDevice(device), mWidth(width), mHeight(height) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
@@ -64,7 +64,7 @@ namespace vklite {
         mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
-    VulkanImage::~VulkanImage() {
+    Image::~Image() {
         vk::Device device = mDevice.getDevice();
 
         device.destroy(mImageView);
@@ -72,42 +72,42 @@ namespace vklite {
         device.unmapMemory(mDeviceMemory);
     }
 
-    const vk::Image &VulkanImage::getImage() const {
+    const vk::Image &Image::getImage() const {
         return mImage;
     }
 
-    const vk::ImageView &VulkanImage::getImageView() const {
+    const vk::ImageView &Image::getImageView() const {
         return mImageView;
     }
 
-    uint32_t VulkanImage::getMipLevels() const {
+    uint32_t Image::getMipLevels() const {
         return mMipLevels;
     }
 
-    const vk::DeviceMemory &VulkanImage::getDeviceMemory() const {
+    const vk::DeviceMemory &Image::getDeviceMemory() const {
         return mDeviceMemory;
     }
 
-    vk::Format VulkanImage::getImageFormat() const {
+    vk::Format Image::getImageFormat() const {
         return mImageFormat;
     }
 
 
-    uint32_t VulkanImage::getWidth() const {
+    uint32_t Image::getWidth() const {
         return mWidth;
     }
 
-    uint32_t VulkanImage::getHeight() const {
+    uint32_t Image::getHeight() const {
         return mHeight;
     }
 
-    void VulkanImage::transitionImageLayout(const CommandPool &commandPool) {
+    void Image::transitionImageLayout(const CommandPool &commandPool) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
             recordCommandTransitionImageLayout(commandBuffer);
         });
     }
 
-    void VulkanImage::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer) {
+    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer) {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -147,14 +147,14 @@ namespace vklite {
         );
     }
 
-    void VulkanImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void Image::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
         mStagingBuffer->updateBuffer(data, size);
         vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
         });
     }
 
-    void VulkanImage::recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer) {
+    void Image::recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer) {
         vk::ImageSubresourceLayers imageSubresourceLayers;
         imageSubresourceLayers
                 .setAspectMask(vk::ImageAspectFlagBits::eColor)
@@ -179,7 +179,7 @@ namespace vklite {
         commandBuffer.copyBufferToImage(buffer, mImage, vk::ImageLayout::eTransferDstOptimal, regions);
     }
 
-    void VulkanImage::generateMipmaps(const CommandPool &vulkanCommandPool) {
+    void Image::generateMipmaps(const CommandPool &vulkanCommandPool) {
         if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }
@@ -189,7 +189,7 @@ namespace vklite {
         });
     }
 
-    void VulkanImage::recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
+    void Image::recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
 
         vk::ImageSubresourceRange subresourceRange{};
         subresourceRange

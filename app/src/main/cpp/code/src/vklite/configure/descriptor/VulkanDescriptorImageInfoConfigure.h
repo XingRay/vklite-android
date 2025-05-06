@@ -6,11 +6,11 @@
 
 #include <memory>
 
-#include "vklite/ImageInterface.h"
+//#include "image/ImageInterface.h"
 
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/image/VulkanImageBuilderInterface.h"
+#include "vklite/image/ImageBuilderInterface.h"
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"
 #include "vklite/pipeline/resource/ImageInfo.h"
 
@@ -23,17 +23,17 @@ namespace vklite {
         std::unique_ptr<ImageInfo> mDescriptorBufferInfo;
 
         //create ImageInfo
-        std::unique_ptr<VulkanImageBuilderInterface> mImageBuilder;
+        std::unique_ptr<ImageBuilderInterface> mImageBuilder;
         std::unique_ptr<SamplerBuilderInterface> mSamplerBuilder;
 
         // image data
-        std::shared_ptr<ImageInterface> mImage;
+//        std::shared_ptr<ImageInterface> mImage;
 
     public:
         VulkanDescriptorImageInfoConfigure(
-                std::unique_ptr<VulkanImageBuilderInterface> &&vulkanImageBuilder,
-                std::unique_ptr<SamplerBuilderInterface> &&vulkanSamplerBuilder,
-                std::unique_ptr<vklite::ImageInterface> &&image);
+                std::unique_ptr<ImageBuilderInterface> &&vulkanImageBuilder,
+                std::unique_ptr<SamplerBuilderInterface> &&vulkanSamplerBuilder/*,
+                std::unique_ptr<vklite::ImageInterface> &&image*/);
 
         ~VulkanDescriptorImageInfoConfigure();
 

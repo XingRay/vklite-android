@@ -9,13 +9,13 @@
 
 namespace vklite {
 
-    class VulkanImageInterface {
+    class ImageInterface {
     private:
 
     public:
-        VulkanImageInterface();
+        ImageInterface();
 
-        virtual ~VulkanImageInterface() = 0;
+        virtual ~ImageInterface() = 0;
 
         [[nodiscard]]
         virtual const vk::Image &getImage() const = 0;

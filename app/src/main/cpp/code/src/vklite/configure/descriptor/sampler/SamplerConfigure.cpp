@@ -5,7 +5,7 @@
 #include "SamplerConfigure.h"
 #include "vklite/configure/descriptor/DescriptorSlotConfigure.h"
 
-#include "vklite/image/VulkanImageBuilder.h"
+#include "vklite/image/ImageBuilder.h"
 #include "vklite/sampler/builder/DefaultSamplerBuilder.h"
 
 namespace vklite {
@@ -37,9 +37,9 @@ namespace vklite {
 
     SamplerConfigure &SamplerConfigure::setImage(std::unique_ptr<vklite::ImageInterface> &&image) {
         mDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
-                std::make_unique<VulkanImageBuilder>(),
-                std::make_unique<DefaultSamplerBuilder>(),
-                std::move(image)
+                std::make_unique<ImageBuilder>(),
+                std::make_unique<DefaultSamplerBuilder>()/*,
+                std::move(image)*/
         );
         return *this;
     }

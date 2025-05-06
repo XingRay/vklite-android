@@ -79,7 +79,7 @@ namespace test01 {
                 .enableMsaa()
                 .sampleCountFlagBits(sampleCountFlagBits)
                 .enableDepth()
-                .build(*mDevice, *mSwapchain);
+                .build(*mDevice);
 
         mFrameBuffer = vklite::FrameBufferBuilder()
                 .displaySize(mSwapchain->getDisplaySize())
