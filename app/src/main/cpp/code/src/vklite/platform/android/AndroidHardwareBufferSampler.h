@@ -8,23 +8,23 @@
 #include "vklite/device/Device.h"
 #include "vklite/sampler/DefaultSampler.h"
 #include "AndroidHardwareBuffer.h"
-#include "VulkanAndroidHardwareBufferYcbcrConversion.h"
-#include "VulkanAndroidHardwareBufferImage.h"
+#include "AndroidHardwareBufferYcbcrConversion.h"
+#include "AndroidHardwareBufferImage.h"
 #include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
 
-    class VulkanAndroidHardwareBufferSampler : public SamplerInterface {
+    class AndroidHardwareBufferSampler : public SamplerInterface {
     private:
         const Device &mDevice;
         vk::Sampler mSampler;
 
     public:
 
-        VulkanAndroidHardwareBufferSampler(const Device &device,
-                                           const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
+        AndroidHardwareBufferSampler(const Device &device,
+                                     const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 
-        ~VulkanAndroidHardwareBufferSampler() override;
+        ~AndroidHardwareBufferSampler() override;
 
         [[nodiscard]]
         const vk::Sampler &getSampler() const override;

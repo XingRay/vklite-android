@@ -15,12 +15,12 @@
 #include "vklite/image/Image.h"
 
 #include "AndroidHardwareBuffer.h"
-#include "VulkanAndroidHardwareBufferYcbcrConversion.h"
+#include "AndroidHardwareBufferYcbcrConversion.h"
 #include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
-    class VulkanAndroidHardwareBufferImage : public ImageInterface {
+    class AndroidHardwareBufferImage : public ImageInterface {
     private:
         const Device &mDevice;
 
@@ -29,11 +29,11 @@ namespace vklite {
         vk::ImageView mImageView;
 
     public:
-        VulkanAndroidHardwareBufferImage(const Device &device,
-                                         const AndroidHardwareBuffer &androidHardwareBuffer,
-                                         const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
+        AndroidHardwareBufferImage(const Device &device,
+                                   const AndroidHardwareBuffer &androidHardwareBuffer,
+                                   const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 
-        ~VulkanAndroidHardwareBufferImage() override;
+        ~AndroidHardwareBufferImage() override;
 
         [[nodiscard]]
         const vk::Image &getImage() const override;

@@ -2,16 +2,16 @@
 // Created by leixing on 2025/3/15.
 //
 
-#include "VulkanAndroidInstancePlugin.h"
+#include "AndroidInstancePlugin.h"
 #include "vklite/platform/android/VulkanAndroidApi.h"
 
 namespace vklite {
 
-    VulkanAndroidInstancePlugin::VulkanAndroidInstancePlugin() = default;
+    AndroidInstancePlugin::AndroidInstancePlugin() = default;
 
-    VulkanAndroidInstancePlugin::~VulkanAndroidInstancePlugin() = default;
+    AndroidInstancePlugin::~AndroidInstancePlugin() = default;
 
-    void VulkanAndroidInstancePlugin::onInstanceCreated(const Instance &instance) {
+    void AndroidInstancePlugin::onInstanceCreated(const Instance &instance) {
         const vk::Instance &vkInstance = instance.getInstance();
 
         vkGetAndroidHardwareBufferPropertiesANDROID = (PFN_vkGetAndroidHardwareBufferPropertiesANDROID) vkGetInstanceProcAddr(vkInstance, "vkGetAndroidHardwareBufferPropertiesANDROID");

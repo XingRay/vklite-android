@@ -1,7 +1,7 @@
 //
 // Created by leixing on 2025/1/19.
 //
-#include "VulkanAndroidHardwareBufferImage.h"
+#include "AndroidHardwareBufferImage.h"
 
 #include "vklite/util/VkCheckCpp.h"
 #include "vklite/util/VkCheck.h"
@@ -10,9 +10,9 @@
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferImage::VulkanAndroidHardwareBufferImage(const Device &device,
-                                                                       const AndroidHardwareBuffer &androidHardwareBuffer,
-                                                                       const VulkanAndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
+    AndroidHardwareBufferImage::AndroidHardwareBufferImage(const Device &device,
+                                                           const AndroidHardwareBuffer &androidHardwareBuffer,
+                                                           const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
             : mDevice(device) {
         vk::Device vkDevice = mDevice.getDevice();
 
@@ -136,7 +136,7 @@ namespace vklite {
         mImageView = vkDevice.createImageView(imageViewCreateInfo);
     }
 
-    VulkanAndroidHardwareBufferImage::~VulkanAndroidHardwareBufferImage() {
+    AndroidHardwareBufferImage::~AndroidHardwareBufferImage() {
         vk::Device device = mDevice.getDevice();
 
         device.destroyImageView(mImageView);
@@ -144,29 +144,29 @@ namespace vklite {
         device.freeMemory(mDeviceMemory);
     }
 
-    const vk::Image &VulkanAndroidHardwareBufferImage::getImage() const {
+    const vk::Image &AndroidHardwareBufferImage::getImage() const {
         return mImage;
     }
 
     [[nodiscard]]
-    const vk::DeviceMemory &VulkanAndroidHardwareBufferImage::getDeviceMemory() const {
+    const vk::DeviceMemory &AndroidHardwareBufferImage::getDeviceMemory() const {
         return mDeviceMemory;
     }
 
-    const vk::ImageView &VulkanAndroidHardwareBufferImage::getImageView() const {
+    const vk::ImageView &AndroidHardwareBufferImage::getImageView() const {
         return mImageView;
     }
 
     [[nodiscard]]
-    uint32_t VulkanAndroidHardwareBufferImage::getMipLevels() const {
+    uint32_t AndroidHardwareBufferImage::getMipLevels() const {
         return 0;
     }
 
-    void VulkanAndroidHardwareBufferImage::transitionImageLayout(const CommandPool &commandPool) {
+    void AndroidHardwareBufferImage::transitionImageLayout(const CommandPool &commandPool) {
 
     }
 
-    void VulkanAndroidHardwareBufferImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void AndroidHardwareBufferImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
 
     }
 

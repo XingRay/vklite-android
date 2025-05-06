@@ -11,12 +11,12 @@
 
 namespace vklite {
 
-    class VulkanAndroidInstancePlugin : public InstancePlugin {
+    class AndroidInstancePlugin : public InstancePlugin {
 
     public:
-        VulkanAndroidInstancePlugin();
+        AndroidInstancePlugin();
 
-        ~VulkanAndroidInstancePlugin() override;
+        ~AndroidInstancePlugin() override;
 
         void onInstanceCreated(const Instance &instance) override;
     };

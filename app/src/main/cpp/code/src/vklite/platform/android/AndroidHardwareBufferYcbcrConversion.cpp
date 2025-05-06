@@ -2,13 +2,13 @@
 // Created by leixing on 2025/3/15.
 //
 
-#include "VulkanAndroidHardwareBufferYcbcrConversion.h"
+#include "AndroidHardwareBufferYcbcrConversion.h"
 #include "vklite/util/VkCheck.h"
 
 namespace vklite {
 
-    VulkanAndroidHardwareBufferYcbcrConversion::VulkanAndroidHardwareBufferYcbcrConversion(const Device &device,
-                                                                                           const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo)
+    AndroidHardwareBufferYcbcrConversion::AndroidHardwareBufferYcbcrConversion(const Device &device,
+                                                                               const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo)
             : mDevice(device) {
 
         vk::ExternalFormatANDROID externalFormat;
@@ -40,14 +40,14 @@ namespace vklite {
 
     }
 
-    VulkanAndroidHardwareBufferYcbcrConversion::~VulkanAndroidHardwareBufferYcbcrConversion() {
+    AndroidHardwareBufferYcbcrConversion::~AndroidHardwareBufferYcbcrConversion() {
         const vk::Device &device = mDevice.getDevice();
 
         // device.destroySamplerYcbcrConversion(mConversion); // link error
         vkDestroySamplerYcbcrConversion(device, mSamplerYcbcrConversion, nullptr);
     }
 
-    const vk::SamplerYcbcrConversion &VulkanAndroidHardwareBufferYcbcrConversion::getSamplerYcbcrConversion() const {
+    const vk::SamplerYcbcrConversion &AndroidHardwareBufferYcbcrConversion::getSamplerYcbcrConversion() const {
         return mSamplerYcbcrConversion;
     }
 } // vklite
