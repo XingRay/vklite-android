@@ -38,8 +38,8 @@ namespace vklite {
         [[nodiscard]]
         const vk::Image &getImage() const override;
 
-        [[nodiscard]]
-        const vk::ImageView &getImageView() const override;
+//        [[nodiscard]]
+//        const vk::ImageView &getImageView() const override;
 
         [[nodiscard]]
         const vk::DeviceMemory &getDeviceMemory() const;

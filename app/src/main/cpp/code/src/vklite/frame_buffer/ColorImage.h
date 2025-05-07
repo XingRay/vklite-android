@@ -16,7 +16,6 @@ namespace vklite {
 
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;
-        vk::ImageView mImageView;
 
     public:
         ColorImage(const Device &device, uint32_t width, uint32_t height, vk::SampleCountFlagBits sampleCountFlagBits, vk::Format displayFormat);

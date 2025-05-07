@@ -14,12 +14,11 @@ namespace vklite {
                                                              vk::ImageTiling::eOptimal,
                                                              vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
                                                              vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mImageView = device.createImageView(mImage, displayFormat, vk::ImageAspectFlagBits::eColor, 1);
+//        mImageView = device.createImageView(mImage, displayFormat, vk::ImageAspectFlagBits::eColor, 1);
     }
 
     ColorImage::~ColorImage() {
         const vk::Device &vkDevice = mDevice.getDevice();
-        vkDevice.destroy(mImageView);
         vkDevice.destroy(mImage);
         vkDevice.freeMemory(mDeviceMemory);
     }

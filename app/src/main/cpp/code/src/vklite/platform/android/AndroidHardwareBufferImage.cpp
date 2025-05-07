@@ -153,9 +153,9 @@ namespace vklite {
         return mDeviceMemory;
     }
 
-    const vk::ImageView &AndroidHardwareBufferImage::getImageView() const {
-        return mImageView;
-    }
+//    const vk::ImageView &AndroidHardwareBufferImage::getImageView() const {
+//        return mImageView;
+//    }
 
     [[nodiscard]]
     uint32_t AndroidHardwareBufferImage::getMipLevels() const {

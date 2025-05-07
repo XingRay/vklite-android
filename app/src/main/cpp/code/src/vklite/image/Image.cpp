@@ -7,15 +7,10 @@
 
 namespace vklite {
 
-    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format)
-            : mDevice(device), mWidth(width), mHeight(height) {
+    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels)
+            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
-
-        mMipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
-        vk::MemoryPropertyFlagBits memoryProperty = vk::MemoryPropertyFlagBits::eDeviceLocal;
-//        mImageFormat = vk::Format::eR8G8B8A8Srgb;
-        mImageFormat = format;
 
         vk::Extent3D extent3D;
         extent3D
@@ -29,7 +24,7 @@ namespace vklite {
                 .setExtent(extent3D)
                 .setMipLevels(mMipLevels)
                 .setArrayLayers(1)
-                .setFormat(mImageFormat)
+                .setFormat(mFormat)
                         //VK_IMAGE_TILING_LINEAR texel按行的顺序排列
                         //VK_IMAGE_TILING_OPTIMAL texel按实现定义的顺序排列
                         //the tiling mode cannot be changed at a later time.
@@ -47,7 +42,7 @@ namespace vklite {
         mImage = vkDevice.createImage(imageCreateInfo);
 
         vk::MemoryRequirements memoryRequirements = vkDevice.getImageMemoryRequirements(mImage);
-        uint32_t memoryTypeIndex = device.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, memoryProperty);
+        uint32_t memoryTypeIndex = device.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         vk::MemoryAllocateInfo memoryAllocateInfo;
         memoryAllocateInfo
@@ -58,7 +53,7 @@ namespace vklite {
 
         vkDevice.bindImageMemory(mImage, mDeviceMemory, 0);
 
-        mImageView = mDevice.createImageView(mImage, mImageFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
+//        mImageView = mDevice.createImageView(mImage, mFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
         uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
         mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
@@ -67,7 +62,7 @@ namespace vklite {
     Image::~Image() {
         vk::Device device = mDevice.getDevice();
 
-        device.destroy(mImageView);
+//        device.destroy(mImageView);
         device.destroy(mImage);
         device.unmapMemory(mDeviceMemory);
     }
@@ -76,9 +71,9 @@ namespace vklite {
         return mImage;
     }
 
-    const vk::ImageView &Image::getImageView() const {
-        return mImageView;
-    }
+//    const vk::ImageView &Image::getImageView() const {
+//        return mImageView;
+//    }
 
     uint32_t Image::getMipLevels() const {
         return mMipLevels;
@@ -89,7 +84,7 @@ namespace vklite {
     }
 
     vk::Format Image::getImageFormat() const {
-        return mImageFormat;
+        return mFormat;
     }
 
 
@@ -180,7 +175,7 @@ namespace vklite {
     }
 
     void Image::generateMipmaps(const CommandPool &vulkanCommandPool) {
-        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mImageFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
+        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }
 

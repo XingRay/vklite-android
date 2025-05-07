@@ -26,7 +26,7 @@ namespace vklite {
         vk::DescriptorImageInfo descriptorImageInfo{};
         descriptorImageInfo
                 .setSampler(mSampler->getSampler())
-                .setImageView(mImage->getImageView())
+//                .setImageView(mImage->getImageView())
                         // todo: set by field
                 .setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
 

@@ -20,8 +20,8 @@ namespace vklite {
         [[nodiscard]]
         virtual const vk::Image &getImage() const = 0;
 
-        [[nodiscard]]
-        virtual const vk::ImageView &getImageView() const = 0;
+//        [[nodiscard]]
+//        virtual const vk::ImageView &getImageView() const = 0;
 
         [[nodiscard]]
         virtual uint32_t getMipLevels() const = 0;

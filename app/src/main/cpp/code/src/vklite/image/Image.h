@@ -15,29 +15,28 @@ namespace vklite {
     class Image : public ImageInterface {
     private:
         const Device &mDevice;
-
-        vk::Format mImageFormat;
+        vk::Format mFormat;
         uint32_t mMipLevels;
-
         uint32_t mWidth;
         uint32_t mHeight;
 
+
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;
-        vk::ImageView mImageView;
+//        vk::ImageView mImageView;
 
         std::unique_ptr<VulkanStagingBuffer> mStagingBuffer;
 
     public:
-        Image(const Device &device, uint32_t width, uint32_t height, vk::Format format);
+        Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels);
 
-        ~Image();
+        ~Image() override;
 
         [[nodiscard]]
         const vk::Image &getImage() const override;
 
-        [[nodiscard]]
-        const vk::ImageView &getImageView() const override;
+//        [[nodiscard]]
+//        const vk::ImageView &getImageView() const override;
 
         [[nodiscard]]
         uint32_t getMipLevels() const override;
