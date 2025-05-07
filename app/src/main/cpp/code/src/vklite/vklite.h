@@ -17,3 +17,4 @@
 #include "vklite/pipeline/resource/PipelineResourceBuilder.h"
 #include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/vertex_buffer/VertexBufferBuilder.h"
+#include "vklite/image_view/ImageViewBuilder.h"

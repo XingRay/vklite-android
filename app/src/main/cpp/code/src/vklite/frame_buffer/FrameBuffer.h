@@ -9,12 +9,14 @@
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/render_pass/RenderPass.h"
 #include "vklite/command_pool/CommandPool.h"
+#include "vklite/image_view/ImageView.h"
 
 namespace vklite {
 
     class FrameBuffer {
     private:
         const Device &mDevice;
+        std::vector<ImageView>&& mDisplayImageViews;
 
         vk::Image mColorImage;
         vk::DeviceMemory mColorDeviceMemory;
@@ -28,7 +30,7 @@ namespace vklite {
 
     public:
         FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
-                    const std::vector<vk::ImageView> &displayImageViews,
+                    std::vector<ImageView>&& displayImageViews,
                     vk::Format displayFormat,
                     vk::Extent2D displaySize,
                     vk::SampleCountFlagBits sampleCountFlagBits);

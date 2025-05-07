@@ -6,13 +6,10 @@
 
 namespace vklite {
 
-    FrameBufferBuilder::FrameBufferBuilder() {
+    FrameBufferBuilder::FrameBufferBuilder()
+            : mSampleCountFlagBits(vk::SampleCountFlagBits::e1) {}
 
-    }
-
-    FrameBufferBuilder::~FrameBufferBuilder() {
-
-    }
+    FrameBufferBuilder::~FrameBufferBuilder() = default;
 
     FrameBufferBuilder &FrameBufferBuilder::displayFormat(vk::Format displayFormat) {
         mDisplayFormat = displayFormat;
@@ -24,14 +21,17 @@ namespace vklite {
         return *this;
     }
 
+    FrameBufferBuilder &FrameBufferBuilder::displayImageViews(std::vector<vklite::ImageView> &&displayImageViews) {
+        mDisplayImageViews = std::move(displayImageViews);
+        return *this;
+    }
+
     FrameBufferBuilder &FrameBufferBuilder::sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits) {
         mSampleCountFlagBits = sampleCountFlagBits;
         return *this;
     }
 
-    std::unique_ptr<FrameBuffer> FrameBufferBuilder::build(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
-                                                           const std::vector<vk::ImageView> &displayImageViews) {
-
-        return std::make_unique<FrameBuffer>(device, renderPass, commandPool, displayImageViews, mDisplayFormat, mDisplaySize, mSampleCountFlagBits);
+    std::unique_ptr<FrameBuffer> FrameBufferBuilder::build(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool) {
+        return std::make_unique<FrameBuffer>(device, renderPass, commandPool, std::move(mDisplayImageViews), mDisplayFormat, mDisplaySize, mSampleCountFlagBits);
     }
 } // vklite

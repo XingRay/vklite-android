@@ -228,7 +228,7 @@ namespace vklite {
         return {image, imageMemory};
     }
 
-    vk::ImageView Device::createImageView(const vk::Image &image, vk::Format format, vk::ImageAspectFlags imageAspect, uint32_t mipLevels) const {
+    vk::ImageView Device::createImageView(const vk::Image &image, vk::Format format, vk::ImageAspectFlags imageAspect, uint32_t levelCount) const {
         vk::ImageViewCreateInfo imageViewCreateInfo{};
         imageViewCreateInfo.setImage(image)
                 .setViewType(vk::ImageViewType::e2D)
@@ -239,12 +239,13 @@ namespace vklite {
         vk::ImageSubresourceRange &imageSubresourceRange = imageViewCreateInfo.subresourceRange;
         imageSubresourceRange.setAspectMask(imageAspect)
                 .setBaseMipLevel(0)
-                .setLevelCount(mipLevels)
+                .setLevelCount(levelCount)
                 .setBaseArrayLayer(0)
                 .setLayerCount(1);
 
         vk::ComponentMapping &componentMapping = imageViewCreateInfo.components;
-        componentMapping.setR(vk::ComponentSwizzle::eIdentity)
+        componentMapping
+                .setR(vk::ComponentSwizzle::eIdentity)
                 .setG(vk::ComponentSwizzle::eIdentity)
                 .setB(vk::ComponentSwizzle::eIdentity)
                 .setA(vk::ComponentSwizzle::eIdentity);

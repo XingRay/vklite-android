@@ -51,26 +51,12 @@ namespace vklite {
 
         mSwapChain = vkDevice.createSwapchainKHR(swapchainCreateInfo);
         mDisplayImages = vkDevice.getSwapchainImagesKHR(mSwapChain);
-        LOG_D("mDisplayImages.szie: %ld", mDisplayImages.size());
-        mDisplayImageViews.resize(mDisplayImages.size());
-
-        for (int i = 0; i < mDisplayImages.size(); i++) {
-            mDisplayImageViews[i] = device.createImageView(mDisplayImages[i], mSwapChainImageFormat.format, vk::ImageAspectFlagBits::eColor, 1);
-        }
     }
 
     Swapchain::~Swapchain() {
         LOG_D("VulkanSwapchain::~VulkanSwapchain");
         vk::Device device = mDevice.getDevice();
         // 通过 getSwapchainImagesKHR 获取的对象, 不是create的对象,不需要destroy, swapchain 会自动销毁
-//        for (const auto &displayImage: mDisplayImages) {
-//            device.destroy(displayImage);
-//        }
-
-        for (const auto &imageView: mDisplayImageViews) {
-            device.destroy(imageView);
-        }
-
         device.destroy(mSwapChain);
     }
 
@@ -96,9 +82,5 @@ namespace vklite {
 
     const std::vector<vk::Image> &Swapchain::getDisplayImages() const {
         return mDisplayImages;
-    }
-
-    const std::vector<vk::ImageView> &Swapchain::getDisplayImageViews() const {
-        return mDisplayImageViews;
     }
 }

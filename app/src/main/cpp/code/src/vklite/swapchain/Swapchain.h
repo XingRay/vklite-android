@@ -18,7 +18,6 @@ namespace vklite {
 
         vk::SwapchainKHR mSwapChain;
         std::vector<vk::Image> mDisplayImages;
-        std::vector<vk::ImageView> mDisplayImageViews;
 
     public:
         Swapchain(const Device &device, const Surface &surface,
@@ -47,7 +46,5 @@ namespace vklite {
         [[nodiscard]]
         const std::vector<vk::Image> &getDisplayImages() const;
 
-        [[nodiscard]]
-        const std::vector<vk::ImageView> &getDisplayImageViews() const;
     };
 }

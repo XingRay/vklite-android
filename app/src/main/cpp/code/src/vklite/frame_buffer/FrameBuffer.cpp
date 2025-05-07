@@ -9,11 +9,11 @@
 namespace vklite {
 
     FrameBuffer::FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
-                             const std::vector<vk::ImageView> &displayImageViews,
+                             std::vector<ImageView> &&displayImageViews,
                              vk::Format displayFormat,
                              vk::Extent2D displaySize,
                              vk::SampleCountFlagBits sampleCountFlagBits)
-            : mDevice(device) {
+            : mDevice(device), mDisplayImageViews(std::move(displayImageViews)) {
         LOG_D("FrameBuffer::FrameBuffer");
         std::tie(mColorImage, mColorDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
                                                                        sampleCountFlagBits,
@@ -39,13 +39,13 @@ namespace vklite {
                                                            vk::QueueFamilyIgnored, vk::QueueFamilyIgnored);
         });
 
-        mFrameBuffers.resize(displayImageViews.size());
+        mFrameBuffers.resize(mDisplayImageViews.size());
 
-        for (int i = 0; i < displayImageViews.size(); i++) {
+        for (int i = 0; i < mDisplayImageViews.size(); i++) {
             std::array<vk::ImageView, 3> attachments = {
                     mColorImageView,
                     mDepthImageView,
-                    displayImageViews[i],
+                    mDisplayImageViews[i].getImageView(),
             };
 
             vk::FramebufferCreateInfo framebufferCreateInfo{};

@@ -81,11 +81,19 @@ namespace test01 {
                 .enableDepth()
                 .build(*mDevice);
 
+        std::vector<vklite::ImageView> displayImageViews = vklite::ImageViewBuilder()
+                .format(mSwapchain->getDisplayFormat())
+                .levelCount(1)
+                .imageAspect(vk::ImageAspectFlagBits::eColor)
+                .build(*mDevice, mSwapchain->getDisplayImages());
+
+
         mFrameBuffer = vklite::FrameBufferBuilder()
                 .displaySize(mSwapchain->getDisplaySize())
                 .displayFormat(mSwapchain->getDisplayFormat())
+                .displayImageViews(std::move(displayImageViews))
                 .sampleCountFlagBits(sampleCountFlagBits)
-                .build(*mDevice, *mRenderPass, *mCommandPool, mSwapchain->getDisplayImageViews());
+                .build(*mDevice, *mRenderPass, *mCommandPool);
 
         mSyncObject = vklite::SyncObjectBuilder()
                 .frameCount(mFrameCount)
