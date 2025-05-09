@@ -3,6 +3,7 @@
 //
 
 #include "ImageView.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -25,7 +26,8 @@ namespace vklite {
                 .setA(vk::ComponentSwizzle::eIdentity);
 
         vk::ImageViewCreateInfo imageViewCreateInfo{};
-        imageViewCreateInfo.setImage(image)
+        imageViewCreateInfo
+                .setImage(image)
                 .setViewType(vk::ImageViewType::e2D)
                 .setFormat(format)
                 .setSubresourceRange(imageSubresourceRange)
@@ -34,9 +36,19 @@ namespace vklite {
         mImageView = mDevice.getDevice().createImageView(imageViewCreateInfo);
     }
 
+    ImageView::ImageView(ImageView &&other) noexcept
+            : mDevice(other.mDevice),
+              mImageView(std::exchange(other.mImageView, nullptr)) {}
+
     ImageView::~ImageView() {
-        const vk::Device &vkDevice = mDevice.getDevice();
-        vkDevice.destroy(mImageView);
+        LOG_D("ImageView::~ImageView");
+        if (mImageView != nullptr) {
+            LOG_D("vkDevice.destroy(mImageView); mImageView:%p", static_cast<void *>(mImageView));
+            const vk::Device &vkDevice = mDevice.getDevice();
+            vkDevice.destroy(mImageView);
+        } else {
+            LOG_D("mImageView is null, 'vkDevice.destroy(mImageView);' skipped");
+        }
     }
 
     const vk::ImageView &ImageView::getImageView() const {

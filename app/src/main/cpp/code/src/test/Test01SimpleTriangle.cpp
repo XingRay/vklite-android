@@ -8,6 +8,7 @@
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace test01 {
 
@@ -81,19 +82,40 @@ namespace test01 {
                 .enableDepth()
                 .build(*mDevice);
 
-        std::vector<vklite::ImageView> displayImageViews = vklite::ImageViewBuilder()
+        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
                 .format(mSwapchain->getDisplayFormat())
-                .levelCount(1)
-                .imageAspect(vk::ImageAspectFlagBits::eColor)
                 .build(*mDevice, mSwapchain->getDisplayImages());
 
-
-        mFrameBuffer = vklite::FrameBufferBuilder()
-                .displaySize(mSwapchain->getDisplaySize())
-                .displayFormat(mSwapchain->getDisplayFormat())
-                .displayImageViews(std::move(displayImageViews))
+        mColorImage = vklite::ImageBuilder::colorImageBuilder()
+                .width(mSwapchain->getDisplaySize().width)
+                .height(mSwapchain->getDisplaySize().height)
+                .format(mSwapchain->getDisplayFormat())
                 .sampleCountFlagBits(sampleCountFlagBits)
-                .build(*mDevice, *mRenderPass, *mCommandPool);
+                .build(*mDevice);
+        mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                .build(*mDevice, *mColorImage);
+
+        mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+                .width(mSwapchain->getDisplaySize().width)
+                .height(mSwapchain->getDisplaySize().height)
+                .format(mPhysicalDevice->findDepthFormat())
+                .sampleCountFlagBits(sampleCountFlagBits)
+                .build(*mDevice);
+        mDepthImage->transitionImageLayout(*mCommandPool);
+        mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                .build(*mDevice, *mDepthImage);
+
+        mFrameBuffers.reserve(mDisplayImageViews.size());
+        for (const vklite::ImageView &imageView: mDisplayImageViews) {
+            mFrameBuffers.push_back(vklite::FrameBufferBuilder()
+                                            .width(mSwapchain->getDisplaySize().width)
+                                            .height(mSwapchain->getDisplaySize().height)
+                                                    // 下面添加附件的顺序不能乱
+                                            .addAttachment(mColorImageView->getImageView())
+                                            .addAttachment(mDepthImageView->getImageView())
+                                            .addAttachment(imageView.getImageView())
+                                            .build(*mDevice, *mRenderPass));
+        }
 
         mSyncObject = vklite::SyncObjectBuilder()
                 .frameCount(mFrameCount)
@@ -229,7 +251,7 @@ namespace test01 {
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
-                .setFramebuffer(mFrameBuffer->getFrameBuffers()[imageIndex])
+                .setFramebuffer(mFrameBuffers[imageIndex].getFrameBuffer())
                 .setRenderArea(renderArea)
                 .setClearValues(clearValues);
         /**
@@ -245,6 +267,7 @@ namespace test01 {
         mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
 
         commandBuffer.endRenderPass();
+
         commandBuffer.end();
 
         result = mSyncObject->resetFence(mCurrentFrameIndex);

@@ -16,29 +16,34 @@ namespace vklite {
     class FrameBuffer {
     private:
         const Device &mDevice;
-        std::vector<ImageView>&& mDisplayImageViews;
-
-        vk::Image mColorImage;
-        vk::DeviceMemory mColorDeviceMemory;
-        vk::ImageView mColorImageView;
-
-        vk::Image mDepthImage;
-        vk::DeviceMemory mDepthDeviceMemory;
-        vk::ImageView mDepthImageView;
-
-        std::vector<vk::Framebuffer> mFrameBuffers;
+        vk::Framebuffer mFrameBuffer;
 
     public:
-        FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
-                    std::vector<ImageView>&& displayImageViews,
-                    vk::Format displayFormat,
-                    vk::Extent2D displaySize,
-                    vk::SampleCountFlagBits sampleCountFlagBits);
+
+        // 默认构造函数（不可行）, 因为 const 引用成员 mDevice 必须初始化，且无默认构造函数
+        FrameBuffer() = delete;
+
+        // 带参数的构造函数
+        FrameBuffer(const Device &device, const RenderPass &renderPass,
+                    const std::vector<vk::ImageView> &attachments, uint32_t width, uint32_t height, uint32_t layers);
+
+        // 拷贝构造函数（显式删除） ---
+        // 原因：mDevice 是 const 引用，无法重新绑定；
+        FrameBuffer(const FrameBuffer &) = delete;
+
+        // 移动构造函数
+        FrameBuffer(FrameBuffer &&other) noexcept;
+
+        // 拷贝赋值运算符
+        FrameBuffer &operator=(const FrameBuffer &) = delete;
+
+        // 移动赋值运算符
+        FrameBuffer &operator=(FrameBuffer &&) = delete;
 
         ~FrameBuffer();
 
         [[nodiscard]]
-        const std::vector<vk::Framebuffer> &getFrameBuffers() const;
+        const vk::Framebuffer &getFrameBuffer() const;
 
     private:
 

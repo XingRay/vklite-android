@@ -55,6 +55,22 @@ namespace vklite {
         }
     }
 
+    uint32_t VulkanUtil::calcMipLevles(uint32_t width, uint32_t height) {
+        return static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+    }
+
+    vk::ImageAspectFlags VulkanUtil::calcImageAspectFlags(vk::ImageLayout imageLayout, vk::Format format) {
+        if (imageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+            if (hasStencilComponent(format)) {
+                return vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil;
+            } else {
+                return vk::ImageAspectFlagBits::eDepth;
+            }
+        } else {
+            return vk::ImageAspectFlagBits::eColor;
+        }
+    }
+
     void VulkanUtil::recordTransitionImageLayoutCommand(const vk::CommandBuffer &commandBuffer,
                                                         vk::Image image,
                                                         vk::Format format,
@@ -71,17 +87,7 @@ namespace vklite {
                 .setBaseArrayLayer(0)
                 .setLayerCount(1);
 
-        // 注意这里一定要是 vk::ImageLayout::eDepthStencilAttachmentOptimal ， 写成了 vk::ImageLayout::eStencilAttachmentOptimal 后面会报警告
-        if (newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
-            if (hasStencilComponent(format)) {
-                imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
-            } else {
-                imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eDepth);
-            }
-        } else {
-            imageSubresourceRange.setAspectMask(vk::ImageAspectFlagBits::eColor);
-        }
-
+        imageSubresourceRange.setAspectMask(calcImageAspectFlags(newImageLayout, format));
 
         vk::ImageMemoryBarrier imageMemoryBarrier;
         imageMemoryBarrier

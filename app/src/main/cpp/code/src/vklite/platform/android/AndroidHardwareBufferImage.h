@@ -45,6 +45,9 @@ namespace vklite {
         const vk::DeviceMemory &getDeviceMemory() const;
 
         [[nodiscard]]
+        vk::Format getFormat() const override;
+
+        [[nodiscard]]
         uint32_t getMipLevels() const override;
 
         void transitionImageLayout(const CommandPool &commandPool) override;

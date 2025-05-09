@@ -10,6 +10,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/image_view/ImageView.h"
+#include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
@@ -33,7 +34,15 @@ namespace vklite {
 
         std::unique_ptr<ImageView> build(const Device &device, const vk::Image &image);
 
+        std::unique_ptr<ImageView> build(const Device &device, const ImageInterface &image);
+
         std::vector<ImageView> build(const Device &device, const std::vector<vk::Image> &images);
+
+    public://static
+        static ImageViewBuilder colorImageViewBuilder();
+
+        static ImageViewBuilder depthImageViewBuilder();
+
     };
 
 } // vklite

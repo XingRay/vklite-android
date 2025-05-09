@@ -8,6 +8,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
+#include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 

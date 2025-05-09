@@ -7,31 +7,37 @@
 namespace vklite {
 
     FrameBufferBuilder::FrameBufferBuilder()
-            : mSampleCountFlagBits(vk::SampleCountFlagBits::e1) {}
+            : mLayers(1), mWidth(0), mHeight(0) {}
 
     FrameBufferBuilder::~FrameBufferBuilder() = default;
 
-    FrameBufferBuilder &FrameBufferBuilder::displayFormat(vk::Format displayFormat) {
-        mDisplayFormat = displayFormat;
+    FrameBufferBuilder &FrameBufferBuilder::width(uint32_t width) {
+        mWidth = width;
         return *this;
     }
 
-    FrameBufferBuilder &FrameBufferBuilder::displaySize(vk::Extent2D displaySize) {
-        mDisplaySize = displaySize;
+    FrameBufferBuilder &FrameBufferBuilder::height(uint32_t height) {
+        mHeight = height;
         return *this;
     }
 
-    FrameBufferBuilder &FrameBufferBuilder::displayImageViews(std::vector<vklite::ImageView> &&displayImageViews) {
-        mDisplayImageViews = std::move(displayImageViews);
+    FrameBufferBuilder &FrameBufferBuilder::layers(uint32_t layers) {
+        mLayers = layers;
         return *this;
     }
 
-    FrameBufferBuilder &FrameBufferBuilder::sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits) {
-        mSampleCountFlagBits = sampleCountFlagBits;
+    FrameBufferBuilder &FrameBufferBuilder::addAttachment(vk::ImageView attachment) {
+        mAttachments.push_back(attachment);
         return *this;
     }
 
-    std::unique_ptr<FrameBuffer> FrameBufferBuilder::build(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool) {
-        return std::make_unique<FrameBuffer>(device, renderPass, commandPool, std::move(mDisplayImageViews), mDisplayFormat, mDisplaySize, mSampleCountFlagBits);
+    FrameBuffer FrameBufferBuilder::build(const vklite::Device &device, const vklite::RenderPass &renderPass) {
+//        return FrameBuffer(device, renderPass, mAttachments, mWidth, mHeight, mLayers);
+        return {device, renderPass, mAttachments, mWidth, mHeight, mLayers};
     }
+
+    std::unique_ptr<FrameBuffer> FrameBufferBuilder::buildUnique(const vklite::Device &device, const vklite::RenderPass &renderPass) {
+        return std::make_unique<FrameBuffer>(device, renderPass, mAttachments, mWidth, mHeight, mLayers);
+    }
+
 } // vklite

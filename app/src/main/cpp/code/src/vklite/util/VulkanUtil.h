@@ -20,6 +20,10 @@ namespace vklite {
 
         static std::string formatDeviceSize(vk::DeviceSize size);
 
+        static uint32_t calcMipLevles(uint32_t width, uint32_t height);
+
+        static vk::ImageAspectFlags calcImageAspectFlags(vk::ImageLayout imageLayout, vk::Format format);
+
         static void recordTransitionImageLayoutCommand(const vk::CommandBuffer &commandBuffer,
                                                        vk::Image image,
                                                        vk::Format format,

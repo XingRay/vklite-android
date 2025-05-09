@@ -36,11 +36,11 @@ namespace vklite {
     }
 
     SamplerConfigure &SamplerConfigure::setImage(std::unique_ptr<vklite::ImageInterface> &&image) {
-        mDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
-                std::make_unique<ImageBuilder>(),
-                std::make_unique<DefaultSamplerBuilder>()/*,
-                std::move(image)*/
-        );
+//        mDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
+//                std::make_unique<ImageBuilder>(),
+//                std::make_unique<DefaultSamplerBuilder>()/*,
+//                std::move(image)*/
+//        );
         return *this;
     }
 

@@ -7,10 +7,12 @@
 #include "vulkan/vulkan.hpp"
 
 #include "vklite/device/Device.h"
+#include "vklite/image/ImageInterface.h"
+#include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
-    class ColorImage {
+    class ColorImage{
     private:
         const Device &mDevice;
 

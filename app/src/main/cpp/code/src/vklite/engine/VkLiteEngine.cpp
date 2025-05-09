@@ -229,7 +229,7 @@ namespace vklite {
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
-                .setFramebuffer(mFrameBuffer->getFrameBuffers()[imageIndex])
+//                .setFramebuffer(mFrameBuffer->getFrameBuffers()[imageIndex])
                 .setRenderArea(renderArea)
                 .setClearValues(clearValues);
         /**

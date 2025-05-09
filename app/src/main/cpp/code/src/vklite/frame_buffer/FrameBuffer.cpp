@@ -8,76 +8,45 @@
 
 namespace vklite {
 
-    FrameBuffer::FrameBuffer(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool,
-                             std::vector<ImageView> &&displayImageViews,
-                             vk::Format displayFormat,
-                             vk::Extent2D displaySize,
-                             vk::SampleCountFlagBits sampleCountFlagBits)
-            : mDevice(device), mDisplayImageViews(std::move(displayImageViews)) {
+    FrameBuffer::FrameBuffer(const Device &device, const RenderPass &renderPass, const std::vector<vk::ImageView> &attachments, uint32_t width, uint32_t height, uint32_t layers)
+            : mDevice(device) {
         LOG_D("FrameBuffer::FrameBuffer");
-        std::tie(mColorImage, mColorDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
-                                                                       sampleCountFlagBits,
-                                                                       displayFormat,
-                                                                       vk::ImageTiling::eOptimal,
-                                                                       vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
-                                                                       vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mColorImageView = device.createImageView(mColorImage, displayFormat, vk::ImageAspectFlagBits::eColor, 1);
 
-        vk::Format depthFormat = device.getPhysicalDevice().findDepthFormat();
+        vk::FramebufferCreateInfo framebufferCreateInfo{};
+        framebufferCreateInfo
+                .setRenderPass(renderPass.getRenderPass())
+                .setAttachments(attachments)
+                .setWidth(width)
+                .setHeight(height)
+                .setLayers(layers);
 
-        std::tie(mDepthImage, mDepthDeviceMemory) = device.createImage(displaySize.width, displaySize.height, 1,
-                                                                       sampleCountFlagBits,
-                                                                       depthFormat,
-                                                                       vk::ImageTiling::eOptimal,
-                                                                       vk::ImageUsageFlagBits::eDepthStencilAttachment,
-                                                                       vk::MemoryPropertyFlagBits::eDeviceLocal);
-        mDepthImageView = device.createImageView(mDepthImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
+        mFrameBuffer = device.getDevice().createFramebuffer(framebufferCreateInfo);
+        LOG_D("device.getDevice().createFramebuffer() => mFrameBuffer: %p", static_cast<void *>(mFrameBuffer));
+    }
 
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
-            VulkanUtil::recordTransitionImageLayoutCommand(commandBuffer, mDepthImage, depthFormat, vk::ImageLayout::eUndefined,
-                                                           vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
-                                                           vk::QueueFamilyIgnored, vk::QueueFamilyIgnored);
-        });
+//    FrameBuffer::FrameBuffer(FrameBuffer &&other) noexcept
+//            : mDevice(other.mDevice), mFrameBuffer(other.mFrameBuffer) {
+//        other.mFrameBuffer = nullptr;
+//    }
 
-        mFrameBuffers.resize(mDisplayImageViews.size());
-
-        for (int i = 0; i < mDisplayImageViews.size(); i++) {
-            std::array<vk::ImageView, 3> attachments = {
-                    mColorImageView,
-                    mDepthImageView,
-                    mDisplayImageViews[i].getImageView(),
-            };
-
-            vk::FramebufferCreateInfo framebufferCreateInfo{};
-            framebufferCreateInfo
-                    .setRenderPass(renderPass.getRenderPass())
-                    .setAttachments(attachments)
-                    .setWidth(displaySize.width)
-                    .setHeight(displaySize.height)
-                    .setLayers(1);
-
-            mFrameBuffers[i] = device.getDevice().createFramebuffer(framebufferCreateInfo);
-        }
+    FrameBuffer::FrameBuffer(FrameBuffer &&other) noexcept
+            : mDevice(other.mDevice),
+              mFrameBuffer(std::exchange(other.mFrameBuffer, nullptr)) {
+        LOG_D("FrameBuffer::FrameBuffer(FrameBuffer &&other)");
     }
 
     FrameBuffer::~FrameBuffer() {
         LOG_D("FrameBuffer::~FrameBuffer");
-        vk::Device device = mDevice.getDevice();
-
-        for (const auto &frameBuffer: mFrameBuffers) {
-            device.destroy(frameBuffer);
+        if (mFrameBuffer != nullptr) {
+            LOG_D("vkDevice.destroy(mFrameBuffer); mFrameBuffer: %p", static_cast<void *>(mFrameBuffer));
+            vk::Device vkDevice = mDevice.getDevice();
+            vkDevice.destroy(mFrameBuffer);
+        } else {
+            LOG_D("mFrameBuffer is nullptr, 'vkDevice.destroy(mFrameBuffer);' skipped");
         }
-
-        device.destroy(mDepthImageView);
-        device.destroy(mDepthImage);
-        device.freeMemory(mDepthDeviceMemory);
-
-        device.destroy(mColorImageView);
-        device.destroy(mColorImage);
-        device.freeMemory(mColorDeviceMemory);
     }
 
-    const std::vector<vk::Framebuffer> &FrameBuffer::getFrameBuffers() const {
-        return mFrameBuffers;
+    const vk::Framebuffer &FrameBuffer::getFrameBuffer() const {
+        return mFrameBuffer;
     }
 } // vklite

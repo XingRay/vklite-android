@@ -13,26 +13,30 @@ namespace vklite {
 
     class FrameBufferBuilder {
     private:
-        vk::Format mDisplayFormat;
-        vk::Extent2D mDisplaySize;
-        std::vector<ImageView> mDisplayImageViews;
-        vk::SampleCountFlagBits mSampleCountFlagBits;
+
+        uint32_t mWidth;
+        uint32_t mHeight;
+        uint32_t mLayers;
+        std::vector<vk::ImageView> mAttachments;
 
     public:
         FrameBufferBuilder();
 
         ~FrameBufferBuilder();
 
-        FrameBufferBuilder &displayFormat(vk::Format displayFormat);
+        FrameBufferBuilder &width(uint32_t width);
 
-        FrameBufferBuilder &displaySize(vk::Extent2D displaySize);
+        FrameBufferBuilder &height(uint32_t height);
 
-        FrameBufferBuilder &displayImageViews(std::vector<vklite::ImageView> &&mDisplayImageViews);
+        FrameBufferBuilder &layers(uint32_t layers);
 
-        FrameBufferBuilder &sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits);
+        FrameBufferBuilder &addAttachment(vk::ImageView attachment);
 
         [[nodiscard]]
-        std::unique_ptr<FrameBuffer> build(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool);
+        FrameBuffer build(const Device &device, const RenderPass &renderPass);
+
+        [[nodiscard]]
+        std::unique_ptr<FrameBuffer> buildUnique(const Device &device, const RenderPass &renderPass);
     };
 
 } // vklite

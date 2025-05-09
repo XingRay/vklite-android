@@ -7,7 +7,7 @@
 namespace vklite {
 
     ImageViewBuilder::ImageViewBuilder()
-            : mLevelCount(1) {}
+            : mLevelCount(1), mFormat(vk::Format::eUndefined) {}
 
     ImageViewBuilder::~ImageViewBuilder() = default;
 
@@ -30,6 +30,10 @@ namespace vklite {
         return std::make_unique<ImageView>(device, image, mFormat, mImageAspect, mLevelCount);
     }
 
+    std::unique_ptr<ImageView> ImageViewBuilder::build(const Device &device, const ImageInterface &image) {
+        return std::make_unique<ImageView>(device, image.getImage(), image.getFormat(), mImageAspect, mLevelCount);
+    }
+
     std::vector<ImageView> ImageViewBuilder::build(const Device &device, const std::vector<vk::Image> &images) {
         std::vector<ImageView> imageViews;
         imageViews.reserve(images.size());
@@ -39,6 +43,16 @@ namespace vklite {
         }
 
         return imageViews;
+    }
+
+    ImageViewBuilder ImageViewBuilder::colorImageViewBuilder() {
+        return ImageViewBuilder()
+                .imageAspect(vk::ImageAspectFlagBits::eColor);
+    }
+
+    ImageViewBuilder ImageViewBuilder::depthImageViewBuilder() {
+        return ImageViewBuilder()
+                .imageAspect(vk::ImageAspectFlagBits::eDepth);
     }
 
 } // vklite

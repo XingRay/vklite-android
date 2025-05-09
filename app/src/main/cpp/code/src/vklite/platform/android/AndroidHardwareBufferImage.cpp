@@ -157,6 +157,10 @@ namespace vklite {
 //        return mImageView;
 //    }
 
+    vk::Format AndroidHardwareBufferImage::getFormat() const {
+        return vk::Format::eUndefined;
+    }
+
     [[nodiscard]]
     uint32_t AndroidHardwareBufferImage::getMipLevels() const {
         return 0;

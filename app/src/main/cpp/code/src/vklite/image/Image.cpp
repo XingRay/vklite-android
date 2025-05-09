@@ -7,8 +7,16 @@
 
 namespace vklite {
 
-    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels)
-            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format) {
+    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels, vk::ImageUsageFlags imageUsageFlags,
+                 vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling,
+                 vk::ImageLayout oldImageLayout,
+                 vk::ImageLayout newImageLayout,
+                 uint32_t srcQueueFamilyIndex,
+                 uint32_t dstQueueFamilyIndex,
+                 vk::ImageAspectFlags imageAspectFlags)
+            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format),
+              mOldImageLayout(oldImageLayout), mNewImageLayout(newImageLayout), mSrcQueueFamilyIndex(srcQueueFamilyIndex), mDstQueueFamilyIndex(dstQueueFamilyIndex),
+              mImageAspectFlags(imageAspectFlags) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
 
@@ -22,20 +30,22 @@ namespace vklite {
         imageCreateInfo
                 .setImageType(vk::ImageType::e2D)
                 .setExtent(extent3D)
-                .setMipLevels(mMipLevels)
+                .setMipLevels(mipLevels)
                 .setArrayLayers(1)
-                .setFormat(mFormat)
+                .setFormat(format)
                         //VK_IMAGE_TILING_LINEAR texel按行的顺序排列
                         //VK_IMAGE_TILING_OPTIMAL texel按实现定义的顺序排列
                         //the tiling mode cannot be changed at a later time.
                         //如果希望能够直接访问图像内存中的texel，则必须使用VK_IMAGE_TILING_LINEAR
-                .setTiling(vk::ImageTiling::eOptimal)
+                .setTiling(imageTiling)
                         //VK_IMAGE_LAYOUT_UNDEFINED 不能被 GPU 使用，并且第一个转换将丢弃texel
                         //VK_IMAGE_TILING_OPTIMAL 不能被 GPU 使用，并且第一个转换将保留texel
                 .setInitialLayout(vk::ImageLayout::eUndefined)
-                .setUsage(vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
+//                .setUsage(vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
+                .setUsage(imageUsageFlags)
                 .setSharingMode(vk::SharingMode::eExclusive)
-                .setSamples(vk::SampleCountFlagBits::e1)
+//                .setSamples(vk::SampleCountFlagBits::e1)
+                .setSamples(sampleCountFlagBits)
                         //用于稀疏纹理相关的标志位
                 .setFlags(vk::ImageCreateFlags{});
 
@@ -55,8 +65,8 @@ namespace vklite {
 
 //        mImageView = mDevice.createImageView(mImage, mFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
 
-        uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
-        mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
+//        uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
+//        mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
     Image::~Image() {
@@ -83,7 +93,7 @@ namespace vklite {
         return mDeviceMemory;
     }
 
-    vk::Format Image::getImageFormat() const {
+    vk::Format Image::getFormat() const {
         return mFormat;
     }
 
@@ -103,6 +113,17 @@ namespace vklite {
     }
 
     void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer) {
+        recordCommandTransitionImageLayout(commandBuffer, mFormat, mOldImageLayout, mNewImageLayout, mMipLevels, mSrcQueueFamilyIndex, mDstQueueFamilyIndex, mImageAspectFlags);
+    }
+
+    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                                   vk::Format format,
+                                                   vk::ImageLayout oldImageLayout,
+                                                   vk::ImageLayout newImageLayout,
+                                                   uint32_t mipLevels,
+                                                   uint32_t srcQueueFamilyIndex,
+                                                   uint32_t dstQueueFamilyIndex,
+                                                   vk::ImageAspectFlags imageAspectFlags) {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -110,18 +131,20 @@ namespace vklite {
                 .setLevelCount(mMipLevels)
                 .setBaseArrayLayer(0)
                 .setLayerCount(1)
-                .setAspectMask(vk::ImageAspectFlagBits::eColor);
+                .setAspectMask(imageAspectFlags);
 
         vk::ImageMemoryBarrier imageMemoryBarrier;
         imageMemoryBarrier
                 .setOldLayout(vk::ImageLayout::eUndefined)
                 .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
-                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
+//                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
+                .setSrcQueueFamilyIndex(mSrcQueueFamilyIndex)
+//                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
+                .setDstQueueFamilyIndex(mDstQueueFamilyIndex)
                 .setImage(mImage)
                 .setSubresourceRange(imageSubresourceRange)
                 .setSrcAccessMask(vk::AccessFlags{})
-                .setDstAccessMask(vk::AccessFlagBits::eTransferWrite);
+                .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
 
         // 内存屏障
         std::vector<vk::MemoryBarrier> memoryBarriers = {};
@@ -134,7 +157,8 @@ namespace vklite {
 
         commandBuffer.pipelineBarrier(
                 vk::PipelineStageFlagBits::eTopOfPipe,
-                vk::PipelineStageFlagBits::eTransfer,
+//                vk::PipelineStageFlagBits::eTransfer,
+                vk::PipelineStageFlagBits::eEarlyFragmentTests,
                 vk::DependencyFlags{},
                 memoryBarriers,
                 bufferMemoryBarriers,
@@ -143,10 +167,10 @@ namespace vklite {
     }
 
     void Image::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
-        mStagingBuffer->updateBuffer(data, size);
-        vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
-        });
+//        mStagingBuffer->updateBuffer(data, size);
+//        vulkanCommandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+//            recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
+//        });
     }
 
     void Image::recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer) {
