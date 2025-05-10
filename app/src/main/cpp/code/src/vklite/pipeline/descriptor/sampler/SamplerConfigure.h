@@ -10,7 +10,7 @@
 #include "vulkan/vulkan.hpp"
 
 #include "image/ImageInterface.h"
-#include "vklite/pipeline/descriptor/DescriptorImageInfoConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorImageInfoConfigure.h"
 
 namespace vklite {
 

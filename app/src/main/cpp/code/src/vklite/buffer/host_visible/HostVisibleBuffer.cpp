@@ -17,11 +17,11 @@ namespace vklite {
     }
 
     vklite::HostVisibleBuffer::~HostVisibleBuffer() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
-        device.unmapMemory(mDeviceMemory);
-        device.destroy(mBuffer);
-        device.freeMemory(mDeviceMemory);
+        vkDevice.unmapMemory(mDeviceMemory);
+        vkDevice.destroy(mBuffer);
+        vkDevice.freeMemory(mDeviceMemory);
         mMappedMemoryPointer = nullptr;
     }
 

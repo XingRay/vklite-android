@@ -3,7 +3,7 @@
 //
 
 #include "ImmutableSamplerConfigure.h"
-#include "vklite/pipeline/descriptor/DescriptorSlotConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 
 namespace vklite {
 

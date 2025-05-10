@@ -70,11 +70,11 @@ namespace vklite {
     }
 
     Image::~Image() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
 //        device.destroy(mImageView);
-        device.destroy(mImage);
-        device.unmapMemory(mDeviceMemory);
+        vkDevice.destroy(mImage);
+        vkDevice.unmapMemory(mDeviceMemory);
     }
 
     const vk::Image &Image::getImage() const {

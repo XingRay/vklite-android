@@ -16,11 +16,11 @@ namespace vklite {
     }
 
     vklite::DeviceLocalBuffer::~DeviceLocalBuffer() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
-        device.unmapMemory(mDeviceMemory);
-        device.destroy(mBuffer);
-        device.freeMemory(mDeviceMemory);
+        vkDevice.unmapMemory(mDeviceMemory);
+        vkDevice.destroy(mBuffer);
+        vkDevice.freeMemory(mDeviceMemory);
     }
 
     const vk::Buffer &DeviceLocalBuffer::getBuffer() const {

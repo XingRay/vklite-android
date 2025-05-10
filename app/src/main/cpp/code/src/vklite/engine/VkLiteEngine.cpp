@@ -23,7 +23,7 @@ namespace vklite {
                                std::unique_ptr<RenderPass> renderPass,
                                std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                                std::unique_ptr<ComputePipeline> computePipeline,
-                               std::vector<PipelineResource>&& pipelineResources,
+                               std::vector<PipelineResource> &&pipelineResources,
                                std::unique_ptr<FrameBuffer> frameBuffer,
                                std::unique_ptr<SyncObject> syncObject,
                                uint32_t frameCount) {
@@ -176,19 +176,19 @@ namespace vklite {
     }
 
     void VkLiteEngine::drawFrame() {
-        const vk::Device device = mDevice->getDevice();
+        const vk::Device &vkDevice = mDevice->getDevice();
         vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
         vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
         vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
 
-        vk::Result result = device.waitForFences(1, &fence, vk::True, std::numeric_limits<uint64_t>::max());
+        vk::Result result = vkDevice.waitForFences(1, &fence, vk::True, std::numeric_limits<uint64_t>::max());
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-        auto [acquireResult, imageIndex] = device.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
+        auto [acquireResult, imageIndex] = vkDevice.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
                 // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。
@@ -242,7 +242,7 @@ namespace vklite {
          */
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
-        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
 
         commandBuffer.endRenderPass();
         commandBuffer.end();

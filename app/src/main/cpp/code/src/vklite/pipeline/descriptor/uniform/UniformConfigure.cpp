@@ -3,12 +3,12 @@
 //
 
 #include "UniformConfigure.h"
-#include "vklite/pipeline/descriptor/DescriptorSlotConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 
 namespace vklite {
 
     UniformConfigure::UniformConfigure()
-            : mBinding(0), mDescriptorOffset(0), mDescriptorRange(1) {}
+            : mBinding(0), mDescriptorCount(1), mShaderStageFlags(vk::ShaderStageFlagBits::eVertex) {}
 
     UniformConfigure::~UniformConfigure() = default;
 
@@ -17,18 +17,13 @@ namespace vklite {
         return *this;
     }
 
-    UniformConfigure &UniformConfigure::descriptorOffset(uint32_t offset) {
-        mDescriptorOffset = offset;
-        return *this;
-    }
-
-    UniformConfigure &UniformConfigure::descriptorRange(uint32_t range) {
-        mDescriptorRange = range;
-        return *this;
-    }
-
     UniformConfigure &UniformConfigure::shaderStageFlags(vk::ShaderStageFlags shaderStageFlags) {
         mShaderStageFlags = shaderStageFlags;
+        return *this;
+    }
+
+    UniformConfigure &UniformConfigure::descriptorCount(uint32_t descriptorCount) {
+        mDescriptorCount = descriptorCount;
         return *this;
     }
 
@@ -76,10 +71,9 @@ namespace vklite {
 //                                                                  mDescriptorCount, mShaderStageFlags, );
 //    }
 
-//    std::unique_ptr<DescriptorBindingConfigure> UniformConfigure::createDescriptorBindingConfigure() {
-////        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eUniformBuffer, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-////                                                                  std::move(mDescriptorBufferInfoConfigure));
-//        return nullptr;
-//    }
+    DescriptorBindingConfigure UniformConfigure::createDescriptorBindingConfigure() const {
+//        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
+        return {mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount, {}};
+    }
 
 } // vklite

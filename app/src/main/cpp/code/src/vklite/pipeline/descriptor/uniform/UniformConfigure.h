@@ -9,7 +9,7 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/pipeline/descriptor/DescriptorBufferInfoConfigure.h"
+#include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
 
 namespace vklite {
 
@@ -18,8 +18,7 @@ namespace vklite {
     private:
         uint32_t mBinding;
         vk::ShaderStageFlags mShaderStageFlags;
-        uint32_t mDescriptorOffset;
-        uint32_t mDescriptorRange;
+        uint32_t mDescriptorCount;
 
     public:
         UniformConfigure();
@@ -28,11 +27,9 @@ namespace vklite {
 
         UniformConfigure &binding(uint32_t binding);
 
-        UniformConfigure &descriptorOffset(uint32_t offset);
-
-        UniformConfigure &descriptorRange(uint32_t range);
-
         UniformConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
+
+        UniformConfigure &descriptorCount(uint32_t descriptorCount);
 
 //        UniformConfigure &setUniformBuffer(uint32_t capacity, const void *data, uint32_t size);
 //
@@ -55,10 +52,8 @@ namespace vklite {
 //            return setUniformBuffer(size, &data, size);
 //        }
 
-    private:
-
-//        [[nodiscard]]
-//        std::unique_ptr<DescriptorBindingConfigure> createDescriptorBindingConfigure();
+        [[nodiscard]]
+        DescriptorBindingConfigure createDescriptorBindingConfigure() const;
     };
 
 } // vklite

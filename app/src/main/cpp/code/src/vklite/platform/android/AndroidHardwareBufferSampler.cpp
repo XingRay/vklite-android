@@ -41,9 +41,9 @@ namespace vklite {
     }
 
     AndroidHardwareBufferSampler::~AndroidHardwareBufferSampler() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
-        device.destroySampler(mSampler);
+        vkDevice.destroySampler(mSampler);
     }
 
     const vk::Sampler &AndroidHardwareBufferSampler::getSampler() const {

@@ -8,14 +8,15 @@
 namespace vklite {
 
     GraphicsPipeline::GraphicsPipeline(const Device &device,
-                                       const Swapchain &swapchain,
                                        const RenderPass &renderPass,
                                        const VulkanShaderModule &vertexShaderModule,
                                        const VulkanShaderModule &fragmentShaderModule,
                                        const std::vector<vk::VertexInputBindingDescription> &vertexInputBindingDescriptions,
                                        const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
-                                       std::unique_ptr<PipelineLayout> &&pipelineLayout)
-            : mDevice(device), mPipelineLayout(std::move(pipelineLayout)) {
+                                       const PipelineLayout &pipelineLayout,
+                                       const std::vector<vk::Viewport> &viewports,
+                                       const std::vector<vk::Rect2D> &scissors)
+            : mDevice(device) {
 
         vk::Device vkDevice = device.getDevice();
 
@@ -35,28 +36,10 @@ namespace vklite {
         dynamicStateCreateInfo
                 .setDynamicStates(dynamicStages);
 
-        vk::Extent2D displaySize = swapchain.getDisplaySize();
-
-        vk::Viewport viewport;
-        viewport
-                .setX(0.0f)
-                .setY(0.0f)
-                .setWidth((float) displaySize.width)
-                .setHeight((float) displaySize.height)
-                .setMinDepth(0.0f)
-                .setMaxDepth(1.0f);
-        mViewports.push_back(viewport);
-
-        vk::Rect2D scissor{};
-        scissor
-                .setOffset(vk::Offset2D{0, 0})
-                .setExtent(displaySize);
-        mScissors.push_back(scissor);
-
         vk::PipelineViewportStateCreateInfo viewportStateCreateInfo;
         viewportStateCreateInfo
-                .setViewports(mViewports)
-                .setScissors(mScissors);
+                .setViewports(viewports)
+                .setScissors(scissors);
 
         // vertex shader
         vk::PipelineVertexInputStateCreateInfo vertexInputStateCreateInfo;
@@ -182,7 +165,7 @@ namespace vklite {
                 .setPDepthStencilState(&depthStencilStateCreateInfo)
                 .setPColorBlendState(&colorBlendStateCreateInfo)
                 .setPDynamicState(&dynamicStateCreateInfo)
-                .setLayout(mPipelineLayout->getPipelineLayout())
+                .setLayout(pipelineLayout.getPipelineLayout())
                 .setRenderPass(renderPass.getRenderPass())
                 .setSubpass(0)
                 .setBasePipelineHandle(nullptr)
@@ -221,8 +204,8 @@ namespace vklite {
 
     GraphicsPipeline::~GraphicsPipeline() {
         LOG_D("GraphicsPipeline::~GraphicsPipeline");
-        vk::Device device = mDevice.getDevice();
-        device.destroy(mPipeline);
+        const vk::Device &vkDevice = mDevice.getDevice();
+        vkDevice.destroy(mPipeline);
     }
 
     const vk::Pipeline &GraphicsPipeline::getPipeline() const {
@@ -372,7 +355,9 @@ namespace vklite {
 //        }
 //    }
 
-    void GraphicsPipeline::drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource) {
+    void GraphicsPipeline::drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource,
+                                     const std::vector<vk::Viewport> &viewports,
+                                     const std::vector<vk::Rect2D> &scissors) {
 
         commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
 
@@ -380,8 +365,8 @@ namespace vklite {
          * firstViewport 在某些情况下，可能需要将视口绑定到特定的范围，而不是从索引 0 开始
          * 类似于 copy中的 dst_Index [s,s,s] -> [_,_,_, d,d,d, _,_,...] (firstViewport=3)
          */
-        commandBuffer.setViewport(0, mViewports);
-        commandBuffer.setScissor(0, mScissors);
+        commandBuffer.setViewport(0, viewports);
+        commandBuffer.setScissor(0, scissors);
 
         // vertex buffer
         /**

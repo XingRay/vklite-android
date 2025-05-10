@@ -26,7 +26,28 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure) {
+        DescriptorBindingConfigure bindingConfigure{};
+        configure(bindingConfigure);
+        addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure) {
+        mDescriptorBindingConfigures.emplace(bindingConfigure.getBinding(), bindingConfigure);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformConfigure &)> &configure) {
+        UniformConfigure uniformConfigure{};
+        configure(uniformConfigure);
+        addUniform(uniformConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformConfigure &uniformConfigure) {
+        DescriptorBindingConfigure bindingConfigure = uniformConfigure.createDescriptorBindingConfigure();
+        addDescriptorBinding(std::move(bindingConfigure));
         return *this;
     }
 
@@ -121,27 +142,6 @@ namespace vklite {
 //        return vulkanDescriptorBindingSet;
 //    }
 
-//    std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() {
-//
-//        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
-//        descriptorSetLayoutBindings.reserve(mDescriptorBindingConfigures.size());
-//
-//        for (const auto &entry: mDescriptorBindingConfigures) {
-//            uint32_t binding = entry.first;
-//            const std::unique_ptr<VulkanDescriptorBindingConfigure> &vulkanDescriptorConfigure = entry.second;
-//
-//            vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding = vulkanDescriptorConfigure->createDescriptorSetLayoutBinding();
-//            descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
-//        }
-//
-////        for (const VulkanUniformConfigure &vulkanUniformConfigure: mUniformConfigures) {
-////            vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding = vulkanUniformConfigure.createDescriptorSetLayoutBinding();
-////            descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
-////        }
-//
-//        return descriptorSetLayoutBindings;
-//    }
-
 //    vk::DescriptorSetLayout DescriptorSetConfigure::createDescriptorSetLayout(const VulkanDevice &device) {
 //
 //        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings = createDescriptorSetLayoutBindings();
@@ -152,5 +152,20 @@ namespace vklite {
 //
 //        return device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
 //    }
+
+    std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() const{
+        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
+        descriptorSetLayoutBindings.reserve(mDescriptorBindingConfigures.size());
+
+        for (const auto &entry: mDescriptorBindingConfigures) {
+            uint32_t binding = entry.first;
+            const DescriptorBindingConfigure &descriptorBindingConfigure = entry.second;
+
+            vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding = descriptorBindingConfigure.createDescriptorSetLayoutBinding();
+            descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
+        }
+
+        return descriptorSetLayoutBindings;
+    }
 
 } // vklite

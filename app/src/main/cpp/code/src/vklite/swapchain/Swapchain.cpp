@@ -55,9 +55,9 @@ namespace vklite {
 
     Swapchain::~Swapchain() {
         LOG_D("Swapchain::~Swapchain()");
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
         // 通过 getSwapchainImagesKHR 获取的对象, 不是create的对象,不需要destroy, swapchain 会自动销毁
-        device.destroy(mSwapChain);
+        vkDevice.destroy(mSwapChain);
     }
 
     const vk::SwapchainKHR &Swapchain::getSwapChain() const {

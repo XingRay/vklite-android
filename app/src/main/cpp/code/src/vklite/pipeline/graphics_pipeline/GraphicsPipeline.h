@@ -12,15 +12,15 @@
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/render_pass/RenderPass.h"
 #include "vklite/shader/VulkanShaderModule.h"
-#include "vklite/pipeline/descriptor/DescriptorPool.h"
+#include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/index_buffer/IndexBuffer.h"
 #include "vklite/buffer/host_visible/HostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"
-#include "vklite/pipeline/descriptor/DescriptorBindingSets.h"
+#include "vklite/pipeline/descriptor/old/DescriptorBindingSets.h"
 #include "vklite/pipeline/resource/BufferInfo.h"
 #include "vklite/pipeline/resource/ImageInfo.h"
-#include "vklite/pipeline/descriptor/PipelineLayout.h"
+#include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/pipeline/resource/PipelineResource.h"
 
 namespace vklite {
@@ -28,27 +28,19 @@ namespace vklite {
     class GraphicsPipeline {
     private:
         const Device &mDevice;
-
-        std::vector<vk::Viewport> mViewports;
-        std::vector<vk::Rect2D> mScissors;
-
         vk::Pipeline mPipeline;
-
-        std::unique_ptr<PipelineLayout> mPipelineLayout;
-
-        // frame -> pipeline resource
-//        std::vector<PipelineResource> mPipelineResources;
 
     public:
 
         GraphicsPipeline(const Device &device,
-                         const Swapchain &swapchain,
                          const RenderPass &renderPass,
                          const VulkanShaderModule &vertexShaderModule,
                          const VulkanShaderModule &fragmentShaderModule,
                          const std::vector<vk::VertexInputBindingDescription> &vertexInputBindingDescriptions,
                          const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
-                         std::unique_ptr<PipelineLayout> &&pipelineLayout);
+                         const PipelineLayout &pipelineLayout,
+                         const std::vector<vk::Viewport> &viewports,
+                         const std::vector<vk::Rect2D> &scissors);
 
         ~GraphicsPipeline();
 
@@ -109,7 +101,9 @@ namespace vklite {
 
 //        GraphicsPipeline &updatePushConstant(uint32_t index, const void *data);
 
-        void drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource);
+        void drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource,
+                       const std::vector<vk::Viewport> &viewports,
+                       const std::vector<vk::Rect2D> &scissors);
 
     private:
 

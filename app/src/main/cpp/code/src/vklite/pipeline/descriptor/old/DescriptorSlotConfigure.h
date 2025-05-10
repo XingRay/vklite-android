@@ -10,11 +10,11 @@
 
 #include "vklite/sampler/SamplerInterface.h"
 
-#include "vklite/pipeline/descriptor/Descriptor.h"
-#include "DescriptorBufferInfoConfigure.h"
+#include "vklite/pipeline/descriptor/old/Descriptor.h"
+#include "vklite/pipeline/descriptor/old/DescriptorBufferInfoConfigure.h"
 #include "vklite/buffer/UniformBufferBuilder.h"
-#include "DescriptorImageInfoConfigure.h"
-#include "DescriptorImmutableSamplerConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorImageInfoConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorImmutableSamplerConfigure.h"
 
 namespace vklite {
 

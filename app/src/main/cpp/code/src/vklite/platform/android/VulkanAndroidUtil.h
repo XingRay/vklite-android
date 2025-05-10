@@ -13,7 +13,7 @@ namespace vklite {
     public:
 
         [[nodiscard]]
-        static vk::AndroidHardwareBufferFormatPropertiesANDROID getAndroidHardwareBufferFormat(vk::Device device, AHardwareBuffer *hardwareBuffer);
+        static vk::AndroidHardwareBufferFormatPropertiesANDROID getAndroidHardwareBufferFormat(vk::Device vkDevice, AHardwareBuffer *hardwareBuffer);
     };
 
 } // vklite

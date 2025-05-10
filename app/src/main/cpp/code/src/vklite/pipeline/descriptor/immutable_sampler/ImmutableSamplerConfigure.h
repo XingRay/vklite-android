@@ -10,7 +10,7 @@
 #include "vulkan/vulkan.hpp"
 
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"
-#include "vklite/pipeline/descriptor/DescriptorImmutableSamplerConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorImmutableSamplerConfigure.h"
 
 namespace vklite {
 

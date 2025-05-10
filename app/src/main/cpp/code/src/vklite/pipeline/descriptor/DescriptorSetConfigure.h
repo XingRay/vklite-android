@@ -8,9 +8,11 @@
 #include <memory>
 #include <unordered_map>
 
+#include <vulkan/vulkan.hpp>
+
 #include "vklite/device/Device.h"
-#include "DescriptorSlotConfigure.h"
-#include "vklite/pipeline/descriptor/DescriptorBindingSet.h"
+#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
+#include "vklite/pipeline/descriptor/old/DescriptorBindingSet.h"
 #include "vklite/pipeline/descriptor/uniform/UniformConfigure.h"
 #include "vklite/pipeline/descriptor/sampler/SamplerConfigure.h"
 #include "vklite/pipeline/descriptor/immutable_sampler/ImmutableSamplerConfigure.h"
@@ -21,7 +23,7 @@ namespace vklite {
     private:
         uint32_t mSet;
         // binding -> BindingConfigure
-//        std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> mDescriptorBindingConfigures;
+        std::unordered_map<uint32_t, DescriptorBindingConfigure> mDescriptorBindingConfigures;
 
     public:
 
@@ -29,18 +31,22 @@ namespace vklite {
 
         ~DescriptorSetConfigure();
 
+        [[nodiscard]]
         uint32_t getSet() const;
 
 //        const std::unordered_map<uint32_t, std::unique_ptr<DescriptorBindingConfigure>> &getDescriptorBindingConfigures();
 
         DescriptorSetConfigure &set(uint32_t set);
 
-        //todo [functional configure]
-//        DescriptorSetConfigure &addVulkanDescriptor(std::unique_ptr<VulkanDescriptorBindingConfigure> &&vulkanDescriptor);
+        // addDescriptorBinding
+        DescriptorSetConfigure &addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure);
 
-//        DescriptorSetConfigure &addUniform(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
+        DescriptorSetConfigure &addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure);
 
+        // addUniform
         DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
+
+        DescriptorSetConfigure &addUniform(const UniformConfigure &uniformConfigure);
 
 //        DescriptorSetConfigure &addSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
 
@@ -52,7 +58,9 @@ namespace vklite {
 
 //        DescriptorSetConfigure &addStorage(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
 
-        std::unique_ptr<DescriptorBindingSet> createVulkanDescriptorBindingSet(const Device &device, const CommandPool &commandPool);
+//        std::unique_ptr<DescriptorBindingSet> createDescriptorBindingSet(const Device &device, const CommandPool &commandPool);
+
+        std::vector<vk::DescriptorSetLayoutBinding> createDescriptorSetLayoutBindings() const;
 
     private:
 //        std::vector<vk::DescriptorSetLayoutBinding> createDescriptorSetLayoutBindings();

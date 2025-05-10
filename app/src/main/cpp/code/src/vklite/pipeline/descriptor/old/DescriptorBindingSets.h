@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "DescriptorBindingSet.h"
+#include "vklite/pipeline/descriptor/old/DescriptorBindingSet.h"
 
 namespace vklite {
 

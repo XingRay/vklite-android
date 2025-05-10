@@ -8,8 +8,8 @@
 namespace vklite {
     ComputePipeline::ComputePipeline(const Device &device,
                                      const VulkanShaderModule &computeShaderModule,
-                                     const std::vector <vk::DescriptorSetLayout> &descriptorSetLayouts,
-                                     const std::vector <vk::PushConstantRange> &pushConstantRanges)
+                                     const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
+                                     const std::vector<vk::PushConstantRange> &pushConstantRanges)
             : mDevice(device) {
         vk::Device vkDevice = device.getDevice();
 
@@ -39,10 +39,10 @@ namespace vklite {
     }
 
     ComputePipeline::~ComputePipeline() {
-        LOG_D("VulkanGraphicsPipeline::~VulkanGraphicsPipeline");
-        vk::Device device = mDevice.getDevice();
-        device.destroy(mPipeline);
-        device.destroy(mPipelineLayout);
+        LOG_D("GraphicsPipeline::~GraphicsPipeline");
+        const vk::Device& vkDevice = mDevice.getDevice();
+        vkDevice.destroy(mPipeline);
+        vkDevice.destroy(mPipelineLayout);
     }
 
     const vk::Pipeline &ComputePipeline::getPipeline() const {

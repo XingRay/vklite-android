@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include <vulkan/vulkan.hpp>
 #include <optional>
+
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/util/selector/StringListSelector.h"
 #include "vklite/swapchain/SwapChainSupportDetail.h"

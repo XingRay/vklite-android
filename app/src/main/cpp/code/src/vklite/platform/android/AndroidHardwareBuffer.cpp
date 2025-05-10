@@ -14,24 +14,24 @@ namespace vklite {
     AndroidHardwareBuffer::~AndroidHardwareBuffer() = default;
 
     vk::AndroidHardwareBufferPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferProperties() const {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
         vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
         propertiesInfo.pNext = &formatInfo;
 
-        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(device, mHardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
+        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(vkDevice, mHardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
         return propertiesInfo;
     }
 
     vk::AndroidHardwareBufferFormatPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferFormatProperties() const {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
         vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
         propertiesInfo.pNext = &formatInfo;
 
-        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(device, mHardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
+        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(vkDevice, mHardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
         return formatInfo;
     }
 

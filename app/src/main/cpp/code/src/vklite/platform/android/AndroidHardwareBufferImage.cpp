@@ -14,7 +14,7 @@ namespace vklite {
                                                            const AndroidHardwareBuffer &androidHardwareBuffer,
                                                            const AndroidHardwareBufferYcbcrConversion &conversion)
             : mDevice(device) {
-        vk::Device vkDevice = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
         AHardwareBuffer_Desc hardwareBufferDescription = androidHardwareBuffer.getAndroidHardwareBufferDescription();
         vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties = androidHardwareBuffer.getAndroidHardwareBufferProperties();
@@ -137,11 +137,11 @@ namespace vklite {
     }
 
     AndroidHardwareBufferImage::~AndroidHardwareBufferImage() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
-        device.destroyImageView(mImageView);
-        device.destroyImage(mImage);
-        device.freeMemory(mDeviceMemory);
+        vkDevice.destroyImageView(mImageView);
+        vkDevice.destroyImage(mImage);
+        vkDevice.freeMemory(mDeviceMemory);
     }
 
     const vk::Image &AndroidHardwareBufferImage::getImage() const {

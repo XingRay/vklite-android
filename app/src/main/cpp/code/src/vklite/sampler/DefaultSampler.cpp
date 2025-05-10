@@ -36,9 +36,9 @@ namespace vklite {
     }
 
     DefaultSampler::~DefaultSampler() {
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
 
-        device.destroy(mSampler);
+        vkDevice.destroy(mSampler);
     }
 
     const vk::Sampler &DefaultSampler::getSampler() const {

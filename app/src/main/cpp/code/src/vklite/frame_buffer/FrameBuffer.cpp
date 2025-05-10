@@ -39,7 +39,7 @@ namespace vklite {
         LOG_D("FrameBuffer::~FrameBuffer");
         if (mFrameBuffer != nullptr) {
             LOG_D("vkDevice.destroy(mFrameBuffer); mFrameBuffer: %p", static_cast<void *>(mFrameBuffer));
-            vk::Device vkDevice = mDevice.getDevice();
+            const vk::Device& vkDevice = mDevice.getDevice();
             vkDevice.destroy(mFrameBuffer);
         } else {
             LOG_D("mFrameBuffer is nullptr, 'vkDevice.destroy(mFrameBuffer);' skipped");

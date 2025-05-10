@@ -4,7 +4,7 @@
 
 #include "GraphicsPipelineBuilder.h"
 #include "vklite/shader/VulkanShaderModule.h"
-#include "vklite/pipeline/descriptor/DescriptorBindingSets.h"
+#include "vklite/pipeline/descriptor/old/DescriptorBindingSets.h"
 
 namespace vklite {
 
@@ -26,14 +26,24 @@ namespace vklite {
     GraphicsPipelineBuilder &GraphicsPipelineBuilder::addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure) {
         VertexBindingConfigure config{};
         configure(config);
-        mVertexConfigure.add(std::move(config));
+        addVertexBinding(std::move(config));
         return *this;
     }
 
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(const std::function<void(DescriptorSetConfigure &)> &configure){
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addVertexBinding(VertexBindingConfigure &&configure) {
+        mVertexConfigure.add(std::move(configure));
+        return *this;
+    }
+
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(const std::function<void(DescriptorSetConfigure &)> &configure) {
         DescriptorSetConfigure config = DescriptorSetConfigure();
         configure(config);
-//        mPipelineLayoutConfigure.addDescriptorSetConfigure(config);
+        addDescriptorSet(std::move(config));
+        return *this;
+    }
+
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(DescriptorSetConfigure &&descriptorSetConfigure) {
+        mPipelineLayoutBuilder.addDescriptorSetConfigure(std::move(descriptorSetConfigure));
         return *this;
     }
 
@@ -43,9 +53,35 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::build(const Device &device,
-                                                                     const Swapchain &swapchain,
-                                                                     const RenderPass &renderPass) {
+    GraphicsPipeline GraphicsPipelineBuilder::build(const Device &device,
+                                                    const RenderPass &renderPass,
+                                                    const PipelineLayout &pipelineLayout,
+                                                    const std::vector<vk::Viewport> &viewports,
+                                                    const std::vector<vk::Rect2D> &scissors) {
+        // shader code
+        VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);
+        VulkanShaderModule fragmentShaderModule = VulkanShaderModule(device, mFragmentShaderCode);
+
+        // vertex buffer description
+        std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
+        std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions = mVertexConfigure.createVertexInputAttributeDescriptions();
+
+        return GraphicsPipeline(device,
+                                renderPass,
+                                vertexShaderModule,
+                                fragmentShaderModule,
+                                vertexInputBindingDescriptions,
+                                vertexInputAttributeDescriptions,
+                                pipelineLayout,
+                                viewports,
+                                scissors);
+    }
+
+    std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::buildUnique(const Device &device,
+                                                                           const RenderPass &renderPass,
+                                                                           const PipelineLayout &pipelineLayout,
+                                                                           const std::vector<vk::Viewport> &viewports,
+                                                                           const std::vector<vk::Rect2D> &scissors) {
 
         // shader code
         VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);
@@ -61,8 +97,6 @@ namespace vklite {
         //        std::unique_ptr<VulkanDescriptorPool> vulkanDescriptorPool = std::make_unique<VulkanDescriptorPool>(device,
 //                                                                                                            mDescriptorSetConfigures.createDescriptorPoolSizes(frameCount),
 //                                                                                                            mDescriptorSetConfigures.getSetCount(frameCount));
-
-        std::unique_ptr<PipelineLayout> pipelineLayout = mPipelineLayoutConfigure.createPipelineLayout(device);
 
         // frame -> set -> binding
 //        std::vector<std::unique_ptr<VulkanDescriptorBindingSets>> vulkanDescriptorBindingSets;
@@ -84,13 +118,14 @@ namespace vklite {
 //        }
 
         return std::make_unique<GraphicsPipeline>(device,
-                                                  swapchain,
                                                   renderPass,
                                                   vertexShaderModule,
                                                   fragmentShaderModule,
                                                   vertexInputBindingDescriptions,
                                                   vertexInputAttributeDescriptions,
-                                                  std::move(pipelineLayout));
+                                                  pipelineLayout,
+                                                  viewports,
+                                                  scissors);
     }
 
 } // vklite

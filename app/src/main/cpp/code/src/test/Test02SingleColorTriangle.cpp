@@ -123,6 +123,34 @@ namespace test02 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
+        mPipelineLayout = vklite::PipelineLayoutBuilder()
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
+                                uniformConfigure
+                                        .binding(0)
+                                        .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
+                            });
+                })
+                .buildUnique(*mDevice);
+
+        vk::Viewport viewport;
+        viewport
+                .setX(0.0f)
+                .setY(0.0f)
+                .setWidth((float) mSwapchain->getDisplaySize().width)
+                .setHeight((float) mSwapchain->getDisplaySize().height)
+                .setMinDepth(0.0f)
+                .setMaxDepth(1.0f);
+        mViewports.push_back(viewport);
+
+        vk::Rect2D scissor{};
+        scissor
+                .setOffset(vk::Offset2D{0, 0})
+                .setExtent(mSwapchain->getDisplaySize());
+        mScissors.push_back(scissor);
+
         mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
@@ -132,14 +160,7 @@ namespace test02 {
                             .stride(sizeof(Vertex))
                             .addAttribute(0, ShaderFormat::Vec3);
                 })
-                .addDescriptorSet([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-                    descriptorSetConfigure
-                    .set(0)
-                    .addUniform([&](vklite::UniformConfigure & uniformConfigure){
-
-                    });
-                })
-                .build(*mDevice, *mSwapchain, *mRenderPass);
+                .buildUnique(*mDevice, *mRenderPass, *mPipelineLayout, mViewports, mScissors);
 
         mIndexBuffer = vklite::IndexBufferBuilder()
                 .bufferSize(indices.size() * sizeof(uint32_t))
@@ -238,7 +259,7 @@ namespace test02 {
          */
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
-        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
 
         commandBuffer.endRenderPass();
 

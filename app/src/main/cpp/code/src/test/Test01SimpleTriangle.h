@@ -55,6 +55,12 @@ namespace test01 {
         std::vector<vklite::FrameBuffer> mFrameBuffers;
 
         std::unique_ptr<vklite::SyncObject> mSyncObject;
+
+        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
+
+        std::vector<vk::Viewport> mViewports;
+        std::vector<vk::Rect2D> mScissors;
+
         std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
         std::vector<vklite::PipelineResource> mPipelineResources;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;

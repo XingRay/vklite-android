@@ -23,15 +23,15 @@ namespace vklite {
 
     SyncObject::~SyncObject() {
         LOG_D("VulkanSyncObject::~VulkanSyncObject");
-        vk::Device device = mDevice.getDevice();
+        const vk::Device& vkDevice = mDevice.getDevice();
         for (const auto &semaphore: mImageAvailableSemaphores) {
-            device.destroy(semaphore);
+            vkDevice.destroy(semaphore);
         }
         for (const auto &semaphore: mRenderFinishedSemaphores) {
-            device.destroy(semaphore);
+            vkDevice.destroy(semaphore);
         }
         for (const auto &fence: mFences) {
-            device.destroy(fence);
+            vkDevice.destroy(fence);
         }
     }
 
@@ -48,12 +48,12 @@ namespace vklite {
     }
 
     vk::Result SyncObject::resetFence(uint32_t index) {
-        vk::Device device = mDevice.getDevice();
-        return device.resetFences(1, &mFences[index]);
+        const vk::Device& vkDevice = mDevice.getDevice();
+        return vkDevice.resetFences(1, &mFences[index]);
     }
 
     vk::Result SyncObject::waitFence(uint32_t index) {
-        vk::Device device = mDevice.getDevice();
-        return device.waitForFences(1, &mFences[index], vk::True, std::numeric_limits<uint64_t>::max());
+        const vk::Device& vkDevice = mDevice.getDevice();
+        return vkDevice.waitForFences(1, &mFences[index], vk::True, std::numeric_limits<uint64_t>::max());
     }
 } // vklite
