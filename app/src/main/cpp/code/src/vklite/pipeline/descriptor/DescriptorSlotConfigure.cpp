@@ -1,0 +1,88 @@
+//
+// Created by leixing on 2025/1/14.
+//
+
+#include "DescriptorSlotConfigure.h"
+
+namespace vklite {
+
+    DescriptorSlotConfigure::DescriptorSlotConfigure(uint32_t binding, vk::DescriptorType descriptorType, uint32_t descriptorOffset, uint32_t descriptorRange,
+                                                                       vk::ShaderStageFlags shaderStageFlags,
+                                                                       std::unique_ptr<DescriptorBufferInfoConfigure> &&descriptorBufferInfoConfigure)
+            : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
+              mDescriptorBufferInfoConfigure(std::move(descriptorBufferInfoConfigure)) {}
+
+    DescriptorSlotConfigure::DescriptorSlotConfigure(uint32_t binding, vk::DescriptorType descriptorType, uint32_t descriptorOffset, uint32_t descriptorRange,
+                                                                       vk::ShaderStageFlags shaderStageFlags,
+                                                                       std::unique_ptr<DescriptorImageInfoConfigure> &&descriptorImageInfoConfigure)
+            : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
+              mDescriptorImageInfoConfigure(std::move(descriptorImageInfoConfigure)) {}
+
+    DescriptorSlotConfigure::DescriptorSlotConfigure(uint32_t binding, vk::DescriptorType descriptorType, uint32_t descriptorOffset, uint32_t descriptorRange,
+                                                                       vk::ShaderStageFlags shaderStageFlags,
+                                                                       std::unique_ptr<DescriptorImmutableSamplerConfigure> &&descriptorImmutableSamplerConfigure)
+            : mBinding(binding), mDescriptorType(descriptorType), mDescriptorOffset(descriptorOffset), mDescriptorRange(descriptorRange), mShaderStageFlags(shaderStageFlags),
+              mDescriptorImmutableSamplerConfigure(std::move(descriptorImmutableSamplerConfigure)) {}
+
+    DescriptorSlotConfigure::~DescriptorSlotConfigure() = default;
+
+    uint32_t DescriptorSlotConfigure::getBinding() const {
+        return mBinding;
+    }
+
+    vk::DescriptorType DescriptorSlotConfigure::getDescriptorType() const {
+        return mDescriptorType;
+    }
+
+    uint32_t DescriptorSlotConfigure::getDescriptorOffset() const {
+        return mDescriptorOffset;
+    }
+
+    uint32_t DescriptorSlotConfigure::getDescriptorRange() const {
+        return mDescriptorRange;
+    }
+
+    vk::ShaderStageFlags DescriptorSlotConfigure::getShaderStageFlags() const {
+        return mShaderStageFlags;
+    }
+
+//    const std::vector<std::unique_ptr<VulkanSamplerInterface>> &DescriptorSlotConfigure::getImmutableSamplers() const {
+//        return mImmutableSamplers;
+//    }
+
+    vk::DescriptorSetLayoutBinding DescriptorSlotConfigure::createDescriptorSetLayoutBinding() const {
+        vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding{};
+
+        descriptorSetLayoutBinding
+                .setBinding(mBinding)
+                .setDescriptorType(mDescriptorType)
+                .setDescriptorCount(mDescriptorRange)
+                .setStageFlags(mShaderStageFlags);
+
+        if (mDescriptorImmutableSamplerConfigure!= nullptr) {
+            std::vector<vk::Sampler> samplers;
+//            for (const std::unique_ptr<VulkanSamplerInterface> &vulkanSampler: mImmutableSamplers) {
+//                samplers.push_back(vulkanSampler->getSampler());
+//            }
+//            mDescriptorImmutableSamplerConfigure
+            descriptorSetLayoutBinding
+                    .setDescriptorCount(samplers.size())
+                    .setPImmutableSamplers(samplers.data());
+        }
+
+        return descriptorSetLayoutBinding;
+    }
+
+//    std::unique_ptr<VulkanDescriptorBinding> DescriptorSlotConfigure::createVulkanDescriptorBinding(const VulkanDevice &device, const CommandPool &commandPool) {
+//        std::unique_ptr<VulkanDescriptorBinding> vulkanDescriptorBinding = std::make_unique<VulkanDescriptorBinding>(mDescriptorType, mDescriptorOffset, mDescriptorRange);
+//        if (mDescriptorType == vk::DescriptorType::eUniformBuffer) {
+//            vulkanDescriptorBinding->setVulkanDescriptorBufferInfo(mDescriptorBufferInfoConfigure->provideDescriptorBufferInfo(device, commandPool));
+//        } else if (mDescriptorType == vk::DescriptorType::eCombinedImageSampler) {
+//            vulkanDescriptorBinding->setVulkanDescriptorImageInfo(mDescriptorImageInfoConfigure->provideDescriptorImageInfo(device, commandPool));
+//        } else {
+//            throw std::runtime_error("unknown descriptor type.");
+//        }
+//
+//        return vulkanDescriptorBinding;
+//    }
+}

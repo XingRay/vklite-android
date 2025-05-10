@@ -11,7 +11,7 @@
 #include "vklite/instance/Instance.h"
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/buffer/host_visible/VulkanHostVisibleBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
 #include "vklite/image/Image.h"
 
 #include "AndroidHardwareBuffer.h"
@@ -31,7 +31,7 @@ namespace vklite {
     public:
         AndroidHardwareBufferImage(const Device &device,
                                    const AndroidHardwareBuffer &androidHardwareBuffer,
-                                   const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
+                                   const AndroidHardwareBufferYcbcrConversion &conversion);
 
         ~AndroidHardwareBufferImage() override;
 
@@ -52,7 +52,7 @@ namespace vklite {
 
         void transitionImageLayout(const CommandPool &commandPool) override;
 
-        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
+        void update(const CommandPool &commandPool, const void *data, uint32_t size) override;
 
     };
 

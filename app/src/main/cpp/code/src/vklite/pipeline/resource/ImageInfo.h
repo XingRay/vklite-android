@@ -16,14 +16,14 @@ namespace vklite {
         std::unique_ptr<SamplerInterface> mSampler;
 
     public:
-        ImageInfo(std::unique_ptr<ImageInterface> &&vulkanImage,
-                  std::unique_ptr<SamplerInterface> &&vulkanSampler);
+        ImageInfo(std::unique_ptr<ImageInterface> &&image,
+                  std::unique_ptr<SamplerInterface> &&sampler);
 
         ~ImageInfo();
 
-        const std::unique_ptr<ImageInterface> &getVulkanImage() const;
+        const std::unique_ptr<ImageInterface> &getImage() const;
 
-        const std::unique_ptr<SamplerInterface> &getVulkanSampler() const;
+        const std::unique_ptr<SamplerInterface> &getSampler() const;
 
         [[nodiscard]]
         vk::DescriptorImageInfo createDescriptorImageInfo() const;

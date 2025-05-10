@@ -4,16 +4,16 @@
 
 #pragma once
 
-#include "vklite/buffer/device_local/VulkanDeviceLocalBuffer.h"
-#include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
     class VertexBuffer {
     private:
-        VulkanDeviceLocalBuffer mVertexBuffer;
-        VulkanStagingBuffer mStagingBuffer;
+        DeviceLocalBuffer mVertexBuffer;
+        StagingBuffer mStagingBuffer;
 
     public:
         VertexBuffer(const Device &device, vk::DeviceSize bufferSize);
@@ -33,11 +33,11 @@ namespace vklite {
             recordCommandUpdate(commandBuffer, data.data(), data.size() * sizeof(T));
         }
 
-        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size);
+        void update(const CommandPool &commandPool, const void *data, uint32_t size);
 
         template<class T>
-        void update(const CommandPool &vulkanCommandPool, const std::vector<T> &data) {
-            update(vulkanCommandPool, data.data(), data.size() * sizeof(T));
+        void update(const CommandPool &commandPool, const std::vector<T> &data) {
+            update(commandPool, data.data(), data.size() * sizeof(T));
         }
 
     };

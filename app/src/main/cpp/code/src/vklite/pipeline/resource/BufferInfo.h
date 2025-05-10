@@ -8,28 +8,28 @@
 #include <memory>
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/buffer/VulkanBufferInterface.h"
+#include "vklite/buffer/BufferInterface.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
     class BufferInfo {
     private:
-        std::shared_ptr<VulkanBufferInterface> mBuffer;
+        std::shared_ptr<BufferInterface> mBuffer;
         uint32_t mOffset;
         uint32_t mRange;
 
     public:
-        BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer, uint32_t offset, uint32_t range);
+        BufferInfo(const std::shared_ptr<BufferInterface> &buffer, uint32_t offset, uint32_t range);
 
-        BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer, uint32_t range);
+        BufferInfo(const std::shared_ptr<BufferInterface> &buffer, uint32_t range);
 
-        explicit BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer);
+        explicit BufferInfo(const std::shared_ptr<BufferInterface> &buffer);
 
         ~BufferInfo();
 
         [[nodiscard]]
-        const std::shared_ptr<VulkanBufferInterface> &getVulkanBuffer() const;
+        const std::shared_ptr<BufferInterface> &getVulkanBuffer() const;
 
         [[nodiscard]]
         uint32_t getOffset() const;

@@ -12,7 +12,7 @@ namespace vklite {
 
     AndroidHardwareBufferImage::AndroidHardwareBufferImage(const Device &device,
                                                            const AndroidHardwareBuffer &androidHardwareBuffer,
-                                                           const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
+                                                           const AndroidHardwareBufferYcbcrConversion &conversion)
             : mDevice(device) {
         vk::Device vkDevice = mDevice.getDevice();
 
@@ -107,7 +107,7 @@ namespace vklite {
 
         vk::SamplerYcbcrConversionInfo samplerYcbcrConversionInfo;
         samplerYcbcrConversionInfo
-                .setConversion(vulkanAndroidSamplerYcbcrConversion.getSamplerYcbcrConversion());
+                .setConversion(conversion.getSamplerYcbcrConversion());
 
         vk::ImageSubresourceRange imageSubresourceRange{};
         imageSubresourceRange
@@ -170,7 +170,7 @@ namespace vklite {
 
     }
 
-    void AndroidHardwareBufferImage::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void AndroidHardwareBufferImage::update(const CommandPool &commandPool, const void *data, uint32_t size) {
 
     }
 

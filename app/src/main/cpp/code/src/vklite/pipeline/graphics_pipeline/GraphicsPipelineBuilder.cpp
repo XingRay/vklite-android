@@ -4,7 +4,7 @@
 
 #include "GraphicsPipelineBuilder.h"
 #include "vklite/shader/VulkanShaderModule.h"
-#include "vklite/pipeline/descriptor/VulkanDescriptorBindingSets.h"
+#include "vklite/pipeline/descriptor/DescriptorBindingSets.h"
 
 namespace vklite {
 
@@ -30,12 +30,13 @@ namespace vklite {
         return *this;
     }
 
-    //    GraphicsPipelineConfigure &GraphicsPipelineConfigure::addDescriptorSet(const std::function<void(VulkanDescriptorSetConfigure &)> &configure) {
-//        std::unique_ptr<VulkanDescriptorSetConfigure> config = std::make_unique<VulkanDescriptorSetConfigure>();
-//        configure(*config);
-//        mDescriptorSetConfigures.addVulkanDescriptorSetConfigure(std::move(config));
-//        return *this;
-//    }
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(const std::function<void(DescriptorSetConfigure &)> &configure){
+        DescriptorSetConfigure config = DescriptorSetConfigure();
+        configure(config);
+//        mPipelineLayoutConfigure.addDescriptorSetConfigure(config);
+        return *this;
+    }
+
 
     GraphicsPipelineBuilder &GraphicsPipelineBuilder::addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits) {
 //        mPushConstantConfigures.addPushConstantConfigures(PushConstantConfigure(size, offset, stageFlagBits));

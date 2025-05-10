@@ -15,9 +15,9 @@
 #include "vklite/pipeline/descriptor/DescriptorPool.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/index_buffer/IndexBuffer.h"
-#include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
-#include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
-#include "vklite/pipeline/descriptor/VulkanDescriptorBindingSets.h"
+#include "vklite/buffer/host_visible/HostVisibleIndexBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"
+#include "vklite/pipeline/descriptor/DescriptorBindingSets.h"
 #include "vklite/pipeline/resource/BufferInfo.h"
 #include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/pipeline/descriptor/PipelineLayout.h"
@@ -71,17 +71,17 @@ namespace vklite {
 //
 //        GraphicsPipeline &createVertexBuffer(uint32_t binding, size_t size);
 //
-//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, const void *data, size_t size);
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &commandPool, const void *data, size_t size);
 //
-//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, uint32_t index, const void *data, size_t size);
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &commandPool, uint32_t index, const void *data, size_t size);
 //
 //        template<typename T>
-//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, const std::vector<T> &data) {
-//            return updateVertexBuffer(vulkanCommandPool, 0, data);
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &commandPool, const std::vector<T> &data) {
+//            return updateVertexBuffer(commandPool, 0, data);
 //        }
 
 //        template<typename T>
-//        GraphicsPipeline &updateVertexBuffer(const CommandPool &vulkanCommandPool, uint32_t index, const std::vector<T> &data) {
+//        GraphicsPipeline &updateVertexBuffer(const CommandPool &commandPool, uint32_t index, const std::vector<T> &data) {
 //            if (index >= mVertexBuffers.size()) {
 //                LOG_E("index out of range, index:%d, size:%zu", index, mVertexBuffers.size());
 //
@@ -92,14 +92,14 @@ namespace vklite {
 //                                           std::to_string(mVertexBuffers.size());
 //                throw std::runtime_error(errorMessage);
 //            }
-//            mVertexBuffers[index]->update(vulkanCommandPool, data.data(), data.size() * sizeof(T));
+//            mVertexBuffers[index]->update(commandPool, data.data(), data.size() * sizeof(T));
 //
 //            return *this;
 //        }
 
 //        GraphicsPipeline &createIndexBuffer(size_t size);
 //
-//        GraphicsPipeline &updateIndexBuffer(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices);
+//        GraphicsPipeline &updateIndexBuffer(const CommandPool &commandPool, const std::vector<uint32_t> &indices);
 
 //        GraphicsPipeline &updateUniformBuffer(const CommandPool &commandPool, uint32_t frameIndex, uint32_t set, uint32_t binding, const void *data, uint32_t size);
 

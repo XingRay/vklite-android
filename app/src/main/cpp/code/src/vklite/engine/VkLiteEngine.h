@@ -19,10 +19,10 @@
 #include "vklite/pipeline/resource/PipelineResource.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/vertex_buffer/VertexBuffer.h"
-#include "vklite/buffer/host_visible/VulkanHostVisibleVertexBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleVertexBuffer.h"
 #include "vklite/index_buffer/IndexBuffer.h"
-#include "vklite/buffer/host_visible/VulkanHostVisibleIndexBuffer.h"
-#include "vklite/buffer/device_local/VulkanDeviceLocalUniformBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleIndexBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"
 #include "vklite/sync/SyncObject.h"
 #include "vklite/frame_buffer/FrameBuffer.h"
 #include "vklite/sampler/DefaultSampler.h"
@@ -62,7 +62,7 @@ namespace vklite {
     public:
         VkLiteEngine(std::unique_ptr<Instance> instance,
                      std::unique_ptr<Surface> surface,
-                     std::unique_ptr<PhysicalDevice> vulkanPhysicalDevice,
+                     std::unique_ptr<PhysicalDevice> physicalDevice,
                      std::unique_ptr<Device> device,
                      std::unique_ptr<CommandPool> commandPool,
                      std::unique_ptr<Swapchain> swapchain,

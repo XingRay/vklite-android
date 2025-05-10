@@ -39,12 +39,12 @@ namespace vklite {
         return *this;
     }
 
-    IndexBuffer &IndexBuffer::update(const CommandPool &vulkanCommandPool, const std::vector<uint32_t> &indices) {
+    IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, const std::vector<uint32_t> &indices) {
         size_t size = indices.size() * sizeof(uint32_t);
         mIndicesCount = indices.size();
 
         mStagingBuffer.updateBuffer(indices.data(), size);
-        mIndexBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
+        mIndexBuffer.copyFrom(commandPool, mStagingBuffer.getBuffer());
 
         return *this;
     }

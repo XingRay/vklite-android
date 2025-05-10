@@ -7,7 +7,7 @@
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
+#include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/image/ImageInterface.h"
 
 namespace vklite {
@@ -65,11 +65,11 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getHeight() const;
 
-        void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) override;
+        void update(const CommandPool &commandPool, const void *data, uint32_t size) override;
 
         void recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer);
 
-        void generateMipmaps(const CommandPool &vulkanCommandPool);
+        void generateMipmaps(const CommandPool &commandPool);
 
         void recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
 

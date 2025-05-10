@@ -28,7 +28,7 @@ namespace vklite {
 
         virtual void transitionImageLayout(const CommandPool &commandPool) = 0;
 
-        virtual void update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) = 0;
+        virtual void update(const CommandPool &commandPool, const void *data, uint32_t size) = 0;
     };
 
 } // vklite

@@ -130,7 +130,7 @@ namespace vklite {
     }
 
     Device::~Device() {
-        LOG_D("VulkanDevice::~VulkanDevice");
+        LOG_D("Device::~Device");
         if (mDevice != nullptr) {
             mDevice.destroy();
         } else {

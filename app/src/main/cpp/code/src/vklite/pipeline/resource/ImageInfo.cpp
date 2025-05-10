@@ -6,18 +6,18 @@
 
 namespace vklite {
 
-    ImageInfo::ImageInfo(std::unique_ptr<ImageInterface> &&vulkanImage,
-                                                         std::unique_ptr<SamplerInterface> &&vulkanSampler)
-            : mImage(std::move(vulkanImage)),
-              mSampler(std::move(vulkanSampler)) {}
+    ImageInfo::ImageInfo(std::unique_ptr<ImageInterface> &&image,
+                                                         std::unique_ptr<SamplerInterface> &&sampler)
+            : mImage(std::move(image)),
+              mSampler(std::move(sampler)) {}
 
     ImageInfo::~ImageInfo() = default;
 
-    const std::unique_ptr<ImageInterface> &ImageInfo::getVulkanImage() const {
+    const std::unique_ptr<ImageInterface> &ImageInfo::getImage() const {
         return mImage;
     }
 
-    const std::unique_ptr<SamplerInterface> &ImageInfo::getVulkanSampler() const {
+    const std::unique_ptr<SamplerInterface> &ImageInfo::getSampler() const {
         return mSampler;
     }
 

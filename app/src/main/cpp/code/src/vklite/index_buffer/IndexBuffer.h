@@ -4,18 +4,18 @@
 
 #pragma once
 
-#include "vklite/buffer/device_local/VulkanDeviceLocalBuffer.h"
-#include "vklite/buffer/host_visible/VulkanStagingBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
     class IndexBuffer {
     private:
-        VulkanDeviceLocalBuffer mIndexBuffer;
+        DeviceLocalBuffer mIndexBuffer;
         uint32_t mIndicesCount;
 
-        VulkanStagingBuffer mStagingBuffer;
+        StagingBuffer mStagingBuffer;
 
     public:
         IndexBuffer(const Device &device, vk::DeviceSize bufferSize);
@@ -33,7 +33,7 @@ namespace vklite {
 
         IndexBuffer& recordCommandUpdate(const vk::CommandBuffer& commandBuffer, const std::vector<uint32_t>& indices);
 
-        IndexBuffer& update(const CommandPool& vulkanCommandPool, const std::vector<uint32_t>& indices);
+        IndexBuffer& update(const CommandPool& commandPool, const std::vector<uint32_t>& indices);
     };
 
 } // vklite

@@ -6,18 +6,18 @@
 
 namespace vklite {
 
-    BufferInfo::BufferInfo(const std::shared_ptr<VulkanBufferInterface> &vulkanBuffer, uint32_t offset, uint32_t range)
+    BufferInfo::BufferInfo(const std::shared_ptr<BufferInterface> &vulkanBuffer, uint32_t offset, uint32_t range)
             : mBuffer(vulkanBuffer), mOffset(offset), mRange(range) {}
 
-    BufferInfo::BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer, uint32_t range)
+    BufferInfo::BufferInfo(const std::shared_ptr<BufferInterface> &buffer, uint32_t range)
             : BufferInfo(buffer, 0, range) {}
 
-    BufferInfo::BufferInfo(const std::shared_ptr<VulkanBufferInterface> &buffer)
+    BufferInfo::BufferInfo(const std::shared_ptr<BufferInterface> &buffer)
             : BufferInfo(buffer, 0, buffer->getSize()) {}
 
     BufferInfo::~BufferInfo() = default;
 
-    const std::shared_ptr<VulkanBufferInterface> &BufferInfo::getVulkanBuffer() const {
+    const std::shared_ptr<BufferInterface> &BufferInfo::getVulkanBuffer() const {
         return mBuffer;
     }
 

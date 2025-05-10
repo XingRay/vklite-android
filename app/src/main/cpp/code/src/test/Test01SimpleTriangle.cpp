@@ -4,11 +4,10 @@
 
 #include "Test01SimpleTriangle.h"
 #include "FileUtil.h"
-#include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
+#include "vklite/util/VulkanUtil.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
-#include "vklite/util/VulkanUtil.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
-#include "vklite/util/VulkanUtil.h"
+#include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 
 namespace test01 {
 
@@ -149,46 +148,9 @@ namespace test01 {
                 .build(mFrameCount);
 
         LOG_D("test created ");
-
-//        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
-//                .layers({}, std::move(layers))
-//                .extensions({}, std::move(instanceExtensions))
-//                .deviceExtensions(std::move(deviceExtensions))
-//                .surfaceBuilder(std::make_unique<vklite::AndroidVulkanSurfaceBuilder>(mApp.window))
-//                .enableMsaa()
-//                .physicalDeviceAsDefault()
-//                .graphicsPipeline([&](vklite::GraphicsPipelineConfigure &graphicsPipelineConfigure) {
-//                    graphicsPipelineConfigure
-//                            .vertexShaderCode(std::move(vertexShaderCode))
-//                            .fragmentShaderCode(std::move(fragmentShaderCode))
-//                            .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-//                                vertexBindingConfigure
-//                                        .binding(0)
-//                                        .stride(sizeof(Vertex))
-//                                        .addAttribute(0, ShaderFormat::Vec3);
-//                            });
-//                })
-////                .pipelineResource([&](){
-////
-////                })
-//                .build();
-
-
-
     }
 
     void Test01SimpleTriangle::init() {
-//        mVkLiteEngine->getGraphicsPipeline()
-//                .createVertexBuffer(vertices.size() * sizeof(Vertex))
-//                .updateVertexBuffer(mVkLiteEngine->getCommandPool(), vertices)
-//                .createIndexBuffer(indices.size() * sizeof(uint32_t))
-//                .updateIndexBuffer(mVkLiteEngine->getCommandPool(), indices);
-
-//        (*mVkLiteEngine)
-//                .createVertexBuffer(vertices.size() * sizeof(Vertex))
-//                .updateVertexBuffer(vertices)
-//                .createIndexBuffer(indices.size() * sizeof(uint32_t))
-//                .updateIndexBuffer(indices);
 
     }
 
@@ -199,20 +161,20 @@ namespace test01 {
 
     // 绘制三角形帧
     void Test01SimpleTriangle::drawFrame() {
-        const vk::Device device = mDevice->getDevice();
+        const vk::Device vkDevice = mDevice->getDevice();
         vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
         vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
         vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
         std::array<vk::Fence, 1> waitFences = {fence};
 
-        vk::Result result = device.waitForFences(waitFences, vk::True, std::numeric_limits<uint64_t>::max());
+        vk::Result result = vkDevice.waitForFences(waitFences, vk::True, std::numeric_limits<uint64_t>::max());
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-        auto [acquireResult, imageIndex] = device.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
+        auto [acquireResult, imageIndex] = vkDevice.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
                 // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。

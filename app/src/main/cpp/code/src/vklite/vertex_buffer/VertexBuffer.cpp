@@ -27,8 +27,8 @@ namespace vklite {
         mVertexBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
     }
 
-    void VertexBuffer::update(const CommandPool &vulkanCommandPool, const void *data, uint32_t size) {
+    void VertexBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
         mStagingBuffer.updateBuffer(data, size);
-        mVertexBuffer.copyFrom(vulkanCommandPool, mStagingBuffer.getBuffer());
+        mVertexBuffer.copyFrom(commandPool, mStagingBuffer.getBuffer());
     }
 } // vklite
