@@ -96,13 +96,8 @@ namespace vklite {
 //    }
 
     void PipelineResource::addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
-//        LOG_D("before mVertexBuffers.push_back");
         mVertexBuffers.push_back(buffer);
-//        LOG_D("after mVertexBuffers.push_back");
-
-//        LOG_D("before mVertexBufferOffsets.push_back");
         mVertexBufferOffsets.push_back(offset);
-//        LOG_D("after mVertexBufferOffsets.push_back");
     }
 
     void PipelineResource::setIndexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {

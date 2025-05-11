@@ -6,12 +6,13 @@
 
 namespace vklite {
 
-    PipelineResourceBuilder::PipelineResourceBuilder() = default;
+    PipelineResourceBuilder::PipelineResourceBuilder()
+            : mIndicesCount(0) {};
 
     PipelineResourceBuilder::~PipelineResourceBuilder() = default;
 
-    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider) {
-        mVertexBufferProvider = vertexBufferProvider;
+    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider) {
+        mVertexBufferProvider = std::move(vertexBufferProvider);
         return *this;
     }
 
@@ -22,8 +23,8 @@ namespace vklite {
         return *this;
     }
 
-    PipelineResourceBuilder &PipelineResourceBuilder::indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> indexBufferProvider) {
-        mIndexBufferProvider = indexBufferProvider;
+    PipelineResourceBuilder &PipelineResourceBuilder::indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider) {
+        mIndexBufferProvider = std::move(indexBufferProvider);
         return *this;
     }
 

@@ -101,7 +101,9 @@ namespace vklite {
 
 //        GraphicsPipeline &updatePushConstant(uint32_t index, const void *data);
 
-        void drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource,
+        void drawFrame(const vk::CommandBuffer &commandBuffer,
+                       const PipelineLayout& pipelineLayout,
+                       const PipelineResource &pipelineResource,
                        const std::vector<vk::Viewport> &viewports,
                        const std::vector<vk::Rect2D> &scissors);
 

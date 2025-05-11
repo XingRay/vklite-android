@@ -61,6 +61,7 @@ namespace test02 {
         std::vector<vklite::FrameBuffer> mFrameBuffers;
 
         std::unique_ptr<vklite::SyncObject> mSyncObject;
+        std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
 
         std::vector<vk::Viewport> mViewports;

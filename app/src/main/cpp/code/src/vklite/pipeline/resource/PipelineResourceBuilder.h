@@ -24,15 +24,18 @@ namespace vklite {
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider);
+        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
 
         PipelineResourceBuilder &vertexBuffer(VertexBuffer &vertexBuffer);
 
-        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> indexBufferProvider);
+        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
 
         PipelineResourceBuilder &indexBuffer(IndexBuffer &indexBuffer);
 
         PipelineResourceBuilder &indicesCount(uint32_t indicesCount);
+
+        [[nodiscard]]
+        PipelineResource build();
 
         [[nodiscard]]
         std::vector<PipelineResource> build(uint32_t frameCount);

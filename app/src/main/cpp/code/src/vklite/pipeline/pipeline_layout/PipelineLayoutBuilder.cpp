@@ -120,49 +120,102 @@ namespace vklite {
 //        return descriptorPoolSizes;
 //    }
 //
-//    uint32_t PipelineLayoutConfigure::getSetCount(uint32_t frameCount) const {
-//        return mPipelineLayoutConfigure.size() * frameCount;
-//    }
-//
-//    std::unique_ptr<VulkanDescriptorBindingSets> PipelineLayoutConfigure::createVulkanDescriptorBindingSets(const VulkanDevice &device, const CommandPool &commandPool) const {
-//        if (mPipelineLayoutConfigure.empty()) {
-//            return nullptr;
-//        }
-//
-//        std::unique_ptr<VulkanDescriptorBindingSets> vulkanDescriptorBindingSets = std::make_unique<VulkanDescriptorBindingSets>();
-//
-//        for (const auto &entry: mPipelineLayoutConfigure) {
-//            uint32_t set = entry.first;
-//            const std::unique_ptr<VulkanDescriptorSetConfigure> &vulkanDescriptorSetConfigure = entry.second;
-//
-//            std::unique_ptr<VulkanDescriptorBindingSet> vulkanDescriptorBindingSet = vulkanDescriptorSetConfigure->createVulkanDescriptorBindingSet(device, commandPool);
-//            vulkanDescriptorBindingSets->set(set, std::move(vulkanDescriptorBindingSet));
-//        }
-//
-//        return vulkanDescriptorBindingSets;
-//    }
+    uint32_t PipelineLayoutBuilder::getDescriptorSetCount() const {
+        return mDescriptorSetConfigures.size();
+    }
 
-    std::vector<std::vector<vk::DescriptorSetLayoutBinding>> PipelineLayoutBuilder::createDescriptorSetLayoutBindings() {
-        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> descriptorSetLayoutBindingSets;
-        for (const auto &entry: mDescriptorSetConfigures) {
-            uint32_t set = entry.first;
-            const DescriptorSetConfigure &descriptorSetConfigure = entry.second;
+    std::vector<vk::DescriptorPoolSize> PipelineLayoutBuilder::calcDescriptorPoolSizes() const {
+        std::vector<vk::DescriptorPoolSize> descriptorPoolSizes;
+        std::unordered_map<vk::DescriptorType, size_t> descriptorTypeToIndexMap;
 
-            std::vector<vk::DescriptorSetLayoutBinding> bindingSet = descriptorSetConfigure.createDescriptorSetLayoutBindings();
+        for (const auto &setEntry: mDescriptorSetConfigures) {
+            uint32_t set = setEntry.first;
+            const DescriptorSetConfigure &descriptorSet = setEntry.second;
+            const std::unordered_map<uint32_t, DescriptorBindingConfigure> &descriptorBindingConfigures = descriptorSet.getDescriptorBindingConfigures();
+
+            for (const auto &bindingEntry: descriptorBindingConfigures) {
+                uint32_t binding = bindingEntry.first;
+                const DescriptorBindingConfigure &descriptor = bindingEntry.second;
+
+                const vk::DescriptorType type = descriptor.getDescriptorType();
+                const uint32_t count = descriptor.getDescriptorCount();
+                if (descriptorTypeToIndexMap.contains(type)) {
+                    descriptorPoolSizes[descriptorTypeToIndexMap[type]].descriptorCount += count;
+                } else {
+                    descriptorTypeToIndexMap[type] = descriptorPoolSizes.size();
+                    descriptorPoolSizes.emplace_back(type, count);
+                }
+            }
         }
-        //=mDescriptorSetConfigures.createDescriptorSetLayoutBindings();
-        return descriptorSetLayoutBindingSets;
+
+        return descriptorPoolSizes;
     }
 
-    PipelineLayout PipelineLayoutBuilder::build(const Device &device) {
-        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> descriptorSetLayoutBindingSets = createDescriptorSetLayoutBindings();
-        return PipelineLayout(device, descriptorSetLayoutBindingSets, mPushConstantRanges);
+    std::unique_ptr<DescriptorPool> PipelineLayoutBuilder::createDescriptorPool(const Device &device, uint32_t frameCount) const {
+        std::vector<vk::DescriptorPoolSize> descriptorPoolSizes;
+        std::unordered_map<vk::DescriptorType, size_t> descriptorTypeToIndexMap;
+
+        for (const auto &setEntry: mDescriptorSetConfigures) {
+            uint32_t set = setEntry.first;
+            const DescriptorSetConfigure &descriptorSet = setEntry.second;
+            const std::unordered_map<uint32_t, DescriptorBindingConfigure> &descriptorBindingConfigures = descriptorSet.getDescriptorBindingConfigures();
+
+            for (const auto &bindingEntry: descriptorBindingConfigures) {
+                uint32_t binding = bindingEntry.first;
+                const DescriptorBindingConfigure &descriptor = bindingEntry.second;
+
+                const vk::DescriptorType type = descriptor.getDescriptorType();
+                const uint32_t count = descriptor.getDescriptorCount() * frameCount;
+                if (descriptorTypeToIndexMap.contains(type)) {
+                    descriptorPoolSizes[descriptorTypeToIndexMap[type]].descriptorCount += count;
+                } else {
+                    descriptorTypeToIndexMap[type] = descriptorPoolSizes.size();
+                    descriptorPoolSizes.emplace_back(type, count);
+                }
+            }
+        }
+
+        return std::make_unique<DescriptorPool>(device, descriptorPoolSizes, mDescriptorSetConfigures.size() * frameCount);
     }
 
-    std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUnique(const Device &device) {
-        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> descriptorSetLayoutBindingSets = createDescriptorSetLayoutBindings();
-        return std::make_unique<PipelineLayout>(device, descriptorSetLayoutBindingSets, mPushConstantRanges);
+    std::vector<vk::DescriptorSetLayout> PipelineLayoutBuilder::createDescriptorSetLayouts(const Device &device) const {
+
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
+
+        for (const auto &setEntry: mDescriptorSetConfigures) {
+            uint32_t set = setEntry.first;
+            const DescriptorSetConfigure &descriptorSetConfigure = setEntry.second;
+
+            std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings = descriptorSetConfigure.createDescriptorSetLayoutBindings();
+
+            vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo{};
+            descriptorSetLayoutCreateInfo
+                    .setBindings(descriptorSetLayoutBindings);
+
+            vk::DescriptorSetLayout descriptorSetLayout = device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+            descriptorSetLayouts.push_back(descriptorSetLayout);
+        }
+
+        return descriptorSetLayouts;
     }
 
+    uint32_t PipelineLayoutBuilder::calcTotalPushConstantSize() const {
+        uint32_t totalPushConstantSize = 0;
+        for (const vk::PushConstantRange &pushConstantRange: mPushConstantRanges) {
+            totalPushConstantSize += pushConstantRange.size;
+        }
+        return totalPushConstantSize;
+    }
+
+    PipelineLayout PipelineLayoutBuilder::buildPipelineLayout(const Device &device) const {
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = createDescriptorSetLayouts(device);
+//        return PipelineLayout(device, descriptorSetLayoutBindingSets, mPushConstantRanges);
+        return {device, descriptorSetLayouts, mPushConstantRanges};
+    }
+
+    std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUniquePipelineLayout(const Device &device) const {
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = createDescriptorSetLayouts(device);
+        return std::make_unique<PipelineLayout>(device, descriptorSetLayouts, mPushConstantRanges);
+    }
 
 } // vklite

@@ -29,7 +29,7 @@ namespace vklite {
         // set -> binding -> offset -> slot
 //        std::unordered_map<uint32_t, std::unordered_map<uint32_t, std::unordered_map<uint32_t, PipelineResourceSlot>>> mPipelineResourceSlots;
 //
-//        std::vector<vk::DescriptorSet> mDescriptorSets;
+        std::vector<vk::DescriptorSet> mDescriptorSets;
 //
 //        std::vector<PushConstant> mPushConstants;
 

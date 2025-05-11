@@ -12,6 +12,7 @@
 #include "vklite/render_pass/RenderPassBuilder.h"
 #include "vklite/frame_buffer/FrameBufferBuilder.h"
 #include "vklite/sync/SyncObjectBuilder.h"
+#include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
 #include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"

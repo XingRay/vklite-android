@@ -355,7 +355,9 @@ namespace vklite {
 //        }
 //    }
 
-    void GraphicsPipeline::drawFrame(const vk::CommandBuffer &commandBuffer, const PipelineResource &pipelineResource,
+    void GraphicsPipeline::drawFrame(const vk::CommandBuffer &commandBuffer,
+                                     const PipelineLayout &pipelineLayout,
+                                     const PipelineResource &pipelineResource,
                                      const std::vector<vk::Viewport> &viewports,
                                      const std::vector<vk::Rect2D> &scissors) {
 
@@ -384,7 +386,7 @@ namespace vklite {
         commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
 
         // uniform/sampler/storage/...
-//        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);
+//        commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout.getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);
 
         // push constants
 //        const std::vector<PushConstant> &pushConstants = pipelineResource.getPushConstants();

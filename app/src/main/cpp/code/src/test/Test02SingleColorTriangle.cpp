@@ -123,7 +123,7 @@ namespace test02 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
-        mPipelineLayout = vklite::PipelineLayoutBuilder()
+        vklite::PipelineLayoutBuilder pipelineLayoutBuilder = vklite::PipelineLayoutBuilder()
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
@@ -132,8 +132,16 @@ namespace test02 {
                                         .binding(0)
                                         .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
                             });
-                })
+                });
+
+        mDescriptorPool = vklite::DescriptorPoolBuilder()
+                .descriptorPoolSizes(pipelineLayoutBuilder.calcDescriptorPoolSizes())
+                .descriptorSetCount(pipelineLayoutBuilder.getDescriptorSetCount())
+                .frameCount(mFrameCount)
                 .buildUnique(*mDevice);
+
+        mPipelineLayout = pipelineLayoutBuilder
+                .buildUniquePipelineLayout(*mDevice);
 
         vk::Viewport viewport;
         viewport
@@ -259,7 +267,7 @@ namespace test02 {
          */
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
-        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+        mGraphicsPipeline->drawFrame(commandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
 
         commandBuffer.endRenderPass();
 

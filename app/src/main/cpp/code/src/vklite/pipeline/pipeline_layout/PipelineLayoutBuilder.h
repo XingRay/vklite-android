@@ -34,14 +34,30 @@ namespace vklite {
         PipelineLayoutBuilder &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
 
         [[nodiscard]]
-        PipelineLayout build(const Device &device);
+        std::unique_ptr<DescriptorPool> createDescriptorPool(const Device &device, uint32_t frameCount) const;
 
         [[nodiscard]]
-        std::unique_ptr<PipelineLayout> buildUnique(const Device &device);
+        std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const Device &device) const;
+
+        [[nodiscard]]
+        uint32_t calcTotalPushConstantSize() const;
+
+        [[nodiscard]]
+        uint32_t getDescriptorSetCount() const;
+
+        [[nodiscard]]
+        std::vector<vk::DescriptorPoolSize> calcDescriptorPoolSizes() const;
+
+        [[nodiscard]]
+        PipelineLayout buildPipelineLayout(const Device &device)const;
+
+        [[nodiscard]]
+        std::unique_ptr<PipelineLayout> buildUniquePipelineLayout(const Device &device)const;
+
 
     private:
-        [[nodiscard]]
-        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> createDescriptorSetLayoutBindings();
+//        [[nodiscard]]
+//        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> createDescriptorSetLayoutBindings();
     };
 
 } // vklite

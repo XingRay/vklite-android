@@ -22,22 +22,13 @@ namespace vklite {
 
     public:
         PipelineLayout(const Device &device,
-                       const std::vector<std::vector<vk::DescriptorSetLayoutBinding>> &descriptorSetLayoutBindingSets,
+                       const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
                        const std::vector<vk::PushConstantRange> &pushConstantRanges);
 
         ~PipelineLayout();
 
         [[nodiscard]]
         const vk::PipelineLayout &getPipelineLayout() const;
-
-//        [[nodiscard]]
-//        std::unique_ptr<DescriptorPool> createDescriptorPool(uint32_t frameCount) const;
-//
-//        [[nodiscard]]
-//        std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts() const;
-//
-//        [[nodiscard]]
-//        uint32_t calcTotalPushConstantSize() const;
     };
 
 } // vklite

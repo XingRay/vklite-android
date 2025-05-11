@@ -130,7 +130,7 @@ namespace test01 {
                                         .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
                             });
                 })
-                .buildUnique(*mDevice);
+                .buildUniquePipelineLayout(*mDevice);
 
         vk::Viewport viewport;
         viewport
@@ -254,7 +254,7 @@ namespace test01 {
          */
         commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
 
-        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
 
         commandBuffer.endRenderPass();
 

@@ -22,6 +22,7 @@ namespace vklite {
     class DescriptorSetConfigure {
     private:
         uint32_t mSet;
+
         // binding -> BindingConfigure
         std::unordered_map<uint32_t, DescriptorBindingConfigure> mDescriptorBindingConfigures;
 
@@ -34,7 +35,8 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getSet() const;
 
-//        const std::unordered_map<uint32_t, std::unique_ptr<DescriptorBindingConfigure>> &getDescriptorBindingConfigures();
+        [[nodiscard]]
+        const std::unordered_map<uint32_t, DescriptorBindingConfigure> &getDescriptorBindingConfigures() const;
 
         DescriptorSetConfigure &set(uint32_t set);
 

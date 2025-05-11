@@ -17,6 +17,10 @@ namespace vklite {
         return mSet;
     }
 
+    const std::unordered_map<uint32_t, DescriptorBindingConfigure>& DescriptorSetConfigure::getDescriptorBindingConfigures() const{
+        return mDescriptorBindingConfigures;
+    }
+
 //    const std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> &DescriptorSetConfigure::getVulkanDescriptorBindingConfigures() {
 //        return mDescriptorBindingConfigures;
 //    }
