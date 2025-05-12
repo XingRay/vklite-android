@@ -18,31 +18,31 @@ namespace vklite {
 
 //    class VulkanDescriptorSetConfigure;
 
-    class ImmutableSamplerConfigure {
-//        friend VulkanDescriptorSetConfigure;
-
-    private:
-        uint32_t mBinding;
-        uint32_t mDescriptorOffset;
-        uint32_t mDescriptorRange;
-        vk::ShaderStageFlags mShaderStageFlags;
-
-        std::unique_ptr<DescriptorImmutableSamplerConfigure> mDescriptorImmutableSamplerConfigure;
-
-    public:
-        ImmutableSamplerConfigure();
-
-        ~ImmutableSamplerConfigure();
-
-        ImmutableSamplerConfigure &binding(uint32_t binding);
-
-        ImmutableSamplerConfigure &descriptorOffset(uint32_t offset);
-
-        ImmutableSamplerConfigure &descriptorRange(uint32_t range);
-
-        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
-
-//        std::unique_ptr<VulkanDescriptorBindingConfigure> createVulkanDescriptorBindingConfigure();
-    };
+//    class ImmutableSamplerConfigure {
+////        friend VulkanDescriptorSetConfigure;
+//
+//    private:
+//        uint32_t mBinding;
+//        uint32_t mDescriptorOffset;
+//        uint32_t mDescriptorRange;
+//        vk::ShaderStageFlags mShaderStageFlags;
+//
+////        std::unique_ptr<DescriptorImmutableSamplerConfigure> mDescriptorImmutableSamplerConfigure;
+//
+//    public:
+//        ImmutableSamplerConfigure();
+//
+//        ~ImmutableSamplerConfigure();
+//
+//        ImmutableSamplerConfigure &binding(uint32_t binding);
+//
+//        ImmutableSamplerConfigure &descriptorOffset(uint32_t offset);
+//
+//        ImmutableSamplerConfigure &descriptorRange(uint32_t range);
+//
+//        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
+//
+////        std::unique_ptr<VulkanDescriptorBindingConfigure> createVulkanDescriptorBindingConfigure();
+//    };
 
 } // vklite

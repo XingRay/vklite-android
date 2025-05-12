@@ -27,50 +27,6 @@ namespace vklite {
         return *this;
     }
 
-//    UniformConfigure &UniformConfigure::setUniformBuffer(uint32_t capacity, const void *data, uint32_t size) {
-//        mDescriptorBufferInfoConfigure = std::make_unique<DescriptorBufferInfoConfigure>(std::make_unique<UniformBufferBuilder>(), capacity, data, size);
-//        return *this;
-//    }
-//
-//    UniformConfigure &UniformConfigure::setUniformBuffer(std::unique_ptr<BufferInfo> &&bufferInfo) {
-//        mDescriptorBufferInfoConfigure = std::make_unique<DescriptorBufferInfoConfigure>(std::move(bufferInfo));
-//        return *this;
-//    }
-
-//    vk::DescriptorSetLayoutBinding VulkanUniformConfigure::createDescriptorSetLayoutBinding() const {
-//        vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding{};
-//
-//        descriptorSetLayoutBinding
-//                .setBinding(mBinding)
-//                .setDescriptorType(vk::DescriptorType::eUniformBuffer)
-//                .setDescriptorCount(mDescriptorCount)
-//                .setStageFlags(mShaderStageFlags);
-//
-//        return descriptorSetLayoutBinding;
-//    }
-
-//    std::shared_ptr<VulkanDeviceLocalUniformBuffer> VulkanUniformConfigure::createUniformBuffer(const VulkanDevice &device, const CommandPool &commandPool) const {
-//        if (mBuffer != nullptr) {
-//            return mBuffer;
-//        }
-//
-//        if (mCreateBufferCapacity == 0) {
-//            return nullptr;
-//        }
-//
-//        std::shared_ptr<VulkanDeviceLocalUniformBuffer> buffer = std::make_shared<VulkanDeviceLocalUniformBuffer>(device, mCreateBufferCapacity);
-//        if (!mCreateBufferData.empty()) {
-//            buffer->update(commandPool, mCreateBufferData);
-//        }
-//
-//        return buffer;
-//    }
-
-//    std::unique_ptr<VulkanDescriptorBindingConfigure> VulkanUniformConfigure::createVulkanDescriptorSetConfigure() {
-//        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eUniformBuffer,
-//                                                                  mDescriptorCount, mShaderStageFlags, );
-//    }
-
     DescriptorBindingConfigure UniformConfigure::createDescriptorBindingConfigure() const {
 //        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
         return {mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount, {}};

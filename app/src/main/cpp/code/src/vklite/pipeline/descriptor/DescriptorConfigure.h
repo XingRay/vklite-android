@@ -14,40 +14,25 @@
 
 namespace vklite {
 
-    class PipelineLayoutBuilder {
+    class DescriptorConfigure {
     private:
         // set -> DescriptorSetConfigure
         std::unordered_map<uint32_t, DescriptorSetConfigure> mDescriptorSetConfigures;
 
-        // push constants
-        std::vector<vk::PushConstantRange> mPushConstantRanges;
-
     public:
-        PipelineLayoutBuilder();
+        DescriptorConfigure();
 
-        ~PipelineLayoutBuilder();
+        ~DescriptorConfigure();
 
-        PipelineLayoutBuilder &addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure);
+        DescriptorConfigure &addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure);
 
-        PipelineLayoutBuilder &addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &)> configure);
-
-        PipelineLayoutBuilder &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
-
-        [[nodiscard]]
-        uint32_t calcTotalPushConstantSize() const;
+        DescriptorConfigure &addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &)> configure);
 
         [[nodiscard]]
         uint32_t getDescriptorSetCount() const;
 
         [[nodiscard]]
         std::vector<vk::DescriptorPoolSize> calcDescriptorPoolSizes() const;
-
-        [[nodiscard]]
-        PipelineLayout buildPipelineLayout(const Device &device) const;
-
-        [[nodiscard]]
-        std::unique_ptr<PipelineLayout> buildUniquePipelineLayout(const Device &device) const;
-
 
     private:
         [[nodiscard]]

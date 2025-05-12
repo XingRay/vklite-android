@@ -123,7 +123,7 @@ namespace test02 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
-        vklite::PipelineLayoutBuilder pipelineLayoutBuilder = vklite::PipelineLayoutBuilder()
+        vklite::DescriptorConfigure descriptorConfigure = vklite::DescriptorConfigure()
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
@@ -135,12 +135,14 @@ namespace test02 {
                 });
 
         mDescriptorPool = vklite::DescriptorPoolBuilder()
-                .descriptorPoolSizes(pipelineLayoutBuilder.calcDescriptorPoolSizes())
-                .descriptorSetCount(pipelineLayoutBuilder.getDescriptorSetCount())
+                .descriptorPoolSizes(descriptorConfigure.calcDescriptorPoolSizes())
+                .descriptorSetCount(descriptorConfigure.getDescriptorSetCount())
                 .frameCount(mFrameCount)
                 .buildUnique(*mDevice);
 
-        mPipelineLayout = pipelineLayoutBuilder
+//        mDescriptorPool->allocateDescriptorSets();
+
+        mPipelineLayout = vklite::PipelineLayoutBuilder()
                 .buildUniquePipelineLayout(*mDevice);
 
         vk::Viewport viewport;
@@ -187,8 +189,6 @@ namespace test02 {
                 .build(mFrameCount);
 
         LOG_D("test created ");
-
-
     }
 
     void Test02SingleColorTriangle::init() {

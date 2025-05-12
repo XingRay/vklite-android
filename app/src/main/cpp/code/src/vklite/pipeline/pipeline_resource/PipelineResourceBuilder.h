@@ -8,7 +8,7 @@
 #include <vector>
 #include <functional>
 
-#include "vklite/pipeline/resource/PipelineResource.h"
+#include "vklite/pipeline/pipeline_resource/PipelineResource.h"
 #include "vklite/vertex_buffer/VertexBuffer.h"
 #include "vklite/index_buffer/IndexBuffer.h"
 
@@ -16,19 +16,23 @@ namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-        std::function<VertexBuffer &(uint32_t)> mVertexBufferProvider;
-        std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
+        std::function<VertexBuffer & (uint32_t)> mVertexBufferProvider;
+        std::function<IndexBuffer & (uint32_t)> mIndexBufferProvider;
         uint32_t mIndicesCount;
     public:
         PipelineResourceBuilder();
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
+        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer & (uint32_t frameIndex)
+
+        > &&vertexBufferProvider);
 
         PipelineResourceBuilder &vertexBuffer(VertexBuffer &vertexBuffer);
 
-        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
+        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer & (uint32_t frameIndex)
+
+        > &&indexBufferProvider);
 
         PipelineResourceBuilder &indexBuffer(IndexBuffer &indexBuffer);
 

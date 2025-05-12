@@ -146,17 +146,6 @@ namespace vklite {
 //        return vulkanDescriptorBindingSet;
 //    }
 
-//    vk::DescriptorSetLayout DescriptorSetConfigure::createDescriptorSetLayout(const VulkanDevice &device) {
-//
-//        std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings = createDescriptorSetLayoutBindings();
-//
-//        vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo{};
-//        descriptorSetLayoutCreateInfo
-//                .setBindings(descriptorSetLayoutBindings);
-//
-//        return device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
-//    }
-
     std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() const{
         std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
         descriptorSetLayoutBindings.reserve(mDescriptorBindingConfigures.size());

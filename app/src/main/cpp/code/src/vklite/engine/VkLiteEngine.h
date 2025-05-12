@@ -16,7 +16,7 @@
 #include "vklite/render_pass/RenderPass.h"
 #include "vklite/pipeline/graphics_pipeline/GraphicsPipeline.h"
 #include "vklite/pipeline/compute_pipeline/ComputePipeline.h"
-#include "vklite/pipeline/resource/PipelineResource.h"
+#include "vklite/pipeline/pipeline_resource/PipelineResource.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/vertex_buffer/VertexBuffer.h"
 #include "vklite/buffer/host_visible/HostVisibleVertexBuffer.h"

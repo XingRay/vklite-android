@@ -5,8 +5,9 @@
 #include "DescriptorPoolBuilder.h"
 
 namespace vklite {
+
     DescriptorPoolBuilder::DescriptorPoolBuilder()
-            : mFrameCount(1) {}
+            : mFrameCount(1), mDescriptorSetCount(0) {}
 
     DescriptorPoolBuilder::~DescriptorPoolBuilder() = default;
 
@@ -36,6 +37,7 @@ namespace vklite {
 
     std::vector<vk::DescriptorPoolSize> DescriptorPoolBuilder::calcDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes, uint32_t framerCount) {
         std::vector<vk::DescriptorPoolSize> poolSizes;
+        poolSizes.reserve(descriptorPoolSizes.size());
         for (const vk::DescriptorPoolSize &descriptorPoolSize: descriptorPoolSizes) {
             poolSizes.emplace_back(descriptorPoolSize.type, descriptorPoolSize.descriptorCount * framerCount);
         }

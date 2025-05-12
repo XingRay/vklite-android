@@ -6,8 +6,6 @@
 
 #include <unordered_map>
 
-#include "Descriptor.h"
-
 namespace vklite {
 
     class DescriptorBindingSet {

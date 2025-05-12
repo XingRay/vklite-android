@@ -18,10 +18,8 @@
 #include "vklite/buffer/host_visible/HostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"
 #include "vklite/pipeline/descriptor/old/DescriptorBindingSets.h"
-#include "vklite/pipeline/resource/BufferInfo.h"
-#include "vklite/pipeline/resource/ImageInfo.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
-#include "vklite/pipeline/resource/PipelineResource.h"
+#include "vklite/pipeline/pipeline_resource/PipelineResource.h"
 
 namespace vklite {
 
@@ -102,7 +100,7 @@ namespace vklite {
 //        GraphicsPipeline &updatePushConstant(uint32_t index, const void *data);
 
         void drawFrame(const vk::CommandBuffer &commandBuffer,
-                       const PipelineLayout& pipelineLayout,
+                       const PipelineLayout &pipelineLayout,
                        const PipelineResource &pipelineResource,
                        const std::vector<vk::Viewport> &viewports,
                        const std::vector<vk::Rect2D> &scissors);

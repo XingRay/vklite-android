@@ -9,8 +9,6 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
-#include "vklite/pipeline/descriptor/old/Descriptor.h"
 
 namespace vklite {
 

@@ -3,24 +3,24 @@
 //
 #include <iterator>
 
-#include "PipelineLayoutBuilder.h"
+#include "DescriptorConfigure.h"
 
 #include "vklite/device/Device.h"
 
 namespace vklite {
 
-    PipelineLayoutBuilder::PipelineLayoutBuilder() {
+    DescriptorConfigure::DescriptorConfigure() {
 //        mDescriptors = std::make_unique<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>>();
     }
 
-    PipelineLayoutBuilder::~PipelineLayoutBuilder() = default;
+    DescriptorConfigure::~DescriptorConfigure() = default;
 
-    PipelineLayoutBuilder &PipelineLayoutBuilder::addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure) {
+    DescriptorConfigure &DescriptorConfigure::addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure) {
         mDescriptorSetConfigures.emplace(descriptorSetConfigure.getSet(), std::move(descriptorSetConfigure));
         return *this;
     }
 
-    PipelineLayoutBuilder &PipelineLayoutBuilder::addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &)> configure) {
+    DescriptorConfigure &DescriptorConfigure::addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &)> configure) {
         DescriptorSetConfigure descriptorSetConfigure;
         configure(descriptorSetConfigure);
         addDescriptorSetConfigure(std::move(descriptorSetConfigure));
@@ -33,12 +33,6 @@ namespace vklite {
 //        bindings.try_emplace(binding, std::move(descriptor));
 //        return *this;
 //    }
-
-    PipelineLayoutBuilder &PipelineLayoutBuilder::addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags) {
-        vk::PushConstantRange pushConstantRange(stageFlags, offset, size);
-        mPushConstantRanges.push_back(pushConstantRange);
-        return *this;
-    }
 
 //    PipelineLayoutConfigure &PipelineLayoutConfigure::addVulkanDescriptorSetConfigure(std::unique_ptr<VulkanDescriptorSetConfigure> &&vulkanDescriptorSetConfigure) {
 //        mPipelineLayoutConfigure[vulkanDescriptorSetConfigure->getSet()] = std::move(vulkanDescriptorSetConfigure);
@@ -94,11 +88,11 @@ namespace vklite {
 //        return descriptorSetLayouts;
 //    }
 
-    uint32_t PipelineLayoutBuilder::getDescriptorSetCount() const {
+    uint32_t DescriptorConfigure::getDescriptorSetCount() const {
         return mDescriptorSetConfigures.size();
     }
 
-    std::vector<vk::DescriptorPoolSize> PipelineLayoutBuilder::calcDescriptorPoolSizes() const {
+    std::vector<vk::DescriptorPoolSize> DescriptorConfigure::calcDescriptorPoolSizes() const {
         std::vector<vk::DescriptorPoolSize> descriptorPoolSizes;
         std::unordered_map<vk::DescriptorType, size_t> descriptorTypeToIndexMap;
 
@@ -125,7 +119,7 @@ namespace vklite {
         return descriptorPoolSizes;
     }
 
-    std::vector<vk::DescriptorSetLayout> PipelineLayoutBuilder::createDescriptorSetLayouts(const Device &device) const {
+    std::vector<vk::DescriptorSetLayout> DescriptorConfigure::createDescriptorSetLayouts(const Device &device) const {
 
         std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
 
@@ -144,23 +138,6 @@ namespace vklite {
         }
 
         return descriptorSetLayouts;
-    }
-
-    uint32_t PipelineLayoutBuilder::calcTotalPushConstantSize() const {
-        uint32_t totalPushConstantSize = 0;
-        for (const vk::PushConstantRange &pushConstantRange: mPushConstantRanges) {
-            totalPushConstantSize += pushConstantRange.size;
-        }
-        return totalPushConstantSize;
-    }
-
-    PipelineLayout PipelineLayoutBuilder::buildPipelineLayout(const Device &device) const {
-//        return PipelineLayout(device, createDescriptorSetLayouts(device), mPushConstantRanges);
-        return {device, createDescriptorSetLayouts(device), mPushConstantRanges};
-    }
-
-    std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUniquePipelineLayout(const Device &device) const {
-        return std::make_unique<PipelineLayout>(device, createDescriptorSetLayouts(device), mPushConstantRanges);
     }
 
 } // vklite
