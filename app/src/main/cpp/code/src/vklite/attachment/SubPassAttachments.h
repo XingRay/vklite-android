@@ -20,11 +20,11 @@ namespace vklite {
 
         ~SubPassAttachments();
 
-        SubPassAttachments addAttachment(Attachment attachment);
+        SubPassAttachments addAttachment(Attachment &&attachment);
 
-        SubPassAttachments addAttachment(std::function<Attachment()> attachment);
+        SubPassAttachments addAttachment(const std::function<Attachment()> &attachment);
 
-        SubPassAttachments addAttachmentIf(bool add, std::function<Attachment()> attachment);
+        SubPassAttachments addAttachmentIf(bool add, const std::function<Attachment()> &attachment);
     };
 
 } // vklite
