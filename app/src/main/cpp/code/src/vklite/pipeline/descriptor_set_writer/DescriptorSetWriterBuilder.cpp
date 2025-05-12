@@ -15,26 +15,28 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetWriterBuilder &DescriptorSetWriterBuilder::writeDescriptorSetProvider(std::function<std::vector<DescriptorMapping>(uint32_t)> &&provider) {
-        mWriteDescriptorSetProvider = std::move(provider);
+    DescriptorSetWriterBuilder &DescriptorSetWriterBuilder::descriptorSetMappingConfigure(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
+        mDescriptorSetMappingConfigure = std::move(configure);
         return *this;
     }
 
     DescriptorSetWriter DescriptorSetWriterBuilder::build() const {
-        std::vector<DescriptorMapping> writeDescriptorSets;
+        std::vector<DescriptorMapping> descriptorMappings;
 
         for (uint32_t frameIndex = 0; frameIndex < mFrameCount; frameIndex++) {
-            std::vector<DescriptorMapping> writeDescriptorSetsOfFrame = mWriteDescriptorSetProvider(frameIndex);
+            DescriptorSetMappingConfigure configure;
+            mDescriptorSetMappingConfigure(frameIndex, configure);
+            std::vector<DescriptorMapping> writeDescriptorSetsOfFrame = configure.getDescriptorMappings();
 
-            writeDescriptorSets.insert(
-                    writeDescriptorSets.end(),
-                    std::make_move_iterator(writeDescriptorSetsOfFrame.begin()),
-                    std::make_move_iterator(writeDescriptorSetsOfFrame.end())
+                    descriptorMappings.insert(
+                            descriptorMappings.end(),
+                            std::make_move_iterator(writeDescriptorSetsOfFrame.begin()),
+                            std::make_move_iterator(writeDescriptorSetsOfFrame.end())
             );
         }
 
 //        return DescriptorSetWriter(std::move(writeDescriptorSets));
-        return {std::move(writeDescriptorSets)};
+        return {std::move(descriptorMappings)};
     }
 
 } // vklite

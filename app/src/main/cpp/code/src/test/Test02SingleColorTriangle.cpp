@@ -9,6 +9,7 @@
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
 
 namespace test02 {
 
@@ -196,57 +197,19 @@ namespace test02 {
             mDeviceLocalUniformBuffers.back()->update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
         }
 
-//        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
-//        for (int i = 0; i < mFrameCount; i++) {
-//            const std::unique_ptr<vklite::BufferInterface> &bufferInterface = mDeviceLocalUniformBuffers[i];
-//            const vklite::PipelineResource &pipelineResource = mPipelineResources[i];
-//
-//            vk::WriteDescriptorSet writeDescriptorSet{};
-//
-//            vk::DescriptorBufferInfo descriptorBufferInfo;
-//            descriptorBufferInfo
-//                    .setBuffer(bufferInterface->getBuffer())
-//                    .setOffset(0)
-//                    .setRange(bufferInterface->getSize());
-//
-//            std::array<vk::DescriptorBufferInfo, 1> descriptorBufferInfos = {descriptorBufferInfo};
-//
-//            writeDescriptorSet
-//                    .setDstSet(pipelineResource.getDescriptorSets()[0])
-//                    .setDstBinding(0)
-//                    .setDstArrayElement(0)
-//                    .setDescriptorCount(1)
-//                    .setDescriptorType(vk::DescriptorType::eUniformBuffer)
-//                    .setBufferInfo(descriptorBufferInfos);
-//            writeDescriptorSets.push_back(writeDescriptorSet);
-//        }
-//        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
-
         vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
-                .writeDescriptorSetProvider([&](uint32_t frameIndex) {
-                    std::vector<vklite::DescriptorMapping> descriptorMappings;
-
-                    const std::unique_ptr<vklite::BufferInterface> &bufferInterface = mDeviceLocalUniformBuffers[frameIndex];
-                    const vk::DescriptorSet descriptorSet = mPipelineResources[frameIndex].getDescriptorSets()[0];
-
-                    vk::DescriptorBufferInfo descriptorBufferInfo;
-                    descriptorBufferInfo
-                            .setBuffer(bufferInterface->getBuffer())
-                            .setOffset(0)
-                            .setRange(bufferInterface->getSize());
-
-                    vklite::DescriptorMapping descriptorMapping;
-                    descriptorMapping
-                            .descriptorSet(descriptorSet)
-                            .binding(0)
-                            .descriptorType(vk::DescriptorType::eUniformBuffer)
-                            .descriptorIndex(0)
-                            .descriptorCount(1)
-                            .addBufferInfo(*bufferInterface);
-
-                    descriptorMappings.push_back(std::move(descriptorMapping));
-                    return descriptorMappings;
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
+                    descriptorSetMappingConfigure
+                            .addMapping([&](vklite::DescriptorMapping &mapping) {
+                                mapping
+                                        .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
+                                        .binding(0)
+                                        .descriptorType(vk::DescriptorType::eUniformBuffer)
+                                        .descriptorIndex(0)
+                                        .descriptorCount(1)
+                                        .addBufferInfo(*mDeviceLocalUniformBuffers[frameIndex]);
+                            });
                 })
                 .build();
         mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);

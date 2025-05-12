@@ -32,6 +32,7 @@ namespace vklite {
 
         ~DescriptorMapping();
 
+        [[nodiscard]]
         const vk::DescriptorSet &getDescriptorSet() const;
 
         [[nodiscard]]
@@ -46,8 +47,10 @@ namespace vklite {
         [[nodiscard]]
         vk::DescriptorType getDescriptorType() const;
 
+        [[nodiscard]]
         std::optional<std::reference_wrapper<const std::vector<vk::DescriptorBufferInfo>>> getDescriptorBufferInfos() const;
 
+        [[nodiscard]]
         std::optional<std::reference_wrapper<const std::vector<vk::DescriptorImageInfo>>> getDescriptorImageInfos() const;
 
         DescriptorMapping &descriptorSet(vk::DescriptorSet descriptorSet);
