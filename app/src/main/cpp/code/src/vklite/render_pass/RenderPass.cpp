@@ -115,35 +115,12 @@ namespace vklite {
 
         }
         if (enableDepth) {
+            // Vulkan规定每个Subpass最多只能关联一个深度/模板附件
             subPassDescription
                     .setPDepthStencilAttachment(&depthAttachmentReferences[0]);
         }
 
         std::array<vk::SubpassDescription, 1> subpassDescriptions{subPassDescription};
-
-//        std::vector<vk::SubpassDependency> subPassDependencies;
-//
-//        vk::SubpassDependency startingPass{};
-//        startingPass
-//                .setSrcSubpass(vk::SubpassExternal)
-//                .setSrcStageMask(vk::PipelineStageFlagBits::eBottomOfPipe)
-//                .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-//                .setDstSubpass(0)
-//                .setSrcAccessMask(vk::AccessFlagBits::eMemoryRead)
-//                .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
-//                .setDependencyFlags(vk::DependencyFlagBits::eByRegion);
-//        subPassDependencies.push_back(startingPass);
-//
-//        vk::SubpassDependency endingPass;
-//        endingPass
-//                .setSrcSubpass(0)
-//                .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-//                .setSrcAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
-//                .setDstSubpass(vk::SubpassExternal)
-//                .setDstStageMask(vk::PipelineStageFlagBits::eBottomOfPipe)
-//                .setDstAccessMask(vk::AccessFlagBits::eMemoryRead)
-//                .setDependencyFlags(vk::DependencyFlagBits::eByRegion);
-//        subPassDependencies.push_back(endingPass);
 
         vk::SubpassDependency subPassDependency = vk::SubpassDependency{}
                 .setSrcSubpass(vk::SubpassExternal)

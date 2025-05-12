@@ -5,6 +5,7 @@
 #include "DrawCallBuilder.h"
 
 namespace vklite {
+
     DrawCallBuilder::DrawCallBuilder() {
 
     }

@@ -113,7 +113,7 @@ namespace test02 {
             mFrameBuffers.push_back(vklite::FrameBufferBuilder()
                                             .width(mSwapchain->getDisplaySize().width)
                                             .height(mSwapchain->getDisplaySize().height)
-                                                    // 下面添加附件的顺序不能乱
+                                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                                             .addAttachment(mColorImageView->getImageView())
                                             .addAttachment(mDepthImageView->getImageView())
                                             .addAttachment(imageView.getImageView())
@@ -204,10 +204,10 @@ namespace test02 {
                             .addMapping([&](vklite::DescriptorMapping &mapping) {
                                 mapping
                                         .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
-                                        .binding(0)
+//                                        .binding(0)
                                         .descriptorType(vk::DescriptorType::eUniformBuffer)
-                                        .descriptorIndex(0)
-                                        .descriptorCount(1)
+//                                        .descriptorIndex(0)
+//                                        .descriptorCount(1)
                                         .addBufferInfo(*mDeviceLocalUniformBuffers[frameIndex]);
                             });
                 })
