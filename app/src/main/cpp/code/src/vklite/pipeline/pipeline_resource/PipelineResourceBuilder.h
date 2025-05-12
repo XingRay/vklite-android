@@ -16,30 +16,28 @@ namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-        std::function<VertexBuffer & (uint32_t)> mVertexBufferProvider;
-        std::function<IndexBuffer & (uint32_t)> mIndexBufferProvider;
+        std::function<VertexBuffer &(uint32_t)> mVertexBufferProvider;
+        std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
         uint32_t mIndicesCount;
+
+        std::function<std::vector<vk::DescriptorSet>(uint32_t frameIndex)> mDescriptorSetProvider;
+
     public:
         PipelineResourceBuilder();
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer & (uint32_t frameIndex)
-
-        > &&vertexBufferProvider);
+        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
 
         PipelineResourceBuilder &vertexBuffer(VertexBuffer &vertexBuffer);
 
-        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer & (uint32_t frameIndex)
-
-        > &&indexBufferProvider);
+        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
 
         PipelineResourceBuilder &indexBuffer(IndexBuffer &indexBuffer);
 
         PipelineResourceBuilder &indicesCount(uint32_t indicesCount);
 
-        [[nodiscard]]
-        PipelineResource build();
+        PipelineResourceBuilder &descriptorSet(std::function<std::vector<vk::DescriptorSet>(uint32_t frameIndex)> &&descriptorSetProvider);
 
         [[nodiscard]]
         std::vector<PipelineResource> build(uint32_t frameCount);

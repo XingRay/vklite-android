@@ -31,10 +31,10 @@ namespace vklite {
         return mIndicesCount;
     }
 
-//    const std::vector<vk::DescriptorSet> &PipelineResource::getDescriptorSets() const {
-//        return mDescriptorSets;
-//    }
-//
+    const std::vector<vk::DescriptorSet> &PipelineResource::getDescriptorSets() const {
+        return mDescriptorSets;
+    }
+
 //    const std::vector<PushConstant> &PipelineResource::getPushConstants() const {
 //        return mPushConstants;
 //    }
@@ -95,18 +95,30 @@ namespace vklite {
 //        }
 //    }
 
-    void PipelineResource::addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
+    PipelineResource &PipelineResource::addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
         mVertexBuffers.push_back(buffer);
         mVertexBufferOffsets.push_back(offset);
+
+        return *this;
     }
 
-    void PipelineResource::setIndexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
+    PipelineResource &PipelineResource::indexBuffer(vk::Buffer buffer, vk::DeviceSize offset) {
         mIndexBuffer = buffer;
         mIndexBufferOffset = offset;
+
+        return *this;
     }
 
-    void PipelineResource::indicesCount(uint32_t indicesCount) {
+    PipelineResource &PipelineResource::indicesCount(uint32_t indicesCount) {
         mIndicesCount = indicesCount;
+
+        return *this;
+    }
+
+    PipelineResource &PipelineResource::descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets) {
+        mDescriptorSets = std::move(descriptorSets);
+
+        return *this;
     }
 
 } // vklite

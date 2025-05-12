@@ -17,7 +17,7 @@ namespace vklite {
         return mSet;
     }
 
-    const std::unordered_map<uint32_t, DescriptorBindingConfigure>& DescriptorSetConfigure::getDescriptorBindingConfigures() const{
+    const std::unordered_map<uint32_t, DescriptorBindingConfigure> &DescriptorSetConfigure::getDescriptorBindingConfigures() const {
         return mDescriptorBindingConfigures;
     }
 
@@ -146,7 +146,7 @@ namespace vklite {
 //        return vulkanDescriptorBindingSet;
 //    }
 
-    std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() const{
+    std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() const {
         std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
         descriptorSetLayoutBindings.reserve(mDescriptorBindingConfigures.size());
 

@@ -44,12 +44,22 @@ namespace vklite {
 
     vk::DescriptorSetLayoutBinding DescriptorBindingConfigure::createDescriptorSetLayoutBinding() const {
         vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding;
-        descriptorSetLayoutBinding
-                .setBinding(mBinding)
-                .setDescriptorType(mDescriptorType)
-                .setDescriptorCount(mDescriptorCount)
-                .setStageFlags(mShaderStageFlags)
-                .setImmutableSamplers(mImmutableSamplers);
+        if (mImmutableSamplers.empty()) {
+            descriptorSetLayoutBinding
+                    .setBinding(mBinding)
+                    .setDescriptorType(mDescriptorType)
+                    .setDescriptorCount(mDescriptorCount)
+                    .setStageFlags(mShaderStageFlags);
+//                    .setImmutableSamplers(mImmutableSamplers);
+        } else {
+            descriptorSetLayoutBinding
+                    .setBinding(mBinding)
+                    .setDescriptorType(mDescriptorType)
+//                    .setDescriptorCount(mDescriptorCount)
+                    .setStageFlags(mShaderStageFlags)
+                            // ** 注意 ** setImmutableSamplers 会同时设置 descriptorCount 为 mImmutableSamplers.size()
+                    .setImmutableSamplers(mImmutableSamplers);
+        }
         return descriptorSetLayoutBinding;
     }
 

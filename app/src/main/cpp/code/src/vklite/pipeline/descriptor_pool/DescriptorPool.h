@@ -23,6 +23,7 @@ namespace vklite {
         [[nodiscard]]
         const vk::DescriptorPool &getDescriptorPool() const;
 
+        [[nodiscard]]
         std::vector<vk::DescriptorSet> allocateDescriptorSets(const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts);
     };
 

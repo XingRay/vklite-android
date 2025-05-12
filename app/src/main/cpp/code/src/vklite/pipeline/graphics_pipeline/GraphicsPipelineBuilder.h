@@ -28,11 +28,6 @@ namespace vklite {
          */
         VertexConfigure mVertexConfigure;
 
-        /**
-         * descriptor sets
-         */
-        PipelineLayoutBuilder mPipelineLayoutBuilder;
-
     public:
         explicit GraphicsPipelineBuilder();
 
@@ -54,20 +49,6 @@ namespace vklite {
         GraphicsPipelineBuilder &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
 
         GraphicsPipelineBuilder &addVertexBinding(VertexBindingConfigure &&configure);
-
-        /**
-         *
-         * DescriptorSet
-         *
-         */
-        GraphicsPipelineBuilder &addDescriptorSet(const std::function<void(DescriptorSetConfigure &)> &configure);
-
-        GraphicsPipelineBuilder &addDescriptorSet(DescriptorSetConfigure &&descriptorSetConfigure);
-
-        /**
-         * push constant
-         */
-        GraphicsPipelineBuilder &addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits);
 
         [[nodiscard]]
         GraphicsPipeline build(const Device &device,

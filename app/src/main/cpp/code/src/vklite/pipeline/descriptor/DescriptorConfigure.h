@@ -34,7 +34,6 @@ namespace vklite {
         [[nodiscard]]
         std::vector<vk::DescriptorPoolSize> calcDescriptorPoolSizes() const;
 
-    private:
         [[nodiscard]]
         std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const Device &device) const;
     };

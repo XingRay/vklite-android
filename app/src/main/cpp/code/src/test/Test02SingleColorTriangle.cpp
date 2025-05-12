@@ -140,10 +140,10 @@ namespace test02 {
                 .frameCount(mFrameCount)
                 .buildUnique(*mDevice);
 
-//        mDescriptorPool->allocateDescriptorSets();
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = descriptorConfigure.createDescriptorSetLayouts(*mDevice);
 
         mPipelineLayout = vklite::PipelineLayoutBuilder()
-                .buildUniquePipelineLayout(*mDevice);
+                .buildUnique(*mDevice, descriptorSetLayouts);
 
         vk::Viewport viewport;
         viewport
@@ -186,7 +186,41 @@ namespace test02 {
                 .vertexBuffer(*mVertexBuffer)
                 .indexBuffer(*mIndexBuffer)
                 .indicesCount(indices.size())
+                .descriptorSet([&](uint32_t frameIndex) {
+                    return mDescriptorPool->allocateDescriptorSets(descriptorSetLayouts);
+                })
                 .build(mFrameCount);
+
+        for (int i = 0; i < mFrameCount; i++) {
+            mDeviceLocalUniformBuffers.push_back(vklite::UniformBufferBuilder().build(*mDevice, sizeof(ColorUniformBufferObject)));
+            mDeviceLocalUniformBuffers.back()->update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
+        }
+
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
+        for (int i = 0; i < mFrameCount; i++) {
+            const std::unique_ptr<vklite::BufferInterface> &bufferInterface = mDeviceLocalUniformBuffers[i];
+            const vklite::PipelineResource &pipelineResource = mPipelineResources[i];
+
+            vk::WriteDescriptorSet writeDescriptorSet{};
+
+            vk::DescriptorBufferInfo descriptorBufferInfo;
+            descriptorBufferInfo
+                    .setBuffer(bufferInterface->getBuffer())
+                    .setOffset(0)
+                    .setRange(bufferInterface->getSize());
+
+            std::array<vk::DescriptorBufferInfo, 1> descriptorBufferInfos = {descriptorBufferInfo};
+
+            writeDescriptorSet
+                    .setDstSet(pipelineResource.getDescriptorSets()[0])
+                    .setDstBinding(0)
+                    .setDstArrayElement(0)
+                    .setDescriptorCount(1)
+                    .setDescriptorType(vk::DescriptorType::eUniformBuffer)
+                    .setBufferInfo(descriptorBufferInfos);
+            writeDescriptorSets.push_back(writeDescriptorSet);
+        }
+        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
         LOG_D("test created ");
     }

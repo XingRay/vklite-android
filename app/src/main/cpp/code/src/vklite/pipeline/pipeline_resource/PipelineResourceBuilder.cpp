@@ -40,17 +40,24 @@ namespace vklite {
         return *this;
     }
 
+    PipelineResourceBuilder &PipelineResourceBuilder::descriptorSet(std::function<std::vector<vk::DescriptorSet>(uint32_t frameIndex)> &&descriptorSetProvider) {
+        mDescriptorSetProvider = std::move(descriptorSetProvider);
+        return *this;
+    }
+
     std::vector<PipelineResource> PipelineResourceBuilder::build(uint32_t frameCount) {
         std::vector<PipelineResource> pipelineResources;
-//        pipelineResources.reserve(frameCount);
-        pipelineResources.resize(frameCount);
+        pipelineResources.reserve(frameCount);
+
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-//            pipelineResources.emplace_back(); // 添加新元素
-//            PipelineResource& pipelineResource = pipelineResources.back();
-            PipelineResource &pipelineResource = pipelineResources[frameIndex];
-            pipelineResource.addVertexBuffer(mVertexBufferProvider(frameIndex).getBuffer(), 0);
-            pipelineResource.setIndexBuffer(mIndexBufferProvider(frameIndex).getBuffer(), 0);
-            pipelineResource.indicesCount(mIndicesCount);
+            PipelineResource pipelineResource;
+            pipelineResource
+                    .addVertexBuffer(mVertexBufferProvider(frameIndex).getBuffer(), 0)
+                    .indexBuffer(mIndexBufferProvider(frameIndex).getBuffer(), 0)
+                    .indicesCount(mIndicesCount)
+                    .descriptorSets(mDescriptorSetProvider(frameIndex));
+
+            pipelineResources.push_back(std::move(pipelineResource));
         }
 
         return pipelineResources;

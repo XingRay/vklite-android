@@ -35,24 +35,6 @@ namespace vklite {
         return *this;
     }
 
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(const std::function<void(DescriptorSetConfigure &)> &configure) {
-        DescriptorSetConfigure config = DescriptorSetConfigure();
-        configure(config);
-        addDescriptorSet(std::move(config));
-        return *this;
-    }
-
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addDescriptorSet(DescriptorSetConfigure &&descriptorSetConfigure) {
-        mPipelineLayoutBuilder.addDescriptorSetConfigure(std::move(descriptorSetConfigure));
-        return *this;
-    }
-
-
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::addPushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits) {
-//        mPushConstantConfigures.addPushConstantConfigures(PushConstantConfigure(size, offset, stageFlagBits));
-        return *this;
-    }
-
     GraphicsPipeline GraphicsPipelineBuilder::build(const Device &device,
                                                     const RenderPass &renderPass,
                                                     const PipelineLayout &pipelineLayout,
@@ -66,15 +48,24 @@ namespace vklite {
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
         std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions = mVertexConfigure.createVertexInputAttributeDescriptions();
 
-        return GraphicsPipeline(device,
-                                renderPass,
-                                vertexShaderModule,
-                                fragmentShaderModule,
-                                vertexInputBindingDescriptions,
-                                vertexInputAttributeDescriptions,
-                                pipelineLayout,
-                                viewports,
-                                scissors);
+//        return GraphicsPipeline(device,
+//                                renderPass,
+//                                vertexShaderModule,
+//                                fragmentShaderModule,
+//                                vertexInputBindingDescriptions,
+//                                vertexInputAttributeDescriptions,
+//                                pipelineLayout,
+//                                viewports,
+//                                scissors);
+        return {device,
+                renderPass,
+                vertexShaderModule,
+                fragmentShaderModule,
+                vertexInputBindingDescriptions,
+                vertexInputAttributeDescriptions,
+                pipelineLayout,
+                viewports,
+                scissors};
     }
 
     std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::buildUnique(const Device &device,

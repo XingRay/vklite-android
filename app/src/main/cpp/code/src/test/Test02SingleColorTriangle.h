@@ -14,6 +14,7 @@
 
 #include "vklite/vklite.h"
 #include "vklite/Log.h"
+#include "vklite/buffer/UniformBufferBuilder.h"
 
 namespace test02 {
 
@@ -71,6 +72,8 @@ namespace test02 {
         std::vector<vklite::PipelineResource> mPipelineResources;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+
+        std::vector<std::unique_ptr<vklite::BufferInterface>> mDeviceLocalUniformBuffers;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

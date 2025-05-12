@@ -9,9 +9,7 @@
 
 namespace vklite {
 
-    DescriptorConfigure::DescriptorConfigure() {
-//        mDescriptors = std::make_unique<std::unordered_map<uint32_t, std::unordered_map<uint32_t, Descriptor>>>();
-    }
+    DescriptorConfigure::DescriptorConfigure() = default;
 
     DescriptorConfigure::~DescriptorConfigure() = default;
 
@@ -26,67 +24,6 @@ namespace vklite {
         addDescriptorSetConfigure(std::move(descriptorSetConfigure));
         return *this;
     }
-
-//    PipelineLayoutConfigure &PipelineLayoutConfigure::addDescriptor(uint32_t set, uint32_t binding, Descriptor &&descriptor) {
-//        auto [setIt, setInserted] = (*mDescriptors).try_emplace(set);
-//        auto &bindings = setIt->second;
-//        bindings.try_emplace(binding, std::move(descriptor));
-//        return *this;
-//    }
-
-//    PipelineLayoutConfigure &PipelineLayoutConfigure::addVulkanDescriptorSetConfigure(std::unique_ptr<VulkanDescriptorSetConfigure> &&vulkanDescriptorSetConfigure) {
-//        mPipelineLayoutConfigure[vulkanDescriptorSetConfigure->getSet()] = std::move(vulkanDescriptorSetConfigure);
-//        return *this;
-//    }
-
-//    std::vector<vk::DescriptorSetLayout> PipelineLayoutConfigure::createDescriptorSetLayouts(const VulkanDevice &device) const {
-//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
-//
-//        for (const auto &entry: mPipelineLayoutConfigure) {
-//            uint32_t set = entry.first;
-//            const std::unique_ptr<VulkanDescriptorSetConfigure> &descriptorSetConfigure = entry.second;
-//
-//            std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;
-//            const std::unordered_map<uint32_t, std::unique_ptr<VulkanDescriptorBindingConfigure>> &vulkanDescriptorBindingConfigures = descriptorSetConfigure->getVulkanDescriptorBindingConfigures();
-//            descriptorSetLayoutBindings.reserve(vulkanDescriptorBindingConfigures.size());
-//
-//            for (const auto &vulkanDescriptorBindingConfiguresEntry: vulkanDescriptorBindingConfigures) {
-//                uint32_t binding = vulkanDescriptorBindingConfiguresEntry.first;
-//                const std::unique_ptr<VulkanDescriptorBindingConfigure> &vulkanDescriptorConfigure = vulkanDescriptorBindingConfiguresEntry.second;
-//
-//                vk::DescriptorSetLayoutBinding descriptorSetLayoutBinding{};
-//
-//                descriptorSetLayoutBinding
-//                        .setBinding(vulkanDescriptorConfigure->getBinding())
-//                        .setDescriptorType(vulkanDescriptorConfigure->getDescriptorType())
-//                        .setDescriptorCount(vulkanDescriptorConfigure->getDescriptorRange())
-//                        .setStageFlags(vulkanDescriptorConfigure->getShaderStageFlags());
-//
-////                const std::vector<std::unique_ptr<VulkanSampler>> &immutableSamplers = vulkanDescriptorConfigure->getImmutableSamplers();
-////                if (!immutableSamplers.empty()) {
-////                    std::vector<vk::Sampler> samplers;
-////                    for (const std::unique_ptr<VulkanSampler> &vulkanSampler: immutableSamplers) {
-////                        samplers.push_back(vulkanSampler->getSampler());
-////                    }
-////
-////                    descriptorSetLayoutBinding
-////                            .setDescriptorCount(samplers.size())
-////                            .setPImmutableSamplers(samplers.data());
-////                }
-//
-//                descriptorSetLayoutBindings.push_back(descriptorSetLayoutBinding);
-//            }
-//
-//            vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo{};
-//            descriptorSetLayoutCreateInfo
-//                    .setBindings(descriptorSetLayoutBindings);
-//
-//            vk::DescriptorSetLayout descriptorSetLayout = device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
-//            descriptorSetLayouts.push_back(descriptorSetLayout);
-//        }
-//
-//        return descriptorSetLayouts;
-//    }
 
     uint32_t DescriptorConfigure::getDescriptorSetCount() const {
         return mDescriptorSetConfigures.size();
