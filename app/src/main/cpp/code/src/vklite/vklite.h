@@ -22,3 +22,4 @@
 #include "vklite/vertex_buffer/VertexBufferBuilder.h"
 #include "vklite/image_view/ImageViewBuilder.h"
 #include "vklite/image/ImageBuilder.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"

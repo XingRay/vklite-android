@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <memory>
 
-#include "PipelineResourceSlot.h"
 #include "vklite/push_constant/PushConstant.h"
 /**
  * resources for a frame used in pipeline
