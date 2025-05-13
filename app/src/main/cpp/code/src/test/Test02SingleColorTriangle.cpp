@@ -10,6 +10,7 @@
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
+#include "vklite/render_pass/attachment/Attachments.h"
 
 namespace test02 {
 
@@ -78,13 +79,7 @@ namespace test02 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
-        mRenderPass = vklite::RenderPassBuilder()
-                .displayFormat(mSwapchain->getDisplayFormat())
-                .enableMsaa()
-                .sampleCountFlagBits(sampleCountFlagBits)
-                .enableDepth()
-                .build(*mDevice);
-
+        // 创建附件
         mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
                 .format(mSwapchain->getDisplayFormat())
                 .build(*mDevice, mSwapchain->getDisplayImages());
@@ -107,6 +102,28 @@ namespace test02 {
         mDepthImage->transitionImageLayout(*mCommandPool);
         mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                 .build(*mDevice, *mDepthImage);
+
+
+        vklite::Attachments subPassAttachments = vklite::Attachments()
+                .addAttachmentIf(mMsaaEnable, [&]() {
+                    return vklite::Attachment::msaaColorAttachment()
+                            .sampleCountFlags(sampleCountFlagBits)
+                            .format(mSwapchain->getDisplayFormat());
+                })
+                .addAttachmentIf(mDepthEnable, [&]() {
+                    return vklite::Attachment::depthStencilAttachment()
+                            .sampleCountFlags(sampleCountFlagBits)
+                            .format(mSwapchain->getDisplayFormat());
+                })
+                .addAttachment(std::move(vklite::Attachment::presentColorAttachment()
+                                                 .format(mSwapchain->getDisplayFormat())));
+
+        mRenderPass = vklite::RenderPassBuilder()
+                .displayFormat(mSwapchain->getDisplayFormat())
+                .enableMsaa()
+                .sampleCountFlagBits(sampleCountFlagBits)
+                .enableDepth()
+                .build(*mDevice);
 
         mFrameBuffers.reserve(mDisplayImageViews.size());
         for (const vklite::ImageView &imageView: mDisplayImageViews) {

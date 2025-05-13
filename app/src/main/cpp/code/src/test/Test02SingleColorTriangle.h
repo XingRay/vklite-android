@@ -37,6 +37,8 @@ namespace test02 {
         bool mFrameBufferResized = false;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
+        bool mMsaaEnable = true;
+        bool mDepthEnable = true;
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;

@@ -39,6 +39,14 @@ namespace vklite {
         Attachment &initialLayout(vk::ImageLayout initialLayout);
 
         Attachment &finalLayout(vk::ImageLayout finalLayout);
+
+    public:// static
+
+        static Attachment msaaColorAttachment();
+
+        static Attachment depthStencilAttachment();
+
+        static Attachment presentColorAttachment();
     };
 
 } // vklite

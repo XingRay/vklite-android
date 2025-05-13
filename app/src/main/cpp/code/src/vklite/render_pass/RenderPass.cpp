@@ -91,12 +91,18 @@ namespace vklite {
                 .setStencilLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .setStencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                 .setInitialLayout(vk::ImageLayout::eUndefined)
+                //finalLayout 是渲染通道结束时附件的布局
+                // 附件在渲染完成后必须转换为交换链可接受的布局，否则无法正确呈现到屏幕
                 .setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
         attachmentDescriptions.push_back(presentColorAttachmentDescription);
 
         vk::AttachmentReference presentColorAttachmentReference{};
         presentColorAttachmentReference
                 .setAttachment(index)
+                // 子流程使用时的布局
+                // 子通道执行时需要临时的高效布局（如 eColorAttachmentOptimal），而 finalLayout 可能需要适配外部系统（如交换链）
+                // finalLayout 是全局的，影响整个渲染通道结束后的状态；layout 是局部的，仅作用于子通道执行期间
+                // 子通道执行期间，该附件作为颜色写入目标，需保持最优访问模式（避免频繁布局转换）
                 .setLayout(vk::ImageLayout::eColorAttachmentOptimal);
         presentColorAttachmentReferences.push_back(presentColorAttachmentReference);
 
