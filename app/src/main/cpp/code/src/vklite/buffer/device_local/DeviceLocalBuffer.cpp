@@ -11,12 +11,35 @@ namespace vklite {
 
     DeviceLocalBuffer::DeviceLocalBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits)
             : mDevice(device), mBufferSize(bufferSize) {
-        std::tie(mBuffer, mDeviceMemory) = device.createBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferDst | bufferUsageFlagBits,
-                                                                     vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+        vk::Device vkDevice = mDevice.getDevice();
+        PhysicalDevice physicalDevice = mDevice.getPhysicalDevice();
+
+        vk::BufferCreateInfo bufferCreateInfo{};
+        bufferCreateInfo.setSize(bufferSize)
+                .setUsage(vk::BufferUsageFlagBits::eTransferDst | bufferUsageFlagBits)
+                .setSharingMode(vk::SharingMode::eExclusive);
+
+        mBuffer = vkDevice.createBuffer(bufferCreateInfo);
+
+
+        vk::MemoryRequirements memoryRequirements = vkDevice.getBufferMemoryRequirements(mBuffer);
+        vk::PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.getPhysicalDevice().getMemoryProperties();
+
+        uint32_t memoryType = physicalDevice.findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+        vk::MemoryAllocateInfo memoryAllocateInfo{};
+        memoryAllocateInfo
+                .setAllocationSize(memoryRequirements.size)
+                .setMemoryTypeIndex(memoryType);
+
+        vk::DeviceMemory bufferMemory = vkDevice.allocateMemory(memoryAllocateInfo);
+
+
+        vkDevice.bindBufferMemory(mBuffer, bufferMemory, 0);
     }
 
     vklite::DeviceLocalBuffer::~DeviceLocalBuffer() {
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
         vkDevice.unmapMemory(mDeviceMemory);
         vkDevice.destroy(mBuffer);
