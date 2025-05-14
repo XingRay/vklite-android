@@ -19,10 +19,9 @@ namespace vklite {
 
     public://methods
         RenderPass(const Device &device,
-                   vk::Format displayFormat,
-                   bool enableMsaa,
-                   vk::SampleCountFlagBits sampleCountFlagBits,
-                   bool enableDepth);
+                   const std::vector<vk::AttachmentDescription> &attachmentDescriptions,
+                   const std::vector<vk::SubpassDescription> &subpassDescriptions,
+                   const std::vector<vk::SubpassDependency> &subpassDependencies);
 
         ~RenderPass();
 

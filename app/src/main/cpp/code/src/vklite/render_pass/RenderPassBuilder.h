@@ -5,33 +5,35 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include "vklite/render_pass/RenderPass.h"
+#include "vklite/render_pass/subpass/Subpass.h"
+#include "vklite/render_pass/attachment/Attachment.h"
 
 namespace vklite {
 
     class RenderPassBuilder {
     private:
-        bool mEnableMsaa;
-        vk::SampleCountFlagBits mSampleCountFlagBits;
+        std::vector<Subpass> mSubpasses;
+        std::vector<Attachment> mAttachments;
 
-        bool mEnableDepth;
+        bool mAddAttachmentInvoked = false;
 
-        vk::Format mDisplayFormat;
     public:
         RenderPassBuilder();
 
         ~RenderPassBuilder();
 
-        RenderPassBuilder &enableMsaa();
+        RenderPassBuilder &addSubpass(const std::function<void(Subpass &subpass, const std::vector<Subpass> &subpasses)> &configure);
 
-        RenderPassBuilder &enableDepth();
+        RenderPassBuilder &addAttachment(const std::function<void(Attachment &attachment, std::vector<Subpass> &subpasses)> &configure);
 
-        RenderPassBuilder &sampleCountFlagBits(vk::SampleCountFlagBits mSampleCountFlagBits);
+        RenderPassBuilder &addAttachmentIf(bool condition, const std::function<void(Attachment &attachment, std::vector<Subpass> &subpasses)> &configure);
 
-        RenderPassBuilder &displayFormat(vk::Format displayFormat);
+        std::unique_ptr<RenderPass> buildUnique(const Device &device);
 
-        std::unique_ptr<RenderPass> build(const Device &device);
+        RenderPass build(const Device &device);
     };
 
 } // vklite

@@ -3,11 +3,13 @@
 //
 
 #include "Attachment.h"
+#include "vklite/render_pass/subpass/Subpass.h"
 
 namespace vklite {
 
     Attachment::Attachment()
-            : mFormat(vk::Format::eUndefined),
+            : mIndex(0),
+              mFormat(vk::Format::eUndefined),
               mSampleCountFlags(vk::SampleCountFlagBits::e1),
               mLoadOp(vk::AttachmentLoadOp::eDontCare),
               mStoreOp(vk::AttachmentStoreOp::eDontCare),
@@ -18,12 +20,16 @@ namespace vklite {
 
     Attachment::~Attachment() = default;
 
+    uint32_t Attachment::getIndex() const {
+        return mIndex;
+    }
+
     Attachment &Attachment::format(vk::Format format) {
         mFormat = format;
         return *this;
     }
 
-    Attachment &Attachment::sampleCountFlags(vk::SampleCountFlags sampleCountFlags) {
+    Attachment &Attachment::sampleCountFlags(vk::SampleCountFlagBits sampleCountFlags) {
         mSampleCountFlags = sampleCountFlags;
         return *this;
     }
@@ -58,9 +64,91 @@ namespace vklite {
         return *this;
     }
 
-    Attachment Attachment::msaaColorAttachment() {
-        Attachment msaaColorAttachment;
-        msaaColorAttachment
+    Attachment &Attachment::index(uint32_t index) {
+        mIndex = index;
+        return *this;
+    }
+
+    Attachment &Attachment::asInputAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout) {
+        Subpass.addInputAttachment(*this, layout);
+        return *this;
+    }
+
+    Attachment &Attachment::asInputAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout) {
+        if (condition) {
+            asInputAttachmentUsedIn(Subpass, layout);
+        }
+        return *this;
+    }
+
+    Attachment &Attachment::asColorAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout) {
+        Subpass.addColorAttachment(*this, layout);
+        return *this;
+    }
+
+    Attachment &Attachment::asColorAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout) {
+        if (condition) {
+            asColorAttachmentUsedIn(Subpass, layout);
+        }
+        return *this;
+    }
+
+    Attachment &Attachment::asResolveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout) {
+        Subpass.addResolveAttachment(*this, layout);
+        return *this;
+    }
+
+    Attachment &Attachment::asResolveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout) {
+        if (condition) {
+            asResolveAttachmentUsedIn(Subpass, layout);
+        }
+        return *this;
+    }
+
+    Attachment &Attachment::asDepthStencilAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout) {
+        Subpass.setDepthStencilAttachment(*this, layout);
+        return *this;
+    }
+
+    Attachment &Attachment::asDepthStencilAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout) {
+        if (condition) {
+            asDepthStencilAttachmentUsedIn(Subpass, layout);
+        }
+        return *this;
+    }
+
+    Attachment &Attachment::asPreserveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout) {
+        Subpass.addPreserveAttachment(*this, layout);
+        return *this;
+    }
+
+    Attachment &Attachment::asPreserveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout) {
+        if (condition) {
+            asPreserveAttachmentUsedIn(Subpass, layout);
+        }
+        return *this;
+    }
+
+    vk::AttachmentDescription Attachment::createAttachmentDescription() const {
+        vk::AttachmentDescription attachmentDescription{};
+
+        attachmentDescription
+                .setFormat(mFormat)
+                .setSamples(mSampleCountFlags)
+                .setLoadOp(mLoadOp)
+                .setStoreOp(mStoreOp)
+                .setStencilLoadOp(mStencilLoadOp)
+                .setStencilStoreOp(mStencilStoreOp)
+                .setInitialLayout(mInitialLayout)
+                .setFinalLayout(mFinalLayout);
+
+        return attachmentDescription;
+    }
+
+    // static
+
+    Attachment &Attachment::msaaColorAttachment(Attachment &attachment) {
+        attachment
 //                .setFormat(displayFormat)
 //                .setSamples(sampleCountFlagBits)
                 //载入图像前将帧缓冲清0
@@ -83,12 +171,11 @@ namespace vklite {
                         // 这个特殊值的警告是图像的内容不能保证被保留，但这并不重要，因为我们无论如何要清除
                 .initialLayout(vk::ImageLayout::eUndefined)
                 .finalLayout(vk::ImageLayout::eColorAttachmentOptimal);
-        return msaaColorAttachment;
+        return attachment;
     }
 
-    Attachment Attachment::depthStencilAttachment() {
-        Attachment depthStencilAttachment;
-        depthStencilAttachment
+    Attachment &Attachment::depthStencilAttachment(Attachment &attachment) {
+        attachment
 //                .setFormat(device.getPhysicalDevice().findDepthFormat())
 //                .setSamples(sampleCountFlagBits)
                 .loadOp(vk::AttachmentLoadOp::eClear)
@@ -97,12 +184,11 @@ namespace vklite {
                 .stencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                 .initialLayout(vk::ImageLayout::eUndefined)
                 .finalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
-        return depthStencilAttachment;
+        return attachment;
     }
 
-    Attachment Attachment::presentColorAttachment() {
-        Attachment presentColorAttachment;
-        presentColorAttachment
+    Attachment &Attachment::presentColorAttachment(Attachment &attachment) {
+        attachment
 //                .setFormat(displayFormat)
                 .sampleCountFlags(vk::SampleCountFlagBits::e1)
                 .loadOp(vk::AttachmentLoadOp::eDontCare)
@@ -111,7 +197,7 @@ namespace vklite {
                 .stencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                 .initialLayout(vk::ImageLayout::eUndefined)
                 .finalLayout(vk::ImageLayout::ePresentSrcKHR);
-        return presentColorAttachment;
+        return attachment;
     }
 
 } // vklite

@@ -4,14 +4,18 @@
 
 #pragma once
 
-#include <vulkan//vulkan.hpp>
+#include <vulkan/vulkan.hpp>
 
 namespace vklite {
 
+    class Subpass;
+
     class Attachment {
     private:
+        uint32_t mIndex;
+
         vk::Format mFormat;
-        vk::SampleCountFlags mSampleCountFlags;
+        vk::SampleCountFlagBits mSampleCountFlags;
         vk::AttachmentLoadOp mLoadOp;
         vk::AttachmentStoreOp mStoreOp;
         vk::AttachmentLoadOp mStencilLoadOp;
@@ -24,9 +28,12 @@ namespace vklite {
 
         ~Attachment();
 
+        [[nodiscard]]
+        uint32_t getIndex() const;
+
         Attachment &format(vk::Format format);
 
-        Attachment &sampleCountFlags(vk::SampleCountFlags sampleCountFlags);
+        Attachment &sampleCountFlags(vk::SampleCountFlagBits sampleCountFlags);
 
         Attachment &loadOp(vk::AttachmentLoadOp loadOp);
 
@@ -40,13 +47,38 @@ namespace vklite {
 
         Attachment &finalLayout(vk::ImageLayout finalLayout);
 
+        Attachment &index(uint32_t index);
+
+        Attachment &asInputAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asInputAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asColorAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asColorAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asResolveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asResolveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asDepthStencilAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asDepthStencilAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asPreserveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+
+        Attachment &asPreserveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+
+        [[nodiscard]]
+        vk::AttachmentDescription createAttachmentDescription() const;
+
     public:// static
 
-        static Attachment msaaColorAttachment();
+        static Attachment& msaaColorAttachment(Attachment& attachment);
 
-        static Attachment depthStencilAttachment();
+        static Attachment& depthStencilAttachment(Attachment& attachment);
 
-        static Attachment presentColorAttachment();
+        static Attachment& presentColorAttachment(Attachment& attachment);
     };
 
 } // vklite

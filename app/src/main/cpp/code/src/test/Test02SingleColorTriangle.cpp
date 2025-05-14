@@ -9,8 +9,6 @@
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
-#include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
-#include "vklite/render_pass/attachment/Attachments.h"
 
 namespace test02 {
 
@@ -104,26 +102,34 @@ namespace test02 {
                 .build(*mDevice, *mDepthImage);
 
 
-        vklite::Attachments subPassAttachments = vklite::Attachments()
-                .addAttachmentIf(mMsaaEnable, [&]() {
-                    return vklite::Attachment::msaaColorAttachment()
-                            .sampleCountFlags(sampleCountFlagBits)
-                            .format(mSwapchain->getDisplayFormat());
-                })
-                .addAttachmentIf(mDepthEnable, [&]() {
-                    return vklite::Attachment::depthStencilAttachment()
-                            .sampleCountFlags(sampleCountFlagBits)
-                            .format(mSwapchain->getDisplayFormat());
-                })
-                .addAttachment(std::move(vklite::Attachment::presentColorAttachment()
-                                                 .format(mSwapchain->getDisplayFormat())));
-
+        vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
         mRenderPass = vklite::RenderPassBuilder()
-                .displayFormat(mSwapchain->getDisplayFormat())
-                .enableMsaa()
-                .sampleCountFlagBits(sampleCountFlagBits)
-                .enableDepth()
-                .build(*mDevice);
+                .addSubpass([&](vklite::Subpass &Subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    Subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .stageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
+                            .accessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+                            .addDependency(externalSubpass);
+                })
+                .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::msaaColorAttachment(attachment)
+                            .sampleCountFlags(sampleCountFlagBits)
+                            .format(mSwapchain->getDisplayFormat())
+                            .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                })
+                .addAttachmentIf(mDepthEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::depthStencilAttachment(attachment)
+                            .sampleCountFlags(sampleCountFlagBits)
+                            .format(mPhysicalDevice->findDepthFormat())
+                            .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
+                })
+                .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::presentColorAttachment(attachment)
+                            .format(mSwapchain->getDisplayFormat())
+                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
+                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                })
+                .buildUnique(*mDevice);
 
         mFrameBuffers.reserve(mDisplayImageViews.size());
         for (const vklite::ImageView &imageView: mDisplayImageViews) {
