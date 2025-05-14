@@ -8,7 +8,8 @@
 
 namespace vklite {
 
-    GraphicsPipelineBuilder::GraphicsPipelineBuilder() = default;
+    GraphicsPipelineBuilder::GraphicsPipelineBuilder()
+            : mMsaaEnable(false), mSampleCount(vk::SampleCountFlagBits::e1), mDepthTestEnable(true) {};
 
     GraphicsPipelineBuilder::~GraphicsPipelineBuilder() = default;
 
@@ -32,6 +33,21 @@ namespace vklite {
 
     GraphicsPipelineBuilder &GraphicsPipelineBuilder::addVertexBinding(VertexBindingConfigure &&configure) {
         mVertexConfigure.add(std::move(configure));
+        return *this;
+    }
+
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::msaaEnable(bool msaaEnable) {
+        mMsaaEnable = msaaEnable;
+        return *this;
+    }
+
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::sampleCount(vk::SampleCountFlagBits sampleCount) {
+        mSampleCount = sampleCount;
+        return *this;
+    }
+
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::depthTestEnable(bool depthTestEnable) {
+        mDepthTestEnable = depthTestEnable;
         return *this;
     }
 
@@ -65,7 +81,10 @@ namespace vklite {
                 vertexInputAttributeDescriptions,
                 pipelineLayout,
                 viewports,
-                scissors};
+                scissors,
+                mMsaaEnable,
+                mSampleCount,
+                mDepthTestEnable};
     }
 
     std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::buildUnique(const Device &device,
@@ -116,7 +135,10 @@ namespace vklite {
                                                   vertexInputAttributeDescriptions,
                                                   pipelineLayout,
                                                   viewports,
-                                                  scissors);
+                                                  scissors,
+                                                  mMsaaEnable,
+                                                  mSampleCount,
+                                                  mDepthTestEnable);
     }
 
 } // vklite

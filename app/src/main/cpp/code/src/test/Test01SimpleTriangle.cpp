@@ -56,7 +56,7 @@ namespace test01 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-        vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;//mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;//mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -89,7 +89,7 @@ namespace test01 {
                 .width(mSwapchain->getDisplaySize().width)
                 .height(mSwapchain->getDisplaySize().height)
                 .format(mSwapchain->getDisplayFormat())
-                .sampleCountFlagBits(sampleCountFlagBits)
+                .sampleCount(sampleCount)
                 .build(*mDevice);
         mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                 .build(*mDevice, *mColorImage);
@@ -98,7 +98,7 @@ namespace test01 {
                 .width(mSwapchain->getDisplaySize().width)
                 .height(mSwapchain->getDisplaySize().height)
                 .format(mPhysicalDevice->findDepthFormat())
-                .sampleCountFlagBits(sampleCountFlagBits)
+                .sampleCount(sampleCount)
                 .build(*mDevice);
         mDepthImage->transitionImageLayout(*mCommandPool);
         mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()

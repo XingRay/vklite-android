@@ -10,7 +10,7 @@ namespace vklite {
     Attachment::Attachment()
             : mIndex(0),
               mFormat(vk::Format::eUndefined),
-              mSampleCountFlags(vk::SampleCountFlagBits::e1),
+              mSampleCount(vk::SampleCountFlagBits::e1),
               mLoadOp(vk::AttachmentLoadOp::eDontCare),
               mStoreOp(vk::AttachmentStoreOp::eDontCare),
               mStencilLoadOp(vk::AttachmentLoadOp::eDontCare),
@@ -29,8 +29,8 @@ namespace vklite {
         return *this;
     }
 
-    Attachment &Attachment::sampleCountFlags(vk::SampleCountFlagBits sampleCountFlags) {
-        mSampleCountFlags = sampleCountFlags;
+    Attachment &Attachment::sampleCount(vk::SampleCountFlagBits sampleCount) {
+        mSampleCount = sampleCount;
         return *this;
     }
 
@@ -134,7 +134,7 @@ namespace vklite {
 
         attachmentDescription
                 .setFormat(mFormat)
-                .setSamples(mSampleCountFlags)
+                .setSamples(mSampleCount)
                 .setLoadOp(mLoadOp)
                 .setStoreOp(mStoreOp)
                 .setStencilLoadOp(mStencilLoadOp)
@@ -190,7 +190,7 @@ namespace vklite {
     Attachment &Attachment::presentColorAttachment(Attachment &attachment) {
         attachment
 //                .setFormat(displayFormat)
-                .sampleCountFlags(vk::SampleCountFlagBits::e1)
+                .sampleCount(vk::SampleCountFlagBits::e1)
                 .loadOp(vk::AttachmentLoadOp::eDontCare)
                 .storeOp(vk::AttachmentStoreOp::eStore)
                 .stencilLoadOp(vk::AttachmentLoadOp::eDontCare)

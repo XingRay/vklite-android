@@ -28,6 +28,13 @@ namespace vklite {
          */
         VertexConfigure mVertexConfigure;
 
+        // msaa
+        bool mMsaaEnable;
+        vk::SampleCountFlagBits mSampleCount;
+
+        // depth & stencil
+        bool mDepthTestEnable;
+
     public:
         explicit GraphicsPipelineBuilder();
 
@@ -49,6 +56,12 @@ namespace vklite {
         GraphicsPipelineBuilder &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
 
         GraphicsPipelineBuilder &addVertexBinding(VertexBindingConfigure &&configure);
+
+        GraphicsPipelineBuilder & msaaEnable(bool msaaEnable);
+
+        GraphicsPipelineBuilder & sampleCount(vk::SampleCountFlagBits sampleCount);
+
+        GraphicsPipelineBuilder & depthTestEnable(bool depthTestEnable);
 
         [[nodiscard]]
         GraphicsPipeline build(const Device &device,

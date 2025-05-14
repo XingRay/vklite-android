@@ -59,11 +59,11 @@ namespace test02 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-        vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;
+        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {
-//            sampleCountFlagBits = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+            sampleCount = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
         }
-        LOG_D("sampleCountFlagBits:%d", sampleCountFlagBits);
+        LOG_D("sampleCount:%d", sampleCount);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -87,25 +87,28 @@ namespace test02 {
                 .format(mSwapchain->getDisplayFormat())
                 .build(*mDevice, mSwapchain->getDisplayImages());
 
-        mColorImage = vklite::ImageBuilder::colorImageBuilder()
-                .width(mSwapchain->getDisplaySize().width)
-                .height(mSwapchain->getDisplaySize().height)
-                .format(mSwapchain->getDisplayFormat())
-                .sampleCountFlagBits(sampleCountFlagBits)
-                .build(*mDevice);
-        mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
-                .build(*mDevice, *mColorImage);
+        if (mMsaaEnable) {
+            mColorImage = vklite::ImageBuilder::colorImageBuilder()
+                    .width(mSwapchain->getDisplaySize().width)
+                    .height(mSwapchain->getDisplaySize().height)
+                    .format(mSwapchain->getDisplayFormat())
+                    .sampleCount(sampleCount)
+                    .build(*mDevice);
+            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                    .build(*mDevice, *mColorImage);
+        }
 
-        mDepthImage = vklite::ImageBuilder::depthImageBuilder()
-                .width(mSwapchain->getDisplaySize().width)
-                .height(mSwapchain->getDisplaySize().height)
-                .format(mPhysicalDevice->findDepthFormat())
-                .sampleCountFlagBits(sampleCountFlagBits)
-                .build(*mDevice);
-        mDepthImage->transitionImageLayout(*mCommandPool);
-        mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
-                .build(*mDevice, *mDepthImage);
-
+        if (mDepthTestEnable) {
+            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+                    .width(mSwapchain->getDisplaySize().width)
+                    .height(mSwapchain->getDisplaySize().height)
+                    .format(mPhysicalDevice->findDepthFormat())
+                    .sampleCount(sampleCount)
+                    .build(*mDevice);
+            mDepthImage->transitionImageLayout(*mCommandPool);
+            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                    .build(*mDevice, *mDepthImage);
+        }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
         mRenderPass = vklite::RenderPassBuilder()
@@ -118,20 +121,19 @@ namespace test02 {
                 })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
-                            .sampleCountFlags(sampleCountFlagBits)
+                            .sampleCount(sampleCount)
                             .format(mSwapchain->getDisplayFormat())
                             .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
-                .addAttachmentIf(mDepthEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::depthStencilAttachment(attachment)
-                            .sampleCountFlags(sampleCountFlagBits)
+                            .sampleCount(sampleCount)
                             .format(mPhysicalDevice->findDepthFormat())
                             .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
                 })
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
                             .format(mSwapchain->getDisplayFormat())
-                            .sampleCountFlags(sampleCountFlagBits)
                             .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
                             .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
@@ -143,8 +145,8 @@ namespace test02 {
                                             .width(mSwapchain->getDisplaySize().width)
                                             .height(mSwapchain->getDisplaySize().height)
                                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                                            .addAttachmentIf(mMsaaEnable, mColorImageView->getImageView())
-                                            .addAttachmentIf(mDepthEnable, mDepthImageView->getImageView())
+                                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView(); })
+                                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
                                             .addAttachment(imageView.getImageView())
                                             .build(*mDevice, *mRenderPass));
         }
@@ -175,6 +177,7 @@ namespace test02 {
         mPipelineLayout = vklite::PipelineLayoutBuilder()
                 .buildUnique(*mDevice, descriptorSetLayouts);
 
+        LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
         vk::Viewport viewport;
         viewport
                 .setX(0.0f)
@@ -200,6 +203,9 @@ namespace test02 {
                             .stride(sizeof(Vertex))
                             .addAttribute(0, ShaderFormat::Vec3);
                 })
+                .msaaEnable(mMsaaEnable)
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
                 .buildUnique(*mDevice, *mRenderPass, *mPipelineLayout, mViewports, mScissors);
 
         mIndexBuffer = vklite::IndexBufferBuilder()

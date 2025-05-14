@@ -38,7 +38,10 @@ namespace vklite {
                          const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
                          const PipelineLayout &pipelineLayout,
                          const std::vector<vk::Viewport> &viewports,
-                         const std::vector<vk::Rect2D> &scissors);
+                         const std::vector<vk::Rect2D> &scissors,
+                         bool msaaEnable,
+                         vk::SampleCountFlagBits sampleCount,
+                         bool depthTestEnable);
 
         ~GraphicsPipeline();
 

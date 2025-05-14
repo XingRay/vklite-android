@@ -15,7 +15,7 @@ namespace vklite {
         uint32_t mMipLevels;
         vk::Format mFormat;
         vk::ImageUsageFlags mImageUsageFlags;
-        vk::SampleCountFlagBits mSampleCountFlagBits;
+        vk::SampleCountFlagBits mSampleCount;
         vk::ImageTiling mImageTiling;
 
         // TransitionImageLayout params
@@ -40,7 +40,7 @@ namespace vklite {
 
         ImageBuilder &imageUsageFlags(vk::ImageUsageFlags imageUsageFlags);
 
-        ImageBuilder &sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits);
+        ImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
         ImageBuilder &imageTiling(vk::ImageTiling imageTiling);
 

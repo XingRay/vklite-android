@@ -34,6 +34,8 @@ namespace vklite {
 
         FrameBufferBuilder &addAttachmentIf(bool condition, vk::ImageView attachment);
 
+        FrameBufferBuilder &addAttachmentIf(bool condition, std::function<vk::ImageView()> attachment);
+
         [[nodiscard]]
         FrameBuffer build(const Device &device, const RenderPass &renderPass);
 

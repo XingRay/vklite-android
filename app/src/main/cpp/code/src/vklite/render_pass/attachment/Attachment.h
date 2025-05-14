@@ -15,7 +15,7 @@ namespace vklite {
         uint32_t mIndex;
 
         vk::Format mFormat;
-        vk::SampleCountFlagBits mSampleCountFlags;
+        vk::SampleCountFlagBits mSampleCount;
         vk::AttachmentLoadOp mLoadOp;
         vk::AttachmentStoreOp mStoreOp;
         vk::AttachmentLoadOp mStencilLoadOp;
@@ -33,7 +33,7 @@ namespace vklite {
 
         Attachment &format(vk::Format format);
 
-        Attachment &sampleCountFlags(vk::SampleCountFlagBits sampleCountFlags);
+        Attachment &sampleCount(vk::SampleCountFlagBits sampleCount);
 
         Attachment &loadOp(vk::AttachmentLoadOp loadOp);
 

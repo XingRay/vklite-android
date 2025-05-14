@@ -9,9 +9,13 @@
 namespace vklite {
 
     ImageBuilder::ImageBuilder()
-            : mImageTiling(vk::ImageTiling::eOptimal), mSampleCountFlagBits(vk::SampleCountFlagBits::e1), mMipLevels(1),
-              mSrcQueueFamilyIndex(vk::QueueFamilyIgnored), mDstQueueFamilyIndex(vk::QueueFamilyIgnored),
-              mOldImageLayout(vk::ImageLayout::eUndefined), mNewImageLayout(vk::ImageLayout::eUndefined) {};
+            : mImageTiling(vk::ImageTiling::eOptimal),
+              mSampleCount(vk::SampleCountFlagBits::e1),
+              mMipLevels(1),
+              mSrcQueueFamilyIndex(vk::QueueFamilyIgnored),
+              mDstQueueFamilyIndex(vk::QueueFamilyIgnored),
+              mOldImageLayout(vk::ImageLayout::eUndefined),
+              mNewImageLayout(vk::ImageLayout::eUndefined) {};
 
     ImageBuilder::~ImageBuilder() = default;
 
@@ -40,8 +44,8 @@ namespace vklite {
         return *this;
     }
 
-    ImageBuilder &ImageBuilder::sampleCountFlagBits(vk::SampleCountFlagBits sampleCountFlagBits) {
-        mSampleCountFlagBits = sampleCountFlagBits;
+    ImageBuilder &ImageBuilder::sampleCount(vk::SampleCountFlagBits sampleCount) {
+        mSampleCount = sampleCount;
         return *this;
     }
 
@@ -78,7 +82,7 @@ namespace vklite {
 
     std::unique_ptr<ImageInterface> ImageBuilder::build(const Device &device) {
         vk::ImageAspectFlags imageAspectFlags = VulkanUtil::calcImageAspectFlags(mNewImageLayout, mFormat);
-        return std::make_unique<Image>(device, mWidth, mHeight, mFormat, mMipLevels, mImageUsageFlags, mSampleCountFlagBits, mImageTiling,
+        return std::make_unique<Image>(device, mWidth, mHeight, mFormat, mMipLevels, mImageUsageFlags, mSampleCount, mImageTiling,
                                        mOldImageLayout, mNewImageLayout, mSrcQueueFamilyIndex,
                                        mDstQueueFamilyIndex, imageAspectFlags);
     }
