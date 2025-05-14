@@ -24,11 +24,6 @@ namespace vklite {
         LOG_D("device.getDevice().createFramebuffer() => mFrameBuffer: %p", static_cast<void *>(mFrameBuffer));
     }
 
-//    FrameBuffer::FrameBuffer(FrameBuffer &&other) noexcept
-//            : mDevice(other.mDevice), mFrameBuffer(other.mFrameBuffer) {
-//        other.mFrameBuffer = nullptr;
-//    }
-
     FrameBuffer::FrameBuffer(FrameBuffer &&other) noexcept
             : mDevice(other.mDevice),
               mFrameBuffer(std::exchange(other.mFrameBuffer, nullptr)) {
@@ -39,7 +34,7 @@ namespace vklite {
         LOG_D("FrameBuffer::~FrameBuffer");
         if (mFrameBuffer != nullptr) {
             LOG_D("vkDevice.destroy(mFrameBuffer); mFrameBuffer: %p", static_cast<void *>(mFrameBuffer));
-            const vk::Device& vkDevice = mDevice.getDevice();
+            const vk::Device &vkDevice = mDevice.getDevice();
             vkDevice.destroy(mFrameBuffer);
         } else {
             LOG_D("mFrameBuffer is nullptr, 'vkDevice.destroy(mFrameBuffer);' skipped");

@@ -71,7 +71,7 @@ namespace test01 {
                 .build(*mDevice, *mSurface);
 
         mCommandPool = vklite::CommandPoolBuilder()
-                .frameCount(mFrameCount)
+                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
                 .build(*mDevice);
 
         mRenderPass = vklite::RenderPassBuilder()
@@ -224,7 +224,7 @@ namespace test01 {
                 .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
                 .setPInheritanceInfo(nullptr);
 
-        vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
+        vk::CommandBuffer commandBuffer;// = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
 

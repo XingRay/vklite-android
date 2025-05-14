@@ -211,9 +211,9 @@ namespace vklite {
                 .setPInheritanceInfo(nullptr);
 
 
-        vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
-        commandBuffer.reset();
-        commandBuffer.begin(commandBufferBeginInfo);
+//        vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
+//        commandBuffer.reset();
+//        commandBuffer.begin(commandBufferBeginInfo);
 
 
         vk::Extent2D displaySize = mSwapchain->getDisplaySize();
@@ -240,12 +240,12 @@ namespace vklite {
          * 子流程的渲染命令通过次级命令缓冲区（Secondary Command Buffer）记录。
          * 适用于复杂的渲染流程，可以将渲染命令分散到多个次级命令缓冲区中，以提高代码的模块化和复用性。
          */
-        commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
-
-//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
-
-        commandBuffer.endRenderPass();
-        commandBuffer.end();
+//        commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
+//
+////        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex]);
+//
+//        commandBuffer.endRenderPass();
+//        commandBuffer.end();
 
         result = mSyncObject->resetFence(mCurrentFrameIndex);
         if (result != vk::Result::eSuccess) {
@@ -254,7 +254,7 @@ namespace vklite {
 
         std::array<vk::Semaphore, 1> waitSemaphores = {imageAvailableSemaphore};
         std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
-        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
+        std::array<vk::CommandBuffer, 1> commandBuffers;// = {commandBuffer};
         std::array<vk::Semaphore, 1> signalSemaphores = {renderFinishedSemaphore};
 
         vk::SubmitInfo submitInfo{};

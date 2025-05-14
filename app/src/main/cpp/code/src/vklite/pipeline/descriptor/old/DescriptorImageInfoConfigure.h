@@ -9,7 +9,7 @@
 //#include "image/ImageInterface.h"
 
 #include "vklite/device/Device.h"
-#include "vklite/command_pool/CommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/image/ImageBuilderInterface.h"
 #include "vklite/sampler/builder/SamplerBuilderInterface.h"
 

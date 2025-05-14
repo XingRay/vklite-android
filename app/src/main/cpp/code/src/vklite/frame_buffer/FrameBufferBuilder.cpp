@@ -31,6 +31,13 @@ namespace vklite {
         return *this;
     }
 
+    FrameBufferBuilder &FrameBufferBuilder::addAttachmentIf(bool condition, vk::ImageView attachment) {
+        if(condition){
+            mAttachments.push_back(attachment);
+        }
+        return *this;
+    }
+
     FrameBuffer FrameBufferBuilder::build(const vklite::Device &device, const vklite::RenderPass &renderPass) {
 //        return FrameBuffer(device, renderPass, mAttachments, mWidth, mHeight, mLayers);
         return {device, renderPass, mAttachments, mWidth, mHeight, mLayers};

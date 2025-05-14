@@ -74,8 +74,9 @@ namespace test02 {
                 .build(*mDevice, *mSurface);
 
         mCommandPool = vklite::CommandPoolBuilder()
-                .frameCount(mFrameCount)
+                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
                 .build(*mDevice);
+        mCommandBuffers = mCommandPool->allocateUniqueCommandBuffers(mFrameCount);
 
         // 创建附件
         mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
@@ -137,8 +138,8 @@ namespace test02 {
                                             .width(mSwapchain->getDisplaySize().width)
                                             .height(mSwapchain->getDisplaySize().height)
                                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                                            .addAttachment(mColorImageView->getImageView())
-                                            .addAttachment(mDepthImageView->getImageView())
+                                            .addAttachmentIf(mMsaaEnable, mColorImageView->getImageView())
+                                            .addAttachmentIf(mDepthEnable, mDepthImageView->getImageView())
                                             .addAttachment(imageView.getImageView())
                                             .build(*mDevice, *mRenderPass));
         }
@@ -286,7 +287,7 @@ namespace test02 {
                 .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
                 .setPInheritanceInfo(nullptr);
 
-        vk::CommandBuffer commandBuffer = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
+        const vk::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
 

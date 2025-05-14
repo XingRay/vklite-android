@@ -99,7 +99,7 @@ namespace vklite {
                 mGraphicsQueue = nullptr;
             } else {
                 mGraphicQueueFamilyIndex = graphicQueueFamilyIndices[0];
-                mGraphicsQueue = mDevice.getQueue(mComputeQueueFamilyIndex, 0);
+                mGraphicsQueue = mDevice.getQueue(mGraphicQueueFamilyIndex, 0);
             }
         } else {
             mGraphicQueueFamilyIndex = -1;
@@ -156,6 +156,10 @@ namespace vklite {
 
     const std::vector<uint32_t> &Device::getQueueFamilyIndices() const {
         return mQueueFamilyIndices;
+    }
+
+    vk::Queue Device::getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex) const {
+        return mDevice.getQueue(queueFamilyIndex, queueIndex);
     }
 
     const vk::Queue &Device::getGraphicsQueue() const {

@@ -13,7 +13,7 @@
 #include "vklite/render_pass/RenderPass.h"
 #include "vklite/shader/VulkanShaderModule.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
-#include "vklite/command_pool/CommandPool.h"
+#include "vklite/command/CommandPool.h"
 #include "vklite/index_buffer/IndexBuffer.h"
 #include "vklite/buffer/host_visible/HostVisibleIndexBuffer.h"
 #include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"

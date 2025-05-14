@@ -8,7 +8,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/device/Device.h"
-#include "vklite/command_pool/CommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 

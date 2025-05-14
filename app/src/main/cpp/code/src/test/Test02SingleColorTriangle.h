@@ -37,8 +37,8 @@ namespace test02 {
         bool mFrameBufferResized = false;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
-        bool mMsaaEnable = true;
-        bool mDepthEnable = true;
+        bool mMsaaEnable = true; // todo: false x / true v
+        bool mDepthEnable = true; // false v / true v
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
@@ -51,6 +51,7 @@ namespace test02 {
         std::unique_ptr<vklite::Device> mDevice;
         std::unique_ptr<vklite::Swapchain> mSwapchain;
         std::unique_ptr<vklite::CommandPool> mCommandPool;
+        std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
         std::unique_ptr<vklite::RenderPass> mRenderPass;
 
         std::vector<vklite::ImageView> mDisplayImageViews;

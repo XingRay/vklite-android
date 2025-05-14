@@ -7,7 +7,7 @@
 #include <cstdint>
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/command_pool/CommandPool.h"
+#include "vklite/command/CommandPool.h"
 
 namespace vklite {
 

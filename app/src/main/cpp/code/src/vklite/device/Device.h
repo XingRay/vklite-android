@@ -62,6 +62,9 @@ namespace vklite {
         const std::vector<uint32_t> &getQueueFamilyIndices() const;
 
         [[nodiscard]]
+        vk::Queue getQueue(uint32_t queueFamilyIndex, uint32_t queueIndex = 0) const;
+
+        [[nodiscard]]
         const vk::Queue &getGraphicsQueue() const;
 
         [[nodiscard]]
