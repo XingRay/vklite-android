@@ -59,7 +59,11 @@ namespace test02 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-        vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;//mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vk::SampleCountFlagBits sampleCountFlagBits = vk::SampleCountFlagBits::e1;
+        if (mMsaaEnable) {
+            sampleCountFlagBits = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        }
+        LOG_D("sampleCountFlagBits:%d", sampleCountFlagBits);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -127,6 +131,7 @@ namespace test02 {
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
                             .format(mSwapchain->getDisplayFormat())
+                            .sampleCountFlags(sampleCountFlagBits)
                             .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
                             .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })

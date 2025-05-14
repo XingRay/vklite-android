@@ -120,18 +120,6 @@ namespace test01 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
-//        mPipelineLayout = vklite::PipelineLayoutBuilder()
-//                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-//                    descriptorSetConfigure
-//                            .set(0)
-//                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
-//                                uniformConfigure
-//                                        .binding(0)
-//                                        .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
-//                            });
-//                })
-//                .buildUnique(*mDevice);
-
         vk::Viewport viewport;
         viewport
                 .setX(0.0f)
