@@ -9,7 +9,7 @@
 namespace vklite {
 
     GraphicsPipelineBuilder::GraphicsPipelineBuilder()
-            : mMsaaEnable(false), mSampleCount(vk::SampleCountFlagBits::e1), mDepthTestEnable(true) {};
+            : mSampleShadingEnable(false), mSampleCount(vk::SampleCountFlagBits::e1), mDepthTestEnable(true) {};
 
     GraphicsPipelineBuilder::~GraphicsPipelineBuilder() = default;
 
@@ -36,8 +36,8 @@ namespace vklite {
         return *this;
     }
 
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::msaaEnable(bool msaaEnable) {
-        mMsaaEnable = msaaEnable;
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::sampleShadingEnable(bool sampleShadingEnable) {
+        mSampleShadingEnable = sampleShadingEnable;
         return *this;
     }
 
@@ -82,7 +82,7 @@ namespace vklite {
                 pipelineLayout,
                 viewports,
                 scissors,
-                mMsaaEnable,
+                mSampleShadingEnable,
                 mSampleCount,
                 mDepthTestEnable};
     }
@@ -136,7 +136,7 @@ namespace vklite {
                                                   pipelineLayout,
                                                   viewports,
                                                   scissors,
-                                                  mMsaaEnable,
+                                                  mSampleShadingEnable,
                                                   mSampleCount,
                                                   mDepthTestEnable);
     }

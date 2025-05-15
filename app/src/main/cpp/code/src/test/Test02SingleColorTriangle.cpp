@@ -134,8 +134,16 @@ namespace test02 {
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
                             .format(mSwapchain->getDisplayFormat())
-                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
-                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            .applyIf(mMsaaEnable, [&](vklite::Attachment &thiz) {
+                                thiz
+                                        .loadOp(vk::AttachmentLoadOp::eDontCare)
+                                        .asResolveAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            })
+                            .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
+                                thiz.asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            });
+//                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
+//                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
                 .buildUnique(*mDevice);
 
@@ -203,7 +211,6 @@ namespace test02 {
                             .stride(sizeof(Vertex))
                             .addAttribute(0, ShaderFormat::Vec3);
                 })
-                .msaaEnable(mMsaaEnable)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique(*mDevice, *mRenderPass, *mPipelineLayout, mViewports, mScissors);
@@ -228,8 +235,8 @@ namespace test02 {
                 .build(mFrameCount);
 
         for (int i = 0; i < mFrameCount; i++) {
-            mDeviceLocalUniformBuffers.push_back(vklite::UniformBufferBuilder().build(*mDevice, sizeof(ColorUniformBufferObject)));
-            mDeviceLocalUniformBuffers.back()->update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
+            mUniformBuffers.push_back(vklite::UniformBufferBuilder().build(*mDevice, sizeof(ColorUniformBufferObject)));
+            mUniformBuffers.back()->update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
         }
 
         vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
@@ -243,7 +250,7 @@ namespace test02 {
                                         .descriptorType(vk::DescriptorType::eUniformBuffer)
 //                                        .descriptorIndex(0)
 //                                        .descriptorCount(1)
-                                        .addBufferInfo(*mDeviceLocalUniformBuffers[frameIndex]);
+                                        .addBufferInfo(*mUniformBuffers[frameIndex]);
                             });
                 })
                 .build();

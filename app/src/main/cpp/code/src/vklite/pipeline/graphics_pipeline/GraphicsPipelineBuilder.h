@@ -29,7 +29,7 @@ namespace vklite {
         VertexConfigure mVertexConfigure;
 
         // msaa
-        bool mMsaaEnable;
+        bool mSampleShadingEnable;
         vk::SampleCountFlagBits mSampleCount;
 
         // depth & stencil
@@ -57,7 +57,7 @@ namespace vklite {
 
         GraphicsPipelineBuilder &addVertexBinding(VertexBindingConfigure &&configure);
 
-        GraphicsPipelineBuilder & msaaEnable(bool msaaEnable);
+        GraphicsPipelineBuilder & sampleShadingEnable(bool sampleShadingEnable);
 
         GraphicsPipelineBuilder & sampleCount(vk::SampleCountFlagBits sampleCount);
 

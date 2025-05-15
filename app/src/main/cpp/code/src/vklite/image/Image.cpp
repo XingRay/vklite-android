@@ -128,19 +128,21 @@ namespace vklite {
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
                 .setBaseMipLevel(0)
-                .setLevelCount(mMipLevels)
+                .setLevelCount(mipLevels)
                 .setBaseArrayLayer(0)
                 .setLayerCount(1)
                 .setAspectMask(imageAspectFlags);
 
         vk::ImageMemoryBarrier imageMemoryBarrier;
         imageMemoryBarrier
-                .setOldLayout(vk::ImageLayout::eUndefined)
-                .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
+//                .setOldLayout(vk::ImageLayout::eUndefined)
+//                .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
+                .setOldLayout(oldImageLayout)
+                .setNewLayout(newImageLayout)
 //                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setSrcQueueFamilyIndex(mSrcQueueFamilyIndex)
+                .setSrcQueueFamilyIndex(srcQueueFamilyIndex)
 //                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setDstQueueFamilyIndex(mDstQueueFamilyIndex)
+                .setDstQueueFamilyIndex(dstQueueFamilyIndex)
                 .setImage(mImage)
                 .setSubresourceRange(imageSubresourceRange)
                 .setSrcAccessMask(vk::AccessFlags{})

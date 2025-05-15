@@ -38,7 +38,7 @@ namespace vklite {
         return *this;
     }
 
-    FrameBufferBuilder &FrameBufferBuilder::addAttachmentIf(bool condition, std::function<vk::ImageView()> attachment) {
+    FrameBufferBuilder &FrameBufferBuilder::addAttachmentIf(bool condition, const std::function<vk::ImageView()>& attachment) {
         if (condition) {
             mAttachments.push_back(attachment());
         }

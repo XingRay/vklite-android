@@ -69,16 +69,18 @@ namespace vklite {
 
         Attachment &asPreserveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
 
+        Attachment &applyIf(bool condition, const std::function<void(Attachment &attachment)> &handler);
+
         [[nodiscard]]
         vk::AttachmentDescription createAttachmentDescription() const;
 
     public:// static
 
-        static Attachment& msaaColorAttachment(Attachment& attachment);
+        static Attachment &msaaColorAttachment(Attachment &attachment);
 
-        static Attachment& depthStencilAttachment(Attachment& attachment);
+        static Attachment &depthStencilAttachment(Attachment &attachment);
 
-        static Attachment& presentColorAttachment(Attachment& attachment);
+        static Attachment &presentColorAttachment(Attachment &attachment);
     };
 
 } // vklite

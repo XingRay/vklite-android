@@ -32,13 +32,17 @@ namespace test02 {
     private:
 
         const android_app &mApp;
+
+        //config
         const int mFrameCount = 2;
-        uint32_t mCurrentFrameIndex = 0;
-        bool mFrameBufferResized = false;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
-        bool mMsaaEnable = false; // todo: false x / true v
-        bool mDepthTestEnable = true; // false v / true v
+        bool mMsaaEnable = false;
+        bool mDepthTestEnable = false;
+
+        //status
+        uint32_t mCurrentFrameIndex = 0;
+        bool mFrameBufferResized = false;
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
@@ -76,7 +80,7 @@ namespace test02 {
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 
-        std::vector<std::unique_ptr<vklite::BufferInterface>> mDeviceLocalUniformBuffers;
+        std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

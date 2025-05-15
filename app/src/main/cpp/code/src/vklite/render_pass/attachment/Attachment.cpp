@@ -129,6 +129,13 @@ namespace vklite {
         return *this;
     }
 
+    Attachment &Attachment::applyIf(bool condition, const std::function<void(Attachment &attachment)> &handler) {
+        if (condition) {
+            handler(*this);
+        }
+        return *this;
+    }
+
     vk::AttachmentDescription Attachment::createAttachmentDescription() const {
         vk::AttachmentDescription attachmentDescription{};
 
@@ -191,7 +198,7 @@ namespace vklite {
         attachment
 //                .setFormat(displayFormat)
                 .sampleCount(vk::SampleCountFlagBits::e1)
-                .loadOp(vk::AttachmentLoadOp::eDontCare)
+                .loadOp(vk::AttachmentLoadOp::eClear)
                 .storeOp(vk::AttachmentStoreOp::eStore)
                 .stencilLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .stencilStoreOp(vk::AttachmentStoreOp::eDontCare)

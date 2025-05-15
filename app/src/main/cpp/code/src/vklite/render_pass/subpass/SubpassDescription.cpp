@@ -30,9 +30,15 @@ namespace vklite {
                 .setFlags(mFlags)
                 .setPipelineBindPoint(mPipelineBindPoint)
                 .setInputAttachments(mInputAttachments)
-                .setColorAttachments(mColorAttachments)
-                .setResolveAttachments(mResolveAttachments)
                 .setPreserveAttachments(mPreserveAttachments);
+
+        if (!mColorAttachments.empty()) {
+            subpassDescription.setColorAttachments(mColorAttachments);
+        }
+        if (!mResolveAttachments.empty()) {
+            // ** setResolveAttachments 会同时设置 colorAttachmentCount, 而不存在 resolveAttachmentCount
+            subpassDescription.setResolveAttachments(mResolveAttachments);
+        }
 
         if (mDepthStencilAttachment.has_value()) {
             subpassDescription.setPDepthStencilAttachment(&(mDepthStencilAttachment.value()));

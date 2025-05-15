@@ -16,7 +16,7 @@ namespace vklite {
                                        const PipelineLayout &pipelineLayout,
                                        const std::vector<vk::Viewport> &viewports,
                                        const std::vector<vk::Rect2D> &scissors,
-                                       bool msaaEnable,
+                                       bool sampleShadingEnable,
                                        vk::SampleCountFlagBits sampleCount,
                                        bool depthTestEnable)
             : mDevice(device) {
@@ -101,12 +101,15 @@ namespace vklite {
 
         // Multisampling
         vk::PipelineMultisampleStateCreateInfo multiSampleStateCreateInfo;
-        LOG_D("PipelineMultisampleStateCreateInfo, msaaEnable:%d, sampleCount:%d", msaaEnable, sampleCount);
+        LOG_D("PipelineMultisampleStateCreateInfo, sampleShadingEnable:%d, sampleCount:%d", sampleShadingEnable, sampleCount);
         multiSampleStateCreateInfo
-                .setSampleShadingEnable(msaaEnable)
+                // 并非直接控制MSAA的开关，而是控制逐样本着色（Sample Shading）的启用状态,
+                // 设置为true时，会启用样本着色，即对每个样本执行独立的着色计算，这可以提高图像质量但增加计算开销。
+                // 设置为false时，仅对每个像素执行一次着色计算，结果被复制到所有样本，节省性能但可能降低质量。
+                .setSampleShadingEnable(sampleShadingEnable)
                         // 光栅化时的采样数, 采样数越多，抗锯齿效果越好，但性能开销也越大
-                        // vk::SampleCountFlagBits::e1：禁用多重采样（默认）。
-                        // vk::SampleCountFlagBits::e2、e4、e8、e16：启用多重采样
+                        // 当传入 vk::SampleCountFlagBits::e1 时，关闭MSAA（单采样模式）,禁用多重采样（默认）。
+                        // 传入 vk::SampleCountFlagBits::e2、e4、e8、e16 等时，开启MSAA(多重采样)，采样数对应抗锯齿倍数
                 .setRasterizationSamples(sampleCount)
                         // 最小采样着色率, 仅在 sampleShadingEnable 为 vk::True 时有效
                         // 0.0：禁用采样着色, 禁用（默认）。
