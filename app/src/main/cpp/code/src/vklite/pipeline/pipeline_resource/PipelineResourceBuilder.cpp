@@ -11,16 +11,21 @@ namespace vklite {
 
     PipelineResourceBuilder::~PipelineResourceBuilder() = default;
 
-    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider) {
-        mVertexBufferProviders.push_back(std::move(vertexBufferProvider));
+    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(VertexBuffer &vertexBuffer, vk::DeviceSize offset) {
+        addVertexBuffer(VertexBufferInfo(vertexBuffer, offset));
         return *this;
     }
 
-    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(VertexBuffer &vertexBuffer) {
-        std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider = [&vertexBuffer](uint32_t frameIndex) -> VertexBuffer & {
-            return vertexBuffer;
+    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(std::function<VertexBufferInfo(uint32_t frameIndex)> &&vertexBufferInfoProvider) {
+        mVertexBufferInfoProviders.push_back(std::move(vertexBufferInfoProvider));
+        return *this;
+    }
+
+    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(const VertexBufferInfo &vertexBufferInfo) {
+        std::function<VertexBufferInfo(uint32_t frameIndex)> provider = [=](uint32_t frameIndex) -> VertexBufferInfo {
+            return vertexBufferInfo;
         };
-        addVertexBuffer(std::move(vertexBufferProvider));
+        addVertexBuffer(std::move(provider));
         return *this;
     }
 
@@ -53,9 +58,10 @@ namespace vklite {
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
             PipelineResource pipelineResource;
 
-            for (const std::function<VertexBuffer &(uint32_t)> &vertexBufferProvider: mVertexBufferProviders) {
+            for (const std::function<VertexBufferInfo(uint32_t)> &vertexBufferInfoProvider: mVertexBufferInfoProviders) {
+                const VertexBufferInfo &vertexBufferInfo = vertexBufferInfoProvider(frameIndex);
                 pipelineResource
-                        .addVertexBuffer(vertexBufferProvider(frameIndex).getBuffer(), 0);
+                        .addVertexBuffer(vertexBufferInfo.getVertexBuffer().getBuffer(), vertexBufferInfo.getOffset());
             }
 
             pipelineResource

@@ -11,12 +11,13 @@
 #include "vklite/pipeline/pipeline_resource/PipelineResource.h"
 #include "vklite/vertex_buffer/VertexBuffer.h"
 #include "vklite/index_buffer/IndexBuffer.h"
+#include "vklite/pipeline/pipeline_resource/VertexBufferInfo.h"
 
 namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-        std::vector<std::function<VertexBuffer &(uint32_t)>> mVertexBufferProviders;
+        std::vector<std::function<VertexBufferInfo(uint32_t)>> mVertexBufferInfoProviders;
         std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
         uint32_t mIndicesCount;
 
@@ -27,9 +28,11 @@ namespace vklite {
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &addVertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
+        PipelineResourceBuilder &addVertexBuffer(VertexBuffer &vertexBuffer, vk::DeviceSize offset = 0);
 
-        PipelineResourceBuilder &addVertexBuffer(VertexBuffer &vertexBuffer);
+        PipelineResourceBuilder &addVertexBuffer(std::function<VertexBufferInfo(uint32_t frameIndex)> &&vertexBufferInfoProvider);
+
+        PipelineResourceBuilder &addVertexBuffer(const VertexBufferInfo &vertexBufferInfo);
 
         PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
 
