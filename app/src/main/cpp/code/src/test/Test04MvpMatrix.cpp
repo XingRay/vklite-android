@@ -3,7 +3,7 @@
 //
 
 #include "Test04MvpMatrix.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 #include "vklite/engine/VkLiteEngineBuilder.h"
 
 namespace test04 {

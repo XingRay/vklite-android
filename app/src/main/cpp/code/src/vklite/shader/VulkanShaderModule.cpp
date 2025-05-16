@@ -5,12 +5,12 @@
 #include "VulkanShaderModule.h"
 
 namespace vklite {
-    VulkanShaderModule::VulkanShaderModule(const Device &device, const std::vector<char> &code)
+
+    VulkanShaderModule::VulkanShaderModule(const Device &device, const std::vector<uint32_t> &code)
             : mDevice(device) {
         vk::ShaderModuleCreateInfo createInfo;
         createInfo
-                .setCodeSize(code.size())
-                .setPCode(reinterpret_cast<const uint32_t *>(code.data()));
+                .setCode(code);
 
         mShaderModule = device.getDevice().createShaderModule(createInfo);
     }

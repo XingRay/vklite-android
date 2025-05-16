@@ -4,11 +4,8 @@
 
 #include "Test02SingleColorTriangle.h"
 
-#include "FileUtil.h"
-#include "vklite/util/VulkanUtil.h"
-#include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
-#include "vklite/platform/android/device/AndroidDevicePlugin.h"
-#include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
+#include "util/FileUtil.h"
+#include "vklite/vklite_android.h"
 
 namespace test02 {
 
@@ -39,8 +36,8 @@ namespace test02 {
                 "VK_LAYER_KHRONOS_validation"
         };
 
-        std::vector<char> vertexShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/02_triangle_color.vert.spv");
-        std::vector<char> fragmentShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/02_triangle_color.frag.spv");
+        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/02_triangle_color.vert.spv");
+        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/02_triangle_color.frag.spv");
 
         std::vector<Vertex> vertices = {
                 {{1.0f,  -1.0f, 0.0f}},
@@ -303,21 +300,12 @@ namespace test02 {
             }
         }
 
-        vk::CommandBufferBeginInfo commandBufferBeginInfo;
-        commandBufferBeginInfo
-//                .setFlags(vk::CommandBufferUsageFlagBits::eOneTimeSubmit)
-                .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
-                .setPInheritanceInfo(nullptr);
-
-        const vk::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex].getCommandBuffer();
-        commandBuffer.reset();
-        commandBuffer.begin(commandBufferBeginInfo);
-
-        mRenderPass->execute(commandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &commandBuffer) {
-            mGraphicsPipeline->drawFrame(commandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+        const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        commandBuffer.execute([&](const vk::CommandBuffer &vkCommandBuffer) {
+            mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+                mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+            });
         });
-
-        commandBuffer.end();
 
         result = mSyncObject->resetFence(mCurrentFrameIndex);
         if (result != vk::Result::eSuccess) {
@@ -326,7 +314,7 @@ namespace test02 {
 
         std::array<vk::Semaphore, 1> waitSemaphores = {imageAvailableSemaphore};
         std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
-        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
+        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer.getCommandBuffer()};
         std::array<vk::Semaphore, 1> signalSemaphores = {renderFinishedSemaphore};
 
         vk::SubmitInfo submitInfo{};

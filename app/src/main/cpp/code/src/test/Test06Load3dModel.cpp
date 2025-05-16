@@ -3,7 +3,7 @@
 //
 
 #include "Test06Load3dModel.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 #include "vklite/engine/VkLiteEngineBuilder.h"
 #include "image/StbImage.h"

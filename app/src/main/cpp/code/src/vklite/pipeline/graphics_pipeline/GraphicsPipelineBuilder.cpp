@@ -14,12 +14,12 @@ namespace vklite {
     GraphicsPipelineBuilder::~GraphicsPipelineBuilder() = default;
 
 
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::vertexShaderCode(std::vector<char> &&code) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::vertexShaderCode(std::vector<uint32_t> &&code) {
         mVertexShaderCode = std::move(code);
         return *this;
     }
 
-    GraphicsPipelineBuilder &GraphicsPipelineBuilder::fragmentShaderCode(std::vector<char> &&code) {
+    GraphicsPipelineBuilder &GraphicsPipelineBuilder::fragmentShaderCode(std::vector<uint32_t> &&code) {
         mFragmentShaderCode = std::move(code);
         return *this;
     }

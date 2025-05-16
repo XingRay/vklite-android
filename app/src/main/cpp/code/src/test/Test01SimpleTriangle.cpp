@@ -3,7 +3,7 @@
 //
 
 #include "Test01SimpleTriangle.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/platform/android/device/AndroidDevicePlugin.h"
@@ -38,8 +38,8 @@ namespace test01 {
                 "VK_LAYER_KHRONOS_validation"
         };
 
-        std::vector<char> vertexShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
-        std::vector<char> fragmentShaderCode = FileUtil::loadFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
+        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
+        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
         std::vector<Vertex> vertices = {
                 {{1.0f,  -1.0f, 0.0f}},
@@ -223,7 +223,7 @@ namespace test01 {
                 .setExtent(displaySize);
 
         vk::ClearValue colorClearValue = vk::ClearValue{mClearColor};
-        vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(mDepthStencil)};
+        vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(std::array<float, 4>{1.0, 0.0, 0.0, 0.0})};
         std::array<vk::ClearValue, 2> clearValues = {colorClearValue, depthStencilClearValue};
 
         vk::RenderPassBeginInfo renderPassBeginInfo{};

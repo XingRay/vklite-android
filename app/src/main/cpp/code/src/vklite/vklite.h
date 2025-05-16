@@ -6,6 +6,7 @@
 
 #include "vklite/instance/InstanceBuilder.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
+#include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 #include "vklite/device/DeviceBuilder.h"
 #include "vklite/swapchain/SwapchainBuilder.h"
 #include "vklite/command_buffer/CommandPoolBuilder.h"
@@ -23,3 +24,5 @@
 #include "vklite/image_view/ImageViewBuilder.h"
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
+#include "vklite/buffer/UniformBufferBuilder.h"
+#include "vklite/util/VulkanUtil.h"

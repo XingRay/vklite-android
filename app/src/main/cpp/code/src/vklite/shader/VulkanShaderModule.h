@@ -16,7 +16,7 @@ namespace vklite {
         vk::ShaderModule mShaderModule;
 
     public:
-        VulkanShaderModule(const Device &device, const std::vector<char> &code);
+        VulkanShaderModule(const Device &device, const std::vector<uint32_t> &code);
 
         ~VulkanShaderModule();
 

@@ -3,7 +3,7 @@
 //
 
 #include "Test09NdkCameraFaceDetection.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 #include <chrono>
 #include <thread>

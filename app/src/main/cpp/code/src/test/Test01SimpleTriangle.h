@@ -25,11 +25,17 @@ namespace test01 {
     private:
 
         const android_app &mApp;
+
+        //config
         const int mFrameCount = 2;
+        const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
+        const float mClearDepth = 1.0f;
+        bool mMsaaEnable = true;
+        bool mDepthTestEnable = true;
+
+        //status
         uint32_t mCurrentFrameIndex = 0;
         bool mFrameBufferResized = false;
-        const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
-        const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
 
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;

@@ -8,7 +8,7 @@
 #include <thread>
 
 #include "vklite/engine/VkLiteEngineBuilder.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 namespace std {
 

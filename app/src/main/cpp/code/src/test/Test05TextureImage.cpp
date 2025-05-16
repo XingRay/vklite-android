@@ -3,7 +3,7 @@
 //
 
 #include "Test05TextureImage.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 #include "stb_image.h"
 #include "vklite/engine/VkLiteEngineBuilder.h"

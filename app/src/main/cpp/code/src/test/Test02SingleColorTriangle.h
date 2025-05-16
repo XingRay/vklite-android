@@ -13,8 +13,6 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/vklite.h"
-#include "vklite/Log.h"
-#include "vklite/buffer/UniformBufferBuilder.h"
 
 namespace test02 {
 
@@ -37,8 +35,8 @@ namespace test02 {
         const int mFrameCount = 2;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const float mClearDepth = 1.0f;
-        bool mMsaaEnable = false;
-        bool mDepthTestEnable = false;
+        bool mMsaaEnable = true;
+        bool mDepthTestEnable = true;
 
         //status
         uint32_t mCurrentFrameIndex = 0;
@@ -47,7 +45,7 @@ namespace test02 {
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
-        
+
         std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
         std::vector<vk::PresentModeKHR> mPresentModes;
 

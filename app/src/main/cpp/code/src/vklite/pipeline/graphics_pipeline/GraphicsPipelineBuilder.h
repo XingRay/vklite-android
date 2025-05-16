@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <vector>
+#include <cstdint>
+
 #include "GraphicsPipeline.h"
 #include "vklite/pipeline/vertex/VertexConfigure.h"
 #include "vklite/index_buffer/IndexBufferBuilder.h"
@@ -20,8 +23,8 @@ namespace vklite {
         /**
          * shader code
          */
-        std::vector<char> mVertexShaderCode;
-        std::vector<char> mFragmentShaderCode;
+        std::vector<uint32_t> mVertexShaderCode;
+        std::vector<uint32_t> mFragmentShaderCode;
 
         /**
          * vertex
@@ -45,9 +48,9 @@ namespace vklite {
          * shader code
          *
          */
-        GraphicsPipelineBuilder &vertexShaderCode(std::vector<char> &&code);
+        GraphicsPipelineBuilder &vertexShaderCode(std::vector<uint32_t> &&code);
 
-        GraphicsPipelineBuilder &fragmentShaderCode(std::vector<char> &&code);
+        GraphicsPipelineBuilder &fragmentShaderCode(std::vector<uint32_t> &&code);
 
 
         /**
@@ -57,11 +60,11 @@ namespace vklite {
 
         GraphicsPipelineBuilder &addVertexBinding(VertexBindingConfigure &&configure);
 
-        GraphicsPipelineBuilder & sampleShadingEnable(bool sampleShadingEnable);
+        GraphicsPipelineBuilder &sampleShadingEnable(bool sampleShadingEnable);
 
-        GraphicsPipelineBuilder & sampleCount(vk::SampleCountFlagBits sampleCount);
+        GraphicsPipelineBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
-        GraphicsPipelineBuilder & depthTestEnable(bool depthTestEnable);
+        GraphicsPipelineBuilder &depthTestEnable(bool depthTestEnable);
 
         [[nodiscard]]
         GraphicsPipeline build(const Device &device,
