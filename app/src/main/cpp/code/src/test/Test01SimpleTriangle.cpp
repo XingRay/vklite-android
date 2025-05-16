@@ -56,7 +56,11 @@ namespace test01 {
         mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->listPhysicalDevices());
 
-        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;//mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
+        if (mMsaaEnable) {
+            sampleCount = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+        }
+        LOG_D("sampleCount:%d", sampleCount);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
@@ -73,46 +77,86 @@ namespace test01 {
         mCommandPool = vklite::CommandPoolBuilder()
                 .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
                 .build(*mDevice);
+        mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
-        mRenderPass = vklite::RenderPassBuilder()
-//                .displayFormat(mSwapchain->getDisplayFormat())
-//                .enableMsaa()
-//                .sampleCountFlagBits(sampleCountFlagBits)
-//                .enableDepth()
-                .buildUnique(*mDevice);
-
+        // 创建附件
         mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
                 .format(mSwapchain->getDisplayFormat())
                 .build(*mDevice, mSwapchain->getDisplayImages());
 
-        mColorImage = vklite::ImageBuilder::colorImageBuilder()
-                .width(mSwapchain->getDisplaySize().width)
-                .height(mSwapchain->getDisplaySize().height)
-                .format(mSwapchain->getDisplayFormat())
-                .sampleCount(sampleCount)
-                .build(*mDevice);
-        mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
-                .build(*mDevice, *mColorImage);
+        if (mMsaaEnable) {
+            mColorImage = vklite::ImageBuilder::colorImageBuilder()
+                    .width(mSwapchain->getDisplaySize().width)
+                    .height(mSwapchain->getDisplaySize().height)
+                    .format(mSwapchain->getDisplayFormat())
+                    .sampleCount(sampleCount)
+                    .build(*mDevice);
+            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                    .build(*mDevice, *mColorImage);
+        }
 
-        mDepthImage = vklite::ImageBuilder::depthImageBuilder()
-                .width(mSwapchain->getDisplaySize().width)
-                .height(mSwapchain->getDisplaySize().height)
-                .format(mPhysicalDevice->findDepthFormat())
-                .sampleCount(sampleCount)
-                .build(*mDevice);
-        mDepthImage->transitionImageLayout(*mCommandPool);
-        mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
-                .build(*mDevice, *mDepthImage);
+        if (mDepthTestEnable) {
+            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+                    .width(mSwapchain->getDisplaySize().width)
+                    .height(mSwapchain->getDisplaySize().height)
+                    .format(mPhysicalDevice->findDepthFormat())
+                    .sampleCount(sampleCount)
+                    .build(*mDevice);
+            mDepthImage->transitionImageLayout(*mCommandPool);
+            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                    .build(*mDevice, *mDepthImage);
+        }
+
+        vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
+        mRenderPass = vklite::RenderPassBuilder()
+                .addSubpass([&](vklite::Subpass &Subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    Subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .stageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
+                            .accessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+                            .addDependency(externalSubpass);
+                })
+                .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::msaaColorAttachment(attachment)
+                            .sampleCount(sampleCount)
+                            .format(mSwapchain->getDisplayFormat())
+                            .clearColorValue(mClearColor)
+                            .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                })
+                .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::presentColorAttachment(attachment)
+                            .format(mSwapchain->getDisplayFormat())
+                            .clearColorValue(mClearColor)
+                            .applyIf(mMsaaEnable, [&](vklite::Attachment &thiz) {
+                                thiz
+                                        .loadOp(vk::AttachmentLoadOp::eDontCare)
+                                        .asResolveAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            })
+                            .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
+                                thiz.asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            });
+//                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
+//                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                })
+                .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::depthStencilAttachment(attachment)
+                            .sampleCount(sampleCount)
+                            .clearDepthValue(mClearDepth)
+                            .format(mPhysicalDevice->findDepthFormat())
+                            .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
+                })
+                .renderAreaExtend(mSwapchain->getDisplaySize())
+                .buildUnique(*mDevice);
 
         mFrameBuffers.reserve(mDisplayImageViews.size());
         for (const vklite::ImageView &imageView: mDisplayImageViews) {
             mFrameBuffers.push_back(vklite::FrameBufferBuilder()
                                             .width(mSwapchain->getDisplaySize().width)
                                             .height(mSwapchain->getDisplaySize().height)
-                                                    // 下面添加附件的顺序不能乱
-                                            .addAttachment(mColorImageView->getImageView())
-                                            .addAttachment(mDepthImageView->getImageView())
+                                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
+                                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView(); })
                                             .addAttachment(imageView.getImageView())
+                                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
                                             .build(*mDevice, *mRenderPass));
         }
 
@@ -120,6 +164,29 @@ namespace test01 {
                 .frameCount(mFrameCount)
                 .build(*mDevice);
 
+        vklite::DescriptorConfigure descriptorConfigure = vklite::DescriptorConfigure()
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
+                                uniformConfigure
+                                        .binding(0)
+                                        .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
+                            });
+                });
+
+        mDescriptorPool = vklite::DescriptorPoolBuilder()
+                .descriptorPoolSizes(descriptorConfigure.calcDescriptorPoolSizes())
+                .descriptorSetCount(descriptorConfigure.getDescriptorSetCount())
+                .frameCount(mFrameCount)
+                .buildUnique(*mDevice);
+
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = descriptorConfigure.createDescriptorSetLayouts(*mDevice);
+
+        mPipelineLayout = vklite::PipelineLayoutBuilder()
+                .buildUnique(*mDevice, descriptorSetLayouts);
+
+        LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
         vk::Viewport viewport;
         viewport
                 .setX(0.0f)
@@ -145,6 +212,8 @@ namespace test01 {
                             .stride(sizeof(Vertex))
                             .addAttribute(0, ShaderFormat::Vec3);
                 })
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
                 .buildUnique(*mDevice, *mRenderPass, *mPipelineLayout, mViewports, mScissors);
 
         mIndexBuffer = vklite::IndexBufferBuilder()
@@ -161,6 +230,9 @@ namespace test01 {
                 .vertexBuffer(*mVertexBuffer)
                 .indexBuffer(*mIndexBuffer)
                 .indicesCount(indices.size())
+                .descriptorSet([&](uint32_t frameIndex) {
+                    return mDescriptorPool->allocateDescriptorSets(descriptorSetLayouts);
+                })
                 .build(mFrameCount);
 
         LOG_D("test created ");
@@ -206,47 +278,12 @@ namespace test01 {
             }
         }
 
-        vk::CommandBufferBeginInfo commandBufferBeginInfo;
-        commandBufferBeginInfo
-//                .setFlags(vk::CommandBufferUsageFlagBits::eOneTimeSubmit)
-                .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
-                .setPInheritanceInfo(nullptr);
-
-        vk::CommandBuffer commandBuffer;// = mCommandPool->getCommandBuffers()[mCurrentFrameIndex];
-        commandBuffer.reset();
-        commandBuffer.begin(commandBufferBeginInfo);
-
-        vk::Extent2D displaySize = mSwapchain->getDisplaySize();
-        vk::Rect2D renderArea{};
-        renderArea
-                .setOffset(vk::Offset2D{0, 0})
-                .setExtent(displaySize);
-
-        vk::ClearValue colorClearValue = vk::ClearValue{mClearColor};
-        vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(std::array<float, 4>{1.0, 0.0, 0.0, 0.0})};
-        std::array<vk::ClearValue, 2> clearValues = {colorClearValue, depthStencilClearValue};
-
-        vk::RenderPassBeginInfo renderPassBeginInfo{};
-        renderPassBeginInfo
-                .setRenderPass(mRenderPass->getRenderPass())
-                .setFramebuffer(mFrameBuffers[imageIndex].getFrameBuffer())
-                .setRenderArea(renderArea)
-                .setClearValues(clearValues);
-        /**
-         * vk::SubpassContents::eInline
-         * 子流程的渲染命令直接记录在当前的命令缓冲区中, 适用于简单的渲染流程，所有渲染命令都在同一个命令缓冲区中记录。
-         *
-         * vk::SubpassContents::eSecondaryCommandBuffers
-         * 子流程的渲染命令通过次级命令缓冲区（Secondary Command Buffer）记录。
-         * 适用于复杂的渲染流程，可以将渲染命令分散到多个次级命令缓冲区中，以提高代码的模块化和复用性。
-         */
-        commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
-
-//        mGraphicsPipeline->drawFrame(commandBuffer, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
-
-        commandBuffer.endRenderPass();
-
-        commandBuffer.end();
+        const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        commandBuffer.execute([&](const vk::CommandBuffer &vkCommandBuffer) {
+            mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+                mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+            });
+        });
 
         result = mSyncObject->resetFence(mCurrentFrameIndex);
         if (result != vk::Result::eSuccess) {
@@ -255,7 +292,7 @@ namespace test01 {
 
         std::array<vk::Semaphore, 1> waitSemaphores = {imageAvailableSemaphore};
         std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
-        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
+        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer.getCommandBuffer()};
         std::array<vk::Semaphore, 1> signalSemaphores = {renderFinishedSemaphore};
 
         vk::SubmitInfo submitInfo{};

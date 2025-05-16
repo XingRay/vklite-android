@@ -41,13 +41,13 @@ namespace test01 {
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
 
-        vk::SurfaceCapabilitiesKHR mSurfaceCapabilities;
         std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
         std::vector<vk::PresentModeKHR> mPresentModes;
 
         std::unique_ptr<vklite::Device> mDevice;
         std::unique_ptr<vklite::Swapchain> mSwapchain;
         std::unique_ptr<vklite::CommandPool> mCommandPool;
+        std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
         std::unique_ptr<vklite::RenderPass> mRenderPass;
 
         std::vector<vklite::ImageView> mDisplayImageViews;
@@ -61,7 +61,7 @@ namespace test01 {
         std::vector<vklite::FrameBuffer> mFrameBuffers;
 
         std::unique_ptr<vklite::SyncObject> mSyncObject;
-
+        std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
 
         std::vector<vk::Viewport> mViewports;
