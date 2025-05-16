@@ -4,22 +4,17 @@
 
 #include "vklite/command_buffer/CommandBuffers.h"
 #include "vklite/command_buffer/CommandPool.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
     CommandBuffers::CommandBuffers(const Device &device,
                                    const CommandPool &commandPool,
-                                   vk::CommandBufferLevel commandBufferLevel,
-                                   uint32_t count)
+                                   std::vector<CommandBuffer> &&commandBuffers)
             : mDevice(device),
-              mCommandPool(commandPool) {
-        vk::CommandBufferAllocateInfo commandBufferAllocateInfo{};
-        commandBufferAllocateInfo
-                .setLevel(commandBufferLevel)
-                .setCommandPool(mCommandPool.getCommandPool())
-                .setCommandBufferCount(count);
+              mCommandPool(commandPool),
+              mCommandBuffers(std::move(commandBuffers)) {
 
-        mCommandBuffers = mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo);
     }
 
     CommandBuffers::CommandBuffers(CommandBuffers &&other) noexcept
@@ -29,11 +24,17 @@ namespace vklite {
 
     CommandBuffers::~CommandBuffers() {
         if (!mCommandBuffers.empty()) {
-            mDevice.getDevice().freeCommandBuffers(mCommandPool.getCommandPool(), mCommandBuffers);
+            std::vector<vk::CommandBuffer> vkCommandBuffers;
+            vkCommandBuffers.reserve(mCommandBuffers.size());
+            for (const CommandBuffer &commandBuffer: mCommandBuffers) {
+                vkCommandBuffers.push_back(commandBuffer.getCommandBuffer());
+            }
+            LOG_D("CommandBuffers::~CommandBuffers() freeCommandBuffers");
+            mDevice.getDevice().freeCommandBuffers(mCommandPool.getCommandPool(), vkCommandBuffers);
         }
     }
 
-    const vk::CommandBuffer &CommandBuffers::operator[](size_t index) {
+    const CommandBuffer &CommandBuffers::operator[](size_t index) {
         return mCommandBuffers[index];
     }
 } // vklite

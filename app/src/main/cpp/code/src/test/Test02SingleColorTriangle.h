@@ -47,8 +47,7 @@ namespace test02 {
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
-
-        vk::SurfaceCapabilitiesKHR mSurfaceCapabilities;
+        
         std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
         std::vector<vk::PresentModeKHR> mPresentModes;
 

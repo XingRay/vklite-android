@@ -80,7 +80,7 @@ namespace test02 {
         mCommandPool = vklite::CommandPoolBuilder()
                 .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
                 .build(*mDevice);
-        mCommandBuffers = mCommandPool->allocateUniqueCommandBuffers(mFrameCount);
+        mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
         mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
@@ -309,7 +309,7 @@ namespace test02 {
                 .setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse)
                 .setPInheritanceInfo(nullptr);
 
-        const vk::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        const vk::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex].getCommandBuffer();
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
 

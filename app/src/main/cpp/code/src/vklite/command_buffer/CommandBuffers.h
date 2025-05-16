@@ -10,6 +10,7 @@
 #include "vulkan/vulkan.hpp"
 
 #include "vklite/device/Device.h"
+#include "vklite/command_buffer/CommandBuffer.h"
 
 namespace vklite {
 
@@ -20,13 +21,12 @@ namespace vklite {
         const Device &mDevice;
         const CommandPool &mCommandPool;
 
-        std::vector<vk::CommandBuffer> mCommandBuffers;
+        std::vector<CommandBuffer> mCommandBuffers;
 
     public:
         CommandBuffers(const Device &device,
                        const CommandPool &commandPool,
-                       vk::CommandBufferLevel commandBufferLevel,
-                       uint32_t count);
+                       std::vector<CommandBuffer> &&commandBuffers);
 
         ~CommandBuffers();
 
@@ -43,7 +43,7 @@ namespace vklite {
         // 移动赋值运算符
         CommandBuffers &operator=(CommandBuffers &&) = delete;
 
-        const vk::CommandBuffer& operator[](size_t index);
+        const CommandBuffer &operator[](size_t index);
 
     };
 

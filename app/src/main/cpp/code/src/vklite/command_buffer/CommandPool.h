@@ -29,10 +29,10 @@ namespace vklite {
         const vk::CommandPool &getCommandPool() const;
 
         [[nodiscard]]
-        CommandBuffers allocateCommandBuffers(uint32_t count) const;
+        CommandBuffers allocate(uint32_t count, vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) const;
 
         [[nodiscard]]
-        std::unique_ptr<CommandBuffers> allocateUniqueCommandBuffers(uint32_t count) const;
+        std::unique_ptr<CommandBuffers> allocateUnique(uint32_t count, vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) const;
 
         void submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const;
     };

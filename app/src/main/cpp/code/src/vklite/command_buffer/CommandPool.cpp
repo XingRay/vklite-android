@@ -27,13 +27,38 @@ namespace vklite {
         return mCommandPool;
     }
 
-    CommandBuffers CommandPool::allocateCommandBuffers(uint32_t count) const {
-//        return CommandBuffers(mDevice, *this, vk::CommandBufferLevel::ePrimary, count);
-        return {mDevice, *this, vk::CommandBufferLevel::ePrimary, count};
+    CommandBuffers CommandPool::allocate(uint32_t count, vk::CommandBufferLevel level) const {
+        vk::CommandBufferAllocateInfo commandBufferAllocateInfo{};
+        commandBufferAllocateInfo
+                .setLevel(level)
+                .setCommandPool(mCommandPool)
+                .setCommandBufferCount(count);
+
+        std::vector<vk::CommandBuffer> vkCommandBuffers = mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo);
+        std::vector<CommandBuffer> commandBuffers;
+        commandBuffers.reserve(vkCommandBuffers.size());
+        for (const vk::CommandBuffer &vkCommandBuffer: vkCommandBuffers) {
+            commandBuffers.emplace_back(mDevice, *this, vkCommandBuffer);
+        }
+
+        return {mDevice, *this, std::move(commandBuffers)};
     }
 
-    std::unique_ptr<CommandBuffers> CommandPool::allocateUniqueCommandBuffers(uint32_t count) const {
-        return std::make_unique<CommandBuffers>(mDevice, *this, vk::CommandBufferLevel::ePrimary, count);
+    std::unique_ptr<CommandBuffers> CommandPool::allocateUnique(uint32_t count, vk::CommandBufferLevel level) const {
+        vk::CommandBufferAllocateInfo commandBufferAllocateInfo{};
+        commandBufferAllocateInfo
+                .setLevel(level)
+                .setCommandPool(mCommandPool)
+                .setCommandBufferCount(count);
+
+        std::vector<vk::CommandBuffer> vkCommandBuffers = mDevice.getDevice().allocateCommandBuffers(commandBufferAllocateInfo);
+        std::vector<CommandBuffer> commandBuffers;
+        commandBuffers.reserve(vkCommandBuffers.size());
+        for (const vk::CommandBuffer &vkCommandBuffer: vkCommandBuffers) {
+            commandBuffers.emplace_back(mDevice, *this, vkCommandBuffer);
+        }
+
+        return std::make_unique<CommandBuffers>(mDevice, *this, std::move(commandBuffers));
     }
 
     void CommandPool::submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const {
