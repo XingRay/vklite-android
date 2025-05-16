@@ -16,7 +16,7 @@ namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-        std::function<VertexBuffer &(uint32_t)> mVertexBufferProvider;
+        std::vector<std::function<VertexBuffer &(uint32_t)>> mVertexBufferProviders;
         std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
         uint32_t mIndicesCount;
 
@@ -27,9 +27,9 @@ namespace vklite {
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
+        PipelineResourceBuilder &addVertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider);
 
-        PipelineResourceBuilder &vertexBuffer(VertexBuffer &vertexBuffer);
+        PipelineResourceBuilder &addVertexBuffer(VertexBuffer &vertexBuffer);
 
         PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
 

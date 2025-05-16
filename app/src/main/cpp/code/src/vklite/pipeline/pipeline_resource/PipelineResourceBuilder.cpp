@@ -11,15 +11,16 @@ namespace vklite {
 
     PipelineResourceBuilder::~PipelineResourceBuilder() = default;
 
-    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider) {
-        mVertexBufferProvider = std::move(vertexBufferProvider);
+    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(std::function<VertexBuffer &(uint32_t frameIndex)> &&vertexBufferProvider) {
+        mVertexBufferProviders.push_back(std::move(vertexBufferProvider));
         return *this;
     }
 
-    PipelineResourceBuilder &PipelineResourceBuilder::vertexBuffer(VertexBuffer &vertexBuffer) {
-        mVertexBufferProvider = [&vertexBuffer](uint32_t frameIndex) -> VertexBuffer & {
+    PipelineResourceBuilder &PipelineResourceBuilder::addVertexBuffer(VertexBuffer &vertexBuffer) {
+        std::function<VertexBuffer &(uint32_t frameIndex)> vertexBufferProvider = [&vertexBuffer](uint32_t frameIndex) -> VertexBuffer & {
             return vertexBuffer;
         };
+        addVertexBuffer(std::move(vertexBufferProvider));
         return *this;
     }
 
@@ -51,8 +52,13 @@ namespace vklite {
 
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
             PipelineResource pipelineResource;
+
+            for (const std::function<VertexBuffer &(uint32_t)> &vertexBufferProvider: mVertexBufferProviders) {
+                pipelineResource
+                        .addVertexBuffer(vertexBufferProvider(frameIndex).getBuffer(), 0);
+            }
+
             pipelineResource
-                    .addVertexBuffer(mVertexBufferProvider(frameIndex).getBuffer(), 0)
                     .indexBuffer(mIndexBufferProvider(frameIndex).getBuffer(), 0)
                     .indicesCount(mIndicesCount)
                     .descriptorSets(mDescriptorSetProvider(frameIndex));

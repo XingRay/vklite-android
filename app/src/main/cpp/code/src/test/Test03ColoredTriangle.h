@@ -4,14 +4,15 @@
 
 #pragma once
 
-#include "vklite/Log.h"
-#include "test/common/TestBase.h"
-
-#include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/surface/AndroidSurface.h"
+#include <memory>
+#include <vector>
+#include <cstdint>
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "test/common/glm.h"
+#include "test/common/TestBase.h"
+
+#include "vklite/vklite.h"
 
 namespace test03 {
 
@@ -22,12 +23,55 @@ namespace test03 {
 
     class Test03ColoredTriangle : public test::TestBase {
     private:
-
-        const int mFrameCount = 2;
-
         const android_app &mApp;
 
-        std::unique_ptr<vklite::VkLiteEngine> mVkLiteEngine;
+        //config
+        const int mFrameCount = 2;
+        const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
+        const float mClearDepth = 1.0f;
+        bool mMsaaEnable = true;
+        bool mDepthTestEnable = true;
+
+        //status
+        uint32_t mCurrentFrameIndex = 0;
+        bool mFrameBufferResized = false;
+
+        std::unique_ptr<vklite::Instance> mInstance;
+        std::unique_ptr<vklite::Surface> mSurface;
+        std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
+
+        std::vector<vk::SurfaceFormatKHR> mSurfaceFormats;
+        std::vector<vk::PresentModeKHR> mPresentModes;
+
+        std::unique_ptr<vklite::Device> mDevice;
+        std::unique_ptr<vklite::Swapchain> mSwapchain;
+        std::unique_ptr<vklite::CommandPool> mCommandPool;
+        std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
+        std::unique_ptr<vklite::RenderPass> mRenderPass;
+
+        std::vector<vklite::ImageView> mDisplayImageViews;
+
+        std::unique_ptr<vklite::ImageInterface> mColorImage;
+        std::unique_ptr<vklite::ImageView> mColorImageView;
+
+        std::unique_ptr<vklite::ImageInterface> mDepthImage;
+        std::unique_ptr<vklite::ImageView> mDepthImageView;
+
+        std::vector<vklite::FrameBuffer> mFrameBuffers;
+
+        std::unique_ptr<vklite::SyncObject> mSyncObject;
+        std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
+        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
+
+        std::vector<vk::Viewport> mViewports;
+        std::vector<vk::Rect2D> mScissors;
+
+        std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
+        std::vector<vklite::PipelineResource> mPipelineResources;
+        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
+        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+
+        std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

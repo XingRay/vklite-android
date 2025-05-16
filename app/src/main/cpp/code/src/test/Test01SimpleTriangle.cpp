@@ -227,7 +227,7 @@ namespace test01 {
         mVertexBuffer->update(*mCommandPool, vertices);
 
         mPipelineResources = vklite::PipelineResourceBuilder()
-                .vertexBuffer(*mVertexBuffer)
+                .addVertexBuffer(*mVertexBuffer)
                 .indexBuffer(*mIndexBuffer)
                 .indicesCount(indices.size())
                 .descriptorSet([&](uint32_t frameIndex) {
