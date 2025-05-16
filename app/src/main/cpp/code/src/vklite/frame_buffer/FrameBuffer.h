@@ -8,7 +8,7 @@
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/render_pass/RenderPass.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandPool.h"
 #include "vklite/image_view/ImageView.h"
 
 namespace vklite {

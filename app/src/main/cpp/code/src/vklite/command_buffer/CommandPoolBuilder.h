@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandPool.h"
 #include "vklite/device/Device.h"
 
 namespace vklite {

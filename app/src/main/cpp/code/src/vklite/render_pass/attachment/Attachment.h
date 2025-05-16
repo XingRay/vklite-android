@@ -23,6 +23,9 @@ namespace vklite {
         vk::ImageLayout mInitialLayout;
         vk::ImageLayout mFinalLayout;
 
+        // clear value
+        vk::ClearValue mClearValue;
+
     public:
         Attachment();
 
@@ -30,6 +33,9 @@ namespace vklite {
 
         [[nodiscard]]
         uint32_t getIndex() const;
+
+        [[nodiscard]]
+        vk::ClearValue getClearValue() const;
 
         Attachment &format(vk::Format format);
 
@@ -70,6 +76,18 @@ namespace vklite {
         Attachment &asPreserveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
 
         Attachment &applyIf(bool condition, const std::function<void(Attachment &attachment)> &handler);
+
+        Attachment &clearColorValue(vk::ClearColorValue clearColorValue);
+
+        Attachment &clearColorValue(const std::vector<float> &clearColorValue);
+
+        Attachment &clearColorValue(const std::array<float, 4> &clearColorValue);
+
+        Attachment &clearDepthStencilValue(vk::ClearDepthStencilValue clearDepthStencilValue);
+
+        Attachment &clearDepthValue(float clearDepthValue);
+
+        Attachment &clearStencilValue(uint32_t clearStencilValue);
 
         [[nodiscard]]
         vk::AttachmentDescription createAttachmentDescription() const;

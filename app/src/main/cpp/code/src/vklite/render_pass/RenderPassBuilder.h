@@ -20,6 +20,10 @@ namespace vklite {
 
         bool mAddAttachmentInvoked = false;
 
+        std::vector<vk::ClearValue> mClearValues;
+        vk::Rect2D mRenderArea;
+        vk::SubpassContents mSubpassContents;
+
     public:
         RenderPassBuilder();
 
@@ -30,6 +34,20 @@ namespace vklite {
         RenderPassBuilder &addAttachment(const std::function<void(Attachment &attachment, std::vector<Subpass> &subpasses)> &configure);
 
         RenderPassBuilder &addAttachmentIf(bool condition, const std::function<void(Attachment &attachment, std::vector<Subpass> &subpasses)> &configure);
+
+        RenderPassBuilder &renderArea(vk::Rect2D renderArea);
+
+        RenderPassBuilder &renderArea(int32_t x, int32_t y, uint32_t width, uint32_t height);
+
+        RenderPassBuilder &renderAreaOffset(vk::Offset2D offset);
+
+        RenderPassBuilder &renderAreaOffset(int32_t x, int32_t y);
+
+        RenderPassBuilder &renderAreaExtend(vk::Extent2D extent);
+
+        RenderPassBuilder &renderAreaExtend(uint32_t width, uint32_t height);
+
+        RenderPassBuilder &subpassContents(vk::SubpassContents subpassContents);
 
         std::unique_ptr<RenderPass> buildUnique(const Device &device);
 

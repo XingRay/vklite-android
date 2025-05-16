@@ -123,17 +123,13 @@ namespace test02 {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
                             .format(mSwapchain->getDisplayFormat())
+                            .clearColorValue(mClearColor)
                             .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
-                })
-                .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
-                    vklite::Attachment::depthStencilAttachment(attachment)
-                            .sampleCount(sampleCount)
-                            .format(mPhysicalDevice->findDepthFormat())
-                            .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
                 })
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
                             .format(mSwapchain->getDisplayFormat())
+                            .clearColorValue(mClearColor)
                             .applyIf(mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
                                         .loadOp(vk::AttachmentLoadOp::eDontCare)
@@ -145,6 +141,14 @@ namespace test02 {
 //                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
 //                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
+                .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
+                    vklite::Attachment::depthStencilAttachment(attachment)
+                            .sampleCount(sampleCount)
+                            .clearDepthValue(mClearDepth)
+                            .format(mPhysicalDevice->findDepthFormat())
+                            .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
+                })
+                .renderAreaExtend(mSwapchain->getDisplaySize())
                 .buildUnique(*mDevice);
 
         mFrameBuffers.reserve(mDisplayImageViews.size());
@@ -154,8 +158,8 @@ namespace test02 {
                                             .height(mSwapchain->getDisplaySize().height)
                                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                                             .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView(); })
-                                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
                                             .addAttachment(imageView.getImageView())
+                                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
                                             .build(*mDevice, *mRenderPass));
         }
 
@@ -309,35 +313,9 @@ namespace test02 {
         commandBuffer.reset();
         commandBuffer.begin(commandBufferBeginInfo);
 
-        vk::Extent2D displaySize = mSwapchain->getDisplaySize();
-        vk::Rect2D renderArea{};
-        renderArea
-                .setOffset(vk::Offset2D{0, 0})
-                .setExtent(displaySize);
-
-        vk::ClearValue colorClearValue = vk::ClearValue{mClearColor};
-        vk::ClearValue depthStencilClearValue = vk::ClearValue{vk::ClearColorValue(mDepthStencil)};
-        std::array<vk::ClearValue, 2> clearValues = {colorClearValue, depthStencilClearValue};
-
-        vk::RenderPassBeginInfo renderPassBeginInfo{};
-        renderPassBeginInfo
-                .setRenderPass(mRenderPass->getRenderPass())
-                .setFramebuffer(mFrameBuffers[imageIndex].getFrameBuffer())
-                .setRenderArea(renderArea)
-                .setClearValues(clearValues);
-        /**
-         * vk::SubpassContents::eInline
-         * 子流程的渲染命令直接记录在当前的命令缓冲区中, 适用于简单的渲染流程，所有渲染命令都在同一个命令缓冲区中记录。
-         *
-         * vk::SubpassContents::eSecondaryCommandBuffers
-         * 子流程的渲染命令通过次级命令缓冲区（Secondary Command Buffer）记录。
-         * 适用于复杂的渲染流程，可以将渲染命令分散到多个次级命令缓冲区中，以提高代码的模块化和复用性。
-         */
-        commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
-
-        mGraphicsPipeline->drawFrame(commandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
-
-        commandBuffer.endRenderPass();
+        mRenderPass->execute(commandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &commandBuffer) {
+            mGraphicsPipeline->drawFrame(commandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
+        });
 
         commandBuffer.end();
 

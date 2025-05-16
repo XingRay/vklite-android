@@ -2,8 +2,8 @@
 // Created by leixing on 2025/5/15.
 //
 
-#include "vklite/command/CommandBuffers.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandBuffers.h"
+#include "vklite/command_buffer/CommandPool.h"
 
 namespace vklite {
 

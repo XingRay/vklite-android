@@ -8,7 +8,7 @@
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
 #include "vklite/device/DeviceBuilder.h"
 #include "vklite/swapchain/SwapchainBuilder.h"
-#include "vklite/command/CommandPoolBuilder.h"
+#include "vklite/command_buffer/CommandPoolBuilder.h"
 #include "vklite/render_pass/RenderPassBuilder.h"
 #include "vklite/frame_buffer/FrameBufferBuilder.h"
 #include "vklite/sync/SyncObjectBuilder.h"

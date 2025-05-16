@@ -9,7 +9,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/command/CommandBuffers.h"
+#include "vklite/command_buffer/CommandBuffers.h"
 
 namespace vklite {
 

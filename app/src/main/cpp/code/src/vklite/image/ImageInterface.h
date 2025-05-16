@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandPool.h"
 
 namespace vklite {
 

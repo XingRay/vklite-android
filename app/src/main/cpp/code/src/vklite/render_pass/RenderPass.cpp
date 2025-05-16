@@ -10,8 +10,11 @@ namespace vklite {
     RenderPass::RenderPass(const Device &device,
                            const std::vector<vk::AttachmentDescription> &attachmentDescriptions,
                            const std::vector<vk::SubpassDescription> &subpassDescriptions,
-                           const std::vector<vk::SubpassDependency> &subpassDependencies)
-            : mDevice(device) {
+                           const std::vector<vk::SubpassDependency> &subpassDependencies,
+                           std::vector<vk::ClearValue> &&clearValues,
+                           vk::Rect2D renderArea,
+                           vk::SubpassContents subpassContents)
+            : mDevice(device), mClearValues(std::move(clearValues)), mSubpassContents(subpassContents) {
         LOG_D("RenderPass::RenderPass");
 
         vk::RenderPassCreateInfo renderPassCreateInfo{};
@@ -22,6 +25,13 @@ namespace vklite {
                 .setDependencies(subpassDependencies);
 
         mRenderPass = device.getDevice().createRenderPass(renderPassCreateInfo);
+
+        mBeginInfo
+                .setRenderPass(mRenderPass)
+                        // 引用
+                .setClearValues(mClearValues)
+                        // 复制
+                .setRenderArea(renderArea);
     }
 
     RenderPass::~RenderPass() {
@@ -31,5 +41,58 @@ namespace vklite {
 
     const vk::RenderPass &RenderPass::getRenderPass() const {
         return mRenderPass;
+    }
+
+    RenderPass &RenderPass::renderArea(vk::Rect2D renderArea) {
+        mBeginInfo.setRenderArea(renderArea);
+        return *this;
+    }
+
+    RenderPass &RenderPass::renderArea(int32_t x, int32_t y, uint32_t width, uint32_t height) {
+        renderArea(vk::Rect2D{vk::Offset2D{x, y}, vk::Extent2D{width, height}});
+        return *this;
+    }
+
+    RenderPass &RenderPass::renderAreaOffset(vk::Offset2D offset) {
+        mBeginInfo.renderArea.setOffset(offset);
+        return *this;
+    }
+
+    RenderPass &RenderPass::renderAreaOffset(int32_t x, int32_t y) {
+        renderAreaOffset(vk::Offset2D{x, y});
+        return *this;
+    }
+
+    RenderPass &RenderPass::renderAreaExtend(vk::Extent2D extent) {
+        mBeginInfo.renderArea.setExtent(extent);
+        return *this;
+    }
+
+    RenderPass &RenderPass::renderAreaExtend(uint32_t width, uint32_t height) {
+        renderAreaExtend(vk::Extent2D{width, height});
+        return *this;
+    }
+
+    RenderPass &RenderPass::subpassContents(vk::SubpassContents subpassContents) {
+        mSubpassContents = subpassContents;
+        return *this;
+    }
+
+    RenderPass &RenderPass::clearValues(std::vector<vk::ClearValue> clearValues) {
+        mClearValues = std::move(clearValues);
+        mBeginInfo.setClearValues(mClearValues);
+        return *this;
+    }
+
+    RenderPass &RenderPass::clearValue(size_t index, vk::ClearValue clearValue) {
+        mClearValues[index] = clearValue;
+        return *this;
+    }
+
+    void RenderPass::execute(const vk::CommandBuffer &commandBuffer, const vk::Framebuffer &framebuffer, std::function<void(const vk::CommandBuffer &commandBuffer)> handler) {
+        mBeginInfo.setFramebuffer(framebuffer);
+        commandBuffer.beginRenderPass(&mBeginInfo, mSubpassContents);
+        handler(commandBuffer);
+        commandBuffer.endRenderPass();
     }
 }

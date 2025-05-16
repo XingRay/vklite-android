@@ -16,12 +16,17 @@ namespace vklite {
               mStencilLoadOp(vk::AttachmentLoadOp::eDontCare),
               mStencilStoreOp(vk::AttachmentStoreOp::eDontCare),
               mInitialLayout(vk::ImageLayout::eUndefined),
-              mFinalLayout(vk::ImageLayout::eUndefined) {};
+              mFinalLayout(vk::ImageLayout::eUndefined),
+              mClearValue(vk::ClearValue{}) {};
 
     Attachment::~Attachment() = default;
 
     uint32_t Attachment::getIndex() const {
         return mIndex;
+    }
+
+    vk::ClearValue Attachment::getClearValue() const {
+        return mClearValue;
     }
 
     Attachment &Attachment::format(vk::Format format) {
@@ -136,6 +141,40 @@ namespace vklite {
         return *this;
     }
 
+    Attachment &Attachment::clearColorValue(vk::ClearColorValue value) {
+        mClearValue = vk::ClearValue(value);
+        return *this;
+    }
+
+    Attachment &Attachment::clearColorValue(const std::array<float, 4> &value) {
+        clearColorValue(vk::ClearColorValue(value));
+        return *this;
+    }
+
+    Attachment &Attachment::clearColorValue(const std::vector<float> &value) {
+        clearColorValue(std::array<float, 4>{value[0], value[1], value[2], value[3]});
+        return *this;
+    }
+
+    Attachment &Attachment::clearDepthStencilValue(vk::ClearDepthStencilValue value) {
+        mClearValue = vk::ClearValue(value);
+        return *this;
+    }
+
+    Attachment &Attachment::clearDepthValue(float value) {
+        vk::ClearDepthStencilValue depthValue;
+        depthValue.setDepth(value);
+        clearDepthStencilValue(depthValue);
+        return *this;
+    }
+
+    Attachment &Attachment::clearStencilValue(uint32_t value) {
+        vk::ClearDepthStencilValue depthValue;
+        depthValue.setStencil(value);
+        clearDepthStencilValue(depthValue);
+        return *this;
+    }
+
     vk::AttachmentDescription Attachment::createAttachmentDescription() const {
         vk::AttachmentDescription attachmentDescription{};
 
@@ -158,10 +197,10 @@ namespace vklite {
         attachment
 //                .setFormat(displayFormat)
 //                .setSamples(sampleCountFlagBits)
-                //载入图像前将帧缓冲清0
+                //载入图像前将帧缓冲设置为 ClearValue, 需要配置 ClearValues
                 .loadOp(vk::AttachmentLoadOp::eClear)
                         // 渲染图像之后将图像数据保存
-                .storeOp(vk::AttachmentStoreOp::eStore)
+                .storeOp(vk::AttachmentStoreOp::eDontCare)
                         // 模版缓冲, 这里不关注
                 .stencilLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .stencilStoreOp(vk::AttachmentStoreOp::eDontCare)
@@ -199,7 +238,7 @@ namespace vklite {
 //                .setFormat(displayFormat)
                 .sampleCount(vk::SampleCountFlagBits::e1)
                 .loadOp(vk::AttachmentLoadOp::eClear)
-                .storeOp(vk::AttachmentStoreOp::eStore)
+                .storeOp(vk::AttachmentStoreOp::eDontCare)
                 .stencilLoadOp(vk::AttachmentLoadOp::eDontCare)
                 .stencilStoreOp(vk::AttachmentStoreOp::eDontCare)
                 .initialLayout(vk::ImageLayout::eUndefined)

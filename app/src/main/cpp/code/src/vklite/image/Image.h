@@ -6,7 +6,7 @@
 
 #include "vulkan/vulkan.hpp"
 #include "vklite/device/Device.h"
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandPool.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/image/ImageInterface.h"
 

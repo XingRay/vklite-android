@@ -2,7 +2,7 @@
 // Created by leixing on 2024/12/30.
 //
 
-#include "vklite/command/CommandPool.h"
+#include "vklite/command_buffer/CommandPool.h"
 #include "vklite/Log.h"
 
 namespace vklite {

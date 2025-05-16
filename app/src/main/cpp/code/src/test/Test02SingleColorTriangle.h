@@ -36,7 +36,7 @@ namespace test02 {
         //config
         const int mFrameCount = 2;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
-        const std::array<float, 4> mDepthStencil = {1.0f, 0, 0, 0};
+        const float mClearDepth = 1.0f;
         bool mMsaaEnable = false;
         bool mDepthTestEnable = false;
 
