@@ -226,14 +226,17 @@ namespace test02 {
                 .build(*mDevice);
         mVertexBuffer->update(*mCommandPool, vertices);
 
-        mPipelineResources = vklite::PipelineResourceBuilder()
-                .addVertexBuffer(*mVertexBuffer)
-                .indexBuffer(*mIndexBuffer)
-                .indicesCount(indices.size())
-                .descriptorSet([&](uint32_t frameIndex) {
-                    return mDescriptorPool->allocateDescriptorSets(descriptorSetLayouts);
+        mPipelineResources = vklite::PipelineResourcesBuilder()
+                .frameCount(mFrameCount)
+                .pipelineResourceBuilder([&](uint32_t frameIndex) {
+                    return vklite::PipelineResourceBuilder()
+                            .addVertexBuffer(*mVertexBuffer)
+                            .indexBuffer(*mIndexBuffer)
+                            .indicesCount(indices.size())
+                            .descriptorSets(mDescriptorPool->allocateDescriptorSets(descriptorSetLayouts))
+                            .build();
                 })
-                .build(mFrameCount);
+                .build();
 
         for (int i = 0; i < mFrameCount; i++) {
             mUniformBuffers.push_back(vklite::UniformBufferBuilder().build(*mDevice, sizeof(ColorUniformBufferObject)));

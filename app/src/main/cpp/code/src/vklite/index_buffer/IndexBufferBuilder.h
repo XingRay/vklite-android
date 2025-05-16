@@ -13,6 +13,7 @@ namespace vklite {
     class IndexBufferBuilder {
     private:
         vk::DeviceSize mBufferSize;
+        vk::IndexType mIndexType;
 
     public:
         IndexBufferBuilder();
@@ -20,6 +21,8 @@ namespace vklite {
         ~IndexBufferBuilder();
 
         IndexBufferBuilder &bufferSize(vk::DeviceSize bufferSize);
+
+        IndexBufferBuilder & indexType(vk::IndexType indexType);
 
         [[nodiscard]]
         std::unique_ptr<IndexBuffer> build(const Device &device) const;

@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "vklite/push_constant/PushConstant.h"
+
 /**
  * resources for a frame used in pipeline
  * resources: uniform buffer, vk::ImageView ...
@@ -29,7 +30,12 @@ namespace vklite {
 
     public:
 
-        PipelineResource();
+        PipelineResource(std::vector<vk::Buffer> &&vertexBuffers,
+                         std::vector<vk::DeviceSize> &&vertexBufferOffsets,
+                         vk::Buffer indexBuffer,
+                         vk::DeviceSize indexBufferOffset,
+                         uint32_t indicesCount,
+                         std::vector<vk::DescriptorSet> &&descriptorSets);
 
         ~PipelineResource();
 
@@ -43,21 +49,21 @@ namespace vklite {
         const vk::Buffer &getIndexBuffer() const;
 
         [[nodiscard]]
+        vk::DeviceSize getIndexBufferOffset() const;
+
+        [[nodiscard]]
         uint32_t getIndicesCount() const;
 
         [[nodiscard]]
         const std::vector<vk::DescriptorSet> &getDescriptorSets() const;
+
+//        PipelineResource &addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
 //
-//        [[nodiscard]]
-//        const std::vector<PushConstant> &getPushConstants() const;
-
-        PipelineResource &addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
-
-        PipelineResource &indexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
-
-        PipelineResource &indicesCount(uint32_t indicesCount);
-
-        PipelineResource &descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets);
+//        PipelineResource &indexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
+//
+//        PipelineResource &indicesCount(uint32_t indicesCount);
+//
+//        PipelineResource &descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets);
     };
 
 } // vklite

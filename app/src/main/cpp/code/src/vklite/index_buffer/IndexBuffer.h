@@ -13,6 +13,7 @@ namespace vklite {
     class IndexBuffer {
     private:
         DeviceLocalBuffer mIndexBuffer;
+        vk::IndexType mIndexType;
         uint32_t mIndicesCount;
 
         StagingBuffer mStagingBuffer;
@@ -24,6 +25,9 @@ namespace vklite {
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
+
+        [[nodiscard]]
+        vk::IndexType getIndexType() const;
 
         [[nodiscard]]
         const vk::DeviceMemory &getDeviceMemory() const;

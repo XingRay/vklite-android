@@ -6,44 +6,42 @@
 
 #include <cstdint>
 #include <vector>
-#include <functional>
+#include <memory>
 
 #include "vklite/pipeline/pipeline_resource/PipelineResource.h"
 #include "vklite/vertex_buffer/VertexBuffer.h"
 #include "vklite/index_buffer/IndexBuffer.h"
 #include "vklite/pipeline/pipeline_resource/VertexBufferInfo.h"
+#include "vklite/pipeline/pipeline_resource/IndexBufferInfo.h"
 
 namespace vklite {
 
     class PipelineResourceBuilder {
     private:
-        std::vector<std::function<VertexBufferInfo(uint32_t)>> mVertexBufferInfoProviders;
-        std::function<IndexBuffer &(uint32_t)> mIndexBufferProvider;
+        std::vector<VertexBufferInfo> mVertexBufferInfos;
+        std::unique_ptr<IndexBufferInfo> mIndexBufferInfo;
         uint32_t mIndicesCount;
-
-        std::function<std::vector<vk::DescriptorSet>(uint32_t frameIndex)> mDescriptorSetProvider;
+        std::vector<vk::DescriptorSet> mDescriptorSets;
 
     public:
         PipelineResourceBuilder();
 
         ~PipelineResourceBuilder();
 
-        PipelineResourceBuilder &addVertexBuffer(VertexBuffer &vertexBuffer, vk::DeviceSize offset = 0);
-
-        PipelineResourceBuilder &addVertexBuffer(std::function<VertexBufferInfo(uint32_t frameIndex)> &&vertexBufferInfoProvider);
-
         PipelineResourceBuilder &addVertexBuffer(const VertexBufferInfo &vertexBufferInfo);
 
-        PipelineResourceBuilder &indexBuffer(std::function<IndexBuffer &(uint32_t frameIndex)> &&indexBufferProvider);
+        PipelineResourceBuilder &addVertexBuffer(const VertexBuffer &vertexBuffer, vk::DeviceSize offset = 0);
 
-        PipelineResourceBuilder &indexBuffer(IndexBuffer &indexBuffer);
+        PipelineResourceBuilder &indexBuffer(const IndexBufferInfo &indexBufferInfo);
+
+        PipelineResourceBuilder &indexBuffer(const IndexBuffer &indexBuffer, vk::DeviceSize offset = 0);
 
         PipelineResourceBuilder &indicesCount(uint32_t indicesCount);
 
-        PipelineResourceBuilder &descriptorSet(std::function<std::vector<vk::DescriptorSet>(uint32_t frameIndex)> &&descriptorSetProvider);
+        PipelineResourceBuilder &descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets);
 
         [[nodiscard]]
-        std::vector<PipelineResource> build(uint32_t frameCount);
+        PipelineResource build();
     };
 
 } // vklite

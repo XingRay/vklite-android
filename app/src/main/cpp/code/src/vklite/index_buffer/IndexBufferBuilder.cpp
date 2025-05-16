@@ -7,12 +7,17 @@
 namespace vklite {
 
     IndexBufferBuilder::IndexBufferBuilder()
-            : mBufferSize(0) {}
+            : mBufferSize(0), mIndexType(vk::IndexType::eUint32) {}
 
     IndexBufferBuilder::~IndexBufferBuilder() = default;
 
     IndexBufferBuilder &IndexBufferBuilder::bufferSize(vk::DeviceSize bufferSize) {
         mBufferSize = bufferSize;
+        return *this;
+    }
+
+    IndexBufferBuilder &IndexBufferBuilder::indexType(vk::IndexType indexType) {
+        mIndexType = indexType;
         return *this;
     }
 
