@@ -71,8 +71,6 @@ namespace test03 {
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 
-        std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
-
     public:
         // 构造函数初始化基类 TestBase，并传递 name
         explicit Test03ColoredTriangle(const android_app &app, const std::string &name);

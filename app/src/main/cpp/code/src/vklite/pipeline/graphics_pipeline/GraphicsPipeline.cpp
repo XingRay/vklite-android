@@ -222,20 +222,20 @@ namespace vklite {
         commandBuffer.bindVertexBuffers(0, pipelineResource.getVertexBuffers(), pipelineResource.getVertexBufferOffsets());
 
         // index buffer
-        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), 0, vk::IndexType::eUint32);
+        commandBuffer.bindIndexBuffer(pipelineResource.getIndexBuffer(), pipelineResource.getIndexBufferOffset(), pipelineResource.getIndexType());
 
         // uniform/sampler/storage/...
         commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout.getPipelineLayout(), 0, pipelineResource.getDescriptorSets(), nullptr);
 
         // push constants
-//        const std::vector<PushConstant> &pushConstants = pipelineResource.getPushConstants();
-//        for (const PushConstant &pushConstant: pushConstants) {
-//            commandBuffer.pushConstants(mPipelineLayout->getPipelineLayout(),
-//                                        pushConstant.getStageFlags(),
-//                                        pushConstant.getOffset(),
-//                                        pushConstant.getSize(),
-//                                        pushConstant.getData());
-//        }
+        const std::vector<PushConstant> &pushConstants = pipelineResource.getPushConstants();
+        for (const PushConstant &pushConstant: pushConstants) {
+            commandBuffer.pushConstants(pipelineLayout.getPipelineLayout(),
+                                        pushConstant.getStageFlags(),
+                                        pushConstant.getOffset(),
+                                        pushConstant.getSize(),
+                                        pushConstant.getData());
+        }
 
         // draw call
         /**

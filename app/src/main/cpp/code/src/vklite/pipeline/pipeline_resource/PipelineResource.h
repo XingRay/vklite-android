@@ -19,13 +19,20 @@ namespace vklite {
     class PipelineResource {
     private:
 
+        // vertex buffer
         std::vector<vk::Buffer> mVertexBuffers;
         std::vector<vk::DeviceSize> mVertexBufferOffsets;
 
+        // index buffer
         vk::Buffer mIndexBuffer;
         vk::DeviceSize mIndexBufferOffset;
+        vk::IndexType mIndexType;
         uint32_t mIndicesCount;
 
+        // push constants
+        std::vector<PushConstant> mPushConstants;
+
+        // descriptor set
         std::vector<vk::DescriptorSet> mDescriptorSets;
 
     public:
@@ -34,7 +41,9 @@ namespace vklite {
                          std::vector<vk::DeviceSize> &&vertexBufferOffsets,
                          vk::Buffer indexBuffer,
                          vk::DeviceSize indexBufferOffset,
+                         vk::IndexType indexType,
                          uint32_t indicesCount,
+                         std::vector<PushConstant> &&pushConstants,
                          std::vector<vk::DescriptorSet> &&descriptorSets);
 
         ~PipelineResource();
@@ -52,18 +61,18 @@ namespace vklite {
         vk::DeviceSize getIndexBufferOffset() const;
 
         [[nodiscard]]
+        vk::IndexType getIndexType() const;
+
+        [[nodiscard]]
         uint32_t getIndicesCount() const;
+
+        [[nodiscard]]
+        const std::vector<PushConstant> &getPushConstants() const;
 
         [[nodiscard]]
         const std::vector<vk::DescriptorSet> &getDescriptorSets() const;
 
-//        PipelineResource &addVertexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
-//
-//        PipelineResource &indexBuffer(vk::Buffer buffer, vk::DeviceSize offset);
-//
-//        PipelineResource &indicesCount(uint32_t indicesCount);
-//
-//        PipelineResource &descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets);
+        PipelineResource& updatePushConstant(uint32_t index, const void *data, uint32_t size);
     };
 
 } // vklite

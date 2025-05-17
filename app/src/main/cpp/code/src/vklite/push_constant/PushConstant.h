@@ -13,17 +13,33 @@ namespace vklite {
 
     class PushConstant {
     private:
-        std::vector<uint8_t> mPushConstants;
-
-        vk::ShaderStageFlags mStageFlags;
+        std::vector<uint8_t> mData;
         uint32_t mOffset;
-        uint32_t mSize;
-        const void *mData;
+        vk::ShaderStageFlags mStageFlags;
 
     public:
-        explicit PushConstant(uint32_t size);
+
+        PushConstant(const void *data, uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags);
+
+        PushConstant(const void *data, uint32_t size, vk::ShaderStageFlags stageFlags);
+
+        PushConstant(const void *data, uint32_t size);
+
+        PushConstant(std::vector<uint8_t> &&data, uint32_t offset, vk::ShaderStageFlags stageFlags);
+
+        PushConstant(std::vector<uint8_t> &&data, vk::ShaderStageFlags stageFlags);
+
+        explicit PushConstant(std::vector<uint8_t> &&data);
 
         ~PushConstant();
+
+        PushConstant(const PushConstant &other);
+
+        PushConstant &operator=(const PushConstant &other);
+
+        PushConstant(PushConstant &&other) noexcept;
+
+        PushConstant &operator=(PushConstant &&other) noexcept;
 
         void update(const void *data, uint32_t size);
 

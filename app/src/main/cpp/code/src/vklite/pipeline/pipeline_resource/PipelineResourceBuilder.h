@@ -18,9 +18,18 @@ namespace vklite {
 
     class PipelineResourceBuilder {
     private:
+
+        // index buffer
         std::vector<VertexBufferInfo> mVertexBufferInfos;
+
+        // index buffer
         std::unique_ptr<IndexBufferInfo> mIndexBufferInfo;
         uint32_t mIndicesCount;
+
+        // push constants
+        std::vector<PushConstant> mPushConstants;
+
+        // descriptor set
         std::vector<vk::DescriptorSet> mDescriptorSets;
 
     public:
@@ -37,6 +46,8 @@ namespace vklite {
         PipelineResourceBuilder &indexBuffer(const IndexBuffer &indexBuffer, vk::DeviceSize offset = 0);
 
         PipelineResourceBuilder &indicesCount(uint32_t indicesCount);
+
+        PipelineResourceBuilder &addPushConstant(PushConstant &&pushConstant);
 
         PipelineResourceBuilder &descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets);
 

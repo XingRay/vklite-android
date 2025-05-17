@@ -11,13 +11,17 @@ namespace vklite {
                                        std::vector<vk::DeviceSize> &&vertexBufferOffsets,
                                        vk::Buffer indexBuffer,
                                        vk::DeviceSize indexBufferOffset,
+                                       vk::IndexType indexType,
                                        uint32_t indicesCount,
+                                       std::vector<PushConstant> &&pushConstants,
                                        std::vector<vk::DescriptorSet> &&descriptorSets)
             : mVertexBuffers(std::move(vertexBuffers)),
               mVertexBufferOffsets(std::move(vertexBufferOffsets)),
               mIndexBuffer(indexBuffer),
               mIndexBufferOffset(indexBufferOffset),
+              mIndexType(indexType),
               mIndicesCount(indicesCount),
+              mPushConstants(std::move(pushConstants)),
               mDescriptorSets(std::move(descriptorSets)) {}
 
     PipelineResource::~PipelineResource() = default;
@@ -38,12 +42,25 @@ namespace vklite {
         return mIndexBufferOffset;
     }
 
+    vk::IndexType PipelineResource::getIndexType() const {
+        return mIndexType;
+    }
+
     uint32_t PipelineResource::getIndicesCount() const {
         return mIndicesCount;
     }
 
+    const std::vector<PushConstant> &PipelineResource::getPushConstants() const {
+        return mPushConstants;
+    }
+
     const std::vector<vk::DescriptorSet> &PipelineResource::getDescriptorSets() const {
         return mDescriptorSets;
+    }
+
+    PipelineResource &PipelineResource::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
+        mPushConstants[index].update(data, size);
+        return *this;
     }
 
 //    const std::vector<PushConstant> &PipelineResource::getPushConstants() const {

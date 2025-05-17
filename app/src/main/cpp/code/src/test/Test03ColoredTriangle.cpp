@@ -228,14 +228,6 @@ namespace test03 {
                 })
                 .build();
 
-//                .addVertexBuffer(*mVertexBuffer)
-//                .indexBuffer(*mIndexBuffer)
-//                .indicesCount(indices.size())
-//                .descriptorSet([&](uint32_t frameIndex) {
-//                    return mDescriptorPool->allocateDescriptorSets(descriptorSetLayouts);
-//                })
-//                .build(mFrameCount);
-
         LOG_D("test created ");
     }
 

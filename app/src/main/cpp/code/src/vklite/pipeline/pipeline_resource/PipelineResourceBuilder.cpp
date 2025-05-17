@@ -36,6 +36,11 @@ namespace vklite {
         return *this;
     }
 
+    PipelineResourceBuilder &PipelineResourceBuilder::addPushConstant(PushConstant &&pushConstant){
+        mPushConstants.push_back(std::move(pushConstant));
+        return *this;
+    }
+
     PipelineResourceBuilder &PipelineResourceBuilder::descriptorSets(std::vector<vk::DescriptorSet> &&descriptorSets) {
         mDescriptorSets = std::move(descriptorSets);
         return *this;
@@ -56,12 +61,15 @@ namespace vklite {
 //                                mIndexBufferInfo->getIndexBuffer().getBuffer(),
 //                                mIndexBufferInfo->getOffset(),
 //                                mIndicesCount,
+//                                std::move(mPushConstants),
 //                                std::move(mDescriptorSets));
         return {std::move(vertexBuffers),
                 std::move(vertexBufferOffsets),
                 mIndexBufferInfo->getIndexBuffer().getBuffer(),
                 mIndexBufferInfo->getOffset(),
+                mIndexBufferInfo->getIndexBuffer().getIndexType(),
                 mIndicesCount,
+                std::move(mPushConstants),
                 std::move(mDescriptorSets)};
     }
 
