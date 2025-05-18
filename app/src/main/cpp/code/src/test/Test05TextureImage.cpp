@@ -40,21 +40,6 @@ namespace test05 {
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/05_texture_image.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/05_texture_image.frag.spv");
 
-        // x轴朝右, y轴朝下, z轴朝前, 右手系 (x,y)->z
-//        std::vector<Vertex> vertices = {
-//                // 底部
-//                {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}}, // 左上角
-//                {{1.0f,  -1.0f, -1.0f}, {1.0f, 0.0f}}, // 右上角
-//                {{-1.0f, 1.0f,  -1.0f}, {0.0f, 1.0f}}, // 左下角
-//                {{1.0f,  1.0f,  -1.0f}, {1.0f, 1.0f}}, // 右下角
-//
-//                //顶部
-//                {{-1.0f, -1.0f, 1.0f}, {0.0f, 0.0f}}, // 左上角
-//                {{1.0f,  -1.0f, 1.0f}, {1.0f, 0.0f}}, // 右上角
-//                {{-1.0f, 1.0f,  1.0f}, {0.0f, 1.0f}}, // 左下角
-//                {{1.0f,  1.0f,  1.0f}, {1.0f, 1.0f}}, // 右下角
-//        };
-
         std::vector<Vertex> vertices = {
                 // 前表面 (Z轴正方向)
                 {{-1.0f, -1.0f, 1.0f},  {0.0f, 0.0f}}, // 左下
@@ -108,31 +93,6 @@ namespace test05 {
                 20, 21, 22, 22, 23, 20
         };
 
-//        std::vector<uint32_t> indices = {
-//                // 底面
-//                0, 2, 1,
-//                1, 2, 3,
-//
-//                //上面
-//                4, 6, 5,
-//                5, 6, 7,
-//
-//                //左面
-//                4, 0, 6,
-//                2, 6, 0,
-//
-//                //右面
-//                7, 3, 5,
-//                1, 5, 3,
-//
-//                //前面
-//                6, 2, 7,
-//                3, 7, 2,
-//
-//                //后面
-//                5, 1, 4,
-//                0, 4, 1,
-//        };
 
         mMvpMatrix = MvpMatrix{};
         float scale = 1.0f;
