@@ -3,8 +3,7 @@
 //
 
 #include "GraphicsPipelineBuilder.h"
-#include "vklite/shader/VulkanShaderModule.h"
-#include "vklite/pipeline/descriptor/old/DescriptorBindingSets.h"
+#include "vklite/shader/ShaderModule.h"
 
 namespace vklite {
 
@@ -57,8 +56,8 @@ namespace vklite {
                                                     const std::vector<vk::Viewport> &viewports,
                                                     const std::vector<vk::Rect2D> &scissors) {
         // shader code
-        VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);
-        VulkanShaderModule fragmentShaderModule = VulkanShaderModule(device, mFragmentShaderCode);
+        ShaderModule vertexShaderModule = ShaderModule(device, mVertexShaderCode);
+        ShaderModule fragmentShaderModule = ShaderModule(device, mFragmentShaderCode);
 
         // vertex buffer description
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
@@ -94,8 +93,8 @@ namespace vklite {
                                                                            const std::vector<vk::Rect2D> &scissors) {
 
         // shader code
-        VulkanShaderModule vertexShaderModule = VulkanShaderModule(device, mVertexShaderCode);
-        VulkanShaderModule fragmentShaderModule = VulkanShaderModule(device, mFragmentShaderCode);
+        ShaderModule vertexShaderModule = ShaderModule(device, mVertexShaderCode);
+        ShaderModule fragmentShaderModule = ShaderModule(device, mFragmentShaderCode);
 
         // vertex buffer description
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();

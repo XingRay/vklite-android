@@ -7,7 +7,7 @@
 
 namespace vklite {
     ComputePipeline::ComputePipeline(const Device &device,
-                                     const VulkanShaderModule &computeShaderModule,
+                                     const ShaderModule &computeShaderModule,
                                      const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
                                      const std::vector<vk::PushConstantRange> &pushConstantRanges)
             : mDevice(device) {

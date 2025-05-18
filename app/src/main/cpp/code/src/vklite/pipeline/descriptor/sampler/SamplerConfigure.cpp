@@ -3,7 +3,6 @@
 //
 
 #include "SamplerConfigure.h"
-#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/sampler/SamplerBuilder.h"

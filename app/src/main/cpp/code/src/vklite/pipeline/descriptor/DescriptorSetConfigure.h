@@ -11,8 +11,6 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/device/Device.h"
-#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
-#include "vklite/pipeline/descriptor/old/DescriptorBindingSet.h"
 #include "vklite/pipeline/descriptor/uniform/UniformConfigure.h"
 #include "vklite/pipeline/descriptor/sampler/SamplerConfigure.h"
 #include "vklite/pipeline/descriptor/immutable_sampler/ImmutableSamplerConfigure.h"

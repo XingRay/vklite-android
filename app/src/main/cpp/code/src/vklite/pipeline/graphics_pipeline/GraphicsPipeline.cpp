@@ -9,8 +9,8 @@ namespace vklite {
 
     GraphicsPipeline::GraphicsPipeline(const Device &device,
                                        const RenderPass &renderPass,
-                                       const VulkanShaderModule &vertexShaderModule,
-                                       const VulkanShaderModule &fragmentShaderModule,
+                                       const ShaderModule &vertexShaderModule,
+                                       const ShaderModule &fragmentShaderModule,
                                        const std::vector<vk::VertexInputBindingDescription> &vertexInputBindingDescriptions,
                                        const std::vector<vk::VertexInputAttributeDescription> &vertexInputAttributeDescriptions,
                                        const PipelineLayout &pipelineLayout,

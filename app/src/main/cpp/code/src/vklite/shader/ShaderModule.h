@@ -10,15 +10,15 @@
 
 namespace vklite {
 
-    class VulkanShaderModule {
+    class ShaderModule {
         const Device &mDevice;
 
         vk::ShaderModule mShaderModule;
 
     public:
-        VulkanShaderModule(const Device &device, const std::vector<uint32_t> &code);
+        ShaderModule(const Device &device, const std::vector<uint32_t> &code);
 
-        ~VulkanShaderModule();
+        ~ShaderModule();
 
         const vk::ShaderModule &getShaderModule() const;
     };

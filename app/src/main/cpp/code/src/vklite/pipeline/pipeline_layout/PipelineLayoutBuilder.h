@@ -7,7 +7,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/configure/push_constants/PushConstantConfigure.h"
 #include "vklite/pipeline/descriptor/DescriptorSetConfigure.h"
@@ -27,10 +26,10 @@ namespace vklite {
         PipelineLayoutBuilder &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
 
         [[nodiscard]]
-        PipelineLayout build(const Device &device, const std::vector<vk::DescriptorSetLayout>& descriptorSetLayouts) const;
+        PipelineLayout build(const Device &device, const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts) const;
 
         [[nodiscard]]
-        std::unique_ptr<PipelineLayout> buildUnique(const Device &device, const std::vector<vk::DescriptorSetLayout>& descriptorSetLayouts) const;
+        std::unique_ptr<PipelineLayout> buildUnique(const Device &device, const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts) const;
     };
 
 } // vklite

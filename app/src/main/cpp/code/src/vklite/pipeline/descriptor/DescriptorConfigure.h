@@ -7,7 +7,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/configure/push_constants/PushConstantConfigure.h"
 #include "vklite/pipeline/descriptor/DescriptorSetConfigure.h"

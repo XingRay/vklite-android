@@ -2,11 +2,11 @@
 // Created by leixing on 2025/3/10.
 //
 
-#include "VulkanShaderModule.h"
+#include "ShaderModule.h"
 
 namespace vklite {
 
-    VulkanShaderModule::VulkanShaderModule(const Device &device, const std::vector<uint32_t> &code)
+    ShaderModule::ShaderModule(const Device &device, const std::vector<uint32_t> &code)
             : mDevice(device) {
         vk::ShaderModuleCreateInfo createInfo;
         createInfo
@@ -15,11 +15,11 @@ namespace vklite {
         mShaderModule = device.getDevice().createShaderModule(createInfo);
     }
 
-    VulkanShaderModule::~VulkanShaderModule() {
+    ShaderModule::~ShaderModule() {
         mDevice.getDevice().destroy(mShaderModule);
     }
 
-    const vk::ShaderModule &VulkanShaderModule::getShaderModule() const {
+    const vk::ShaderModule &ShaderModule::getShaderModule() const {
         return mShaderModule;
     }
 

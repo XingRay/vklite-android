@@ -3,7 +3,6 @@
 //
 
 #include "UniformConfigure.h"
-#include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 
 namespace vklite {
 
