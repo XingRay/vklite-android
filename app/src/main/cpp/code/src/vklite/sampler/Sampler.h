@@ -13,7 +13,7 @@
 
 namespace vklite {
 
-    class DefaultSampler : public SamplerInterface {
+    class Sampler : public SamplerInterface {
     private:
         const Device &mDevice;
 
@@ -21,9 +21,9 @@ namespace vklite {
 
     public:
 
-        DefaultSampler(const Device &device, float maxLoad);
+        Sampler(const Device &device, float maxLoad);
 
-        ~DefaultSampler() override;
+        ~Sampler() override;
 
         [[nodiscard]]
         const vk::Sampler &getSampler() const override;

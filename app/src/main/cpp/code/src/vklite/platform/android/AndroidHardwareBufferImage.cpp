@@ -153,25 +153,4 @@ namespace vklite {
         return mDeviceMemory;
     }
 
-//    const vk::ImageView &AndroidHardwareBufferImage::getImageView() const {
-//        return mImageView;
-//    }
-
-    vk::Format AndroidHardwareBufferImage::getFormat() const {
-        return vk::Format::eUndefined;
-    }
-
-    [[nodiscard]]
-    uint32_t AndroidHardwareBufferImage::getMipLevels() const {
-        return 0;
-    }
-
-    void AndroidHardwareBufferImage::transitionImageLayout(const CommandPool &commandPool) {
-
-    }
-
-    void AndroidHardwareBufferImage::update(const CommandPool &commandPool, const void *data, uint32_t size) {
-
-    }
-
 } // vklite

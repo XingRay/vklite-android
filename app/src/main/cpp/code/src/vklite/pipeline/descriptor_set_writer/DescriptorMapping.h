@@ -9,8 +9,9 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/pipeline/descriptor_set_writer/BufferInfo.h"
-#include "vklite/pipeline/descriptor_set_writer/ImageInfo.h"
+#include "vklite/buffer/BufferInterface.h"
+#include "vklite/sampler/SamplerInterface.h"
+#include "vklite/image_view/ImageViewInterface.h"
 
 namespace vklite {
 
@@ -53,6 +54,8 @@ namespace vklite {
         [[nodiscard]]
         std::optional<std::reference_wrapper<const std::vector<vk::DescriptorImageInfo>>> getDescriptorImageInfos() const;
 
+
+        // basic info
         DescriptorMapping &descriptorSet(vk::DescriptorSet descriptorSet);
 
         DescriptorMapping &binding(uint32_t binding);
@@ -63,13 +66,21 @@ namespace vklite {
 
         DescriptorMapping &descriptorType(vk::DescriptorType descriptorType);
 
+
+        // add buffer info
         DescriptorMapping &addBufferInfo(vk::DescriptorBufferInfo bufferInfo);
 
         DescriptorMapping &addBufferInfo(vk::Buffer buffer, vk::DeviceSize offset, vk::DeviceSize range);
 
-        DescriptorMapping &addBufferInfo(const vklite::BufferInterface &bufferInterface);
+        DescriptorMapping &addBufferInfo(const BufferInterface &bufferInterface);
 
+
+        // add image info
         DescriptorMapping &addImageInfo(vk::DescriptorImageInfo imageInfo);
+
+        DescriptorMapping &addImageInfo(vk::Sampler sampler, vk::ImageView imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
+
+        DescriptorMapping &addImageInfo(const SamplerInterface &sampler, const ImageViewInterface &imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
     };
 
 } // vklite

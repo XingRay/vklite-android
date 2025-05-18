@@ -6,8 +6,8 @@
 
 #include <memory>
 
-#include "vklite/buffer/device_local/DeviceLocalUniformBuffer.h"
-#include "BufferBuilderInterface.h"
+#include "UniformBuffer.h"
+#include "vklite/buffer/BufferBuilderInterface.h"
 
 namespace vklite {
 

@@ -2,12 +2,12 @@
 // Created by leixing on 2025/1/7.
 //
 
-#include "DefaultSampler.h"
+#include "Sampler.h"
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
-    DefaultSampler::DefaultSampler(const Device &device, float maxLoad)
+    Sampler::Sampler(const Device &device, float maxLoad)
             : mDevice(device) {
 
         vk::SamplerCreateInfo samplerCreateInfo;
@@ -35,13 +35,13 @@ namespace vklite {
         mSampler = mDevice.getDevice().createSampler(samplerCreateInfo);
     }
 
-    DefaultSampler::~DefaultSampler() {
+    Sampler::~Sampler() {
         const vk::Device& vkDevice = mDevice.getDevice();
 
         vkDevice.destroy(mSampler);
     }
 
-    const vk::Sampler &DefaultSampler::getSampler() const {
+    const vk::Sampler &Sampler::getSampler() const {
         return mSampler;
     }
 

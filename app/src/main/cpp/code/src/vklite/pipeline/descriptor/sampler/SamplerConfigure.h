@@ -9,25 +9,16 @@
 
 #include "vulkan/vulkan.hpp"
 
-#include "image/ImageInterface.h"
-#include "vklite/pipeline/descriptor/old/DescriptorImageInfoConfigure.h"
+#include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
 
 namespace vklite {
 
-//    class VulkanDescriptorBindingConfigure;
-
-//    class VulkanDescriptorSetConfigure;
 
     class SamplerConfigure {
-//        friend VulkanDescriptorSetConfigure;
-
     private:
         uint32_t mBinding;
-        uint32_t mDescriptorOffset;
-        uint32_t mDescriptorRange;
         vk::ShaderStageFlags mShaderStageFlags;
-
-        std::unique_ptr<DescriptorImageInfoConfigure> mDescriptorImageInfoConfigure;
+        uint32_t mDescriptorCount;
 
     public:
         SamplerConfigure();
@@ -36,18 +27,13 @@ namespace vklite {
 
         SamplerConfigure &binding(uint32_t binding);
 
-        SamplerConfigure &descriptorOffset(uint32_t offset);
-
-        SamplerConfigure &descriptorRange(uint32_t range);
-
         SamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 
-        SamplerConfigure &setImage(std::unique_ptr<vklite::ImageInterface> &&image);
+        SamplerConfigure &descriptorCount(uint32_t descriptorCount);
 
-    private:
+        [[nodiscard]]
+        DescriptorBindingConfigure createDescriptorBindingConfigure() const;
 
-//        [[nodiscard]]
-//        std::unique_ptr<VulkanDescriptorBindingConfigure> createVulkanDescriptorBindingConfigure();
     };
 
 } // vklite

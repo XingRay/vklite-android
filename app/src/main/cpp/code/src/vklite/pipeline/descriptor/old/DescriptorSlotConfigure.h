@@ -10,7 +10,7 @@
 
 #include "vklite/sampler/SamplerInterface.h"
 
-#include "vklite/buffer/UniformBufferBuilder.h"
+#include "vklite/uniform_buffer/UniformBufferBuilder.h"
 #include "vklite/pipeline/descriptor/old/DescriptorImageInfoConfigure.h"
 #include "vklite/pipeline/descriptor/old/DescriptorImmutableSamplerConfigure.h"
 

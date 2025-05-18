@@ -19,16 +19,6 @@ namespace vklite {
 
         [[nodiscard]]
         virtual const vk::Image &getImage() const = 0;
-
-        [[nodiscard]]
-        virtual vk::Format getFormat() const = 0;
-
-        [[nodiscard]]
-        virtual uint32_t getMipLevels() const = 0;
-
-        virtual void transitionImageLayout(const CommandPool &commandPool) = 0;
-
-        virtual void update(const CommandPool &commandPool, const void *data, uint32_t size) = 0;
     };
 
 } // vklite

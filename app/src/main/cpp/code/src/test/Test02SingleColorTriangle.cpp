@@ -90,20 +90,27 @@ namespace test02 {
                     .height(mSwapchain->getDisplaySize().height)
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
-                    .build(*mDevice);
+                    .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                    .format(mSwapchain->getDisplayFormat())
                     .build(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
-            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+            vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
+
+            std::unique_ptr<vklite::Image> depthImage = vklite::ImageBuilder::depthImageBuilder()
                     .width(mSwapchain->getDisplaySize().width)
                     .height(mSwapchain->getDisplaySize().height)
-                    .format(mPhysicalDevice->findDepthFormat())
+                    .format(depthFormat)
                     .sampleCount(sampleCount)
-                    .build(*mDevice);
-            mDepthImage->transitionImageLayout(*mCommandPool);
+                    .buildUnique(*mDevice);
+            depthImage->transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
+                                              vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
+            mDepthImage = std::move(depthImage);
+
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                    .format(depthFormat)
                     .build(*mDevice, *mDepthImage);
         }
 

@@ -31,7 +31,7 @@ namespace vklite {
     }
 
     std::unique_ptr<ImageView> ImageViewBuilder::build(const Device &device, const ImageInterface &image) {
-        return std::make_unique<ImageView>(device, image.getImage(), image.getFormat(), mImageAspect, mLevelCount);
+        return std::make_unique<ImageView>(device, image.getImage(), mFormat, mImageAspect, mLevelCount);
     }
 
     std::vector<ImageView> ImageViewBuilder::build(const Device &device, const std::vector<vk::Image> &images) {

@@ -7,10 +7,11 @@
 #include "vulkan/vulkan.hpp"
 
 #include "vklite/device/Device.h"
+#include "vklite/image_view/ImageViewInterface.h"
 
 namespace vklite {
 
-    class ImageView {
+    class ImageView : public ImageViewInterface {
     private:
         const Device &mDevice;
 
@@ -35,10 +36,10 @@ namespace vklite {
         // 移动赋值运算符
         ImageView &operator=(ImageView &&) = delete;
 
-        ~ImageView();
+        ~ImageView() override;
 
         [[nodiscard]]
-        const vk::ImageView &getImageView() const;
+        const vk::ImageView &getImageView() const override;
     };
 
 } // vklite

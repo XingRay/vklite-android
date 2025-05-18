@@ -4,18 +4,18 @@
 
 #pragma once
 
-#include "HostVisibleBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
 
 namespace vklite {
 
-    class HostVisibleUniformBuffer {
+    class HostVisibleVertexBuffer {
     private:
-        HostVisibleBuffer mUniformBuffer;
+        HostVisibleBuffer mVertexBuffer;
 
     public:
-        HostVisibleUniformBuffer(const Device &device, vk::DeviceSize bufferSize);
+        HostVisibleVertexBuffer(const Device &device, vk::DeviceSize bufferSize);
 
-        ~HostVisibleUniformBuffer();
+        ~HostVisibleVertexBuffer();
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;

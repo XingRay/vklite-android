@@ -16,6 +16,11 @@ namespace vklite {
 
         virtual ~SamplerInterface() = 0;
 
+        // 声明移动构造函数和移动赋值运算符
+        SamplerInterface(SamplerInterface &&) noexcept = default;
+
+        SamplerInterface &operator=(SamplerInterface &&) noexcept = default;
+
         [[nodiscard]]
         virtual const vk::Sampler &getSampler() const = 0;
     };

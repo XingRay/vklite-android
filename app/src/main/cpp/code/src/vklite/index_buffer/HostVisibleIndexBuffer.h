@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include "HostVisibleBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
 
 namespace vklite {
 

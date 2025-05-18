@@ -8,15 +8,8 @@
 namespace vklite {
 
     Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels, vk::ImageUsageFlags imageUsageFlags,
-                 vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling,
-                 vk::ImageLayout oldImageLayout,
-                 vk::ImageLayout newImageLayout,
-                 uint32_t srcQueueFamilyIndex,
-                 uint32_t dstQueueFamilyIndex,
-                 vk::ImageAspectFlags imageAspectFlags)
-            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format),
-              mOldImageLayout(oldImageLayout), mNewImageLayout(newImageLayout), mSrcQueueFamilyIndex(srcQueueFamilyIndex), mDstQueueFamilyIndex(dstQueueFamilyIndex),
-              mImageAspectFlags(imageAspectFlags) {
+                 vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling)
+            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
 
@@ -62,15 +55,10 @@ namespace vklite {
         mDeviceMemory = vkDevice.allocateMemory(memoryAllocateInfo);
 
         vkDevice.bindImageMemory(mImage, mDeviceMemory, 0);
-
-//        mImageView = mDevice.createImageView(mImage, mFormat, vk::ImageAspectFlagBits::eColor, mMipLevels);
-
-//        uint32_t bytesPerPixel = VulkanUtil::getImageFormatBytesPerPixel(format);
-//        mStagingBuffer = std::make_unique<VulkanStagingBuffer>(device, width * height * bytesPerPixel);
     }
 
     Image::~Image() {
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
 //        device.destroy(mImageView);
         vkDevice.destroy(mImage);
@@ -106,76 +94,13 @@ namespace vklite {
         return mHeight;
     }
 
-    void Image::transitionImageLayout(const CommandPool &commandPool) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) -> void {
-            recordCommandTransitionImageLayout(commandBuffer);
+    void Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            recordCommandCopyDataFromBuffer(commandBuffer, buffer);
         });
     }
 
-    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer) {
-        recordCommandTransitionImageLayout(commandBuffer, mFormat, mOldImageLayout, mNewImageLayout, mMipLevels, mSrcQueueFamilyIndex, mDstQueueFamilyIndex, mImageAspectFlags);
-    }
-
-    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                                   vk::Format format,
-                                                   vk::ImageLayout oldImageLayout,
-                                                   vk::ImageLayout newImageLayout,
-                                                   uint32_t mipLevels,
-                                                   uint32_t srcQueueFamilyIndex,
-                                                   uint32_t dstQueueFamilyIndex,
-                                                   vk::ImageAspectFlags imageAspectFlags) {
-
-        vk::ImageSubresourceRange imageSubresourceRange;
-        imageSubresourceRange
-                .setBaseMipLevel(0)
-                .setLevelCount(mipLevels)
-                .setBaseArrayLayer(0)
-                .setLayerCount(1)
-                .setAspectMask(imageAspectFlags);
-
-        vk::ImageMemoryBarrier imageMemoryBarrier;
-        imageMemoryBarrier
-//                .setOldLayout(vk::ImageLayout::eUndefined)
-//                .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
-                .setOldLayout(oldImageLayout)
-                .setNewLayout(newImageLayout)
-//                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setSrcQueueFamilyIndex(srcQueueFamilyIndex)
-//                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setDstQueueFamilyIndex(dstQueueFamilyIndex)
-                .setImage(mImage)
-                .setSubresourceRange(imageSubresourceRange)
-                .setSrcAccessMask(vk::AccessFlags{})
-                .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-
-        // 内存屏障
-        std::vector<vk::MemoryBarrier> memoryBarriers = {};
-
-        // 缓冲区内存屏障
-        std::vector<vk::BufferMemoryBarrier> bufferMemoryBarriers = {};
-
-        // 图像内存屏障
-        std::array<vk::ImageMemoryBarrier, 1> imageMemoryBarriers = {imageMemoryBarrier};
-
-        commandBuffer.pipelineBarrier(
-                vk::PipelineStageFlagBits::eTopOfPipe,
-//                vk::PipelineStageFlagBits::eTransfer,
-                vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                vk::DependencyFlags{},
-                memoryBarriers,
-                bufferMemoryBarriers,
-                imageMemoryBarriers
-        );
-    }
-
-    void Image::update(const CommandPool &commandPool, const void *data, uint32_t size) {
-//        mStagingBuffer->updateBuffer(data, size);
-//        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-//            recordCommandCopyFromBuffer(commandBuffer, mStagingBuffer->getBuffer());
-//        });
-    }
-
-    void Image::recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer) {
+    void Image::recordCommandCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer) {
         vk::ImageSubresourceLayers imageSubresourceLayers;
         imageSubresourceLayers
                 .setAspectMask(vk::ImageAspectFlagBits::eColor)
@@ -198,6 +123,69 @@ namespace vklite {
         std::array<vk::BufferImageCopy, 1> regions = {bufferImageCopy};
 
         commandBuffer.copyBufferToImage(buffer, mImage, vk::ImageLayout::eTransferDstOptimal, regions);
+    }
+
+    void Image::transitionImageLayout(const CommandPool &commandPool,
+                                      vk::ImageLayout oldImageLayout,
+                                      vk::ImageLayout newImageLayout,
+                                      uint32_t levelCount,
+                                      uint32_t srcQueueFamilyIndex,
+                                      uint32_t dstQueueFamilyIndex,
+                                      vk::ImageAspectFlags imageAspectFlags) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            recordCommandTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
+        });
+    }
+
+    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                                   vk::ImageLayout oldImageLayout,
+                                                   vk::ImageLayout newImageLayout,
+                                                   uint32_t levelCount,
+                                                   uint32_t srcQueueFamilyIndex,
+                                                   uint32_t dstQueueFamilyIndex,
+                                                   vk::ImageAspectFlags imageAspectFlags) {
+
+        vk::ImageSubresourceRange imageSubresourceRange;
+        imageSubresourceRange
+                .setBaseMipLevel(0)
+                .setLevelCount(levelCount)
+                .setBaseArrayLayer(0)
+                .setLayerCount(1)
+                .setAspectMask(imageAspectFlags);
+
+        vk::ImageMemoryBarrier imageMemoryBarrier;
+        imageMemoryBarrier
+//                .setOldLayout(vk::ImageLayout::eUndefined)
+//                .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
+                .setOldLayout(oldImageLayout)
+                .setNewLayout(newImageLayout)
+//                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
+                .setSrcQueueFamilyIndex(srcQueueFamilyIndex)
+//                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
+                .setDstQueueFamilyIndex(dstQueueFamilyIndex)
+                .setImage(mImage)
+                .setSubresourceRange(imageSubresourceRange)
+                .setSrcAccessMask(vk::AccessFlagBits::eNone)
+                .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+
+        // 内存屏障
+        std::vector<vk::MemoryBarrier> memoryBarriers = {};
+
+        // 缓冲区内存屏障
+        std::vector<vk::BufferMemoryBarrier> bufferMemoryBarriers = {};
+
+        // 图像内存屏障
+        std::array<vk::ImageMemoryBarrier, 1> imageMemoryBarriers = {imageMemoryBarrier};
+
+        commandBuffer.pipelineBarrier(
+                vk::PipelineStageFlagBits::eTopOfPipe,
+//                vk::PipelineStageFlagBits::eTransfer,
+                vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                vk::DependencyFlags{},
+                memoryBarriers,
+                bufferMemoryBarriers,
+                imageMemoryBarriers
+        );
     }
 
     void Image::generateMipmaps(const CommandPool &commandPool) {

@@ -11,7 +11,7 @@
 #include "vklite/device/Device.h"
 #include "vklite/command_buffer/CommandPool.h"
 #include "vklite/image/ImageBuilderInterface.h"
-#include "vklite/sampler/builder/SamplerBuilderInterface.h"
+#include "vklite/sampler/SamplerBuilderInterface.h"
 
 namespace vklite {
 

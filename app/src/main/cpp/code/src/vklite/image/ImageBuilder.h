@@ -5,6 +5,7 @@
 #pragma once
 
 #include "ImageBuilderInterface.h"
+#include "vklite/image/Image.h"
 
 namespace vklite {
 
@@ -17,13 +18,6 @@ namespace vklite {
         vk::ImageUsageFlags mImageUsageFlags;
         vk::SampleCountFlagBits mSampleCount;
         vk::ImageTiling mImageTiling;
-
-        // TransitionImageLayout params
-        vk::ImageLayout mOldImageLayout;
-        vk::ImageLayout mNewImageLayout;
-        uint32_t mSrcQueueFamilyIndex;
-        uint32_t mDstQueueFamilyIndex;
-//        vk::ImageAspectFlags mImageAspectFlags;
 
     public:
         ImageBuilder();
@@ -44,24 +38,15 @@ namespace vklite {
 
         ImageBuilder &imageTiling(vk::ImageTiling imageTiling);
 
-        // TransitionImageLayout params
-        ImageBuilder &oldImageLayout(vk::ImageLayout oldImageLayout);
-
-        ImageBuilder &newImageLayout(vk::ImageLayout newImageLayout);
-
-        ImageBuilder &srcQueueFamilyIndex(uint32_t srcQueueFamilyIndex);
-
-        ImageBuilder &dstQueueFamilyIndex(uint32_t dstQueueFamilyIndex);
-
-//        ImageBuilder &imageAspectFlags(vk::ImageAspectFlags imageAspectFlags);
-
         [[nodiscard]]
-        std::unique_ptr<ImageInterface> build(const Device &device);
+        std::unique_ptr<Image> buildUnique(const Device &device);
 
     public:// static
         static ImageBuilder colorImageBuilder();
 
         static ImageBuilder depthImageBuilder();
+
+        static ImageBuilder textureImageBuilder();
     };
 
 } // vklite

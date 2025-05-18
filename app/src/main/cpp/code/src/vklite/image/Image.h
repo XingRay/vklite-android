@@ -21,11 +21,11 @@ namespace vklite {
         uint32_t mHeight;
 
         // TransitionImageLayout params
-        vk::ImageLayout mOldImageLayout;
-        vk::ImageLayout mNewImageLayout;
-        uint32_t mSrcQueueFamilyIndex;
-        uint32_t mDstQueueFamilyIndex;
-        vk::ImageAspectFlags mImageAspectFlags;
+//        vk::ImageLayout mOldImageLayout;
+//        vk::ImageLayout mNewImageLayout;
+//        uint32_t mSrcQueueFamilyIndex;
+//        uint32_t mDstQueueFamilyIndex;
+//        vk::ImageAspectFlags mImageAspectFlags;
 
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;
@@ -35,12 +35,7 @@ namespace vklite {
 
     public:
         Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels, vk::ImageUsageFlags imageUsageFlags,
-              vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling,
-              vk::ImageLayout oldImageLayout,
-              vk::ImageLayout newImageLayout,
-              uint32_t srcQueueFamilyIndex,
-              uint32_t dstQueueFamilyIndex,
-              vk::ImageAspectFlags imageAspectFlags);
+              vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling);
 
         ~Image() override;
 
@@ -51,13 +46,13 @@ namespace vklite {
 //        const vk::ImageView &getImageView() const override;
 
         [[nodiscard]]
-        uint32_t getMipLevels() const override;
+        uint32_t getMipLevels() const;
 
         [[nodiscard]]
         const vk::DeviceMemory &getDeviceMemory() const;
 
         [[nodiscard]]
-        vk::Format getFormat() const override;
+        vk::Format getFormat() const;
 
         [[nodiscard]]
         uint32_t getWidth() const;
@@ -65,23 +60,32 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getHeight() const;
 
-        void update(const CommandPool &commandPool, const void *data, uint32_t size) override;
 
-        void recordCommandCopyFromBuffer(const vk::CommandBuffer &commandBuffer, vk::Buffer buffer);
+        // copy data from buffer
+        void copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer);
 
+        void recordCommandCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
+
+
+        // generate mipmaps
         void generateMipmaps(const CommandPool &commandPool);
 
         void recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
 
-        void transitionImageLayout(const CommandPool &commandPool) override;
 
-        void recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer);
+        // transition image layout
+        void transitionImageLayout(const CommandPool &commandPool,
+                                   vk::ImageLayout oldImageLayout,
+                                   vk::ImageLayout newImageLayout,
+                                   uint32_t levelCount,
+                                   uint32_t srcQueueFamilyIndex,
+                                   uint32_t dstQueueFamilyIndex,
+                                   vk::ImageAspectFlags imageAspectFlags);
 
         void recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                                vk::Format format,
                                                 vk::ImageLayout oldImageLayout,
                                                 vk::ImageLayout newImageLayout,
-                                                uint32_t mipLevels,
+                                                uint32_t levelCount,
                                                 uint32_t srcQueueFamilyIndex,
                                                 uint32_t dstQueueFamilyIndex,
                                                 vk::ImageAspectFlags imageAspectFlags);

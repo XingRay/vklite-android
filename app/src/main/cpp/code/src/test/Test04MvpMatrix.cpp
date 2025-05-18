@@ -55,30 +55,6 @@ namespace test04 {
                                       glm::vec3(1.0f, 1.0f, 0.0f));
         mMvpMatrix.proj = glm::perspective(glm::radians(45.0f), (float) ANativeWindow_getWidth(mApp.window) / (float) ANativeWindow_getHeight(mApp.window), 0.1f, 10.0f);
 
-//        mVkLiteEngine = vklite::VkLiteEngineBuilder{}
-//                .layers({}, std::move(layers))
-//                .extensions({}, std::move(instanceExtensions))
-//                .deviceExtensions(std::move(deviceExtensions))
-//                .surfaceBuilder(std::make_unique<vklite::AndroidSurfaceBuilder>(mApp.window))
-//                .enableMsaa()
-//                .physicalDeviceAsDefault()
-////                .graphicsPipeline([&](vklite::GraphicsPipelineConfigure &graphicsPipelineConfigure) {
-////                    graphicsPipelineConfigure
-////                            .vertexShaderCode(std::move(vertexShaderCode))
-////                            .fragmentShaderCode(std::move(std::move(fragmentShaderCode)))
-////                            .addVertex([&](vklite::VulkanVertexConfigure &vertexConfigure) {
-////                                vertexConfigure
-////                                        .binding(0)
-////                                        .stride(sizeof(Vertex))
-////                                        .addAttribute(ShaderFormat::Vec3)
-////                                        .addAttribute(ShaderFormat::Vec3)
-////                                        .setVertexBuffer(vertices);
-////                            })
-////                            .index(std::move(indices))
-////                            .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex);;
-////                })
-//                .build();
-
         mInstance = vklite::InstanceBuilder()
                 .extensions({}, std::move(instanceExtensions))
                 .layers({}, std::move(instanceLayers))
@@ -120,20 +96,27 @@ namespace test04 {
                     .height(mSwapchain->getDisplaySize().height)
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
-                    .build(*mDevice);
+                    .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                    .format(mSwapchain->getDisplayFormat())
                     .build(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
-            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+            vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
+
+            std::unique_ptr<vklite::Image> depthImage = vklite::ImageBuilder::depthImageBuilder()
                     .width(mSwapchain->getDisplaySize().width)
                     .height(mSwapchain->getDisplaySize().height)
-                    .format(mPhysicalDevice->findDepthFormat())
+                    .format(depthFormat)
                     .sampleCount(sampleCount)
-                    .build(*mDevice);
-            mDepthImage->transitionImageLayout(*mCommandPool);
+                    .buildUnique(*mDevice);
+            depthImage->transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
+                                              vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
+            mDepthImage = std::move(depthImage);
+
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                    .format(depthFormat)
                     .build(*mDevice, *mDepthImage);
         }
 

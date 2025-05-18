@@ -38,7 +38,7 @@ namespace vklite {
         mDeviceMemory = vkDevice.allocateMemory(memoryAllocateInfo);
         vkDevice.bindBufferMemory(mBuffer, mDeviceMemory, 0);
 
-
+        // todo: map when update
         mMappedMemoryPointer = device.getDevice().mapMemory(mDeviceMemory, 0, bufferSize, vk::MemoryMapFlags{});
     }
 

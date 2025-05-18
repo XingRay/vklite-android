@@ -4,22 +4,22 @@
 
 #pragma once
 
-#include "DeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/command_buffer/CommandPool.h"
 #include "vklite/buffer/BufferInterface.h"
 
 namespace vklite {
 
-    class DeviceLocalUniformBuffer : public BufferInterface {
+    class UniformBuffer : public BufferInterface {
     private:
         DeviceLocalBuffer mUniformBuffer;
         StagingBuffer mStagingBuffer;
 
     public:
-        DeviceLocalUniformBuffer(const Device &device, vk::DeviceSize bufferSize);
+        UniformBuffer(const Device &device, vk::DeviceSize bufferSize);
 
-        ~DeviceLocalUniformBuffer() override;
+        ~UniformBuffer() override;
 
         [[nodiscard]]
         vk::DeviceSize getSize() const override;

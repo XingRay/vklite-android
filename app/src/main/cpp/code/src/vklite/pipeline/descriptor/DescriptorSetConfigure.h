@@ -40,19 +40,23 @@ namespace vklite {
 
         DescriptorSetConfigure &set(uint32_t set);
 
-        // addDescriptorBinding
+        // descriptorBinding
         DescriptorSetConfigure &addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure);
 
         DescriptorSetConfigure &addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure);
 
-        // addUniform
+
+        // uniform
+        DescriptorSetConfigure &addUniform(const UniformConfigure &configure);
+
         DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
 
-        DescriptorSetConfigure &addUniform(const UniformConfigure &uniformConfigure);
 
-//        DescriptorSetConfigure &addSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
+        // sampler
+        DescriptorSetConfigure &addSampler(const SamplerConfigure &configure);
 
-//        DescriptorSetConfigure &addSampler(const std::function<void(VulkanSamplerConfigure &)> &configure);
+        DescriptorSetConfigure &addSampler(const std::function<void(SamplerConfigure &)> &configure);
+
 
         //DescriptorSetConfigure &addImmutableSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
 

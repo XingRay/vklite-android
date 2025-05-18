@@ -9,13 +9,11 @@
 namespace vklite {
 
     ImageBuilder::ImageBuilder()
-            : mImageTiling(vk::ImageTiling::eOptimal),
+            : mWidth(0), mHeight(0), mFormat(vk::Format::eUndefined),
+              mImageUsageFlags(vk::ImageUsageFlagBits::eColorAttachment),
+              mImageTiling(vk::ImageTiling::eOptimal),
               mSampleCount(vk::SampleCountFlagBits::e1),
-              mMipLevels(1),
-              mSrcQueueFamilyIndex(vk::QueueFamilyIgnored),
-              mDstQueueFamilyIndex(vk::QueueFamilyIgnored),
-              mOldImageLayout(vk::ImageLayout::eUndefined),
-              mNewImageLayout(vk::ImageLayout::eUndefined) {};
+              mMipLevels(1) {};
 
     ImageBuilder::~ImageBuilder() = default;
 
@@ -54,37 +52,9 @@ namespace vklite {
         return *this;
     }
 
-    // TransitionImageLayout params
-    ImageBuilder &ImageBuilder::oldImageLayout(vk::ImageLayout oldImageLayout) {
-        mOldImageLayout = oldImageLayout;
-        return *this;
-    }
-
-    ImageBuilder &ImageBuilder::newImageLayout(vk::ImageLayout newImageLayout) {
-        mNewImageLayout = newImageLayout;
-        return *this;
-    }
-
-    ImageBuilder &ImageBuilder::srcQueueFamilyIndex(uint32_t srcQueueFamilyIndex) {
-        mSrcQueueFamilyIndex = srcQueueFamilyIndex;
-        return *this;
-    }
-
-    ImageBuilder &ImageBuilder::dstQueueFamilyIndex(uint32_t dstQueueFamilyIndex) {
-        mDstQueueFamilyIndex = dstQueueFamilyIndex;
-        return *this;
-    }
-
-//    ImageBuilder &ImageBuilder::imageAspectFlags(vk::ImageAspectFlags imageAspectFlags) {
-//        mImageAspectFlags = imageAspectFlags;
-//        return *this;
-//    }
-
-    std::unique_ptr<ImageInterface> ImageBuilder::build(const Device &device) {
-        vk::ImageAspectFlags imageAspectFlags = VulkanUtil::calcImageAspectFlags(mNewImageLayout, mFormat);
-        return std::make_unique<Image>(device, mWidth, mHeight, mFormat, mMipLevels, mImageUsageFlags, mSampleCount, mImageTiling,
-                                       mOldImageLayout, mNewImageLayout, mSrcQueueFamilyIndex,
-                                       mDstQueueFamilyIndex, imageAspectFlags);
+    std::unique_ptr<Image> ImageBuilder::buildUnique(const Device &device) {
+//        vk::ImageAspectFlags imageAspectFlags = VulkanUtil::calcImageAspectFlags(mNewImageLayout, mFormat);
+        return std::make_unique<Image>(device, mWidth, mHeight, mFormat, mMipLevels, mImageUsageFlags, mSampleCount, mImageTiling);
     }
 
     ImageBuilder ImageBuilder::colorImageBuilder() {
@@ -95,9 +65,15 @@ namespace vklite {
 
     ImageBuilder ImageBuilder::depthImageBuilder() {
         return ImageBuilder()
-                .imageUsageFlags(vk::ImageUsageFlagBits::eDepthStencilAttachment)
+                .imageUsageFlags(vk::ImageUsageFlagBits::eDepthStencilAttachment);
 //                .oldImageLayout(vk::ImageLayout::eUndefined)
-                .newImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+//                .newImageLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+    }
+
+    ImageBuilder ImageBuilder::textureImageBuilder() {
+        return ImageBuilder()
+                .imageUsageFlags(vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
+                .sampleCount(vk::SampleCountFlagBits::e1);
     }
 
 } // vklite

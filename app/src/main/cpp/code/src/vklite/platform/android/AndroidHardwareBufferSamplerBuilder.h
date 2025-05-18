@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "vklite/sampler/builder/SamplerBuilderInterface.h"
+#include "vklite/sampler/SamplerBuilderInterface.h"
 #include "AndroidHardwareBufferYcbcrConversion.h"
 
 namespace vklite {

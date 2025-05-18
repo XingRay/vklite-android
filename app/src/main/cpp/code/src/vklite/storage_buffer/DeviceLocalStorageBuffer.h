@@ -9,7 +9,7 @@
 #include "vklite/command_buffer/CommandPool.h"
 
 
-#include "DeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
 
 namespace vklite {

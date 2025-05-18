@@ -8,17 +8,17 @@
 
 namespace vklite {
 
-    class DefaultSamplerBuilder : public SamplerBuilderInterface {
+    class SamplerBuilder : public SamplerBuilderInterface {
     private:
         float mMaxLoad;
 
     public:
 
-        DefaultSamplerBuilder();
+        SamplerBuilder();
 
-        ~DefaultSamplerBuilder() override;
+        ~SamplerBuilder() override;
 
-        DefaultSamplerBuilder &setMaxLoad(float maxLoad);
+        SamplerBuilder &maxLoad(float maxLoad);
 
         std::unique_ptr<SamplerInterface> build(const Device &device) override;
 

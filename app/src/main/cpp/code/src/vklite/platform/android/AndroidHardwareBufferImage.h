@@ -38,21 +38,8 @@ namespace vklite {
         [[nodiscard]]
         const vk::Image &getImage() const override;
 
-//        [[nodiscard]]
-//        const vk::ImageView &getImageView() const override;
-
         [[nodiscard]]
         const vk::DeviceMemory &getDeviceMemory() const;
-
-        [[nodiscard]]
-        vk::Format getFormat() const override;
-
-        [[nodiscard]]
-        uint32_t getMipLevels() const override;
-
-        void transitionImageLayout(const CommandPool &commandPool) override;
-
-        void update(const CommandPool &commandPool, const void *data, uint32_t size) override;
 
     };
 

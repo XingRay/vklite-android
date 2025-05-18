@@ -2,41 +2,41 @@
 // Created by leixing on 2025/3/13.
 //
 
-#include "DeviceLocalUniformBuffer.h"
+#include "UniformBuffer.h"
 
 namespace vklite {
 
-    DeviceLocalUniformBuffer::DeviceLocalUniformBuffer(const Device &device, vk::DeviceSize bufferSize)
+    UniformBuffer::UniformBuffer(const Device &device, vk::DeviceSize bufferSize)
             : mUniformBuffer(device, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer),
               mStagingBuffer(device, bufferSize) {
 
     }
 
-    DeviceLocalUniformBuffer::~DeviceLocalUniformBuffer() = default;
+    UniformBuffer::~UniformBuffer() = default;
 
-    vk::DeviceSize DeviceLocalUniformBuffer::getSize() const {
+    vk::DeviceSize UniformBuffer::getSize() const {
         return mUniformBuffer.getBufferSize();
     }
 
-    const vk::Buffer &DeviceLocalUniformBuffer::getBuffer() const {
+    const vk::Buffer &UniformBuffer::getBuffer() const {
         return mUniformBuffer.getBuffer();
     }
 
-    const vk::DeviceMemory &DeviceLocalUniformBuffer::getDeviceMemory() const {
+    const vk::DeviceMemory &UniformBuffer::getDeviceMemory() const {
         return mUniformBuffer.getDeviceMemory();
     }
 
-    void DeviceLocalUniformBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
+    void UniformBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
         mStagingBuffer.updateBuffer(data, size);
         mUniformBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
     }
 
-    void DeviceLocalUniformBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
+    void UniformBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
         mStagingBuffer.updateBuffer(data, size);
         mUniformBuffer.copyFrom(commandPool, mStagingBuffer.getBuffer());
     }
 
-    std::vector<vk::DescriptorBufferInfo> DeviceLocalUniformBuffer::createDescriptorBufferInfos() {
+    std::vector<vk::DescriptorBufferInfo> UniformBuffer::createDescriptorBufferInfos() {
         vk::DescriptorBufferInfo descriptorBufferInfo{};
         descriptorBufferInfo
                 .setBuffer(mUniformBuffer.getBuffer())

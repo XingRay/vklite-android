@@ -3,7 +3,7 @@
 //
 
 #include "DescriptorSetConfigure.h"
-#include "vklite/buffer/UniformBufferBuilder.h"
+#include "vklite/uniform_buffer/UniformBufferBuilder.h"
 
 namespace vklite {
 
@@ -42,6 +42,13 @@ namespace vklite {
         return *this;
     }
 
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformConfigure &configure) {
+        DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
+        addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformConfigure &)> &configure) {
         UniformConfigure uniformConfigure{};
         configure(uniformConfigure);
@@ -49,9 +56,17 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformConfigure &uniformConfigure) {
-        DescriptorBindingConfigure bindingConfigure = uniformConfigure.createDescriptorBindingConfigure();
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const SamplerConfigure &configure){
+        DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const std::function<void(SamplerConfigure &)> &configure){
+        SamplerConfigure samplerConfigure{};
+        configure(samplerConfigure);
+        addSampler(samplerConfigure);
         return *this;
     }
 

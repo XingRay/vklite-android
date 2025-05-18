@@ -6,12 +6,12 @@
 #include "vklite/pipeline/descriptor/old/DescriptorSlotConfigure.h"
 
 #include "vklite/image/ImageBuilder.h"
-#include "vklite/sampler/builder/DefaultSamplerBuilder.h"
+#include "vklite/sampler/SamplerBuilder.h"
 
 namespace vklite {
 
     SamplerConfigure::SamplerConfigure()
-            : mBinding(0), mDescriptorOffset(0), mDescriptorRange(1) {}
+            : mBinding(0), mDescriptorCount(1), mShaderStageFlags(vk::ShaderStageFlagBits::eFragment) {}
 
     SamplerConfigure::~SamplerConfigure() = default;
 
@@ -20,33 +20,19 @@ namespace vklite {
         return *this;
     }
 
-    SamplerConfigure &SamplerConfigure::descriptorOffset(uint32_t offset) {
-        mDescriptorOffset = offset;
-        return *this;
-    }
-
-    SamplerConfigure &SamplerConfigure::descriptorRange(uint32_t range) {
-        mDescriptorRange = range;
-        return *this;
-    }
-
     SamplerConfigure &SamplerConfigure::shaderStageFlags(vk::ShaderStageFlags shaderStageFlags) {
         mShaderStageFlags = shaderStageFlags;
         return *this;
     }
 
-    SamplerConfigure &SamplerConfigure::setImage(std::unique_ptr<vklite::ImageInterface> &&image) {
-//        mDescriptorImageInfoConfigure = std::make_unique<VulkanDescriptorImageInfoConfigure>(
-//                std::make_unique<ImageBuilder>(),
-//                std::make_unique<DefaultSamplerBuilder>()/*,
-//                std::move(image)*/
-//        );
+    SamplerConfigure &SamplerConfigure::descriptorCount(uint32_t descriptorCount) {
+        mDescriptorCount = descriptorCount;
         return *this;
     }
 
-//    std::unique_ptr<VulkanDescriptorBindingConfigure> SamplerConfigure::createVulkanDescriptorBindingConfigure() {
-//        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-//                                                                  std::move(mDescriptorImageInfoConfigure));
-//    }
+    DescriptorBindingConfigure SamplerConfigure::createDescriptorBindingConfigure() const {
+//        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
+        return {mBinding, vk::DescriptorType::eCombinedImageSampler, mShaderStageFlags, mDescriptorCount, {}};
+    }
 
 } // vklite
