@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~ImageBuilderInterface() = 0;
 
-        virtual std::unique_ptr<ImageInterface> build(const Device &device, uint32_t width, uint32_t height, vk::Format format) = 0;
+        virtual std::unique_ptr<ImageInterface> buildUnique(const Device &device) = 0;
     };
 
 } // vklite

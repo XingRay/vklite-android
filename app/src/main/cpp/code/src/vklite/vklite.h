@@ -31,6 +31,8 @@
 #include "vklite/image_view/ImageViewBuilder.h"
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/sampler/SamplerBuilder.h"
+#include "vklite/image/color_image/ColorImageBuilder.h"
+
 
 #include "vklite/uniform_buffer/UniformBufferBuilder.h"
 #include "vklite/util/VulkanUtil.h"

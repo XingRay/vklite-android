@@ -21,13 +21,6 @@ namespace vklite {
         uint32_t mWidth;
         uint32_t mHeight;
 
-        // TransitionImageLayout params
-//        vk::ImageLayout mOldImageLayout;
-//        vk::ImageLayout mNewImageLayout;
-//        uint32_t mSrcQueueFamilyIndex;
-//        uint32_t mDstQueueFamilyIndex;
-//        vk::ImageAspectFlags mImageAspectFlags;
-
         vk::Image mImage;
         vk::DeviceMemory mDeviceMemory;
 
@@ -36,11 +29,16 @@ namespace vklite {
 
         ~Image() override;
 
+        Image(const Image &other) = delete;
+
+        Image &operator=(const Image &other) = delete;
+
+        Image(Image &&other) noexcept;
+
+        Image &operator=(Image &&other) noexcept = delete;
+
         [[nodiscard]]
         const vk::Image &getImage() const override;
-
-//        [[nodiscard]]
-//        const vk::ImageView &getImageView() const override;
 
         [[nodiscard]]
         uint32_t getMipLevels() const;

@@ -6,13 +6,13 @@
 
 #include <memory>
 
-#include "vklite/image/ImageBuilderInterface.h"
+#include "vklite/image/ImageInterface.h"
 #include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
 
 namespace vklite {
 
-    class HardwareBufferImageBuilder : public ImageBuilderInterface {
+    class HardwareBufferImageBuilder {
     private:
         const HardwareBufferYcbcrConversion &mAndroidSamplerYcbcrConversion;
         const HardwareBuffer &mAndroidHardwareBuffer;
@@ -21,9 +21,9 @@ namespace vklite {
         HardwareBufferImageBuilder(const HardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion,
                                    const HardwareBuffer &androidHardwareBuffer);
 
-        ~HardwareBufferImageBuilder() override;
+        ~HardwareBufferImageBuilder();
 
-        std::unique_ptr<ImageInterface> build(const Device &device, uint32_t width, uint32_t height, vk::Format format) override;
+        std::unique_ptr<ImageInterface> build(const Device &device, uint32_t width, uint32_t height, vk::Format format);
     };
 
 } // vklite

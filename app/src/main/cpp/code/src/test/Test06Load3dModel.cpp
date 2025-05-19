@@ -159,12 +159,16 @@ namespace test06 {
                 .build(*mDevice, mSwapchain->getDisplayImages());
 
         if (mMsaaEnable) {
-            mColorImage = vklite::ImageBuilder::colorImageBuilder()
-                    .width(mSwapchain->getDisplaySize().width)
-                    .height(mSwapchain->getDisplaySize().height)
-                    .format(mSwapchain->getDisplayFormat())
+            mColorImage = vklite::ColorImageBuilder()
+                    .setSizeAndFormat(*mSwapchain)
                     .sampleCount(sampleCount)
                     .buildUnique(*mDevice);
+//            mColorImage = vklite::ImageBuilder::colorImageBuilder()
+//                    .width(mSwapchain->getDisplaySize().width)
+//                    .height(mSwapchain->getDisplaySize().height)
+//                    .format(mSwapchain->getDisplayFormat())
+//                    .sampleCount(sampleCount)
+//                    .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                     .format(mSwapchain->getDisplayFormat())
                     .build(*mDevice, *mColorImage);

@@ -15,36 +15,6 @@ namespace vklite {
               mHeight(imageCreateInfo.extent.height) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
-
-//        vk::Extent3D extent3D;
-//        extent3D
-//                .setWidth(width)
-//                .setHeight(height)
-//                .setDepth(1);
-//
-//        vk::ImageCreateInfo imageCreateInfo;
-//        imageCreateInfo
-//                .setImageType(vk::ImageType::e2D)
-//                .setExtent(extent3D)
-//                .setMipLevels(mipLevels)
-//                .setArrayLayers(1)
-//                .setFormat(format)
-//                        //VK_IMAGE_TILING_LINEAR texel按行的顺序排列
-//                        //VK_IMAGE_TILING_OPTIMAL texel按实现定义的顺序排列
-//                        //the tiling mode cannot be changed at a later time.
-//                        //如果希望能够直接访问图像内存中的texel，则必须使用VK_IMAGE_TILING_LINEAR
-//                .setTiling(imageTiling)
-//                        //VK_IMAGE_LAYOUT_UNDEFINED 不能被 GPU 使用，并且第一个转换将丢弃texel
-//                        //VK_IMAGE_TILING_OPTIMAL 不能被 GPU 使用，并且第一个转换将保留texel
-//                .setInitialLayout(vk::ImageLayout::eUndefined)
-////                .setUsage(vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
-//                .setUsage(imageUsageFlags)
-//                .setSharingMode(vk::SharingMode::eExclusive)
-////                .setSamples(vk::SampleCountFlagBits::e1)
-//                .setSamples(sampleCountFlagBits)
-//                        //用于稀疏纹理相关的标志位
-//                .setFlags(vk::ImageCreateFlags{});
-
         mImage = vkDevice.createImage(imageCreateInfo);
 
         vk::MemoryRequirements memoryRequirements = vkDevice.getImageMemoryRequirements(mImage);
@@ -62,11 +32,43 @@ namespace vklite {
 
     Image::~Image() {
         const vk::Device &vkDevice = mDevice.getDevice();
-
-//        device.destroy(mImageView);
-        vkDevice.destroy(mImage);
-        vkDevice.unmapMemory(mDeviceMemory);
+        if (mImage != nullptr) {
+            vkDevice.destroy(mImage);
+        }
+        if (mDeviceMemory != nullptr) {
+            vkDevice.unmapMemory(mDeviceMemory);
+        }
     }
+
+//    vk::Format mFormat;
+//    uint32_t mMipLevels;
+//    uint32_t mWidth;
+//    uint32_t mHeight;
+//
+//    vk::Image mImage;
+//    vk::DeviceMemory mDeviceMemory;
+
+    Image::Image(Image &&other) noexcept
+            : mDevice(other.mDevice),
+              mFormat(other.mFormat),
+              mMipLevels(other.mMipLevels),
+              mWidth(other.mWidth),
+              mHeight(other.mHeight),
+              mImage(std::exchange(other.mImage, nullptr)),
+              mDeviceMemory(std::exchange(other.mDeviceMemory, nullptr)) {}
+
+//    Image &Image::operator=(Image &&other) noexcept {
+//        if (this != &other) {
+//            mDevice(other.mDevice),
+//                    mMipLevels(other.mMipLevels),
+//                    mWidth(other.mWidth),
+//                    mHeight(other.mHeight),
+//                    mFormat(other.mFormat),
+//                    mImage(std::exchange(other.mImage, nullptr)),
+//                    mDeviceMemory(std::exchange(other.mDeviceMemory, nullptr)
+//        }
+//        return *this;
+//    }
 
     const vk::Image &Image::getImage() const {
         return mImage;

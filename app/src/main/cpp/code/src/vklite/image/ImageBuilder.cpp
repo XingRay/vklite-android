@@ -91,7 +91,8 @@ namespace vklite {
     }
 
     Image ImageBuilder::build(const Device &device) {
-        return Image(device, mImageCreateInfo);
+//        return Image(device, mImageCreateInfo);
+        return {device, mImageCreateInfo};
     }
 
     [[nodiscard]]

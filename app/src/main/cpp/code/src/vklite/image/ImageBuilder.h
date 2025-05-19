@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "ImageBuilderInterface.h"
+#include "vklite/device/Device.h"
 #include "vklite/image/Image.h"
+
 
 namespace vklite {
 
