@@ -21,7 +21,7 @@ namespace vklite {
 
         ImageView() = delete;
 
-        ImageView(const Device &device, const vk::Image &image, vk::Format format, vk::ImageAspectFlags imageAspectFlags, uint32_t levelCount);
+        ImageView(const Device &device, const vk::ImageViewCreateInfo &imageViewCreateInfo);
 
         // 拷贝构造函数（显式删除） ---
         // 原因：mDevice 是 const 引用，无法重新绑定；

@@ -93,7 +93,7 @@ namespace test02 {
                     .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                     .format(mSwapchain->getDisplayFormat())
-                    .build(*mDevice, *mColorImage);
+                    .buildUnique(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
@@ -111,7 +111,7 @@ namespace test02 {
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                     .format(depthFormat)
-                    .build(*mDevice, *mDepthImage);
+                    .buildUnique(*mDevice, *mDepthImage);
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();

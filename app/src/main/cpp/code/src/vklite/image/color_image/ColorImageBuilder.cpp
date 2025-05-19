@@ -48,5 +48,4 @@ namespace vklite {
         return std::make_unique<ColorImage>(mImageBuilder.build(device));
     }
 
-
 } // vklite

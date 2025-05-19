@@ -158,7 +158,7 @@ namespace test05 {
                     .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                     .format(mSwapchain->getDisplayFormat())
-                    .build(*mDevice, *mColorImage);
+                    .buildUnique(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
@@ -176,7 +176,7 @@ namespace test05 {
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                     .format(depthFormat)
-                    .build(*mDevice, *mDepthImage);
+                    .buildUnique(*mDevice, *mDepthImage);
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
@@ -333,7 +333,7 @@ namespace test05 {
             mImages.push_back(std::move(image));
             mImageViews.push_back(vklite::ImageViewBuilder()
                                           .format(textureImage->getFormat())
-                                          .build(*mDevice, *mImages[i]));
+                                          .buildUnique(*mDevice, *mImages[i]));
             mSamplers.push_back(vklite::SamplerBuilder().build(*mDevice));
         }
 

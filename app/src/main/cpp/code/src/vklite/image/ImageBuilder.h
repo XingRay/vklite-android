@@ -61,6 +61,7 @@ namespace vklite {
         std::unique_ptr<Image> buildUnique(const Device &device);
 
     public:// static
+
         static ImageBuilder defaultImageBuilder();
 
         static ImageBuilder colorImageBuilder();

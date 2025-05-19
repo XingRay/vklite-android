@@ -108,7 +108,6 @@ namespace test06 {
             }
         }
 
-
         mMvpMatrix = MvpMatrix{};
         float scale = 1.0f;
 
@@ -163,15 +162,9 @@ namespace test06 {
                     .setSizeAndFormat(*mSwapchain)
                     .sampleCount(sampleCount)
                     .buildUnique(*mDevice);
-//            mColorImage = vklite::ImageBuilder::colorImageBuilder()
-//                    .width(mSwapchain->getDisplaySize().width)
-//                    .height(mSwapchain->getDisplaySize().height)
-//                    .format(mSwapchain->getDisplayFormat())
-//                    .sampleCount(sampleCount)
-//                    .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                     .format(mSwapchain->getDisplayFormat())
-                    .build(*mDevice, *mColorImage);
+                    .buildUnique(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
@@ -189,7 +182,7 @@ namespace test06 {
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                     .format(depthFormat)
-                    .build(*mDevice, *mDepthImage);
+                    .buildUnique(*mDevice, *mDepthImage);
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
@@ -352,9 +345,9 @@ namespace test06 {
 
 
             mImages.push_back(std::move(image));
-            mImageViews.push_back(vklite::ImageViewBuilder()
+            mImageViews.push_back(vklite::ImageViewBuilder::defaultImageViewBuilder()
                                           .format(textureImage->getFormat())
-                                          .build(*mDevice, *mImages[i]));
+                                          .buildUnique(*mDevice, *mImages[i]));
             mSamplers.push_back(vklite::SamplerBuilder().build(*mDevice));
         }
 
