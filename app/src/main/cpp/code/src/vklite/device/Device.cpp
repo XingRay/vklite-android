@@ -19,7 +19,7 @@ namespace vklite {
                    std::vector<const char *> &&extensions,
                    std::vector<const char *> &&layers,
                    const vk::PhysicalDeviceFeatures &physicalDeviceFeatures,
-                   const std::vector<std::unique_ptr<DevicePlugin>> &devicePlugins)
+                   const std::vector<std::unique_ptr<PluginInterface>> &devicePlugins)
             : mPhysicalDevice(physicalDevice),
               mQueueFamilyIndicesMap(std::move(queueFamilyIndicesMap)),
               mPresentQueueFamilyIndices(std::move(presentQueueFamilyIndices)) {
@@ -76,7 +76,7 @@ namespace vklite {
         std::vector<const char *> enabledExtensions = std::move(extensions);
         std::vector<const char *> enabledLayers = std::move(layers);
 
-        for (const std::unique_ptr<DevicePlugin> &devicePlugin: devicePlugins) {
+        for (const std::unique_ptr<PluginInterface> &devicePlugin: devicePlugins) {
             devicePlugin->onCreateDevice(deviceCreateInfo);
             std::vector<const char *> pluginDeviceExtensions = devicePlugin->getDeviceExtensions();
             enabledExtensions.insert(enabledExtensions.end(), pluginDeviceExtensions.begin(), pluginDeviceExtensions.end());

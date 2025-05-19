@@ -6,8 +6,7 @@
 #include "util/FileUtil.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
-#include "vklite/platform/android/device/AndroidDevicePlugin.h"
-#include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
+#include "vklite/vklite_android.h"
 
 namespace test01 {
 
@@ -68,7 +67,7 @@ namespace test01 {
                 .layers(std::move(deviceLayers))
                 .addGraphicQueueIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
                 .addPresentQueueIndex(queueFamilyIndices.presentQueueFamilyIndex.value())
-                .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
+                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
                 .build(*mPhysicalDevice);
 
         mSwapchain = vklite::SwapchainBuilder()

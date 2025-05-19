@@ -10,11 +10,11 @@
 
 namespace vklite {
 
-    class DevicePlugin {
+    class PluginInterface {
     public:
-        DevicePlugin();
+        PluginInterface();
 
-        virtual ~DevicePlugin();
+        virtual ~PluginInterface();
 
         virtual std::vector<const char *> getInstanceExtensions() = 0;
 

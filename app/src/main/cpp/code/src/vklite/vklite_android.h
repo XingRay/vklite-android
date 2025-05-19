@@ -4,5 +4,5 @@
 
 #pragma once
 
-#include "vklite/platform/android/device/AndroidDevicePlugin.h"
+#include "vklite/platform/android/plugin/AndroidPlugin.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"

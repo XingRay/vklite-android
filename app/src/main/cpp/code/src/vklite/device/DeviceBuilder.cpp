@@ -10,7 +10,7 @@ namespace vklite {
 
     DeviceBuilder::~DeviceBuilder() = default;
 
-    DeviceBuilder &DeviceBuilder::addDevicePlugin(std::unique_ptr<DevicePlugin> devicePlugin) {
+    DeviceBuilder &DeviceBuilder::addDevicePlugin(std::unique_ptr<PluginInterface> devicePlugin) {
         mDevicePlugins.push_back(std::move(devicePlugin));
         return *this;
     }

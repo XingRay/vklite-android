@@ -2,14 +2,14 @@
 // Created by leixing on 2025/1/26.
 //
 
-#include "AndroidHardwareBufferSampler.h"
+#include "HardwareBufferSampler.h"
 #include "vklite/util/VkCheck.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
-    AndroidHardwareBufferSampler::AndroidHardwareBufferSampler(const Device &device,
-                                                               const AndroidHardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
+    HardwareBufferSampler::HardwareBufferSampler(const Device &device,
+                                                 const HardwareBufferYcbcrConversion &samplerYcbcrConversion)
             : mDevice(device) {
 
         vk::Device vkDevice = device.getDevice();
@@ -17,7 +17,7 @@ namespace vklite {
         vk::SamplerCreateInfo samplerCreateInfo;
         vk::SamplerYcbcrConversionInfo conversionInfo;
         conversionInfo
-                .setConversion(vulkanAndroidSamplerYcbcrConversion.getSamplerYcbcrConversion());
+                .setConversion(samplerYcbcrConversion.getSamplerYcbcrConversion());
 
         samplerCreateInfo
                 .setPNext(&conversionInfo)
@@ -40,13 +40,13 @@ namespace vklite {
         mSampler = vkDevice.createSampler(samplerCreateInfo);
     }
 
-    AndroidHardwareBufferSampler::~AndroidHardwareBufferSampler() {
+    HardwareBufferSampler::~HardwareBufferSampler() {
         const vk::Device& vkDevice = mDevice.getDevice();
 
         vkDevice.destroySampler(mSampler);
     }
 
-    const vk::Sampler &AndroidHardwareBufferSampler::getSampler() const {
+    const vk::Sampler &HardwareBufferSampler::getSampler() const {
         return mSampler;
     }
 

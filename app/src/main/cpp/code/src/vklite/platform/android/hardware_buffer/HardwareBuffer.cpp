@@ -2,18 +2,18 @@
 // Created by leixing on 2025/3/16.
 //
 
-#include "AndroidHardwareBuffer.h"
+#include "HardwareBuffer.h"
 #include "vklite/util/VkCheck.h"
 
 namespace vklite {
-    AndroidHardwareBuffer::AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer)
+    HardwareBuffer::HardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer)
             : mDevice(device), mHardwareBuffer(hardwareBuffer) {
 
     }
 
-    AndroidHardwareBuffer::~AndroidHardwareBuffer() = default;
+    HardwareBuffer::~HardwareBuffer() = default;
 
-    vk::AndroidHardwareBufferPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferProperties() const {
+    vk::AndroidHardwareBufferPropertiesANDROID HardwareBuffer::getAndroidHardwareBufferProperties() const {
         const vk::Device& vkDevice = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
@@ -24,7 +24,7 @@ namespace vklite {
         return propertiesInfo;
     }
 
-    vk::AndroidHardwareBufferFormatPropertiesANDROID AndroidHardwareBuffer::getAndroidHardwareBufferFormatProperties() const {
+    vk::AndroidHardwareBufferFormatPropertiesANDROID HardwareBuffer::getAndroidHardwareBufferFormatProperties() const {
         const vk::Device& vkDevice = mDevice.getDevice();
         // 获取 HardwareBuffer 属性
         vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
@@ -35,18 +35,18 @@ namespace vklite {
         return formatInfo;
     }
 
-    AHardwareBuffer_Desc AndroidHardwareBuffer::getAndroidHardwareBufferDescription() const {
+    AHardwareBuffer_Desc HardwareBuffer::getAndroidHardwareBufferDescription() const {
         AHardwareBuffer_Desc hardwareBufferDescription;
         AHardwareBuffer_describe(mHardwareBuffer, &hardwareBufferDescription);
         return hardwareBufferDescription;
     }
 
-    uint32_t AndroidHardwareBuffer::getDataSize() const {
+    uint32_t HardwareBuffer::getDataSize() const {
         AHardwareBuffer_Desc hardwareBufferDescription = getAndroidHardwareBufferDescription();
         return hardwareBufferDescription.width * hardwareBufferDescription.height * hardwareBufferDescription.layers;
     }
 
-    AHardwareBuffer *AndroidHardwareBuffer::getHardwareBuffer() const {
+    AHardwareBuffer *HardwareBuffer::getHardwareBuffer() const {
         return mHardwareBuffer;
     }
 

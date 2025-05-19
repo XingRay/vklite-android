@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "vklite/device/DevicePlugin.h"
+#include "vklite/plugin/PluginInterface.h"
 
 namespace vklite {
 
-    class WindowsDevicePlugin : public DevicePlugin {
+    class WindowsPlugin : public PluginInterface {
     private:
     public:
 

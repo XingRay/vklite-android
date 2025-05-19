@@ -68,7 +68,7 @@ namespace test02 {
                 .layers(std::move(deviceLayers))
                 .addGraphicQueueIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
                 .addPresentQueueIndex(queueFamilyIndices.presentQueueFamilyIndex.value())
-                .addDevicePlugin(std::make_unique<vklite::AndroidDevicePlugin>())
+                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
                 .build(*mPhysicalDevice);
 
         mSwapchain = vklite::SwapchainBuilder()

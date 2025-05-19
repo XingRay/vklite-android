@@ -14,13 +14,13 @@
 #include "vklite/buffer/host_visible/HostVisibleBuffer.h"
 #include "vklite/image/Image.h"
 
-#include "AndroidHardwareBuffer.h"
-#include "AndroidHardwareBufferYcbcrConversion.h"
+#include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
+#include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
 #include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
-    class AndroidHardwareBufferImage : public ImageInterface {
+    class HardwareBufferImage : public ImageInterface {
     private:
         const Device &mDevice;
 
@@ -29,11 +29,11 @@ namespace vklite {
         vk::ImageView mImageView;
 
     public:
-        AndroidHardwareBufferImage(const Device &device,
-                                   const AndroidHardwareBuffer &androidHardwareBuffer,
-                                   const AndroidHardwareBufferYcbcrConversion &conversion);
+        HardwareBufferImage(const Device &device,
+                            const HardwareBuffer &androidHardwareBuffer,
+                            const HardwareBufferYcbcrConversion &conversion);
 
-        ~AndroidHardwareBufferImage() override;
+        ~HardwareBufferImage() override;
 
         [[nodiscard]]
         const vk::Image &getImage() const override;

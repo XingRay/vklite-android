@@ -1,18 +1,18 @@
 //
 // Created by leixing on 2025/1/19.
 //
-#include "AndroidHardwareBufferImage.h"
+#include "HardwareBufferImage.h"
 
 #include "vklite/util/VkCheckCpp.h"
 #include "vklite/util/VkCheck.h"
 #include "vklite/util/VulkanUtil.h"
-#include "VulkanAndroidApi.h"
+#include "vklite/platform/android/VulkanAndroidApi.h"
 
 namespace vklite {
 
-    AndroidHardwareBufferImage::AndroidHardwareBufferImage(const Device &device,
-                                                           const AndroidHardwareBuffer &androidHardwareBuffer,
-                                                           const AndroidHardwareBufferYcbcrConversion &conversion)
+    HardwareBufferImage::HardwareBufferImage(const Device &device,
+                                             const HardwareBuffer &androidHardwareBuffer,
+                                             const HardwareBufferYcbcrConversion &conversion)
             : mDevice(device) {
         const vk::Device& vkDevice = mDevice.getDevice();
 
@@ -136,7 +136,7 @@ namespace vklite {
         mImageView = vkDevice.createImageView(imageViewCreateInfo);
     }
 
-    AndroidHardwareBufferImage::~AndroidHardwareBufferImage() {
+    HardwareBufferImage::~HardwareBufferImage() {
         const vk::Device& vkDevice = mDevice.getDevice();
 
         vkDevice.destroyImageView(mImageView);
@@ -144,12 +144,12 @@ namespace vklite {
         vkDevice.freeMemory(mDeviceMemory);
     }
 
-    const vk::Image &AndroidHardwareBufferImage::getImage() const {
+    const vk::Image &HardwareBufferImage::getImage() const {
         return mImage;
     }
 
     [[nodiscard]]
-    const vk::DeviceMemory &AndroidHardwareBufferImage::getDeviceMemory() const {
+    const vk::DeviceMemory &HardwareBufferImage::getDeviceMemory() const {
         return mDeviceMemory;
     }
 

@@ -2,34 +2,34 @@
 // Created by leixing on 2025/4/28.
 //
 
-#include "AndroidDevicePlugin.h"
+#include "AndroidPlugin.h"
 
 namespace vklite {
 
-    AndroidDevicePlugin::AndroidDevicePlugin() {
+    AndroidPlugin::AndroidPlugin() {
         mPhysicalDeviceFeatures2.pNext = &mPhysicalDeviceSamplerYcbcrConversionFeatures;
         mPhysicalDeviceSamplerYcbcrConversionFeatures.samplerYcbcrConversion = true;
         mPhysicalDeviceFeatures2.features.samplerAnisotropy = true;
     }
 
-    AndroidDevicePlugin::~AndroidDevicePlugin() = default;
+    AndroidPlugin::~AndroidPlugin() = default;
 
-    std::vector<const char *> AndroidDevicePlugin::getInstanceExtensions() {
+    std::vector<const char *> AndroidPlugin::getInstanceExtensions() {
         // todo:
         return {};
     }
 
-    std::vector<const char *> AndroidDevicePlugin::getDeviceExtensions() {
+    std::vector<const char *> AndroidPlugin::getDeviceExtensions() {
         // todo:
         return {};
     }
 
-    std::vector<const char *> AndroidDevicePlugin::getLayers() {
+    std::vector<const char *> AndroidPlugin::getLayers() {
         // todo:
         return {};
     }
 
-    void AndroidDevicePlugin::onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) {
+    void AndroidPlugin::onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) {
         deviceCreateInfo.setPNext(&mPhysicalDeviceFeatures2);
     }
 

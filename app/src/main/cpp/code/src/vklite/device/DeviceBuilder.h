@@ -9,7 +9,7 @@
 
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
-#include "vklite/device/DevicePlugin.h"
+#include "vklite/plugin/PluginInterface.h"
 
 namespace vklite {
 
@@ -17,7 +17,7 @@ namespace vklite {
     private:
         std::vector<const char *> mExtensions;
         std::vector<const char *> mLayers;
-        std::vector<std::unique_ptr<DevicePlugin>> mDevicePlugins;
+        std::vector<std::unique_ptr<PluginInterface>> mDevicePlugins;
 
         std::vector<uint32_t> mGraphicQueueIndices;
         std::vector<uint32_t> mPresentQueueIndices;
@@ -30,7 +30,7 @@ namespace vklite {
 
         ~DeviceBuilder();
 
-        DeviceBuilder &addDevicePlugin(std::unique_ptr<DevicePlugin> devicePlugin);
+        DeviceBuilder &addDevicePlugin(std::unique_ptr<PluginInterface> devicePlugin);
 
         DeviceBuilder &addGraphicQueueIndex(uint32_t queueIndex);
 

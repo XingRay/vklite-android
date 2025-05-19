@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include "vklite/device/DevicePlugin.h"
+#include "vklite/plugin/PluginInterface.h"
 
 namespace vklite {
 
-    class AndroidDevicePlugin : public DevicePlugin {
+    class AndroidPlugin : public PluginInterface {
     private:
         vk::PhysicalDeviceFeatures2 mPhysicalDeviceFeatures2;
         vk::PhysicalDeviceSamplerYcbcrConversionFeatures mPhysicalDeviceSamplerYcbcrConversionFeatures;
 
     public:
 
-        AndroidDevicePlugin();
+        AndroidPlugin();
 
-        ~AndroidDevicePlugin() override;
+        ~AndroidPlugin() override;
 
         std::vector<const char *> getInstanceExtensions() override;
 

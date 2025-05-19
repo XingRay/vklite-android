@@ -12,7 +12,7 @@
 #include "vklite/swapchain/SwapChainSupportDetail.h"
 #include "vklite/physical_device/QueueFamilyIndices.h"
 #include "vklite/physical_device/PhysicalDevice.h"
-#include "vklite/device/DevicePlugin.h"
+#include "vklite/plugin/PluginInterface.h"
 
 namespace vklite {
 
@@ -42,7 +42,7 @@ namespace vklite {
                std::vector<const char *> &&extensions,
                std::vector<const char *> &&layers,
                const vk::PhysicalDeviceFeatures &physicalDeviceFeatures,
-               const std::vector<std::unique_ptr<DevicePlugin>> &devicePlugins);
+               const std::vector<std::unique_ptr<PluginInterface>> &devicePlugins);
 
         ~Device();
 

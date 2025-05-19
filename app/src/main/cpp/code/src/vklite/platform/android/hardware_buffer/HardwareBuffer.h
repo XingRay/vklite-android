@@ -10,15 +10,15 @@
 
 namespace vklite {
 
-    class AndroidHardwareBuffer {
+    class HardwareBuffer {
     private:
         const Device &mDevice;
         AHardwareBuffer *mHardwareBuffer;
 
     public:
-        AndroidHardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer);
+        HardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer);
 
-        ~AndroidHardwareBuffer();
+        ~HardwareBuffer();
 
         [[nodiscard]]
         vk::AndroidHardwareBufferPropertiesANDROID getAndroidHardwareBufferProperties() const;
