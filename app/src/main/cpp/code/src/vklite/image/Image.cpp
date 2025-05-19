@@ -7,40 +7,43 @@
 
 namespace vklite {
 
-    Image::Image(const Device &device, uint32_t width, uint32_t height, vk::Format format, uint32_t mipLevels, vk::ImageUsageFlags imageUsageFlags,
-                 vk::SampleCountFlagBits sampleCountFlagBits, vk::ImageTiling imageTiling)
-            : mDevice(device), mWidth(width), mHeight(height), mMipLevels(mipLevels), mFormat(format) {
+    Image::Image(const Device &device, const vk::ImageCreateInfo &imageCreateInfo)
+            : mDevice(device),
+              mFormat(imageCreateInfo.format),
+              mMipLevels(imageCreateInfo.mipLevels),
+              mWidth(imageCreateInfo.extent.width),
+              mHeight(imageCreateInfo.extent.height) {
 
         const vk::Device &vkDevice = mDevice.getDevice();
 
-        vk::Extent3D extent3D;
-        extent3D
-                .setWidth(width)
-                .setHeight(height)
-                .setDepth(1);
-
-        vk::ImageCreateInfo imageCreateInfo;
-        imageCreateInfo
-                .setImageType(vk::ImageType::e2D)
-                .setExtent(extent3D)
-                .setMipLevels(mipLevels)
-                .setArrayLayers(1)
-                .setFormat(format)
-                        //VK_IMAGE_TILING_LINEAR texel按行的顺序排列
-                        //VK_IMAGE_TILING_OPTIMAL texel按实现定义的顺序排列
-                        //the tiling mode cannot be changed at a later time.
-                        //如果希望能够直接访问图像内存中的texel，则必须使用VK_IMAGE_TILING_LINEAR
-                .setTiling(imageTiling)
-                        //VK_IMAGE_LAYOUT_UNDEFINED 不能被 GPU 使用，并且第一个转换将丢弃texel
-                        //VK_IMAGE_TILING_OPTIMAL 不能被 GPU 使用，并且第一个转换将保留texel
-                .setInitialLayout(vk::ImageLayout::eUndefined)
-//                .setUsage(vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
-                .setUsage(imageUsageFlags)
-                .setSharingMode(vk::SharingMode::eExclusive)
-//                .setSamples(vk::SampleCountFlagBits::e1)
-                .setSamples(sampleCountFlagBits)
-                        //用于稀疏纹理相关的标志位
-                .setFlags(vk::ImageCreateFlags{});
+//        vk::Extent3D extent3D;
+//        extent3D
+//                .setWidth(width)
+//                .setHeight(height)
+//                .setDepth(1);
+//
+//        vk::ImageCreateInfo imageCreateInfo;
+//        imageCreateInfo
+//                .setImageType(vk::ImageType::e2D)
+//                .setExtent(extent3D)
+//                .setMipLevels(mipLevels)
+//                .setArrayLayers(1)
+//                .setFormat(format)
+//                        //VK_IMAGE_TILING_LINEAR texel按行的顺序排列
+//                        //VK_IMAGE_TILING_OPTIMAL texel按实现定义的顺序排列
+//                        //the tiling mode cannot be changed at a later time.
+//                        //如果希望能够直接访问图像内存中的texel，则必须使用VK_IMAGE_TILING_LINEAR
+//                .setTiling(imageTiling)
+//                        //VK_IMAGE_LAYOUT_UNDEFINED 不能被 GPU 使用，并且第一个转换将丢弃texel
+//                        //VK_IMAGE_TILING_OPTIMAL 不能被 GPU 使用，并且第一个转换将保留texel
+//                .setInitialLayout(vk::ImageLayout::eUndefined)
+////                .setUsage(vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
+//                .setUsage(imageUsageFlags)
+//                .setSharingMode(vk::SharingMode::eExclusive)
+////                .setSamples(vk::SampleCountFlagBits::e1)
+//                .setSamples(sampleCountFlagBits)
+//                        //用于稀疏纹理相关的标志位
+//                .setFlags(vk::ImageCreateFlags{});
 
         mImage = vkDevice.createImage(imageCreateInfo);
 
