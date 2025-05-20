@@ -101,11 +101,11 @@ namespace vklite {
 
     void Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordCommandCopyDataFromBuffer(commandBuffer, buffer);
+            recordCopyDataFromBuffer(commandBuffer, buffer);
         });
     }
 
-    void Image::recordCommandCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer) {
+    void Image::recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer) {
         vk::ImageSubresourceLayers imageSubresourceLayers;
         imageSubresourceLayers
                 .setAspectMask(vk::ImageAspectFlagBits::eColor)
@@ -138,17 +138,17 @@ namespace vklite {
                                       uint32_t dstQueueFamilyIndex,
                                       vk::ImageAspectFlags imageAspectFlags) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordCommandTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
+            recordTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
         });
     }
 
-    void Image::recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                                   vk::ImageLayout oldImageLayout,
-                                                   vk::ImageLayout newImageLayout,
-                                                   uint32_t levelCount,
-                                                   uint32_t srcQueueFamilyIndex,
-                                                   uint32_t dstQueueFamilyIndex,
-                                                   vk::ImageAspectFlags imageAspectFlags) {
+    void Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                            vk::ImageLayout oldImageLayout,
+                                            vk::ImageLayout newImageLayout,
+                                            uint32_t levelCount,
+                                            uint32_t srcQueueFamilyIndex,
+                                            uint32_t dstQueueFamilyIndex,
+                                            vk::ImageAspectFlags imageAspectFlags) {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -184,7 +184,6 @@ namespace vklite {
 
         commandBuffer.pipelineBarrier(
                 vk::PipelineStageFlagBits::eTopOfPipe,
-//                vk::PipelineStageFlagBits::eTransfer,
                 vk::PipelineStageFlagBits::eEarlyFragmentTests,
                 vk::DependencyFlags{},
                 memoryBarriers,
@@ -199,11 +198,11 @@ namespace vklite {
         }
 
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordCommandGenerateMipmaps(commandBuffer);
+            recordGenerateMipmaps(commandBuffer);
         });
     }
 
-    void Image::recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
+    void Image::recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
 
         vk::ImageSubresourceRange subresourceRange{};
         subresourceRange

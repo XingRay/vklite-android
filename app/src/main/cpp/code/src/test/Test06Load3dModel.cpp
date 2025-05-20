@@ -332,19 +332,19 @@ namespace test06 {
         vklite::StagingBuffer stagingBuffer = vklite::StagingBuffer(*mDevice, textureImage->getPixelBytes());
         stagingBuffer.updateBuffer(textureImage->getPixels(), textureImage->getPixelBytes());
         for (int i = 0; i < mFrameCount; i++) {
-            std::unique_ptr<vklite::Image> image = vklite::ImageBuilder::textureImageBuilder()
-                    .width(textureImage->getWidth())
-                    .height(textureImage->getHeight())
-                    .format(textureImage->getFormat())
-                    .buildUnique(*mDevice);
-            mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-                image->recordCommandTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
-                                                          vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
-                image->recordCommandCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
-            });
+            mImages.push_back(vklite::ImageBuilder::textureImageBuilder()
+                                      .width(textureImage->getWidth())
+                                      .height(textureImage->getHeight())
+                                      .format(textureImage->getFormat())
+                                      .postCreated([&](vklite::Image &image) {
+                                          mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+                                              image.recordTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
+                                                                                vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
+                                              image.recordCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
+                                          });
+                                      })
+                                      .buildUnique(*mDevice));
 
-
-            mImages.push_back(std::move(image));
             mImageViews.push_back(vklite::ImageViewBuilder::defaultImageViewBuilder()
                                           .format(textureImage->getFormat())
                                           .buildUnique(*mDevice, *mImages[i]));

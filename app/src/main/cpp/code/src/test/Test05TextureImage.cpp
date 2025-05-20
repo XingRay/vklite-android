@@ -324,9 +324,9 @@ namespace test05 {
                     .format(textureImage->getFormat())
                     .buildUnique(*mDevice);
             mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-                image->recordCommandTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
-                                                          vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
-                image->recordCommandCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
+                image->recordTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
+                                                   vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
+                image->recordCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
             });
 
 

@@ -59,13 +59,13 @@ namespace vklite {
         // copy data from buffer
         void copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer);
 
-        void recordCommandCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
+        void recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
 
 
         // generate mipmaps
         void generateMipmaps(const CommandPool &commandPool);
 
-        void recordCommandGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
+        void recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
 
 
         // transition image layout
@@ -77,13 +77,13 @@ namespace vklite {
                                    uint32_t dstQueueFamilyIndex,
                                    vk::ImageAspectFlags imageAspectFlags);
 
-        void recordCommandTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                                vk::ImageLayout oldImageLayout,
-                                                vk::ImageLayout newImageLayout,
-                                                uint32_t levelCount,
-                                                uint32_t srcQueueFamilyIndex,
-                                                uint32_t dstQueueFamilyIndex,
-                                                vk::ImageAspectFlags imageAspectFlags);
+        void recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                         vk::ImageLayout oldImageLayout,
+                                         vk::ImageLayout newImageLayout,
+                                         uint32_t levelCount,
+                                         uint32_t srcQueueFamilyIndex,
+                                         uint32_t dstQueueFamilyIndex,
+                                         vk::ImageAspectFlags imageAspectFlags);
 
 
     };

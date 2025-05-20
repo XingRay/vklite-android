@@ -37,7 +37,7 @@ namespace vklite {
                                                         uint32_t srcQueueFamilyIndex,
                                                         uint32_t dstQueueFamilyIndex,
                                                         vk::ImageAspectFlags imageAspectFlags) {
-        mImage.recordCommandTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
+        mImage.recordTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
     }
 
     void DepthImage::transitionImageLayout(const CommandPool &commandPool) {
