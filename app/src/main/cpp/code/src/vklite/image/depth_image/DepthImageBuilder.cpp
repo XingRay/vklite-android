@@ -6,8 +6,11 @@
 
 namespace vklite {
 
+    DepthImageBuilder::DepthImageBuilder(const ImageBuilder &imageBuilder)
+            : mImageBuilder(imageBuilder) {}
+
     DepthImageBuilder::DepthImageBuilder()
-            : mImageBuilder(ImageBuilder::colorImageBuilder()) {}
+            : DepthImageBuilder(ImageBuilder::depthImageBuilder()) {}
 
     DepthImageBuilder::~DepthImageBuilder() = default;
 
@@ -26,12 +29,10 @@ namespace vklite {
         return *this;
     }
 
-    DepthImageBuilder &DepthImageBuilder::setSizeAndFormat(const Swapchain &swapchain) {
-        vk::Extent2D extent = swapchain.getDisplaySize();
+    DepthImageBuilder &DepthImageBuilder::size(const vk::Extent2D &size) {
         (*this)
-                .width(extent.width)
-                .height(extent.height)
-                .format(swapchain.getDisplayFormat());
+                .width(size.width)
+                .height(size.height);
         return *this;
     }
 
@@ -40,12 +41,25 @@ namespace vklite {
         return *this;
     }
 
+    DepthImageBuilder &DepthImageBuilder::postCreated(std::function<void(DepthImage &)> &&postCreatedHandler) {
+        mPostCreatedHandler = std::move(postCreatedHandler);
+        return *this;
+    }
+
     DepthImage DepthImageBuilder::build(const Device &device) {
-        return DepthImage(mImageBuilder.build(device));
+        DepthImage depthImage = DepthImage(mImageBuilder.build(device));
+        if (mPostCreatedHandler != nullptr) {
+            mPostCreatedHandler(depthImage);
+        }
+        return std::move(depthImage);
     }
 
     std::unique_ptr<DepthImage> DepthImageBuilder::buildUnique(const Device &device) {
-        return std::make_unique<DepthImage>(mImageBuilder.build(device));
+        std::unique_ptr<DepthImage> depthImage = std::make_unique<DepthImage>(mImageBuilder.build(device));
+        if (mPostCreatedHandler != nullptr) {
+            mPostCreatedHandler(*depthImage);
+        }
+        return depthImage;
     }
 
 } // vklite

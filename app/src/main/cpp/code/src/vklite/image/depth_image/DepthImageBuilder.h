@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include <vulkan/vulkan.hpp>
 
@@ -19,8 +20,12 @@ namespace vklite {
 
     private:
         ImageBuilder mImageBuilder;
+        std::function<void(DepthImage &)> mPostCreatedHandler;
 
     public:
+
+        explicit DepthImageBuilder(const ImageBuilder &imageBuilder);
+
         DepthImageBuilder();
 
         ~DepthImageBuilder();
@@ -31,9 +36,11 @@ namespace vklite {
 
         DepthImageBuilder &format(vk::Format format);
 
-        DepthImageBuilder &setSizeAndFormat(const Swapchain &swapchain);
+        DepthImageBuilder &size(const vk::Extent2D &size);
 
         DepthImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
+
+        DepthImageBuilder &postCreated(std::function<void(DepthImage &)> &&postCreatedHandler);
 
         [[nodiscard]]
         DepthImage build(const Device &device);

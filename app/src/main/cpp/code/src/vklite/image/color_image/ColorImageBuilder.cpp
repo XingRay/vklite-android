@@ -6,8 +6,11 @@
 
 namespace vklite {
 
+    ColorImageBuilder::ColorImageBuilder(ImageBuilder imageBuilder)
+            : mImageBuilder(imageBuilder) {}
+
     ColorImageBuilder::ColorImageBuilder()
-            : mImageBuilder(ImageBuilder::colorImageBuilder()) {}
+            : ColorImageBuilder(ImageBuilder::colorImageBuilder()) {}
 
     ColorImageBuilder::~ColorImageBuilder() = default;
 
@@ -26,12 +29,10 @@ namespace vklite {
         return *this;
     }
 
-    ColorImageBuilder &ColorImageBuilder::setSizeAndFormat(const Swapchain &swapchain) {
-        vk::Extent2D extent = swapchain.getDisplaySize();
+    ColorImageBuilder &ColorImageBuilder::size(const vk::Extent2D &extent) {
         (*this)
                 .width(extent.width)
-                .height(extent.height)
-                .format(swapchain.getDisplayFormat());
+                .height(extent.height);
         return *this;
     }
 

@@ -21,6 +21,9 @@ namespace vklite {
         ImageBuilder mImageBuilder;
 
     public:
+
+        explicit ColorImageBuilder(ImageBuilder imageBuilder);
+
         ColorImageBuilder();
 
         ~ColorImageBuilder();
@@ -31,7 +34,7 @@ namespace vklite {
 
         ColorImageBuilder &format(vk::Format format);
 
-        ColorImageBuilder &setSizeAndFormat(const Swapchain& swapchain);
+        ColorImageBuilder &size(const vk::Extent2D& extent);
 
         ColorImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 

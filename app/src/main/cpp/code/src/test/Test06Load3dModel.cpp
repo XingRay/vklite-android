@@ -159,7 +159,8 @@ namespace test06 {
 
         if (mMsaaEnable) {
             mColorImage = vklite::ColorImageBuilder()
-                    .setSizeAndFormat(*mSwapchain)
+                    .size(mSwapchain->getDisplaySize())
+                    .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
                     .buildUnique(*mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
@@ -170,15 +171,24 @@ namespace test06 {
         if (mDepthTestEnable) {
             vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
 
-            std::unique_ptr<vklite::Image> depthImage = vklite::ImageBuilder::depthImageBuilder()
-                    .width(mSwapchain->getDisplaySize().width)
-                    .height(mSwapchain->getDisplaySize().height)
+            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+                    .size(mSwapchain->getDisplaySize())
                     .format(depthFormat)
                     .sampleCount(sampleCount)
+                    .postCreated([&](vklite::Image &image) {
+                        image.transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
+                                                    vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
+                    })
                     .buildUnique(*mDevice);
-            depthImage->transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
-                                              vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
-            mDepthImage = std::move(depthImage);
+
+//            mDepthImage = vklite::DepthImageBuilder()
+//                    .size(mSwapchain->getDisplaySize())
+//                    .format(depthFormat)
+//                    .sampleCount(sampleCount)
+//                    .postCreated([&](vklite::DepthImage &depthImage) {
+//                        depthImage.transitionImageLayout(*mCommandPool);
+//                    })
+//                    .buildUnique(*mDevice);
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                     .format(depthFormat)

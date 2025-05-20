@@ -14,6 +14,8 @@ namespace vklite {
     private:
         vk::ImageCreateInfo mImageCreateInfo;
 
+        std::function<void(Image &)> mPostCreatedHandler;
+
     public:
         ImageBuilder();
 
@@ -22,6 +24,8 @@ namespace vklite {
         ImageBuilder &width(uint32_t width);
 
         ImageBuilder &height(uint32_t height);
+
+        ImageBuilder &size(vk::Extent2D size);
 
         ImageBuilder &depth(uint32_t depth);
 
@@ -53,6 +57,8 @@ namespace vklite {
 
         //用于稀疏纹理相关的标志位
         ImageBuilder &flags(vk::ImageCreateFlags flags);
+
+        ImageBuilder &postCreated(std::function<void(Image &)> &&postCreatedHandler);
 
         [[nodiscard]]
         Image build(const Device &device);
