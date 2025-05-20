@@ -158,7 +158,7 @@ namespace test06 {
                 .build(*mDevice, mSwapchain->getDisplayImages());
 
         if (mMsaaEnable) {
-            mColorImage = vklite::ColorImageBuilder()
+            mColorImage = vklite::ImageBuilder::colorImageBuilder()
                     .size(mSwapchain->getDisplaySize())
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
@@ -171,12 +171,21 @@ namespace test06 {
         if (mDepthTestEnable) {
             vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
 
-            mDepthImage = vklite::DepthImageBuilder()
+//            mDepthImage = vklite::DepthImageBuilder()
+//                    .size(mSwapchain->getDisplaySize())
+//                    .format(depthFormat)
+//                    .sampleCount(sampleCount)
+//                    .postCreated([&](vklite::DepthImage &depthImage) {
+//                        depthImage.transitionImageLayout(*mCommandPool);
+//                    })
+//                    .buildUnique(*mDevice);
+
+            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
                     .size(mSwapchain->getDisplaySize())
                     .format(depthFormat)
                     .sampleCount(sampleCount)
-                    .postCreated([&](vklite::DepthImage &depthImage) {
-                        depthImage.transitionImageLayout(*mCommandPool);
+                    .postCreated([&](vklite::Image &image) {
+                        image.transitionImageLayout(*mCommandPool, vklite::ImageTransition::depthImageTransition());
                     })
                     .buildUnique(*mDevice);
 
@@ -338,9 +347,11 @@ namespace test06 {
                                       .format(textureImage->getFormat())
                                       .postCreated([&](vklite::Image &image) {
                                           mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-                                              image.recordTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
-                                                                                vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
-                                              image.recordCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
+//                                              image.recordTransitionImageLayout(commandBuffer, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
+//                                                                                vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
+                                              image
+                                                      .recordTransitionImageLayout(commandBuffer, vklite::ImageTransition::textureImageTransition())
+                                                      .recordCopyDataFromBuffer(commandBuffer, stagingBuffer.getBuffer());
                                           });
                                       })
                                       .buildUnique(*mDevice));

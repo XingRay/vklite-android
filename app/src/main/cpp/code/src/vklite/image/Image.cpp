@@ -99,13 +99,14 @@ namespace vklite {
         return mHeight;
     }
 
-    void Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
+    Image &Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordCopyDataFromBuffer(commandBuffer, buffer);
         });
+        return *this;
     }
 
-    void Image::recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer) {
+    Image &Image::recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer) {
         vk::ImageSubresourceLayers imageSubresourceLayers;
         imageSubresourceLayers
                 .setAspectMask(vk::ImageAspectFlagBits::eColor)
@@ -128,27 +129,41 @@ namespace vklite {
         std::array<vk::BufferImageCopy, 1> regions = {bufferImageCopy};
 
         commandBuffer.copyBufferToImage(buffer, mImage, vk::ImageLayout::eTransferDstOptimal, regions);
+
+        return *this;
     }
 
-    void Image::transitionImageLayout(const CommandPool &commandPool,
-                                      vk::ImageLayout oldImageLayout,
-                                      vk::ImageLayout newImageLayout,
-                                      uint32_t levelCount,
-                                      uint32_t srcQueueFamilyIndex,
-                                      uint32_t dstQueueFamilyIndex,
-                                      vk::ImageAspectFlags imageAspectFlags) {
+    Image &Image::transitionImageLayout(const CommandPool &commandPool,
+                                        vk::ImageLayout oldImageLayout,
+                                        vk::ImageLayout newImageLayout,
+                                        uint32_t levelCount,
+                                        uint32_t srcQueueFamilyIndex,
+                                        uint32_t dstQueueFamilyIndex,
+                                        vk::ImageAspectFlags aspectMask) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, imageAspectFlags);
+            recordTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, aspectMask);
         });
+        return *this;
     }
 
-    void Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                            vk::ImageLayout oldImageLayout,
-                                            vk::ImageLayout newImageLayout,
-                                            uint32_t levelCount,
-                                            uint32_t srcQueueFamilyIndex,
-                                            uint32_t dstQueueFamilyIndex,
-                                            vk::ImageAspectFlags imageAspectFlags) {
+    Image &Image::transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition) {
+        transitionImageLayout(commandPool,
+                              imageTransition.getOldImageLayout(),
+                              imageTransition.getNewImageLayout(),
+                              imageTransition.getLevelCount(),
+                              imageTransition.getSrcQueueFamilyIndex(),
+                              imageTransition.getDstQueueFamilyIndex(),
+                              imageTransition.getAspectMask());
+        return *this;
+    }
+
+    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                              vk::ImageLayout oldImageLayout,
+                                              vk::ImageLayout newImageLayout,
+                                              uint32_t levelCount,
+                                              uint32_t srcQueueFamilyIndex,
+                                              uint32_t dstQueueFamilyIndex,
+                                              vk::ImageAspectFlags aspectMask) {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -156,7 +171,7 @@ namespace vklite {
                 .setLevelCount(levelCount)
                 .setBaseArrayLayer(0)
                 .setLayerCount(1)
-                .setAspectMask(imageAspectFlags);
+                .setAspectMask(aspectMask);
 
         vk::ImageMemoryBarrier imageMemoryBarrier;
         imageMemoryBarrier
@@ -190,9 +205,22 @@ namespace vklite {
                 bufferMemoryBarriers,
                 imageMemoryBarriers
         );
+
+        return *this;
     }
 
-    void Image::generateMipmaps(const CommandPool &commandPool) {
+    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition) {
+        recordTransitionImageLayout(commandBuffer,
+                                    imageTransition.getOldImageLayout(),
+                                    imageTransition.getNewImageLayout(),
+                                    imageTransition.getLevelCount(),
+                                    imageTransition.getSrcQueueFamilyIndex(),
+                                    imageTransition.getDstQueueFamilyIndex(),
+                                    imageTransition.getAspectMask());
+        return *this;
+    }
+
+    Image &Image::generateMipmaps(const CommandPool &commandPool) {
         if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
             throw std::runtime_error("texture image format does not support linear tiling!");
         }
@@ -200,9 +228,11 @@ namespace vklite {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordGenerateMipmaps(commandBuffer);
         });
+
+        return *this;
     }
 
-    void Image::recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
+    Image &Image::recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer) {
 
         vk::ImageSubresourceRange subresourceRange{};
         subresourceRange
@@ -328,5 +358,6 @@ namespace vklite {
                 {imageMemoryBarrier}
         );
 
+        return *this;
     }
 } // vklite

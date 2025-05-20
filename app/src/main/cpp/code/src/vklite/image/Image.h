@@ -9,6 +9,7 @@
 #include "vklite/command_buffer/CommandPool.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
 #include "vklite/image/ImageInterface.h"
+#include "vklite/image/ImageTransition.h"
 
 namespace vklite {
 
@@ -57,35 +58,37 @@ namespace vklite {
 
 
         // copy data from buffer
-        void copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer);
+        Image &copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer);
 
-        void recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
+        Image &recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
 
 
         // generate mipmaps
-        void generateMipmaps(const CommandPool &commandPool);
+        Image &generateMipmaps(const CommandPool &commandPool);
 
-        void recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
+        Image &recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
 
 
         // transition image layout
-        void transitionImageLayout(const CommandPool &commandPool,
-                                   vk::ImageLayout oldImageLayout,
-                                   vk::ImageLayout newImageLayout,
-                                   uint32_t levelCount,
-                                   uint32_t srcQueueFamilyIndex,
-                                   uint32_t dstQueueFamilyIndex,
-                                   vk::ImageAspectFlags imageAspectFlags);
+        Image &transitionImageLayout(const CommandPool &commandPool,
+                                     vk::ImageLayout oldImageLayout,
+                                     vk::ImageLayout newImageLayout,
+                                     uint32_t levelCount,
+                                     uint32_t srcQueueFamilyIndex,
+                                     uint32_t dstQueueFamilyIndex,
+                                     vk::ImageAspectFlags aspectMask);
 
-        void recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                         vk::ImageLayout oldImageLayout,
-                                         vk::ImageLayout newImageLayout,
-                                         uint32_t levelCount,
-                                         uint32_t srcQueueFamilyIndex,
-                                         uint32_t dstQueueFamilyIndex,
-                                         vk::ImageAspectFlags imageAspectFlags);
+        Image &transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition);
 
+        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
+                                           vk::ImageLayout oldImageLayout,
+                                           vk::ImageLayout newImageLayout,
+                                           uint32_t levelCount,
+                                           uint32_t srcQueueFamilyIndex,
+                                           uint32_t dstQueueFamilyIndex,
+                                           vk::ImageAspectFlags aspectMask);
 
+        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition);
     };
 
 } // vklite
