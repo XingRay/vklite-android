@@ -68,7 +68,8 @@ namespace test06 {
         std::unique_ptr<vklite::ImageInterface> mDepthImage;
         std::unique_ptr<vklite::ImageView> mDepthImageView;
 
-        std::vector<vklite::FrameBuffer> mFrameBuffers;
+//        std::vector<vklite::FrameBuffer> mFrameBuffers;
+        vklite::FrameBuffers mFrameBuffers;
 
         std::unique_ptr<vklite::SyncObject> mSyncObject;
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;

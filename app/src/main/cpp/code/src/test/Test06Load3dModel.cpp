@@ -171,15 +171,6 @@ namespace test06 {
         if (mDepthTestEnable) {
             vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
 
-//            mDepthImage = vklite::DepthImageBuilder()
-//                    .size(mSwapchain->getDisplaySize())
-//                    .format(depthFormat)
-//                    .sampleCount(sampleCount)
-//                    .postCreated([&](vklite::DepthImage &depthImage) {
-//                        depthImage.transitionImageLayout(*mCommandPool);
-//                    })
-//                    .buildUnique(*mDevice);
-
             mDepthImage = vklite::ImageBuilder::depthImageBuilder()
                     .size(mSwapchain->getDisplaySize())
                     .format(depthFormat)
@@ -235,17 +226,19 @@ namespace test06 {
                 .renderAreaExtend(mSwapchain->getDisplaySize())
                 .buildUnique(*mDevice);
 
-        mFrameBuffers.reserve(mDisplayImageViews.size());
-        for (const vklite::ImageView &imageView: mDisplayImageViews) {
-            mFrameBuffers.push_back(vklite::FrameBufferBuilder()
-                                            .width(mSwapchain->getDisplaySize().width)
-                                            .height(mSwapchain->getDisplaySize().height)
-                                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView(); })
-                                            .addAttachment(imageView.getImageView())
-                                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
-                                            .build(*mDevice, *mRenderPass));
-        }
+        mFrameBuffers = vklite::FrameBuffersBuilder()
+                .count(mDisplayImageViews.size())
+                .frameBufferBuilder([&](uint32_t index) {
+                    return vklite::FrameBufferBuilder()
+                            .width(mSwapchain->getDisplaySize().width)
+                            .height(mSwapchain->getDisplaySize().height)
+                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
+                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView(); })
+                            .addAttachment(mDisplayImageViews[index].getImageView())
+                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
+                            .build(*mDevice, *mRenderPass);
+                })
+                .build();
 
         mSyncObject = vklite::SyncObjectBuilder()
                 .frameCount(mFrameCount)

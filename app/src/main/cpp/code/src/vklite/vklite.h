@@ -15,6 +15,7 @@
 #include "vklite/swapchain/SwapchainBuilder.h"
 #include "vklite/render_pass/RenderPassBuilder.h"
 #include "vklite/frame_buffer/FrameBufferBuilder.h"
+#include "vklite/frame_buffer/FrameBuffersBuilder.h"
 
 #include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
 #include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
