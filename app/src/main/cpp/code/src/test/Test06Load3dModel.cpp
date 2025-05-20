@@ -171,24 +171,14 @@ namespace test06 {
         if (mDepthTestEnable) {
             vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
 
-            mDepthImage = vklite::ImageBuilder::depthImageBuilder()
+            mDepthImage = vklite::DepthImageBuilder()
                     .size(mSwapchain->getDisplaySize())
                     .format(depthFormat)
                     .sampleCount(sampleCount)
-                    .postCreated([&](vklite::Image &image) {
-                        image.transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
-                                                    vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
+                    .postCreated([&](vklite::DepthImage &depthImage) {
+                        depthImage.transitionImageLayout(*mCommandPool);
                     })
                     .buildUnique(*mDevice);
-
-//            mDepthImage = vklite::DepthImageBuilder()
-//                    .size(mSwapchain->getDisplaySize())
-//                    .format(depthFormat)
-//                    .sampleCount(sampleCount)
-//                    .postCreated([&](vklite::DepthImage &depthImage) {
-//                        depthImage.transitionImageLayout(*mCommandPool);
-//                    })
-//                    .buildUnique(*mDevice);
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
                     .format(depthFormat)
