@@ -45,6 +45,8 @@ namespace vklite {
 
         ImageViewBuilder &format(vk::Format format);
 
+        ImageViewBuilder &next(const void *next);
+
         ImageView build(const Device &device, const vk::Image &image);
 
         std::unique_ptr<ImageView> buildUnique(const Device &device, const vk::Image &image);

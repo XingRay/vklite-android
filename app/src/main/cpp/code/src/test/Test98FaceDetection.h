@@ -16,7 +16,7 @@
 #include "ndk_camera/NdkCamera.h"
 #include "detector/MnnDetector.h"
 
-namespace test09 {
+namespace test08 {
 
     struct Vertex {
         glm::vec3 position;
@@ -33,7 +33,7 @@ namespace test09 {
         alignas(16)glm::mat4 proj;  // 投影矩阵
     };
 
-    class Test09NdkCameraFaceDetection : public test::TestBase {
+    class Test98FaceDetection : public test::TestBase {
     private:
 
         const int mFrameCount = 2;
@@ -47,7 +47,7 @@ namespace test09 {
         std::unique_ptr<detector::MnnDetector> mMnnDetector;
     public:
         // 构造函数初始化基类 TestBase，并传递 name
-        explicit Test09NdkCameraFaceDetection(const android_app &app, const std::string &name);
+        explicit Test98FaceDetection(const android_app &app, const std::string &name);
 
         // 初始化操作
         void init() override;

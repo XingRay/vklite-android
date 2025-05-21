@@ -6,34 +6,34 @@
 
 namespace vklite {
 
-//    ImmutableSamplerConfigure::ImmutableSamplerConfigure()
-//            : mBinding(0), mDescriptorOffset(0), mDescriptorRange(1) {}
-//
-//    ImmutableSamplerConfigure::~ImmutableSamplerConfigure() = default;
-//
-//    ImmutableSamplerConfigure &ImmutableSamplerConfigure::binding(uint32_t binding) {
-//        mBinding = binding;
-//        return *this;
-//    }
-//
-//    ImmutableSamplerConfigure &ImmutableSamplerConfigure::descriptorOffset(uint32_t offset) {
-//        mDescriptorOffset = offset;
-//        return *this;
-//    }
-//
-//    ImmutableSamplerConfigure &ImmutableSamplerConfigure::descriptorRange(uint32_t range) {
-//        mDescriptorRange = range;
-//        return *this;
-//    }
-//
-//    ImmutableSamplerConfigure &ImmutableSamplerConfigure::shaderStageFlags(vk::ShaderStageFlags shaderStageFlags) {
-//        mShaderStageFlags = shaderStageFlags;
-//        return *this;
-//    }
+    ImmutableSamplerConfigure::ImmutableSamplerConfigure()
+            : mBinding(0), mShaderStageFlags(vk::ShaderStageFlagBits::eFragment) {}
 
-//    std::unique_ptr<VulkanDescriptorBindingConfigure> ImmutableSamplerConfigure::createVulkanDescriptorBindingConfigure() {
-//        return std::make_unique<VulkanDescriptorBindingConfigure>(mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorOffset, mDescriptorRange, mShaderStageFlags,
-//                                                                  std::move(mDescriptorImmutableSamplerConfigure));
-//    }
+    ImmutableSamplerConfigure::~ImmutableSamplerConfigure() = default;
+
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::binding(uint32_t binding) {
+        mBinding = binding;
+        return *this;
+    }
+
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::shaderStageFlags(vk::ShaderStageFlags shaderStageFlags) {
+        mShaderStageFlags = shaderStageFlags;
+        return *this;
+    }
+
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSampler(vk::Sampler sampler) {
+        mSamplers.push_back(sampler);
+        return *this;
+    }
+
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSampler(const SamplerInterface &sampler) {
+        addSampler(sampler.getSampler());
+        return *this;
+    }
+
+    DescriptorBindingConfigure ImmutableSamplerConfigure::createDescriptorBindingConfigure() {
+//        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
+        return {mBinding, vk::DescriptorType::eCombinedImageSampler, mShaderStageFlags, std::move(mSamplers)};
+    }
 
 } // vklite

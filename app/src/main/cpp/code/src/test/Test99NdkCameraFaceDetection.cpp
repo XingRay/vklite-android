@@ -2,7 +2,7 @@
 // Created by leixing on 2025/1/4.
 //
 
-#include "Test09NdkCameraFaceDetection.h"
+#include "Test99NdkCameraFaceDetection.h"
 #include "util/FileUtil.h"
 
 #include <chrono>
@@ -298,7 +298,7 @@ namespace test09 {
                                   const std::string &output_img_path);
 
 
-    Test09NdkCameraFaceDetection::Test09NdkCameraFaceDetection(const android_app &app, const std::string &name)
+    Test99NdkCameraFaceDetection::Test99NdkCameraFaceDetection(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app) {
 
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
@@ -377,7 +377,7 @@ namespace test09 {
         mMnnDetector = std::make_unique<detector::MnnDetector>();
     }
 
-    void Test09NdkCameraFaceDetection::init() {
+    void Test99NdkCameraFaceDetection::init() {
 
         // x轴朝右, y轴朝下, z轴朝前, 右手系 (x,y)->z
         std::vector<Vertex> vertices = {
@@ -445,12 +445,12 @@ namespace test09 {
     }
 
     // 检查是否准备好
-    bool Test09NdkCameraFaceDetection::isReady() {
+    bool Test99NdkCameraFaceDetection::isReady() {
         return true;
     }
 
     // 绘制三角形帧
-    void Test09NdkCameraFaceDetection::drawFrame() {
+    void Test99NdkCameraFaceDetection::drawFrame() {
         // 静态变量用于帧率统计
         static auto startTime = std::chrono::steady_clock::now(); // 统计开始时间
         static int frameCount = 0;                               // 帧计数器
@@ -485,7 +485,7 @@ namespace test09 {
     }
 
     // 清理操作
-    void Test09NdkCameraFaceDetection::cleanup() {
+    void Test99NdkCameraFaceDetection::cleanup() {
         LOG_I("Cleaning up %s", getName().c_str());
 //        mVkLiteEngine.reset();
     }

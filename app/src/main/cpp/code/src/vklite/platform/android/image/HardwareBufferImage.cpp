@@ -6,7 +6,7 @@
 #include "vklite/util/VkCheckCpp.h"
 #include "vklite/util/VkCheck.h"
 #include "vklite/util/VulkanUtil.h"
-#include "vklite/platform/android/VulkanAndroidApi.h"
+#include "vklite/platform/android/instance/VulkanAndroidApi.h"
 
 namespace vklite {
 
@@ -17,8 +17,8 @@ namespace vklite {
         const vk::Device& vkDevice = mDevice.getDevice();
 
         AHardwareBuffer_Desc hardwareBufferDescription = androidHardwareBuffer.getAndroidHardwareBufferDescription();
-        vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties = androidHardwareBuffer.getAndroidHardwareBufferProperties();
-        vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo = androidHardwareBuffer.getAndroidHardwareBufferFormatProperties();
+        vk::AndroidHardwareBufferPropertiesANDROID properties = androidHardwareBuffer.getProperties();
+        vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo = androidHardwareBuffer.getFormatProperties();
 
         vk::ExternalMemoryImageCreateInfo externalMemoryImageCreateInfo{};
         externalMemoryImageCreateInfo
@@ -67,12 +67,12 @@ namespace vklite {
                 .setPNext(&hardwareBufferInfo);
 
         // 获取图像的内存需求
-        uint32_t memoryType = mDevice.getPhysicalDevice().findMemoryType(hardwareBufferProperties.memoryTypeBits);
+        uint32_t memoryType = mDevice.getPhysicalDevice().findMemoryType(properties.memoryTypeBits);
 
         // 分配内存并绑定到图像
         vk::MemoryAllocateInfo memoryAllocateInfo{};
         memoryAllocateInfo
-                .setAllocationSize(hardwareBufferProperties.allocationSize)
+                .setAllocationSize(properties.allocationSize)
                 .setMemoryTypeIndex(memoryType)
                 .setPNext(&memoryDedicatedAllocateInfo);
 

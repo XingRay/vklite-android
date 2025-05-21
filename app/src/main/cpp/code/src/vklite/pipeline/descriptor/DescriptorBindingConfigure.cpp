@@ -7,17 +7,25 @@
 namespace vklite {
 
     DescriptorBindingConfigure::DescriptorBindingConfigure()
-            : DescriptorBindingConfigure(0, vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex, 1, {}) {}
+            : DescriptorBindingConfigure(0, vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex, 1) {}
 
     DescriptorBindingConfigure::DescriptorBindingConfigure(uint32_t binding,
                                                            vk::DescriptorType descriptorType,
                                                            vk::ShaderStageFlags shaderStageFlags,
-                                                           uint32_t descriptorCount,
+                                                           uint32_t descriptorCount)
+            : mBinding(binding),
+              mDescriptorType(descriptorType),
+              mShaderStageFlags(shaderStageFlags),
+              mDescriptorCount(descriptorCount) {}
+
+    DescriptorBindingConfigure::DescriptorBindingConfigure(uint32_t binding,
+                                                           vk::DescriptorType descriptorType,
+                                                           vk::ShaderStageFlags shaderStageFlags,
                                                            std::vector<vk::Sampler> &&immutableSamplers)
             : mBinding(binding),
               mDescriptorType(descriptorType),
               mShaderStageFlags(shaderStageFlags),
-              mDescriptorCount(descriptorCount),
+              mDescriptorCount(immutableSamplers.size()),
               mImmutableSamplers(std::move(immutableSamplers)) {}
 
     DescriptorBindingConfigure::~DescriptorBindingConfigure() = default;

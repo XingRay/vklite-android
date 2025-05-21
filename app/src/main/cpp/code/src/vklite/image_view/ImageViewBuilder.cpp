@@ -66,6 +66,11 @@ namespace vklite {
         return *this;
     }
 
+    ImageViewBuilder &ImageViewBuilder::next(const void *next) {
+        mImageViewCreateInfo.pNext = next;
+        return *this;
+    }
+
     ImageView ImageViewBuilder::build(const Device &device, const vk::Image &image) {
         mImageViewCreateInfo.image = image;
 //        return ImageView(device, mImageViewCreateInfo);

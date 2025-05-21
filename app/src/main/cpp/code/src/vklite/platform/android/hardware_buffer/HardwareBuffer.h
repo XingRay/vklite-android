@@ -12,19 +12,24 @@ namespace vklite {
 
     class HardwareBuffer {
     private:
-        const Device &mDevice;
         AHardwareBuffer *mHardwareBuffer;
+        vk::AndroidHardwareBufferPropertiesANDROID mPropertiesInfo;
+        vk::AndroidHardwareBufferFormatPropertiesANDROID mFormatInfo;
+        AHardwareBuffer_Desc mHardwareBufferDescription;
 
     public:
-        HardwareBuffer(const Device &device, AHardwareBuffer *hardwareBuffer);
+        HardwareBuffer(AHardwareBuffer *hardwareBuffer,
+                       vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo,
+                       vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo,
+                       AHardwareBuffer_Desc hardwareBufferDescription);
 
         ~HardwareBuffer();
 
         [[nodiscard]]
-        vk::AndroidHardwareBufferPropertiesANDROID getAndroidHardwareBufferProperties() const;
+        vk::AndroidHardwareBufferPropertiesANDROID getProperties() const;
 
         [[nodiscard]]
-        vk::AndroidHardwareBufferFormatPropertiesANDROID getAndroidHardwareBufferFormatProperties() const;
+        vk::AndroidHardwareBufferFormatPropertiesANDROID getFormatProperties() const;
 
         [[nodiscard]]
         AHardwareBuffer_Desc getAndroidHardwareBufferDescription() const;
@@ -33,6 +38,9 @@ namespace vklite {
         uint32_t getDataSize() const;
 
         AHardwareBuffer *getHardwareBuffer() const;
+
+    public://static
+        static HardwareBuffer build(const Device &device, AHardwareBuffer *hardwareBuffer);
     };
 
 } // vklite

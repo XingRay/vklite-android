@@ -5,43 +5,39 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 #include <memory>
+#include <functional>
 
 #include "vulkan/vulkan.hpp"
 
-#include "vklite/sampler/SamplerBuilderInterface.h"
+#include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
+#include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
 
-//    class VulkanDescriptorBindingConfigure;
+    class ImmutableSamplerConfigure {
 
-//    class VulkanDescriptorSetConfigure;
+    private:
+        uint32_t mBinding;
+        vk::ShaderStageFlags mShaderStageFlags;
+        std::vector<vk::Sampler> mSamplers;
 
-//    class ImmutableSamplerConfigure {
-////        friend VulkanDescriptorSetConfigure;
-//
-//    private:
-//        uint32_t mBinding;
-//        uint32_t mDescriptorOffset;
-//        uint32_t mDescriptorRange;
-//        vk::ShaderStageFlags mShaderStageFlags;
-//
-////        std::unique_ptr<DescriptorImmutableSamplerConfigure> mDescriptorImmutableSamplerConfigure;
-//
-//    public:
-//        ImmutableSamplerConfigure();
-//
-//        ~ImmutableSamplerConfigure();
-//
-//        ImmutableSamplerConfigure &binding(uint32_t binding);
-//
-//        ImmutableSamplerConfigure &descriptorOffset(uint32_t offset);
-//
-//        ImmutableSamplerConfigure &descriptorRange(uint32_t range);
-//
-//        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
-//
-////        std::unique_ptr<VulkanDescriptorBindingConfigure> createVulkanDescriptorBindingConfigure();
-//    };
+    public:
+        ImmutableSamplerConfigure();
+
+        ~ImmutableSamplerConfigure();
+
+        ImmutableSamplerConfigure &binding(uint32_t binding);
+
+        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
+
+        ImmutableSamplerConfigure &addSampler(vk::Sampler sampler);
+
+        ImmutableSamplerConfigure &addSampler(const SamplerInterface &sampler);
+
+        [[nodiscard]]
+        DescriptorBindingConfigure createDescriptorBindingConfigure();
+    };
 
 } // vklite

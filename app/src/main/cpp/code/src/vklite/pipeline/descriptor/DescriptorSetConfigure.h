@@ -56,10 +56,13 @@ namespace vklite {
         DescriptorSetConfigure &addSampler(const std::function<void(SamplerConfigure &)> &configure);
 
 
-        //DescriptorSetConfigure &addImmutableSampler(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
+        // immutable sampler
+        DescriptorSetConfigure &addImmutableSampler(ImmutableSamplerConfigure& configure);
 
-//        DescriptorSetConfigure &addImmutableSampler(const std::function<void(VulkanImmutableSamplerConfigure &)> &configure);
+        DescriptorSetConfigure &addImmutableSampler(const std::function<void(ImmutableSamplerConfigure &)> &configure);
 
+
+        //storage buffer
 //        DescriptorSetConfigure &addStorage(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
 
 //        std::unique_ptr<DescriptorBindingSet> createDescriptorBindingSet(const Device &device, const CommandPool &commandPool);

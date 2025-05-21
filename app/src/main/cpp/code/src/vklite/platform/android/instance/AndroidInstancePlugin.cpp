@@ -3,7 +3,7 @@
 //
 
 #include "AndroidInstancePlugin.h"
-#include "vklite/platform/android/VulkanAndroidApi.h"
+#include "VulkanAndroidApi.h"
 
 namespace vklite {
 
