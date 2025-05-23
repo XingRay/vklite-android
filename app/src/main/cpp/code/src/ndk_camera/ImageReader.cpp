@@ -4,6 +4,9 @@
 
 #include "ndk_camera/ImageReader.h"
 
+#include <algorithm>
+#include <vector>
+
 #include "ndk_camera/Log.h"
 #include "camera/NdkCameraDevice.h"
 
@@ -16,7 +19,7 @@ namespace ndkcamera {
             throw std::runtime_error("Max images must >= 2");
         }
 
-        media_status_t status = AImageReader_newWithUsage(width, height, format, usage, maxImages + 2, &mImageReader);
+        media_status_t status = AImageReader_newWithUsage(width, height, format, usage, maxImages, &mImageReader);
         if (status != AMEDIA_OK || mImageReader == nullptr) {
             LOG_E("Failed to create AImageReader");
             return;

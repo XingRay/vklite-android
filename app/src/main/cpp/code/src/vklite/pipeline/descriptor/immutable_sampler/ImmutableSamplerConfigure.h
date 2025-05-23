@@ -36,6 +36,10 @@ namespace vklite {
 
         ImmutableSamplerConfigure &addSampler(const SamplerInterface &sampler);
 
+        ImmutableSamplerConfigure &addSamplers(std::vector<vk::Sampler> &&samplers);
+
+        ImmutableSamplerConfigure &addSamplers(const std::vector<SamplerInterface> &samplers);
+
         [[nodiscard]]
         DescriptorBindingConfigure createDescriptorBindingConfigure();
     };

@@ -6,9 +6,9 @@
 #include "ndk_camera/Log.h"
 
 namespace ndkcamera {
-    CameraManager::CameraManager() : mCameraManager(ACameraManager_create()) {
 
-    }
+    CameraManager::CameraManager()
+            : mCameraManager(ACameraManager_create()) {}
 
     CameraManager::~CameraManager() {
         ACameraManager_delete(mCameraManager);

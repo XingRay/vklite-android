@@ -5,6 +5,7 @@
 #pragma once
 
 #include <optional>
+#include <vector>
 
 #include "camera/NdkCameraMetadata.h"
 
@@ -39,6 +40,12 @@ namespace ndkcamera {
         EXTERNAL,
     };
 
+    class CameraFpsRange {
+    public:
+        uint32_t min;
+        uint32_t max;
+    };
+
     class CameraMetadata {
     private:
         ACameraMetadata *mMetadata;
@@ -51,6 +58,8 @@ namespace ndkcamera {
         std::optional<SupportedHardwareLevel> querySupportedHardwareLevel();
 
         std::optional<CameraLensFacing> queryCameraLensFacing();
+
+        std::vector<CameraFpsRange> queryCameraFpsRanges() const;
     };
 
 } // ndkcamera

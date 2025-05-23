@@ -37,6 +37,7 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getDataSize() const;
 
+        [[nodiscard]]
         AHardwareBuffer *getHardwareBuffer() const;
 
     public://static

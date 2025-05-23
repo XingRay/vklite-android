@@ -16,6 +16,7 @@
 #include "vklite/vklite_android.h"
 
 #include "ndk_camera/NdkCamera.h"
+#include "util/FrameCounter.h"
 
 namespace test07 {
 
@@ -94,10 +95,15 @@ namespace test07 {
 
         std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
 
+        // hardware buffer
         std::unique_ptr<vklite::HardwareBufferYcbcrConversion> mConversion;
+        std::unique_ptr<vklite::HardwareBufferSampler> mHardwareBufferSampler;
+
         std::unique_ptr<vklite::HardwareBufferImage> mHardwareBufferImage;
         std::unique_ptr<vklite::ImageView> mHardwareBufferImageView;
-        std::unique_ptr<vklite::HardwareBufferSampler> mHardwareBufferSampler;
+
+
+        std::unique_ptr<util::FrameCounter> mFrameCounter;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

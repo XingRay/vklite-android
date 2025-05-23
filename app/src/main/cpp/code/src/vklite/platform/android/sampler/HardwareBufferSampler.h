@@ -26,6 +26,15 @@ namespace vklite {
 
         ~HardwareBufferSampler() override;
 
+        HardwareBufferSampler(const HardwareBufferSampler &other) = delete;
+
+        HardwareBufferSampler &operator=(const HardwareBufferSampler &other) = delete;
+
+        HardwareBufferSampler(HardwareBufferSampler &&other) noexcept;
+
+        HardwareBufferSampler &operator=(HardwareBufferSampler &&other) noexcept = delete;
+
+
         [[nodiscard]]
         const vk::Sampler &getSampler() const override;
 

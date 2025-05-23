@@ -224,13 +224,6 @@ namespace test07 {
         mConversion = std::make_unique<vklite::HardwareBufferYcbcrConversion>(*mDevice, vkHardwareBuffer.getFormatProperties());
         mHardwareBufferSampler = std::make_unique<vklite::HardwareBufferSampler>(*mDevice, *mConversion);
 
-        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mDevice, vkHardwareBuffer, *mConversion);
-        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
-                .format(vkHardwareBuffer.getFormatProperties().format)
-                .conversion(mConversion->getSamplerYcbcrConversion())
-                .buildUnique(*mDevice, *mHardwareBufferImage);
-
-
         vklite::DescriptorConfigure descriptorConfigure = vklite::DescriptorConfigure()
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
@@ -308,6 +301,12 @@ namespace test07 {
                 })
                 .build();
 
+        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mDevice, vkHardwareBuffer, *mConversion);
+        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
+                .format(vkHardwareBuffer.getFormatProperties().format)
+                .conversion((*mConversion).getSamplerYcbcrConversion())
+                .buildUnique(*mDevice, *mHardwareBufferImage);
+
         vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
@@ -323,6 +322,7 @@ namespace test07 {
                 .build();
         mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
 
+        mFrameCounter = std::make_unique<util::FrameCounter>();
         LOG_D("test created ");
     }
 
@@ -337,38 +337,33 @@ namespace test07 {
 
     // 绘制三角形帧
     void Test07NdkCamera::drawFrame() {
-        // 静态变量用于帧率统计
-        static auto startTime = std::chrono::steady_clock::now(); // 统计开始时间
-        static int frameCount = 0;                               // 帧计数器
-
-
 //        LOG_D("Test07NdkCamera::drawFrame()");
-        AHardwareBuffer *buffer = mNdkCamera->getLatestHardwareBuffer();
-//        LOG_D("AHardwareBuffer:%p", buffer);
-        if (buffer != nullptr) {
-//            mVkLiteEngine->updateUniformBuffer(mVkLiteEngine->getCurrentFrameIndex(), 0, 0, buffer, 0);
-//            mVkLiteEngine->drawFrame();
-
-            // 增加帧计数器
-            frameCount++;
-
-            // 计算时间差
-            auto currentTime = std::chrono::steady_clock::now();
-            auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
-
-            // 每 5 秒输出一次帧率
-            if (elapsedTime >= 5) {
-                float fps = static_cast<float>(frameCount) / static_cast<float>(elapsedTime); // 计算帧率
-                LOG_D("FPS: %.2f", fps);                                 // 输出帧率
-
-                // 重置统计
-                startTime = currentTime;
-                frameCount = 0;
-            }
+        AHardwareBuffer *hardwareBuffer = mNdkCamera->getLatestHardwareBuffer();
+        if (hardwareBuffer == nullptr) {
+            return;
         }
 
-        mNdkCamera->cleanLatestHardwareBuffer();
+        vklite::HardwareBuffer vkHardwareBuffer = vklite::HardwareBuffer::build(*mDevice, hardwareBuffer);
+        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mDevice, vkHardwareBuffer, *mConversion);
+        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
+                .format(vkHardwareBuffer.getFormatProperties().format)
+                .conversion((*mConversion).getSamplerYcbcrConversion())
+                .buildUnique(*mDevice, *mHardwareBufferImage);
 
+        vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
+                    descriptorSetMappingConfigure
+                            .addMapping([&](vklite::DescriptorMapping &mapping) {
+                                mapping
+                                        .binding(0)
+                                        .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
+                                        .descriptorType(vk::DescriptorType::eCombinedImageSampler)
+                                        .addImageInfo(*mHardwareBufferSampler, *mHardwareBufferImageView);
+                            });
+                })
+                .build();
+        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
 
         const vk::Device vkDevice = mDevice->getDevice();
         vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
@@ -456,12 +451,18 @@ namespace test07 {
         }
 
         mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mFrameCount;
+
+
+        // 增加帧计数器
+        mFrameCounter->count();
+        LOG_D("FPS: %.2f", mFrameCounter->getFps());
+
+        mNdkCamera->cleanLatestHardwareBuffer();
     }
 
     // 清理操作
     void Test07NdkCamera::cleanup() {
-//        LOG_I("Cleaning up %s", getName().c_str());
-//        mVkLiteEngine.reset();
+        LOG_I("Cleaning up %s", getName().c_str());
     }
 
 } // test

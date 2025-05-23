@@ -25,16 +25,16 @@ namespace vklite {
 
         // 拷贝构造函数（显式删除） ---
         // 原因：mDevice 是 const 引用，无法重新绑定；
-        ImageView(const ImageView &) = delete;
+        ImageView(const ImageView &other) = delete;
 
         // 移动构造函数
         ImageView(ImageView &&other) noexcept;
 
         // 拷贝赋值运算符
-        ImageView &operator=(const ImageView &) = delete;
+        ImageView &operator=(const ImageView &other) = delete;
 
         // 移动赋值运算符
-        ImageView &operator=(ImageView &&) = delete;
+        ImageView &operator=(ImageView &&other) = delete;
 
         ~ImageView() override;
 

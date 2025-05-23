@@ -12,7 +12,7 @@ namespace vklite {
 
     class HardwareBufferYcbcrConversion {
     private:
-        const Device& mDevice;
+        const Device &mDevice;
 
         vk::SamplerYcbcrConversion mSamplerYcbcrConversion;
 
@@ -22,8 +22,16 @@ namespace vklite {
 
         ~HardwareBufferYcbcrConversion();
 
+        HardwareBufferYcbcrConversion(const HardwareBufferYcbcrConversion &other) = delete;
+
+        HardwareBufferYcbcrConversion &operator=(const HardwareBufferYcbcrConversion &other) = delete;
+
+        HardwareBufferYcbcrConversion(HardwareBufferYcbcrConversion &&other) noexcept;
+
+        HardwareBufferYcbcrConversion &operator=(HardwareBufferYcbcrConversion &&other) noexcept = delete;
+
         [[nodiscard]]
-        const vk::SamplerYcbcrConversion& getSamplerYcbcrConversion()const;
+        const vk::SamplerYcbcrConversion &getSamplerYcbcrConversion() const;
     };
 
 } // vklite

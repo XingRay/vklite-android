@@ -31,6 +31,20 @@ namespace vklite {
         return *this;
     }
 
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSamplers(std::vector<vk::Sampler> &&samplers) {
+        mSamplers.insert(mSamplers.end(),
+                         std::make_move_iterator(samplers.begin()),
+                         std::make_move_iterator(samplers.end()));
+        return *this;
+    }
+
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSamplers(const std::vector<SamplerInterface> &samplers) {
+        for (const auto &sampler: samplers) {
+            addSampler(sampler);
+        }
+        return *this;
+    }
+
     DescriptorBindingConfigure ImmutableSamplerConfigure::createDescriptorBindingConfigure() {
 //        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
         return {mBinding, vk::DescriptorType::eCombinedImageSampler, mShaderStageFlags, std::move(mSamplers)};

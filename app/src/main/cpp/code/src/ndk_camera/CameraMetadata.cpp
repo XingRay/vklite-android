@@ -69,4 +69,33 @@ namespace ndkcamera {
         }
     }
 
+    std::vector<CameraFpsRange> CameraMetadata::queryCameraFpsRanges() const {
+        // 查询支持的 FPS 范围
+        std::vector<CameraFpsRange> ranges;
+        camera_status_t status;
+
+        ACameraMetadata_const_entry entry = {};
+        status = ACameraMetadata_getConstEntry(
+                mMetadata,
+                ACAMERA_CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES,
+                &entry
+        );
+
+        if (status != ACAMERA_OK || entry.count == 0) {
+            LOG_D("Device does not support FPS range query");
+            return ranges;
+        }
+
+        // 遍历 FPS 范围列表
+        for (uint32_t i = 0; i < entry.count; i += 2) {
+            int32_t minFps = entry.data.i32[i];
+            int32_t maxFps = entry.data.i32[i + 1];
+            LOG_D("Supported FPS range: [%d, %d]", minFps, maxFps);
+
+            ranges.emplace_back(CameraFpsRange(minFps, maxFps));
+        }
+
+        return ranges;
+    }
+
 } // ndkcamera

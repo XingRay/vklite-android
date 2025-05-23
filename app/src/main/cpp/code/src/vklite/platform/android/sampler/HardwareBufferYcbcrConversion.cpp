@@ -47,6 +47,10 @@ namespace vklite {
         vkDestroySamplerYcbcrConversion(device, mSamplerYcbcrConversion, nullptr);
     }
 
+    HardwareBufferYcbcrConversion::HardwareBufferYcbcrConversion(HardwareBufferYcbcrConversion &&other) noexcept
+            : mDevice(other.mDevice),
+              mSamplerYcbcrConversion(std::exchange(other.mSamplerYcbcrConversion, nullptr)) {}
+
     const vk::SamplerYcbcrConversion &HardwareBufferYcbcrConversion::getSamplerYcbcrConversion() const {
         return mSamplerYcbcrConversion;
     }

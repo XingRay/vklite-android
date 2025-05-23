@@ -41,10 +41,14 @@ namespace vklite {
     }
 
     HardwareBufferSampler::~HardwareBufferSampler() {
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
         vkDevice.destroySampler(mSampler);
     }
+
+    HardwareBufferSampler::HardwareBufferSampler(HardwareBufferSampler &&other) noexcept
+            : mDevice(other.mDevice),
+              mSampler(std::exchange(other.mSampler, nullptr)) {}
 
     const vk::Sampler &HardwareBufferSampler::getSampler() const {
         return mSampler;
