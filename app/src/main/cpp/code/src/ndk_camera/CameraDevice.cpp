@@ -9,10 +9,10 @@
 
 namespace ndkcamera {
 
-    CameraDevice::CameraDevice(ACameraDevice *cameraDevice, ACameraDevice_StateCallbacks *stateCallbacks)
-            : mCameraDevice(cameraDevice), mStateCallbacks(stateCallbacks) {
+    CameraDevice::CameraDevice(ACameraDevice *cameraDevice, std::unique_ptr<CameraDeviceStateCallbacks> stateCallbacks)
+            : mCameraDevice(cameraDevice), mStateCallbacks(std::move(stateCallbacks)) {
         if (mStateCallbacks != nullptr) {
-            mStateCallbacks->context = this;
+            mStateCallbacks->getStateCallbacks().context = this;
         }
     }
 
@@ -24,15 +24,15 @@ namespace ndkcamera {
 
     CameraDevice::CameraDevice(CameraDevice &&other) noexcept
             : mCameraDevice(std::exchange(other.mCameraDevice, nullptr)),
-              mStateCallbacks(std::exchange(other.mStateCallbacks, nullptr)) {
-        mStateCallbacks->context = this;
+              mStateCallbacks(std::move(other.mStateCallbacks)) {
+        mStateCallbacks->getStateCallbacks().context = this;
     }
 
     CameraDevice &CameraDevice::operator=(CameraDevice &&other) noexcept {
         if (this != &other) {
             mCameraDevice = std::exchange(other.mCameraDevice, nullptr);
-            mStateCallbacks = std::exchange(other.mStateCallbacks, nullptr);
-            mStateCallbacks->context = this;
+            mStateCallbacks = std::move(other.mStateCallbacks);
+            mStateCallbacks->getStateCallbacks().context = this;
         }
         return *this;
     }
@@ -58,16 +58,16 @@ namespace ndkcamera {
 
     std::optional<CameraCaptureSession> CameraDevice::createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer) {
         ACaptureSessionOutputContainer *outputs = captureSessionOutputContainer.getCaptureSessionOutputContainer();
-//        ACameraCaptureSession_stateCallbacks *callbacks = cameraCaptureSession.createStateCallbacks();
+        std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks = CameraCaptureSession::createUniqueStateCallbacks();
 
         ACameraCaptureSession *captureSession;
-        camera_status_t status = ACameraDevice_createCaptureSession(mCameraDevice, outputs, /*callbacks,*/nullptr, &captureSession);
+        camera_status_t status = ACameraDevice_createCaptureSession(mCameraDevice, outputs, &(stateCallbacks->getStateCallbacks()), &captureSession);
         if (status != ACAMERA_OK || captureSession == nullptr) {
             LOG_E("ACameraDevice_createCaptureSession() Failed, status: %d, captureSession:%p", status, captureSession);
             return std::nullopt;
         }
 
-        return CameraCaptureSession(captureSession);
+        return CameraCaptureSession(captureSession, std::move(stateCallbacks));
     }
 
     std::unique_ptr<CameraCaptureSession> CameraDevice::createUniqueCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer) {
@@ -82,16 +82,18 @@ namespace ndkcamera {
     std::optional<CameraCaptureSession> CameraDevice::createCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
                                                                                                 const CaptureRequest &captureRequest) {
         ACameraCaptureSession *captureSession;
+        std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks = CameraCaptureSession::createUniqueStateCallbacks();
+
         camera_status_t status = ACameraDevice_createCaptureSessionWithSessionParameters(mCameraDevice,
                                                                                          captureSessionOutputContainer.getCaptureSessionOutputContainer(),
                                                                                          captureRequest.getCaptureRequest(),
-                                                                                         nullptr,// callbacks
+                                                                                         &(stateCallbacks->getStateCallbacks()),
                                                                                          &captureSession);
         if (status != ACAMERA_OK || captureSession == nullptr) {
             LOG_E("ACameraDevice_createCaptureSessionWithSessionParameters() Failed,status: %d, captureSession:%p", status, captureSession);
             return std::nullopt;
         }
-        return CameraCaptureSession(captureSession);
+        return CameraCaptureSession(captureSession, std::move(stateCallbacks));
     }
 
     std::unique_ptr<CameraCaptureSession> CameraDevice::createUniqueCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
@@ -104,11 +106,24 @@ namespace ndkcamera {
     }
 
     void CameraDevice::onDisconnected() {
-        LOG_D("CameraDevice::onDisconnected()");
+        LOG_D("CameraDevice::onDisconnected(), this:%p", this);
     }
 
     void CameraDevice::onError(int error) {
-        LOG_D("CameraDevice::onError(error:%d)", error);
+        LOG_D("CameraDevice::onError(error:%d), this:%p", error, this);
+    }
+
+
+    // static methods
+
+    std::unique_ptr<CameraDeviceStateCallbacks> CameraDevice::createUniqueStateCallbacks() {
+        std::unique_ptr<CameraDeviceStateCallbacks> callbacks = std::make_unique<CameraDeviceStateCallbacks>();
+
+        ACameraDevice_StateCallbacks &stateCallbacks = callbacks->getStateCallbacks();
+        stateCallbacks.onDisconnected = onDisconnected;
+        stateCallbacks.onError = onError;
+
+        return callbacks;
     }
 
     void CameraDevice::onDisconnected(void *context, ACameraDevice *device) {

@@ -10,16 +10,17 @@
 
 #include "ndk_camera/CameraCaptureSession.h"
 #include "ndk_camera/CaptureRequest.h"
+#include "ndk_camera/CameraDeviceStateCallbacks.h"
 
 namespace ndkcamera {
 
     class CameraDevice {
     private:
         ACameraDevice *mCameraDevice;
-        ACameraDevice_StateCallbacks *mStateCallbacks;
+        std::unique_ptr<CameraDeviceStateCallbacks> mStateCallbacks;
 
     public:
-        explicit CameraDevice(ACameraDevice *cameraDevice, ACameraDevice_StateCallbacks *stateCallbacks);
+        CameraDevice(ACameraDevice *cameraDevice, std::unique_ptr<CameraDeviceStateCallbacks> stateCallbacks);
 
         ~CameraDevice();
 
@@ -52,13 +53,19 @@ namespace ndkcamera {
                                                                                               const CaptureRequest &captureRequest);
 
     private:
-
+        // state callbacks
         void onDisconnected();
 
         void onError(int error);
 
 
+
+        // static methods
+
     public://static
+        static std::unique_ptr<CameraDeviceStateCallbacks> createUniqueStateCallbacks();
+
+    private://static
 
         static void onDisconnected(void *context, ACameraDevice *device);
 

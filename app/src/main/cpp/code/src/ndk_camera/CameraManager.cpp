@@ -82,17 +82,15 @@ namespace ndkcamera {
 
     std::unique_ptr<CameraDevice> CameraManager::openCamera(const char *cameraId) {
         ACameraDevice *device;
-        ACameraDevice_StateCallbacks *callbacks = new ACameraDevice_StateCallbacks();
-        callbacks->onDisconnected = CameraDevice::onDisconnected;
-        callbacks->onError = CameraDevice::onError;
+        std::unique_ptr<CameraDeviceStateCallbacks> stateCallbacks = CameraDevice::createUniqueStateCallbacks();
 
-        camera_status_t status = ACameraManager_openCamera(mCameraManager, cameraId, callbacks, &device);
+        camera_status_t status = ACameraManager_openCamera(mCameraManager, cameraId, &(stateCallbacks->getStateCallbacks()), &device);
         if (status != ACAMERA_OK || device == nullptr) {
-            LOG_E("Failed to open camera: %d", status);
+            LOG_E("ACameraManager_openCamera() Failed, status:%d, device:%p", status, device);
             return nullptr; // 返回空指针表示失败
         }
         LOG_D("Device opened successfully: %p", device);
-        return std::make_unique<CameraDevice>(device, callbacks);
+        return std::make_unique<CameraDevice>(device, std::move(stateCallbacks));
     }
 
 } // ndkcamera

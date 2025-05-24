@@ -63,7 +63,7 @@ namespace ndkcamera {
 
     void NdkCamera::startPreview() {
         // 启动相机预览
-        mCaptureSession->setRepeatingRequest(mCaptureRequest);
+        mCaptureSession->setRepeatingRequest(*mCaptureRequest);
     }
 
     void NdkCamera::stopPreview() {

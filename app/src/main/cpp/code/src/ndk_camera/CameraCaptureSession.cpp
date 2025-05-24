@@ -11,8 +11,21 @@
 
 
 namespace ndkcamera {
-    CameraCaptureSession::CameraCaptureSession(ACameraCaptureSession *cameraCaptureSession)
-            : mCameraCaptureSession(cameraCaptureSession) {}
+
+    CameraCaptureSession::CameraCaptureSession(ACameraCaptureSession *captureSession,
+                                               std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks,
+                                               std::unique_ptr<CameraCaptureSessionCaptureCallbacks> captureCallbacks)
+            : mCameraCaptureSession(captureSession),
+              mStateCallbacks(std::move(stateCallbacks)),
+              mCaptureCallbacks(std::move(captureCallbacks)) {
+
+        mStateCallbacks->getStateCallbacks().context = this;
+        mCaptureCallbacks->getCaptureCallbacks().context = this;
+    }
+
+    CameraCaptureSession::CameraCaptureSession(ACameraCaptureSession *captureSession,
+                                               std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks)
+            : CameraCaptureSession(captureSession, std::move(stateCallbacks), createUniqueCaptureCallbacks()) {}
 
     CameraCaptureSession::~CameraCaptureSession() {
         if (mCameraCaptureSession != nullptr) {
@@ -21,38 +34,116 @@ namespace ndkcamera {
     }
 
     CameraCaptureSession::CameraCaptureSession(CameraCaptureSession &&other) noexcept
-            : mCameraCaptureSession(std::exchange(other.mCameraCaptureSession, nullptr)) {}
+            : mCameraCaptureSession(std::exchange(other.mCameraCaptureSession, nullptr)),
+              mStateCallbacks(std::move(other.mStateCallbacks)),
+              mCaptureCallbacks(std::move(other.mCaptureCallbacks)) {
+
+        mStateCallbacks->getStateCallbacks().context = this;
+        mCaptureCallbacks->getCaptureCallbacks().context = this;
+    }
 
     CameraCaptureSession &CameraCaptureSession::operator=(CameraCaptureSession &&other) noexcept {
         if (this != &other) {
             mCameraCaptureSession = std::exchange(other.mCameraCaptureSession, nullptr);
+
+            mStateCallbacks = std::move(other.mStateCallbacks);
+            mStateCallbacks->getStateCallbacks().context = this;
+
+            mCaptureCallbacks = std::move(other.mCaptureCallbacks);
+            mCaptureCallbacks->getCaptureCallbacks().context = this;
         }
         return *this;
     }
 
-    ACameraCaptureSession_stateCallbacks *CameraCaptureSession::createStateCallbacks() {
-        ACameraCaptureSession_stateCallbacks *callbacks = new ACameraCaptureSession_stateCallbacks{};
-        callbacks->context = this;
-        callbacks->onClosed = onClosed;
-        callbacks->onReady = onReady;
-        callbacks->onActive = onActive;
-        return callbacks;
-    }
+    void CameraCaptureSession::setRepeatingRequest(const CaptureRequest &captureRequest) {
+        std::array<ACaptureRequest *, 1> requests{captureRequest.getCaptureRequest()};
 
-    void CameraCaptureSession::setRepeatingRequest(const std::unique_ptr<CaptureRequest> &captureRequest) {
-        std::array<ACaptureRequest *, 1> requests{captureRequest->getCaptureRequest()};
-
-        LOG_D("ACameraCaptureSession_setRepeatingRequest()");
-//        ACameraCaptureSession_captureCallbacks *callbacks = createCaptureCallbacks();
-        ACameraCaptureSession_captureCallbacks *callbacks = nullptr;
 //        int *id = &mCaptureSequenceId;
         int *id = nullptr;
-        ACameraCaptureSession_setRepeatingRequest(mCameraCaptureSession, callbacks, 1, requests.data(), id);
-        LOG_D("ACameraCaptureSession_setRepeatingRequest(mCaptureSession:%p, requests:[%p])", mCameraCaptureSession, requests[0]);
+        camera_status_t status = ACameraCaptureSession_setRepeatingRequest(mCameraCaptureSession, &(mCaptureCallbacks->getCaptureCallbacks()), 1, requests.data(), id);
+        if (status != camera_status_t::ACAMERA_OK) {
+            LOG_E("ACameraCaptureSession_setRepeatingRequest() failed, status:%d", status);
+        }
     }
 
     void CameraCaptureSession::stopRepeating() {
         ACameraCaptureSession_stopRepeating(mCameraCaptureSession);
+    }
+
+    void CameraCaptureSession::onClosed() {
+        LOG_D("CameraCaptureSession::onClosed(), this:%p", this);
+    }
+
+    void CameraCaptureSession::onReady() {
+        LOG_D("CameraCaptureSession::onReady(), this:%p", this);
+    }
+
+    void CameraCaptureSession::onActive() {
+        LOG_D("CameraCaptureSession::onActive(), this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureStarted(
+            ACameraCaptureSession *session,
+            const ACaptureRequest *request, int64_t timestamp) {
+        LOG_D("CameraCaptureSession::onCaptureStarted, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureProgressed(ACameraCaptureSession *session,
+                                                   ACaptureRequest *request, const ACameraMetadata *result) {
+        LOG_D("CameraCaptureSession::onCaptureProgressed, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureCompleted(ACameraCaptureSession *session,
+                                                  ACaptureRequest *request, const ACameraMetadata *result) {
+        LOG_D("CameraCaptureSession::onCaptureCompleted, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureFailed(ACameraCaptureSession *session,
+                                               ACaptureRequest *request, ACameraCaptureFailure *failure) {
+        LOG_D("CameraCaptureSession::onCaptureFailed, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureSequenceCompleted(ACameraCaptureSession *session,
+                                                          int sequenceId, int64_t frameNumber) {
+        LOG_D("CameraCaptureSession::onCaptureSequenceCompleted, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureSequenceAborted(ACameraCaptureSession *session,
+                                                        int sequenceId) {
+        LOG_D("CameraCaptureSession::onCaptureSequenceAborted, this:%p", this);
+    }
+
+    void CameraCaptureSession::onCaptureBufferLost(ACameraCaptureSession *session,
+                                                   ACaptureRequest *request, ACameraWindowType *window, int64_t frameNumber) {
+        LOG_D("CameraCaptureSession::onCaptureBufferLost, this:%p", this);
+    }
+
+
+    // static methods
+    std::unique_ptr<CameraCaptureSessionStateCallbacks> CameraCaptureSession::createUniqueStateCallbacks() {
+        std::unique_ptr<CameraCaptureSessionStateCallbacks> callbacks = std::make_unique<CameraCaptureSessionStateCallbacks>();
+
+        ACameraCaptureSession_stateCallbacks &stateCallbacks = callbacks->getStateCallbacks();
+        stateCallbacks.onClosed = onClosed;
+        stateCallbacks.onReady = onReady;
+        stateCallbacks.onActive = onActive;
+
+        return callbacks;
+    }
+
+    std::unique_ptr<CameraCaptureSessionCaptureCallbacks> CameraCaptureSession::createUniqueCaptureCallbacks() {
+        std::unique_ptr<CameraCaptureSessionCaptureCallbacks> callbacks = std::make_unique<CameraCaptureSessionCaptureCallbacks>();
+
+        ACameraCaptureSession_captureCallbacks &captureCallbacks = callbacks->getCaptureCallbacks();
+        captureCallbacks.onCaptureStarted = onCaptureStarted;
+        captureCallbacks.onCaptureProgressed = onCaptureProgressed;
+        captureCallbacks.onCaptureCompleted = onCaptureCompleted;
+        captureCallbacks.onCaptureFailed = onCaptureFailed;
+        captureCallbacks.onCaptureSequenceCompleted = onCaptureSequenceCompleted;
+        captureCallbacks.onCaptureSequenceAborted = onCaptureSequenceAborted;
+        captureCallbacks.onCaptureBufferLost = onCaptureBufferLost;
+
+        return callbacks;
     }
 
     void CameraCaptureSession::onClosed(void *context, ACameraCaptureSession *session) {
@@ -68,33 +159,6 @@ namespace ndkcamera {
     void CameraCaptureSession::onActive(void *context, ACameraCaptureSession *session) {
         CameraCaptureSession *cameraCaptureSession = static_cast<CameraCaptureSession *>(context);
         cameraCaptureSession->onActive();
-    }
-
-    void CameraCaptureSession::onClosed() {
-        LOG_D("CameraCaptureSession::onClosed()");
-    }
-
-    void CameraCaptureSession::onReady() {
-        LOG_D("CameraCaptureSession::onReady()");
-    }
-
-    void CameraCaptureSession::onActive() {
-        LOG_D("CameraCaptureSession::onActive()");
-    }
-
-    ACameraCaptureSession_captureCallbacks *CameraCaptureSession::createCaptureCallbacks() {
-        ACameraCaptureSession_captureCallbacks *callbacks = new ACameraCaptureSession_captureCallbacks{};
-        callbacks->context = this;
-
-        callbacks->onCaptureStarted = onCaptureStarted;
-        callbacks->onCaptureProgressed = onCaptureProgressed;
-        callbacks->onCaptureCompleted = onCaptureCompleted;
-        callbacks->onCaptureFailed = onCaptureFailed;
-        callbacks->onCaptureSequenceCompleted = onCaptureSequenceCompleted;
-        callbacks->onCaptureSequenceAborted = onCaptureSequenceAborted;
-        callbacks->onCaptureBufferLost = onCaptureBufferLost;
-
-        return callbacks;
     }
 
     void CameraCaptureSession::onCaptureStarted(
@@ -138,43 +202,6 @@ namespace ndkcamera {
                                                    ACaptureRequest *request, ACameraWindowType *window, int64_t frameNumber) {
         CameraCaptureSession *cameraCaptureSession = static_cast<CameraCaptureSession *>(context);
         cameraCaptureSession->onCaptureBufferLost(session, request, window, frameNumber);
-    }
-
-
-    void CameraCaptureSession::onCaptureStarted(
-            ACameraCaptureSession *session,
-            const ACaptureRequest *request, int64_t timestamp) {
-        LOG_D("CameraCaptureSession::onCaptureStarted");
-    }
-
-    void CameraCaptureSession::onCaptureProgressed(ACameraCaptureSession *session,
-                                                   ACaptureRequest *request, const ACameraMetadata *result) {
-        LOG_D("CameraCaptureSession::onCaptureProgressed");
-    }
-
-    void CameraCaptureSession::onCaptureCompleted(ACameraCaptureSession *session,
-                                                  ACaptureRequest *request, const ACameraMetadata *result) {
-        LOG_D("CameraCaptureSession::onCaptureCompleted");
-    }
-
-    void CameraCaptureSession::onCaptureFailed(ACameraCaptureSession *session,
-                                               ACaptureRequest *request, ACameraCaptureFailure *failure) {
-        LOG_D("CameraCaptureSession::onCaptureFailed");
-    }
-
-    void CameraCaptureSession::onCaptureSequenceCompleted(ACameraCaptureSession *session,
-                                                          int sequenceId, int64_t frameNumber) {
-        LOG_D("CameraCaptureSession::onCaptureSequenceCompleted");
-    }
-
-    void CameraCaptureSession::onCaptureSequenceAborted(ACameraCaptureSession *session,
-                                                        int sequenceId) {
-        LOG_D("CameraCaptureSession::onCaptureSequenceAborted");
-    }
-
-    void CameraCaptureSession::onCaptureBufferLost(ACameraCaptureSession *session,
-                                                   ACaptureRequest *request, ACameraWindowType *window, int64_t frameNumber) {
-        LOG_D("CameraCaptureSession::onCaptureBufferLost");
     }
 
 } // ndkcamera

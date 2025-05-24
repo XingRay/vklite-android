@@ -12,7 +12,6 @@
 
 #include <camera/NdkCameraManager.h>
 
-#include "ndk_camera/CameraInfo.h"
 #include "ndk_camera/CameraMetadata.h"
 #include "ndk_camera/CameraDevice.h"
 
