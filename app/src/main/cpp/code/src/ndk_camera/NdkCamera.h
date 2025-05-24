@@ -4,7 +4,9 @@
 
 #pragma once
 
+#include <memory>
 #include <functional>
+#include <optional>
 
 #include <camera/NdkCameraManager.h>
 #include <camera/NdkCameraDevice.h>
@@ -48,6 +50,8 @@ namespace ndkcamera {
         AHardwareBuffer *getLatestHardwareBuffer();
 
         void cleanLatestHardwareBuffer();
+
+        std::optional<Image> acquireLatestImage();
 
     private:
         static void onImageAvailable(void *context, AImageReader *reader);

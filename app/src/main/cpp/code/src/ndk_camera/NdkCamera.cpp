@@ -30,7 +30,7 @@ namespace ndkcamera {
 
         // create session
         // todo: image size selector
-        mImageReader = ImageReader::buildUnique(1080, 1920, AIMAGE_FORMAT_PRIVATE, AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE, 4);
+        mImageReader = ImageReader::buildUnique(1080, 1920, AIMAGE_FORMAT_PRIVATE, AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE, 2);
         mCaptureSessionOutput = mImageReader->createUniqueCaptureSessionOutput();
 
         mCaptureSessionOutputContainer = CaptureSessionOutputContainer::buildUnique();
@@ -77,6 +77,10 @@ namespace ndkcamera {
 
     void NdkCamera::cleanLatestHardwareBuffer() {
         mImageReader->cleanLatestHardwareBuffer();
+    }
+
+    std::optional<Image> NdkCamera::acquireLatestImage() {
+        return mImageReader->acquireLatestImage();
     }
 
     void NdkCamera::onImageAvailable(void *context, AImageReader *reader) {

@@ -40,7 +40,11 @@ namespace test07 {
         AHardwareBuffer *hardwareBuffer = nullptr;
         while (hardwareBuffer == nullptr) {
             LOG_D("waiting for getLatestHardwareBuffer...");
-            hardwareBuffer = mNdkCamera->getLatestHardwareBuffer();
+            std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
+            if (!image.has_value()) {
+                continue;
+            }
+            hardwareBuffer = image.value().getHardwareBuffer();
         }
 
         std::vector<std::string> instanceExtensions = {
@@ -338,8 +342,14 @@ namespace test07 {
     // 绘制三角形帧
     void Test07NdkCamera::drawFrame() {
 //        LOG_D("Test07NdkCamera::drawFrame()");
-        AHardwareBuffer *hardwareBuffer = mNdkCamera->getLatestHardwareBuffer();
+        std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
+        if (!image.has_value()) {
+            LOG_D("Test07NdkCamera::drawFrame(), no image");
+            return;
+        }
+        AHardwareBuffer *hardwareBuffer = image.value().getHardwareBuffer();
         if (hardwareBuffer == nullptr) {
+            LOG_D("Test07NdkCamera::drawFrame(), no hardwareBuffer");
             return;
         }
 
@@ -456,8 +466,6 @@ namespace test07 {
         // 增加帧计数器
         mFrameCounter->count();
         LOG_D("FPS: %.2f", mFrameCounter->getFps());
-
-        mNdkCamera->cleanLatestHardwareBuffer();
     }
 
     // 清理操作
