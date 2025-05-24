@@ -45,11 +45,10 @@ namespace ndkcamera {
     CameraCaptureSession &CameraCaptureSession::operator=(CameraCaptureSession &&other) noexcept {
         if (this != &other) {
             mCameraCaptureSession = std::exchange(other.mCameraCaptureSession, nullptr);
-
             mStateCallbacks = std::move(other.mStateCallbacks);
-            mStateCallbacks->getStateCallbacks().context = this;
-
             mCaptureCallbacks = std::move(other.mCaptureCallbacks);
+
+            mStateCallbacks->getStateCallbacks().context = this;
             mCaptureCallbacks->getCaptureCallbacks().context = this;
         }
         return *this;
