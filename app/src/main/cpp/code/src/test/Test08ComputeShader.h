@@ -15,10 +15,7 @@
 #include "vklite/vklite.h"
 #include "vklite/vklite_android.h"
 
-#include "ndk_camera/NdkCamera.h"
-#include "util/FrameCounter.h"
-
-namespace test07 {
+namespace test08 {
 
     struct Vertex {
         glm::vec3 position;
@@ -29,7 +26,13 @@ namespace test07 {
         }
     };
 
-    class Test07NdkCamera : public test::TestBase {
+    struct MvpMatrix {
+        alignas(16)glm::mat4 model; // 模型矩阵
+        alignas(16)glm::mat4 view;  // 视图矩阵
+        alignas(16)glm::mat4 proj;  // 投影矩阵
+    };
+
+    class Test08ComputeShader : public test::TestBase {
     private:
 
         const android_app &mApp;
@@ -81,21 +84,9 @@ namespace test07 {
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 
-        std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
-
-        // hardware buffer
-        std::unique_ptr<vklite::HardwareBufferYcbcrConversion> mConversion;
-        std::unique_ptr<vklite::HardwareBufferSampler> mHardwareBufferSampler;
-
-        std::unique_ptr<vklite::HardwareBufferImage> mHardwareBufferImage;
-        std::unique_ptr<vklite::ImageView> mHardwareBufferImageView;
-
-
-        std::unique_ptr<util::FrameCounter> mFrameCounter;
-
     public:
         // 构造函数初始化基类 TestBase，并传递 name
-        explicit Test07NdkCamera(const android_app &app, const std::string &name);
+        explicit Test08ComputeShader(const android_app &app, const std::string &name);
 
         // 初始化操作
         void init() override;

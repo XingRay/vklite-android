@@ -47,10 +47,6 @@ namespace ndkcamera {
 
         void stopPreview();
 
-        AHardwareBuffer *getLatestHardwareBuffer();
-
-        void cleanLatestHardwareBuffer();
-
         std::optional<Image> acquireLatestImage();
 
     private:

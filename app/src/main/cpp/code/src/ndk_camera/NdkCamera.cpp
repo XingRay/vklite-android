@@ -48,8 +48,8 @@ namespace ndkcamera {
 
         mCaptureSession = mCameraDevice->createUniqueCaptureSessionWithSessionParameters(*mCaptureSessionOutputContainer, *mCaptureRequest);
 
-        mImageReader->setImageListener([&](const AImageReader *imageReader) {
-            LOG_D("imageReader:%p", imageReader);
+        mImageReader->setImageListener([&](const ImageReader &imageReader) {
+            LOG_D("imageReader:%p", &imageReader);
 //            imageReader.
 //            previewCallback();
         });
@@ -69,14 +69,6 @@ namespace ndkcamera {
     void NdkCamera::stopPreview() {
         // 停止相机预览
         mCaptureSession->stopRepeating();
-    }
-
-    AHardwareBuffer *NdkCamera::getLatestHardwareBuffer() {
-        return mImageReader->getLatestHardwareBuffer();
-    }
-
-    void NdkCamera::cleanLatestHardwareBuffer() {
-        mImageReader->cleanLatestHardwareBuffer();
     }
 
     std::optional<Image> NdkCamera::acquireLatestImage() {

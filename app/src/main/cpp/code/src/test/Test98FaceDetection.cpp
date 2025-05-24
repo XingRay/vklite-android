@@ -175,7 +175,7 @@ namespace test08 {
         AHardwareBuffer *hardwareBuffer = nullptr;
         while (hardwareBuffer == nullptr) {
             LOG_D("waiting for getLatestHardwareBuffer...");
-            hardwareBuffer = mNdkCamera->getLatestHardwareBuffer();
+//            hardwareBuffer = mNdkCamera->getLatestHardwareBuffer();
         }
 
         std::vector<std::string> instanceExtensions = {
@@ -325,7 +325,7 @@ namespace test08 {
 
 
 //        LOG_D("Test07NdkCamera::drawFrame()");
-        AHardwareBuffer *buffer = mNdkCamera->getLatestHardwareBuffer();
+        AHardwareBuffer *buffer;// = mNdkCamera->getLatestHardwareBuffer();
 //        LOG_D("AHardwareBuffer:%p", buffer);
         if (buffer != nullptr) {
 //            mVkLiteEngine->updateUniformBuffer(mVkLiteEngine->getCurrentFrameIndex(), 0, 0, buffer, 0);
@@ -349,7 +349,7 @@ namespace test08 {
             }
         }
 
-        mNdkCamera->cleanLatestHardwareBuffer();
+//        mNdkCamera->cleanLatestHardwareBuffer();
     }
 
     // 清理操作
