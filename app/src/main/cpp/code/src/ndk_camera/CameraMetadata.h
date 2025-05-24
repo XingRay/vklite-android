@@ -48,17 +48,33 @@ namespace ndkcamera {
 
     class CameraMetadata {
     private:
+        const char *mId;
         ACameraMetadata *mMetadata;
 
     public:
-        explicit CameraMetadata(ACameraMetadata *metadata);
+        explicit CameraMetadata(const char *id, ACameraMetadata *metadata);
 
         ~CameraMetadata();
 
-        std::optional<SupportedHardwareLevel> querySupportedHardwareLevel();
+        CameraMetadata(const CameraMetadata &other) = delete;
 
-        std::optional<CameraLensFacing> queryCameraLensFacing();
+        CameraMetadata &operator=(const CameraMetadata &other) = delete;
 
+        CameraMetadata(CameraMetadata &&other) noexcept;
+
+        CameraMetadata &operator=(CameraMetadata &&other) noexcept;
+
+
+        [[nodiscard]]
+        const char *getId() const;
+
+        [[nodiscard]]
+        std::optional<SupportedHardwareLevel> querySupportedHardwareLevel() const;
+
+        [[nodiscard]]
+        std::optional<CameraLensFacing> queryCameraLensFacing() const;
+
+        [[nodiscard]]
         std::vector<CameraFpsRange> queryCameraFpsRanges() const;
     };
 

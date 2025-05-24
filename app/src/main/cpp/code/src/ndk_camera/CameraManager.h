@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <optional>
+#include <memory>
 
 #include <camera/NdkCameraManager.h>
 
@@ -15,8 +17,6 @@
 #include "ndk_camera/CameraDevice.h"
 
 namespace ndkcamera {
-
-    class CameraDevice;
 
     class CameraManager {
     private:
@@ -27,11 +27,24 @@ namespace ndkcamera {
 
         ~CameraManager();
 
-        std::vector<CameraInfo> queryCameraInfoList();
+        CameraManager(const CameraManager &other) = delete;
 
-        std::unique_ptr<CameraMetadata> queryCameraCharacteristics(const std::string &cameraId);
+        CameraManager &operator=(const CameraManager &other) = delete;
 
-        std::unique_ptr<CameraDevice> openCamera(const std::string& cameraId);
+        CameraManager(CameraManager &&other) noexcept;
+
+        CameraManager &operator=(CameraManager &&other) noexcept;
+
+
+        std::vector<const char *> getCameraIdList();
+
+        std::optional<CameraMetadata> queryCameraMetadata(const char *cameraId);
+
+        std::unique_ptr<CameraMetadata> queryUniqueCameraMetadata(const char *cameraId);
+
+        std::vector<CameraMetadata> queryCameraMetadataList();
+
+        std::unique_ptr<CameraDevice> openCamera(const char *cameraId);
     };
 
 } // ndkcamera

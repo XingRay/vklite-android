@@ -5,6 +5,8 @@
 #include "ndk_camera/CameraManager.h"
 #include "ndk_camera/Log.h"
 
+#include <utility>
+
 namespace ndkcamera {
 
     CameraManager::CameraManager()
@@ -14,91 +16,83 @@ namespace ndkcamera {
         ACameraManager_delete(mCameraManager);
     }
 
-    std::vector<CameraInfo> CameraManager::queryCameraInfoList() {
-        std::vector<CameraInfo> cameraInfoList;
-        // 获取相机设备列表
+    CameraManager::CameraManager(CameraManager &&other) noexcept
+            : mCameraManager(std::exchange(other.mCameraManager, nullptr)) {}
+
+    CameraManager &CameraManager::operator=(CameraManager &&other) noexcept {
+        if (this != &other) {
+            mCameraManager = std::exchange(other.mCameraManager, nullptr);
+        }
+        return *this;
+    }
+
+    std::vector<const char *> CameraManager::getCameraIdList() {
+        std::vector<const char *> cameraIds;
+
         ACameraIdList *cameraIdList = nullptr;
         camera_status_t status = ACameraManager_getCameraIdList(mCameraManager, &cameraIdList);
-        if (status != ACAMERA_OK || cameraIdList == nullptr || cameraIdList->numCameras == 0) {
-            LOG_E("Failed to get camera id list or no cameras found");
-            return std::move(cameraInfoList);
+        if (status != ACAMERA_OK || cameraIdList == nullptr) {
+            LOG_E("ACameraManager_getCameraIdList() Failed, status:%d, cameraIdList:%p", status, cameraIdList);
+            return cameraIds;
+        }
+
+        if (cameraIdList->numCameras == 0) {
+            LOG_E("cameraIdList->numCameras == 0, no camera found");
+            return cameraIds;
         }
 
         for (int i = 0; i < cameraIdList->numCameras; i++) {
-            CameraInfo cameraInfo;
+            cameraIds.push_back(cameraIdList->cameraIds[i]);
+        }
+        return cameraIds;
+    }
 
-            const char *cameraId = cameraIdList->cameraIds[i];
-            if (cameraId == nullptr) {
-                LOG_E("Invalid camera ID");
-                continue;
-            }
-            cameraInfo.id = std::string(cameraId);
+    std::optional<CameraMetadata> CameraManager::queryCameraMetadata(const char *cameraId) {
+        ACameraMetadata *metadata;
+        camera_status_t status = ACameraManager_getCameraCharacteristics(mCameraManager, cameraId, &metadata);
+        if (status != ACAMERA_OK || metadata == nullptr) {
+            LOG_E("ACameraManager_getCameraCharacteristics() Failed, status:%d, metadata:%p", status, metadata);
+            return std::nullopt;
+        }
+        return CameraMetadata(cameraId, metadata);
+    }
 
-            std::unique_ptr<CameraMetadata> metaData = queryCameraCharacteristics(std::string(cameraId));
-            if (metaData == nullptr) {
+    std::unique_ptr<CameraMetadata> CameraManager::queryUniqueCameraMetadata(const char *cameraId) {
+        std::optional<CameraMetadata> cameraMetadata = queryCameraMetadata(cameraId);
+        if (!cameraMetadata.has_value()) {
+            return nullptr;
+        }
+        return std::make_unique<CameraMetadata>(std::move(cameraMetadata.value()));
+    }
+
+    std::vector<CameraMetadata> CameraManager::queryCameraMetadataList() {
+        std::vector<CameraMetadata> cameraMetadataList;
+
+        std::vector<const char *> ids = getCameraIdList();
+        for (const char *id: ids) {
+            std::optional<CameraMetadata> metaData = queryCameraMetadata(id);
+            if (!metaData.has_value()) {
                 LOG_E("Failed to get camera characteristics");
                 continue;
             }
-
-            std::optional<SupportedHardwareLevel> supportedHardwareLevel = metaData->querySupportedHardwareLevel();
-            if (supportedHardwareLevel == std::nullopt) {
-                LOG_E("Failed to get supportedHardwareLevel");
-                continue;
-            }
-            cameraInfo.supportedHardwareLevel = supportedHardwareLevel.value();
-
-            std::optional<CameraLensFacing> lensFacing = metaData->queryCameraLensFacing();
-            if (lensFacing == std::nullopt) {
-                LOG_E("Failed to get lens facing");
-                continue;
-            }
-            cameraInfo.lensFacing = lensFacing.value();
-
-            std::string cameraLensFacing;
-            switch (lensFacing.value()) {
-                case CameraLensFacing::FRONT:
-                    cameraLensFacing = "Front";
-                    break;
-                case CameraLensFacing::BACK:
-                    cameraLensFacing = "Back";
-                    break;
-                case CameraLensFacing::EXTERNAL:
-                    cameraLensFacing = "External";
-                    break;
-                default:
-                    break;
-            }
-            LOG_D("Camera %d cameraLensFacing: %s", i, cameraLensFacing.c_str());
-
-            cameraInfoList.push_back(cameraInfo);
+            cameraMetadataList.push_back(std::move(metaData.value()));
         }
-
-        return std::move(cameraInfoList);
+        return cameraMetadataList;
     }
 
-    std::unique_ptr<CameraMetadata> CameraManager::queryCameraCharacteristics(const std::string &cameraId) {
-        ACameraMetadata *metadata;
-        camera_status_t status = ACameraManager_getCameraCharacteristics(mCameraManager, cameraId.c_str(), &metadata);
-        if (status != ACAMERA_OK || metadata == nullptr) {
-            LOG_E("Failed to get camera characteristics");
-            return nullptr;
-        }
-        return std::make_unique<CameraMetadata>(metadata);
-    }
-
-    std::unique_ptr<CameraDevice> CameraManager::openCamera(const std::string &cameraId) {
-        std::unique_ptr<CameraDevice> cameraDevice = std::make_unique<CameraDevice>();
-
+    std::unique_ptr<CameraDevice> CameraManager::openCamera(const char *cameraId) {
         ACameraDevice *device;
-        camera_status_t status = ACameraManager_openCamera(mCameraManager, cameraId.c_str(), cameraDevice->createStateCallbacks(), &device);
+        ACameraDevice_StateCallbacks *callbacks = new ACameraDevice_StateCallbacks();
+        callbacks->onDisconnected = CameraDevice::onDisconnected;
+        callbacks->onError = CameraDevice::onError;
+
+        camera_status_t status = ACameraManager_openCamera(mCameraManager, cameraId, callbacks, &device);
         if (status != ACAMERA_OK || device == nullptr) {
             LOG_E("Failed to open camera: %d", status);
             return nullptr; // 返回空指针表示失败
         }
         LOG_D("Device opened successfully: %p", device);
-        cameraDevice->setCameraDevice(device);
-
-        return cameraDevice;
+        return std::make_unique<CameraDevice>(device, callbacks);
     }
 
 } // ndkcamera

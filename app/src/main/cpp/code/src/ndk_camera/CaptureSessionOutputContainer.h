@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <camera/NdkCameraDevice.h>
 
@@ -14,17 +15,30 @@ namespace ndkcamera {
 
     class CaptureSessionOutputContainer {
     private:
-        ACaptureSessionOutputContainer *mOutputContainer;
+        ACaptureSessionOutputContainer *mCaptureSessionOutputContainer;
 
     public:
-        explicit CaptureSessionOutputContainer();
+        explicit CaptureSessionOutputContainer(ACaptureSessionOutputContainer *captureSessionOutputContainer);
 
         ~CaptureSessionOutputContainer();
 
-        const ACaptureSessionOutputContainer *getOutputContainer();
+        CaptureSessionOutputContainer(const CaptureSessionOutputContainer &other) = delete;
 
-        void add(const std::unique_ptr<CaptureSessionOutput>& sessionOutput);
+        CaptureSessionOutputContainer &operator=(const CaptureSessionOutputContainer &other) = delete;
 
+        CaptureSessionOutputContainer(CaptureSessionOutputContainer &&other) noexcept;
+
+        CaptureSessionOutputContainer &operator=(CaptureSessionOutputContainer &&other) noexcept;
+
+        [[nodiscard]]
+        ACaptureSessionOutputContainer *getCaptureSessionOutputContainer() const;
+
+        camera_status_t add(const CaptureSessionOutput &sessionOutput);
+
+    public://static
+        static std::optional<CaptureSessionOutputContainer> build();
+
+        static std::unique_ptr<CaptureSessionOutputContainer> buildUnique();
     };
 
 } // ndkcamera

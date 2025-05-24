@@ -38,6 +38,7 @@ namespace ndkcamera {
         AHardwareBuffer *buffer = nullptr;
         media_status_t status = AImage_getHardwareBuffer(mImage, &buffer);
         if (status != AMEDIA_OK || buffer == nullptr) {
+            LOG_E("Image::getHardwareBuffer(): status=>%d, buffer:%p", status, buffer);
             return nullptr;
         }
         return buffer;

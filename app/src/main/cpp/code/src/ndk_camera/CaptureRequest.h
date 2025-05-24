@@ -20,13 +20,22 @@ namespace ndkcamera {
 
         ~CaptureRequest();
 
-        ACaptureRequest *getCaptureRequest();
+        CaptureRequest(const CaptureRequest &other) = delete;
+
+        CaptureRequest &operator=(const CaptureRequest &other) = delete;
+
+        CaptureRequest(CaptureRequest &&other) noexcept;
+
+        CaptureRequest &operator=(CaptureRequest &&other) noexcept;
+
+
+        ACaptureRequest *getCaptureRequest() const;
 
         void addTarget(const std::unique_ptr<CameraOutputTarget> &cameraOutputTarget);
 
-        void setFps(int32_t fps);
+        camera_status_t setFps(int32_t fps);
 
-        void setFps(int32_t min, int32_t max);
+        camera_status_t setFps(int32_t min, int32_t max);
     };
 
 } // ndkcamera

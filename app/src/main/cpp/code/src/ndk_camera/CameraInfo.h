@@ -11,7 +11,7 @@ namespace ndkcamera {
 
     class CameraInfo {
     public:
-        std::string id;
+        const char *id;
         CameraLensFacing lensFacing;
         SupportedHardwareLevel supportedHardwareLevel;
     };

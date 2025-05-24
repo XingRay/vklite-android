@@ -11,12 +11,23 @@ namespace ndkcamera {
     class CameraOutputTarget {
     private:
         ACameraOutputTarget *mCameraOutputTarget;
+
     public:
         explicit CameraOutputTarget(ACameraOutputTarget *outputTarget);
 
         ~CameraOutputTarget();
 
-        const ACameraOutputTarget *getCameraOutputTarget();
+        CameraOutputTarget(const CameraOutputTarget &other) = delete;
+
+        CameraOutputTarget &operator=(const CameraOutputTarget &other) = delete;
+
+        CameraOutputTarget(CameraOutputTarget &&other) noexcept;
+
+        CameraOutputTarget &operator=(CameraOutputTarget &&other) noexcept;
+
+
+        [[nodiscard]]
+        ACameraOutputTarget *getCameraOutputTarget() const;
     };
 
 } // ndkcamera

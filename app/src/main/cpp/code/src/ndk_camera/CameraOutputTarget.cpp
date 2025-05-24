@@ -4,16 +4,27 @@
 
 #include "ndk_camera/CameraOutputTarget.h"
 
-namespace ndkcamera {
-    CameraOutputTarget::CameraOutputTarget(ACameraOutputTarget *outputTarget) : mCameraOutputTarget(outputTarget) {
+#include <utility>
 
-    }
+namespace ndkcamera {
+    CameraOutputTarget::CameraOutputTarget(ACameraOutputTarget *outputTarget)
+            : mCameraOutputTarget(outputTarget) {}
 
     CameraOutputTarget::~CameraOutputTarget() {
         ACameraOutputTarget_free(mCameraOutputTarget);
     }
 
-    const ACameraOutputTarget *CameraOutputTarget::getCameraOutputTarget() {
+    CameraOutputTarget::CameraOutputTarget(CameraOutputTarget &&other) noexcept
+            : mCameraOutputTarget(std::exchange(other.mCameraOutputTarget, nullptr)) {}
+
+    CameraOutputTarget &CameraOutputTarget::operator=(CameraOutputTarget &&other) noexcept {
+        if (this != &other) {
+            mCameraOutputTarget = std::exchange(other.mCameraOutputTarget, nullptr);
+        }
+        return *this;
+    }
+
+    ACameraOutputTarget *CameraOutputTarget::getCameraOutputTarget() const {
         return mCameraOutputTarget;
     }
 

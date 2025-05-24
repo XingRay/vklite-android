@@ -5,6 +5,8 @@
 #include "ndk_camera/CaptureRequest.h"
 #include "ndk_camera/Log.h"
 
+#include <utility>
+
 namespace ndkcamera {
     CaptureRequest::CaptureRequest(ACaptureRequest *captureRequest) : mCaptureRequest(captureRequest) {
 
@@ -15,7 +17,18 @@ namespace ndkcamera {
         ACaptureRequest_free(mCaptureRequest);
     }
 
-    ACaptureRequest *CaptureRequest::getCaptureRequest() {
+    CaptureRequest::CaptureRequest(CaptureRequest &&other) noexcept
+            : mCaptureRequest(std::exchange(other.mCaptureRequest, nullptr)) {}
+
+    CaptureRequest &CaptureRequest::operator=(CaptureRequest &&other) noexcept {
+        if (this != &other) {
+            mCaptureRequest = std::exchange(other.mCaptureRequest, nullptr);
+        }
+        return *this;
+    }
+
+
+    ACaptureRequest *CaptureRequest::getCaptureRequest() const {
         return mCaptureRequest;
     }
 
@@ -25,11 +38,11 @@ namespace ndkcamera {
         LOG_D("ACaptureRequest_addTarget(mCaptureRequest:%p, cameraOutputTarget->getCameraOutputTarget():%p)", mCaptureRequest, cameraOutputTarget->getCameraOutputTarget());
     }
 
-    void CaptureRequest::setFps(int32_t fps) {
-        setFps(fps, fps);
+    camera_status_t CaptureRequest::setFps(int32_t fps) {
+        return setFps(fps, fps);
     }
 
-    void CaptureRequest::setFps(int32_t min, int32_t max) {
+    camera_status_t CaptureRequest::setFps(int32_t min, int32_t max) {
         // 设置帧率范围
         int32_t targetFpsRange[2] = {min, max}; // 设置目标帧率范围为 30 FPS
         camera_status_t status = ACaptureRequest_setEntry_i32(
@@ -44,5 +57,6 @@ namespace ndkcamera {
         } else {
             LOG_D("Successfully set target FPS range to [%d, %d]", targetFpsRange[0], targetFpsRange[1]);
         }
+        return status;
     }
 } // ndkcamera

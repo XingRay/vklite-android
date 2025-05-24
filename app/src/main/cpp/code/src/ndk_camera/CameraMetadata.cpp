@@ -5,23 +5,40 @@
 #include "ndk_camera/CameraMetadata.h"
 #include "ndk_camera/Log.h"
 
+#include <utility>
+
 namespace ndkcamera {
 
-    CameraMetadata::CameraMetadata(ACameraMetadata *metadata) : mMetadata(metadata) {
-
-    }
+    CameraMetadata::CameraMetadata(const char *id, ACameraMetadata *metadata)
+            : mId(id), mMetadata(metadata) {}
 
     CameraMetadata::~CameraMetadata() {
         ACameraMetadata_free(mMetadata);
     }
 
+    CameraMetadata::CameraMetadata(CameraMetadata &&other) noexcept
+            : mId(other.mId),
+              mMetadata(std::exchange(other.mMetadata, nullptr)) {}
 
-    std::optional<SupportedHardwareLevel> CameraMetadata::querySupportedHardwareLevel() {
+    CameraMetadata &CameraMetadata::operator=(CameraMetadata &&other) noexcept {
+        if (this != &other) {
+            mId = other.mId;
+            mMetadata = std::exchange(other.mMetadata, nullptr);
+        }
+        return *this;
+    }
+
+
+    const char *CameraMetadata::getId() const {
+        return mId;
+    }
+
+    std::optional<SupportedHardwareLevel> CameraMetadata::querySupportedHardwareLevel() const {
         // 检查相机硬件支持级别
         ACameraMetadata_const_entry hardwareLevelEntry = {};
         camera_status_t status = ACameraMetadata_getConstEntry(mMetadata, ACAMERA_INFO_SUPPORTED_HARDWARE_LEVEL, &hardwareLevelEntry);
         if (status != ACAMERA_OK) {
-            LOG_E("Failed to get hardware level");
+            LOG_E("ACameraMetadata_getConstEntry() Failed, status:%d", status);
             return std::nullopt;
         }
 
@@ -45,7 +62,7 @@ namespace ndkcamera {
         }
     }
 
-    std::optional<CameraLensFacing> CameraMetadata::queryCameraLensFacing() {
+    std::optional<CameraLensFacing> CameraMetadata::queryCameraLensFacing() const {
         ACameraMetadata_const_entry lensFacingEntry = {};
         camera_status_t status = ACameraMetadata_getConstEntry(mMetadata, ACAMERA_LENS_FACING, &lensFacingEntry);
         if (status != ACAMERA_OK) {

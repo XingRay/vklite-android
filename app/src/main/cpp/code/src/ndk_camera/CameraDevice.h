@@ -16,30 +16,49 @@ namespace ndkcamera {
     class CameraDevice {
     private:
         ACameraDevice *mCameraDevice;
-
-        std::unique_ptr<CaptureSessionOutputContainer> mCaptureSessionOutputContainer;
+        ACameraDevice_StateCallbacks *mStateCallbacks;
 
     public:
-        CameraDevice();
+        explicit CameraDevice(ACameraDevice *cameraDevice, ACameraDevice_StateCallbacks *stateCallbacks);
 
         ~CameraDevice();
 
-        void setCameraDevice(ACameraDevice *cameraDevice);
+        CameraDevice(const CameraDevice &other) = delete;
 
-        std::unique_ptr<CameraCaptureSession> createCaptureSession(const std::unique_ptr<CaptureSessionOutputContainer> &captureSessionOutputContainer);
+        CameraDevice &operator=(const CameraDevice &other) = delete;
 
-        std::unique_ptr<CameraCaptureSession> createCaptureSession(const std::unique_ptr<CaptureSessionOutputContainer> &captureSessionOutputContainer,
-                                                                   const std::unique_ptr<CaptureRequest> &captureRequest);
+        CameraDevice(CameraDevice &&other) noexcept;
 
-        ACameraDevice_StateCallbacks *createStateCallbacks();
+        CameraDevice &operator=(CameraDevice &&other) noexcept;
 
-        std::unique_ptr<CaptureRequest> createCaptureRequest();
+
+        // createCaptureRequest
+        std::optional<CaptureRequest> createCaptureRequest();
+
+        std::unique_ptr<CaptureRequest> createUniqueCaptureRequest();
+
+
+        // createCaptureSession
+        std::optional<CameraCaptureSession> createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer);
+
+        std::unique_ptr<CameraCaptureSession> createUniqueCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer);
+
+
+        // createCaptureSessionWithSessionParameters
+        std::optional<CameraCaptureSession> createCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
+                                                                                      const CaptureRequest &captureRequest);
+
+        std::unique_ptr<CameraCaptureSession> createUniqueCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
+                                                                                              const CaptureRequest &captureRequest);
 
     private:
 
         void onDisconnected();
 
         void onError(int error);
+
+
+    public://static
 
         static void onDisconnected(void *context, ACameraDevice *device);
 

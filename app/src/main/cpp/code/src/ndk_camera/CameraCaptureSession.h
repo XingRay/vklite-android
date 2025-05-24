@@ -16,16 +16,23 @@ namespace ndkcamera {
     class CameraCaptureSession {
 
     private:
-        ACameraCaptureSession *mCaptureSession;
+        ACameraCaptureSession *mCameraCaptureSession;
 
-        int mCaptureSequenceId;
+//        int mCaptureSequenceId;
 
     public:
-        CameraCaptureSession();
+        explicit CameraCaptureSession(ACameraCaptureSession *captureSession);
 
         ~CameraCaptureSession();
 
-        void setCameraCaptureSession(ACameraCaptureSession *cameraCaptureSession);
+        CameraCaptureSession(const CameraCaptureSession &other) = delete;
+
+        CameraCaptureSession &operator=(const CameraCaptureSession &other) = delete;
+
+        CameraCaptureSession(CameraCaptureSession &&other) noexcept;
+
+        CameraCaptureSession &operator=(CameraCaptureSession &&other) noexcept;
+
 
         ACameraCaptureSession_stateCallbacks *createStateCallbacks();
 

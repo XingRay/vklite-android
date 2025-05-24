@@ -5,10 +5,15 @@
 #include "ndk_camera/CameraDevice.h"
 #include "ndk_camera/Log.h"
 
+#include <utility>
+
 namespace ndkcamera {
 
-    CameraDevice::CameraDevice() : mCameraDevice(nullptr) {
-        mCaptureSessionOutputContainer = std::make_unique<CaptureSessionOutputContainer>();
+    CameraDevice::CameraDevice(ACameraDevice *cameraDevice, ACameraDevice_StateCallbacks *stateCallbacks)
+            : mCameraDevice(cameraDevice), mStateCallbacks(stateCallbacks) {
+        if (mStateCallbacks != nullptr) {
+            mStateCallbacks->context = this;
+        }
     }
 
     CameraDevice::~CameraDevice() {
@@ -17,70 +22,85 @@ namespace ndkcamera {
         }
     }
 
-    void CameraDevice::setCameraDevice(ACameraDevice *cameraDevice) {
-        mCameraDevice = cameraDevice;
+    CameraDevice::CameraDevice(CameraDevice &&other) noexcept
+            : mCameraDevice(std::exchange(other.mCameraDevice, nullptr)),
+              mStateCallbacks(std::exchange(other.mStateCallbacks, nullptr)) {
+        mStateCallbacks->context = this;
     }
 
-    std::unique_ptr<CameraCaptureSession> CameraDevice::createCaptureSession(const std::unique_ptr<CaptureSessionOutputContainer> &captureSessionOutputContainer) {
-        std::unique_ptr<CameraCaptureSession> cameraCaptureSession = std::make_unique<CameraCaptureSession>();
-        const ACaptureSessionOutputContainer *outputs = captureSessionOutputContainer->getOutputContainer();
-        ACameraCaptureSession_stateCallbacks *callbacks = cameraCaptureSession->createStateCallbacks();
+    CameraDevice &CameraDevice::operator=(CameraDevice &&other) noexcept {
+        if (this != &other) {
+            mCameraDevice = std::exchange(other.mCameraDevice, nullptr);
+            mStateCallbacks = std::exchange(other.mStateCallbacks, nullptr);
+            mStateCallbacks->context = this;
+        }
+        return *this;
+    }
+
+
+    std::optional<CaptureRequest> CameraDevice::createCaptureRequest() {
+        ACaptureRequest *captureRequest;
+        camera_status_t status = ACameraDevice_createCaptureRequest(mCameraDevice, TEMPLATE_PREVIEW, &captureRequest);
+        if (status != ACAMERA_OK || captureRequest == nullptr) {
+            LOG_E("ACameraDevice_createCaptureRequest() Failed, status: %d, captureRequest:%p", status, captureRequest);
+            return std::nullopt;
+        }
+        return CaptureRequest(captureRequest);
+    }
+
+    std::unique_ptr<CaptureRequest> CameraDevice::createUniqueCaptureRequest() {
+        std::optional<CaptureRequest> captureRequest = createCaptureRequest();
+        if (!captureRequest.has_value()) {
+            return nullptr;
+        }
+        return std::make_unique<CaptureRequest>(std::move(captureRequest.value()));
+    }
+
+    std::optional<CameraCaptureSession> CameraDevice::createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer) {
+        ACaptureSessionOutputContainer *outputs = captureSessionOutputContainer.getCaptureSessionOutputContainer();
+//        ACameraCaptureSession_stateCallbacks *callbacks = cameraCaptureSession.createStateCallbacks();
 
         ACameraCaptureSession *captureSession;
-        LOG_D("ACameraDevice_createCaptureSession()");
-//        camera_status_t status = ACameraDevice_createCaptureSession(mCameraDevice, outputs, callbacks, &captureSession);
-        ACaptureRequest *captureRequest;
-        ACameraDevice_createCaptureRequest(mCameraDevice, TEMPLATE_PREVIEW, &captureRequest);
-
-        // 设置目标帧率范围为 60 FPS
-        int32_t targetFpsRange[2] = {60, 60};
-        ACaptureRequest_setEntry_i32(captureRequest, ACAMERA_CONTROL_AE_TARGET_FPS_RANGE, 2, targetFpsRange);
-        LOG_D("ACameraDevice_createCaptureSessionWithSessionParameters");
-        camera_status_t status = ACameraDevice_createCaptureSessionWithSessionParameters(mCameraDevice, outputs, captureRequest, callbacks, &captureSession);
-        LOG_D("ACameraDevice_createCaptureSession(mCameraDevice:%p, outputs:%p, captureSession:%p)", mCameraDevice, outputs, captureSession);
+        camera_status_t status = ACameraDevice_createCaptureSession(mCameraDevice, outputs, /*callbacks,*/nullptr, &captureSession);
         if (status != ACAMERA_OK || captureSession == nullptr) {
-            LOG_E("Failed to create capture session: %d", status);
-            return nullptr; // 返回空指针表示失败
+            LOG_E("ACameraDevice_createCaptureSession() Failed, status: %d, captureSession:%p", status, captureSession);
+            return std::nullopt;
         }
-        cameraCaptureSession->setCameraCaptureSession(captureSession);
 
-        return cameraCaptureSession;
+        return CameraCaptureSession(captureSession);
     }
 
-    std::unique_ptr<CameraCaptureSession> CameraDevice::createCaptureSession(const std::unique_ptr<CaptureSessionOutputContainer> &captureSessionOutputContainer,
-                                                                             const std::unique_ptr<CaptureRequest> &captureRequest) {
-        std::unique_ptr<CameraCaptureSession> cameraCaptureSession = std::make_unique<CameraCaptureSession>();
-        const ACaptureSessionOutputContainer *outputs = captureSessionOutputContainer->getOutputContainer();
-        ACameraCaptureSession_stateCallbacks *callbacks = cameraCaptureSession->createStateCallbacks();
+    std::unique_ptr<CameraCaptureSession> CameraDevice::createUniqueCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer) {
+        std::optional<CameraCaptureSession> cameraCaptureSession = createCaptureSession(captureSessionOutputContainer);
+        if (cameraCaptureSession.has_value()) {
+            return std::make_unique<CameraCaptureSession>(std::move(cameraCaptureSession.value()));
+        } else {
+            return nullptr;
+        }
+    }
 
+    std::optional<CameraCaptureSession> CameraDevice::createCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
+                                                                                                const CaptureRequest &captureRequest) {
         ACameraCaptureSession *captureSession;
-        LOG_D("ACameraDevice_createCaptureSessionWithSessionParameters()");
-        camera_status_t status = ACameraDevice_createCaptureSessionWithSessionParameters(mCameraDevice, outputs, captureRequest->getCaptureRequest(), callbacks, &captureSession);
-        LOG_D("ACameraDevice_createCaptureSession(mCameraDevice:%p, outputs:%p, captureSession:%p)", mCameraDevice, outputs, captureSession);
+        camera_status_t status = ACameraDevice_createCaptureSessionWithSessionParameters(mCameraDevice,
+                                                                                         captureSessionOutputContainer.getCaptureSessionOutputContainer(),
+                                                                                         captureRequest.getCaptureRequest(),
+                                                                                         nullptr,// callbacks
+                                                                                         &captureSession);
         if (status != ACAMERA_OK || captureSession == nullptr) {
-            LOG_E("Failed to create capture session: %d", status);
-            return nullptr; // 返回空指针表示失败
+            LOG_E("ACameraDevice_createCaptureSessionWithSessionParameters() Failed,status: %d, captureSession:%p", status, captureSession);
+            return std::nullopt;
         }
-        cameraCaptureSession->setCameraCaptureSession(captureSession);
-
-        return cameraCaptureSession;
+        return CameraCaptureSession(captureSession);
     }
 
-    ACameraDevice_StateCallbacks *CameraDevice::createStateCallbacks() {
-        ACameraDevice_StateCallbacks *callbacks = new ACameraDevice_StateCallbacks{};
-        callbacks->context = this;
-        callbacks->onDisconnected = onDisconnected;
-        callbacks->onError = onError;
-        return callbacks;
-    }
-
-    std::unique_ptr<CaptureRequest> CameraDevice::createCaptureRequest() {
-        ACaptureRequest *captureRequest;
-        LOG_D("ACameraDevice_createCaptureRequest()");
-        ACameraDevice_createCaptureRequest(mCameraDevice, TEMPLATE_PREVIEW, &captureRequest);
-        LOG_D("ACameraDevice_createCaptureRequest(mCameraDevice:%p, captureRequest:%p)", mCameraDevice, captureRequest);
-
-        return std::make_unique<CaptureRequest>(captureRequest);
+    std::unique_ptr<CameraCaptureSession> CameraDevice::createUniqueCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
+                                                                                                        const CaptureRequest &captureRequest) {
+        std::optional<CameraCaptureSession> captureSession = createCaptureSessionWithSessionParameters(captureSessionOutputContainer, captureRequest);
+        if (!captureSession.has_value()) {
+            return nullptr;
+        }
+        return std::make_unique<CameraCaptureSession>(std::move(captureSession.value()));
     }
 
     void CameraDevice::onDisconnected() {

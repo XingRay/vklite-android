@@ -26,6 +26,7 @@ namespace ndkcamera {
 
         Image &operator=(Image &&other) noexcept;
 
+
         [[nodiscard]]
         AImage *getImage() const;
 

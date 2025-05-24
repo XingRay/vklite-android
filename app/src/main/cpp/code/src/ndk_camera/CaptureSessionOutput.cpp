@@ -5,18 +5,33 @@
 #include "ndk_camera/CaptureSessionOutput.h"
 #include "camera/NdkCameraDevice.h"
 
-namespace ndkcamera {
-    CaptureSessionOutput::CaptureSessionOutput(ACaptureSessionOutput *sessionOutput)
-            : mSessionOutput(sessionOutput) {
+#include <utility>
 
-    }
+#include "Log.h"
+
+namespace ndkcamera {
+
+    CaptureSessionOutput::CaptureSessionOutput(ACaptureSessionOutput *captureSessionOutput)
+            : mCaptureSessionOutput(captureSessionOutput) {}
 
     CaptureSessionOutput::~CaptureSessionOutput() {
-        ACaptureSessionOutput_free(mSessionOutput);
+        if (mCaptureSessionOutput != nullptr) {
+            ACaptureSessionOutput_free(mCaptureSessionOutput);
+        }
     }
 
-    const ACaptureSessionOutput *CaptureSessionOutput::getCaptureSessionOutput() {
-        return mSessionOutput;
+    CaptureSessionOutput::CaptureSessionOutput(CaptureSessionOutput &&other) noexcept
+            : mCaptureSessionOutput(std::exchange(other.mCaptureSessionOutput, nullptr)) {}
+
+    CaptureSessionOutput &CaptureSessionOutput::operator=(CaptureSessionOutput &&other) noexcept {
+        if (this != &other) {
+            mCaptureSessionOutput = std::exchange(other.mCaptureSessionOutput, nullptr);
+        }
+        return *this;
+    }
+
+    ACaptureSessionOutput *CaptureSessionOutput::getCaptureSessionOutput() const {
+        return mCaptureSessionOutput;
     }
 
 } // ndkcamera

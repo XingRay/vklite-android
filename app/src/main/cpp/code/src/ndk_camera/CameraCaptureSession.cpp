@@ -3,20 +3,31 @@
 //
 
 #include "ndk_camera/CameraCaptureSession.h"
-#include "ndk_camera/Log.h"
+
 #include <array>
+#include <utility>
+
+#include "ndk_camera/Log.h"
+
 
 namespace ndkcamera {
-    CameraCaptureSession::CameraCaptureSession() : mCaptureSession(nullptr) {
-
-    }
+    CameraCaptureSession::CameraCaptureSession(ACameraCaptureSession *cameraCaptureSession)
+            : mCameraCaptureSession(cameraCaptureSession) {}
 
     CameraCaptureSession::~CameraCaptureSession() {
-        ACameraCaptureSession_close(mCaptureSession);
+        if (mCameraCaptureSession != nullptr) {
+            ACameraCaptureSession_close(mCameraCaptureSession);
+        }
     }
 
-    void CameraCaptureSession::setCameraCaptureSession(ACameraCaptureSession *cameraCaptureSession) {
-        mCaptureSession = cameraCaptureSession;
+    CameraCaptureSession::CameraCaptureSession(CameraCaptureSession &&other) noexcept
+            : mCameraCaptureSession(std::exchange(other.mCameraCaptureSession, nullptr)) {}
+
+    CameraCaptureSession &CameraCaptureSession::operator=(CameraCaptureSession &&other) noexcept {
+        if (this != &other) {
+            mCameraCaptureSession = std::exchange(other.mCameraCaptureSession, nullptr);
+        }
+        return *this;
     }
 
     ACameraCaptureSession_stateCallbacks *CameraCaptureSession::createStateCallbacks() {
@@ -36,12 +47,12 @@ namespace ndkcamera {
         ACameraCaptureSession_captureCallbacks *callbacks = nullptr;
 //        int *id = &mCaptureSequenceId;
         int *id = nullptr;
-        ACameraCaptureSession_setRepeatingRequest(mCaptureSession, callbacks, 1, requests.data(), id);
-        LOG_D("ACameraCaptureSession_setRepeatingRequest(mCaptureSession:%p, requests:[%p])", mCaptureSession, requests[0]);
+        ACameraCaptureSession_setRepeatingRequest(mCameraCaptureSession, callbacks, 1, requests.data(), id);
+        LOG_D("ACameraCaptureSession_setRepeatingRequest(mCaptureSession:%p, requests:[%p])", mCameraCaptureSession, requests[0]);
     }
 
     void CameraCaptureSession::stopRepeating() {
-        ACameraCaptureSession_stopRepeating(mCaptureSession);
+        ACameraCaptureSession_stopRepeating(mCameraCaptureSession);
     }
 
     void CameraCaptureSession::onClosed(void *context, ACameraCaptureSession *session) {
