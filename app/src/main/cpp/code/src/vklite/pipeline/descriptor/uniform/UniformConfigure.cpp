@@ -6,8 +6,11 @@
 
 namespace vklite {
 
+    UniformConfigure::UniformConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags)
+            : mBinding(binding), mDescriptorCount(descriptorCount), mShaderStageFlags(shaderStageFlags) {}
+
     UniformConfigure::UniformConfigure()
-            : mBinding(0), mDescriptorCount(1), mShaderStageFlags(vk::ShaderStageFlagBits::eVertex) {}
+            : UniformConfigure(0, 1, vk::ShaderStageFlagBits::eVertex) {}
 
     UniformConfigure::~UniformConfigure() = default;
 
@@ -28,7 +31,7 @@ namespace vklite {
 
     DescriptorBindingConfigure UniformConfigure::createDescriptorBindingConfigure() const {
 //        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
-        return {mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount};
+        return {mBinding, vk::DescriptorType::eUniformBuffer, mDescriptorCount, mShaderStageFlags};
     }
 
 } // vklite

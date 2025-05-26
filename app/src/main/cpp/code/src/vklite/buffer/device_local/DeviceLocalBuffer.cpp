@@ -4,6 +4,8 @@
 
 #include "DeviceLocalBuffer.h"
 
+#include <utility>
+
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/Log.h"
 
@@ -40,11 +42,29 @@ namespace vklite {
 
     vklite::DeviceLocalBuffer::~DeviceLocalBuffer() {
         const vk::Device &vkDevice = mDevice.getDevice();
-
-        vkDevice.unmapMemory(mDeviceMemory);
-        vkDevice.destroy(mBuffer);
-        vkDevice.freeMemory(mDeviceMemory);
+        if (mDeviceMemory != nullptr) {
+            vkDevice.unmapMemory(mDeviceMemory);
+        }
+        if (mBuffer != nullptr) {
+            vkDevice.destroy(mBuffer);
+        }
+        if (mDeviceMemory != nullptr) {
+            vkDevice.freeMemory(mDeviceMemory);
+        }
     }
+
+    DeviceLocalBuffer::DeviceLocalBuffer(DeviceLocalBuffer &&other) noexcept
+            : mDevice(other.mDevice),
+              mBuffer(std::exchange(other.mBuffer, nullptr)),
+              mBufferSize(other.mBufferSize),
+              mDeviceMemory(std::exchange(other.mDeviceMemory, nullptr)) {}
+
+//    DeviceLocalBuffer &DeviceLocalBuffer::operator=(DeviceLocalBuffer &&other) noexcept {
+//        if(this!= &other){
+//
+//        }
+//        return *this;
+//    }
 
     const vk::Buffer &DeviceLocalBuffer::getBuffer() const {
         return mBuffer;

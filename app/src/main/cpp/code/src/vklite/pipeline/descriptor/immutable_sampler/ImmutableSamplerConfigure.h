@@ -20,17 +20,17 @@ namespace vklite {
 
     private:
         uint32_t mBinding;
-        vk::ShaderStageFlags mShaderStageFlags;
         std::vector<vk::Sampler> mSamplers;
+        vk::ShaderStageFlags mShaderStageFlags;
 
     public:
+        ImmutableSamplerConfigure(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags);
+
         ImmutableSamplerConfigure();
 
         ~ImmutableSamplerConfigure();
 
         ImmutableSamplerConfigure &binding(uint32_t binding);
-
-        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 
         ImmutableSamplerConfigure &addSampler(vk::Sampler sampler);
 
@@ -39,6 +39,8 @@ namespace vklite {
         ImmutableSamplerConfigure &addSamplers(std::vector<vk::Sampler> &&samplers);
 
         ImmutableSamplerConfigure &addSamplers(const std::vector<SamplerInterface> &samplers);
+
+        ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 
         [[nodiscard]]
         DescriptorBindingConfigure createDescriptorBindingConfigure();

@@ -6,29 +6,66 @@
 
 namespace vklite {
 
-    DescriptorBindingConfigure::DescriptorBindingConfigure()
-            : DescriptorBindingConfigure(0, vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex, 1) {}
+    DescriptorBindingConfigure::DescriptorBindingConfigure(uint32_t binding,
+                                                           vk::DescriptorType descriptorType,
+                                                           uint32_t descriptorCount,
+                                                           vk::ShaderStageFlags shaderStageFlags)
+            : mBinding(binding),
+              mDescriptorType(descriptorType),
+              mDescriptorCount(descriptorCount),
+              mImmutableSamplers{},
+              mShaderStageFlags(shaderStageFlags) {}
 
     DescriptorBindingConfigure::DescriptorBindingConfigure(uint32_t binding,
                                                            vk::DescriptorType descriptorType,
-                                                           vk::ShaderStageFlags shaderStageFlags,
-                                                           uint32_t descriptorCount)
+                                                           std::vector<vk::Sampler> &&immutableSamplers,
+                                                           vk::ShaderStageFlags shaderStageFlags)
             : mBinding(binding),
               mDescriptorType(descriptorType),
-              mShaderStageFlags(shaderStageFlags),
-              mDescriptorCount(descriptorCount) {}
-
-    DescriptorBindingConfigure::DescriptorBindingConfigure(uint32_t binding,
-                                                           vk::DescriptorType descriptorType,
-                                                           vk::ShaderStageFlags shaderStageFlags,
-                                                           std::vector<vk::Sampler> &&immutableSamplers)
-            : mBinding(binding),
-              mDescriptorType(descriptorType),
-              mShaderStageFlags(shaderStageFlags),
               mDescriptorCount(immutableSamplers.size()),
-              mImmutableSamplers(std::move(immutableSamplers)) {}
+              mImmutableSamplers(std::move(immutableSamplers)),
+              mShaderStageFlags(shaderStageFlags) {}
+
+    DescriptorBindingConfigure::DescriptorBindingConfigure()
+            : DescriptorBindingConfigure(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex) {}
 
     DescriptorBindingConfigure::~DescriptorBindingConfigure() = default;
+
+    DescriptorBindingConfigure::DescriptorBindingConfigure(const DescriptorBindingConfigure &other)
+            : mBinding(other.mBinding),
+              mDescriptorType(other.mDescriptorType),
+              mShaderStageFlags(other.mShaderStageFlags),
+              mDescriptorCount(other.mDescriptorCount),
+              mImmutableSamplers(other.mImmutableSamplers) {}
+
+    DescriptorBindingConfigure &DescriptorBindingConfigure::operator=(const DescriptorBindingConfigure &other) {
+        if (this != &other) {
+            mBinding = other.mBinding;
+            mDescriptorType = other.mDescriptorType;
+            mShaderStageFlags = other.mShaderStageFlags;
+            mDescriptorCount = other.mDescriptorCount;
+            mImmutableSamplers = other.mImmutableSamplers;
+        }
+        return *this;
+    }
+
+    DescriptorBindingConfigure::DescriptorBindingConfigure(DescriptorBindingConfigure &&other) noexcept
+            : mBinding(other.mBinding),
+              mDescriptorType(other.mDescriptorType),
+              mShaderStageFlags(other.mShaderStageFlags),
+              mDescriptorCount(other.mDescriptorCount),
+              mImmutableSamplers(std::move(other.mImmutableSamplers)) {}
+
+    DescriptorBindingConfigure &DescriptorBindingConfigure::operator=(DescriptorBindingConfigure &&other) noexcept {
+        if (this != &other) {
+            mBinding = other.mBinding;
+            mDescriptorType = other.mDescriptorType;
+            mShaderStageFlags = other.mShaderStageFlags;
+            mDescriptorCount = other.mDescriptorCount;
+            mImmutableSamplers = std::move(other.mImmutableSamplers);
+        }
+        return *this;
+    }
 
     uint32_t DescriptorBindingConfigure::getBinding() const {
         return mBinding;

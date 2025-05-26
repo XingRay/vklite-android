@@ -14,25 +14,33 @@ namespace vklite {
     private:
         uint32_t mBinding;
         vk::DescriptorType mDescriptorType;
-        vk::ShaderStageFlags mShaderStageFlags;
         uint32_t mDescriptorCount;
         std::vector<vk::Sampler> mImmutableSamplers;
+        vk::ShaderStageFlags mShaderStageFlags;
 
     public:
 
+        DescriptorBindingConfigure(uint32_t binding,
+                                   vk::DescriptorType descriptorType,
+                                   uint32_t descriptorCount,
+                                   vk::ShaderStageFlags shaderStageFlags);
+
+        DescriptorBindingConfigure(uint32_t binding,
+                                   vk::DescriptorType descriptorType,
+                                   std::vector<vk::Sampler> &&immutableSamplers,
+                                   vk::ShaderStageFlags shaderStageFlags);
+
         DescriptorBindingConfigure();
 
-        DescriptorBindingConfigure(uint32_t binding,
-                                   vk::DescriptorType descriptorType,
-                                   vk::ShaderStageFlags shaderStageFlags,
-                                   uint32_t descriptorCount);
-
-        DescriptorBindingConfigure(uint32_t binding,
-                                   vk::DescriptorType descriptorType,
-                                   vk::ShaderStageFlags shaderStageFlags,
-                                   std::vector<vk::Sampler> &&immutableSamplers);
-
         ~DescriptorBindingConfigure();
+
+        DescriptorBindingConfigure(const DescriptorBindingConfigure &other);
+
+        DescriptorBindingConfigure &operator=(const DescriptorBindingConfigure &other);
+
+        DescriptorBindingConfigure(DescriptorBindingConfigure &&other) noexcept;
+
+        DescriptorBindingConfigure &operator=(DescriptorBindingConfigure &&other) noexcept;
 
         [[nodiscard]]
         uint32_t getBinding() const;

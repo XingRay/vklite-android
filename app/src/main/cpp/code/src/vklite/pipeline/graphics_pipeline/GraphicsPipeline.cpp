@@ -26,7 +26,8 @@ namespace vklite {
         // input assembler
         vk::PipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo;
         inputAssemblyStateCreateInfo
-                .setTopology(vk::PrimitiveTopology::eTriangleList)
+//                .setTopology(vk::PrimitiveTopology::eTriangleList)
+                .setTopology(vk::PrimitiveTopology::ePointList)
                 .setPrimitiveRestartEnable(vk::False);
 
 

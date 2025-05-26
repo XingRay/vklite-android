@@ -6,8 +6,11 @@
 
 namespace vklite {
 
+    StorageConfigure::StorageConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags)
+            : mBinding(binding), mDescriptorCount(descriptorCount), mShaderStageFlags(shaderStageFlags) {}
+
     StorageConfigure::StorageConfigure()
-            : mBinding(0), mDescriptorCount(1), mShaderStageFlags(vk::ShaderStageFlagBits::eVertex) {}
+            : StorageConfigure(0, 1, vk::ShaderStageFlagBits::eVertex) {}
 
     StorageConfigure::~StorageConfigure() = default;
 
@@ -28,7 +31,7 @@ namespace vklite {
 
     DescriptorBindingConfigure StorageConfigure::createDescriptorBindingConfigure() const {
 //        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
-        return {mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount};
+        return {mBinding, vk::DescriptorType::eStorageBuffer, mDescriptorCount, mShaderStageFlags};
     }
 
 } // vklite

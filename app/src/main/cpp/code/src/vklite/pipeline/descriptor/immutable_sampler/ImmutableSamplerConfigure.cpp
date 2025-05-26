@@ -6,8 +6,11 @@
 
 namespace vklite {
 
+    ImmutableSamplerConfigure::ImmutableSamplerConfigure(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags)
+            : mBinding(binding), mSamplers(std::move(samplers)), mShaderStageFlags(shaderStageFlags) {}
+
     ImmutableSamplerConfigure::ImmutableSamplerConfigure()
-            : mBinding(0), mShaderStageFlags(vk::ShaderStageFlagBits::eFragment) {}
+            : ImmutableSamplerConfigure(0, {}, vk::ShaderStageFlagBits::eFragment) {}
 
     ImmutableSamplerConfigure::~ImmutableSamplerConfigure() = default;
 
@@ -47,7 +50,7 @@ namespace vklite {
 
     DescriptorBindingConfigure ImmutableSamplerConfigure::createDescriptorBindingConfigure() {
 //        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
-        return {mBinding, vk::DescriptorType::eCombinedImageSampler, mShaderStageFlags, std::move(mSamplers)};
+        return {mBinding, vk::DescriptorType::eCombinedImageSampler, std::move(mSamplers), mShaderStageFlags};
     }
 
 } // vklite

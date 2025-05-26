@@ -16,10 +16,12 @@ namespace vklite {
     class StorageConfigure {
     private:
         uint32_t mBinding;
-        vk::ShaderStageFlags mShaderStageFlags;
         uint32_t mDescriptorCount;
+        vk::ShaderStageFlags mShaderStageFlags;
 
     public:
+        StorageConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+
         StorageConfigure();
 
         ~StorageConfigure();

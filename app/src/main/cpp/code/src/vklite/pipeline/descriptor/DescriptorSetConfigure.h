@@ -14,6 +14,7 @@
 #include "vklite/pipeline/descriptor/uniform/UniformConfigure.h"
 #include "vklite/pipeline/descriptor/sampler/SamplerConfigure.h"
 #include "vklite/pipeline/descriptor/immutable_sampler/ImmutableSamplerConfigure.h"
+#include "vklite/pipeline/descriptor/storage/StorageConfigure.h"
 
 namespace vklite {
 
@@ -39,13 +40,25 @@ namespace vklite {
         DescriptorSetConfigure &set(uint32_t set);
 
         // descriptorBinding
-        DescriptorSetConfigure &addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure);
-
         DescriptorSetConfigure &addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure);
+
+        DescriptorSetConfigure &addDescriptorBinding(uint32_t binding,
+                                                     vk::DescriptorType descriptorType,
+                                                     uint32_t descriptorCount,
+                                                     vk::ShaderStageFlags shaderStageFlags);
+
+        DescriptorSetConfigure &addDescriptorBinding(uint32_t binding,
+                                                     vk::DescriptorType descriptorType,
+                                                     std::vector<vk::Sampler> &&immutableSamplers,
+                                                     vk::ShaderStageFlags shaderStageFlags);
+
+        DescriptorSetConfigure &addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure);
 
 
         // uniform
         DescriptorSetConfigure &addUniform(const UniformConfigure &configure);
+
+        DescriptorSetConfigure &addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
 
@@ -53,26 +66,31 @@ namespace vklite {
         // sampler
         DescriptorSetConfigure &addSampler(const SamplerConfigure &configure);
 
+        DescriptorSetConfigure &addSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+
         DescriptorSetConfigure &addSampler(const std::function<void(SamplerConfigure &)> &configure);
 
 
         // immutable sampler
-        DescriptorSetConfigure &addImmutableSampler(ImmutableSamplerConfigure& configure);
+        DescriptorSetConfigure &addImmutableSampler(ImmutableSamplerConfigure &configure);
+
+        DescriptorSetConfigure &addImmutableSampler(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorSetConfigure &addImmutableSampler(const std::function<void(ImmutableSamplerConfigure &)> &configure);
 
 
         //storage buffer
-//        DescriptorSetConfigure &addStorage(uint32_t binding, vk::ShaderStageFlagBits shaderStageFlagBits, uint32_t descriptorCount = 1);
+        DescriptorSetConfigure &addStorage(const StorageConfigure &configure);
 
-//        std::unique_ptr<DescriptorBindingSet> createDescriptorBindingSet(const Device &device, const CommandPool &commandPool);
+        DescriptorSetConfigure &addStorage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
+        DescriptorSetConfigure &addStorage(const std::function<void(StorageConfigure &)> &configure);
+
+        //todo: addXxx()
+
+        [[nodiscard]]
         std::vector<vk::DescriptorSetLayoutBinding> createDescriptorSetLayoutBindings() const;
 
-    private:
-//        std::vector<vk::DescriptorSetLayoutBinding> createDescriptorSetLayoutBindings();
-
-//        vk::DescriptorSetLayout createDescriptorSetLayout(const VulkanDevice &device);
     };
 
 } // vklite

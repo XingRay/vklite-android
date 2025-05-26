@@ -5,6 +5,7 @@
 #pragma once
 
 #include "vulkan/vulkan.hpp"
+
 #include <optional>
 
 namespace vklite {

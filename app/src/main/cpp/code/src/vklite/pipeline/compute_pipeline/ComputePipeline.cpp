@@ -5,51 +5,34 @@
 #include "ComputePipeline.h"
 #include "vklite/Log.h"
 
+#include <utility>
+
 namespace vklite {
-    ComputePipeline::ComputePipeline(const Device &device,
-                                     const ShaderModule &computeShaderModule,
-                                     const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
-                                     const std::vector<vk::PushConstantRange> &pushConstantRanges)
-            : mDevice(device) {
-        vk::Device vkDevice = device.getDevice();
 
-        vk::PipelineShaderStageCreateInfo computeShaderStageInfo{};
-        computeShaderStageInfo
-                .setStage(vk::ShaderStageFlagBits::eCompute)
-                .setModule(computeShaderModule.getShaderModule())
-                .setPName("main");
-
-        vk::PipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
-        pipelineLayoutCreateInfo
-                .setSetLayouts(descriptorSetLayouts)
-                .setPushConstantRanges(pushConstantRanges);
-
-        mPipelineLayout = device.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
-
-        vk::ComputePipelineCreateInfo computePipelineCreateInfo{};
-        computePipelineCreateInfo
-                .setLayout(mPipelineLayout)
-                .setStage(computeShaderStageInfo);
-
-        auto [result, pipeline] = vkDevice.createComputePipeline(nullptr, computePipelineCreateInfo);
-        if (result != vk::Result::eSuccess) {
-            throw std::runtime_error("createComputePipeline failed");
-        }
-        mPipeline = pipeline;
-    }
+    ComputePipeline::ComputePipeline(vk::Device device, vk::Pipeline pipeline)
+            : mDevice(device), mPipeline(pipeline) {}
 
     ComputePipeline::~ComputePipeline() {
-        LOG_D("GraphicsPipeline::~GraphicsPipeline");
-        const vk::Device& vkDevice = mDevice.getDevice();
-        vkDevice.destroy(mPipeline);
-        vkDevice.destroy(mPipelineLayout);
+        if (mDevice != nullptr && mPipeline != nullptr) {
+            mDevice.destroy(mPipeline);
+            mDevice = nullptr;
+            mPipeline = nullptr;
+        }
+    }
+
+    ComputePipeline::ComputePipeline(ComputePipeline &&other) noexcept
+            : mDevice(other.mDevice), mPipeline(std::exchange(other.mPipeline, nullptr)) {}
+
+    ComputePipeline &ComputePipeline::operator=(ComputePipeline &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mPipeline = std::exchange(other.mPipeline, nullptr);
+        }
+        return *this;
     }
 
     const vk::Pipeline &ComputePipeline::getPipeline() const {
         return mPipeline;
     }
 
-    const vk::PipelineLayout &ComputePipeline::getPipelineLayout() const {
-        return mPipelineLayout;
-    }
 } // vklite

@@ -14,22 +14,18 @@
 
 #include "vklite/vklite.h"
 #include "vklite/vklite_android.h"
+#include "util/Timer.h"
 
 namespace test08 {
 
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec2 uv;
-
-        bool operator==(const Vertex &other) const {
-            return position == other.position && uv == other.uv;
-        }
+    struct UniformBufferObject {
+        float deltaTime = 1.0f;
     };
 
-    struct MvpMatrix {
-        alignas(16)glm::mat4 model; // 模型矩阵
-        alignas(16)glm::mat4 view;  // 视图矩阵
-        alignas(16)glm::mat4 proj;  // 投影矩阵
+    struct Particle {
+        glm::vec2 position;
+        glm::vec2 velocity;
+        glm::vec4 color;
     };
 
     class Test08ComputeShader : public test::TestBase {
@@ -42,12 +38,16 @@ namespace test08 {
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
         const float mClearDepth = 1.0f;
         bool mMsaaEnable = true;
-        bool mDepthTestEnable = true;
+        bool mDepthTestEnable = false;
+        static constexpr uint32_t mParticleCount = 8192;
+
 
         //status
         uint32_t mCurrentFrameIndex = 0;
         bool mFrameBufferResized = false;
+        util::Timer mTimer;
 
+        // vk instance
         std::unique_ptr<vklite::Instance> mInstance;
         std::unique_ptr<vklite::Surface> mSurface;
         std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
@@ -73,16 +73,27 @@ namespace test08 {
         vklite::FrameBuffers mFrameBuffers;
 
         std::unique_ptr<vklite::SyncObject> mSyncObject;
-        std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
-        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
 
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
 
         std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
-        std::vector<vklite::PipelineResource> mPipelineResources;
+        std::unique_ptr<vklite::DescriptorPool> mGraphicsDescriptorPool;
+        std::unique_ptr<vklite::PipelineLayout> mGraphicsPipelineLayout;
+        std::vector<vklite::PipelineResource> mGraphicsPipelineResources;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+
+
+        std::unique_ptr<vklite::CommandBuffers> mComputeCommandBuffers;
+        std::unique_ptr<vklite::ComputePipeline> mComputePipeline;
+        std::unique_ptr<vklite::DescriptorPool> mComputeDescriptorPool;
+        std::unique_ptr<vklite::PipelineLayout> mComputePipelineLayout;
+        std::vector<vklite::PipelineResource> mComputePipelineResources;
+        std::vector<vklite::DeviceLocalBuffer> mShaderStorageBuffers;
+        std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
+        std::vector<vk::Fence> mComputeFences;
+        std::vector<vk::Semaphore> mComputeFinishSemaphores;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

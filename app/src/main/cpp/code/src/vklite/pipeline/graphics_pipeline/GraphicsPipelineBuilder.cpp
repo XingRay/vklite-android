@@ -63,15 +63,6 @@ namespace vklite {
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
         std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions = mVertexConfigure.createVertexInputAttributeDescriptions();
 
-//        return GraphicsPipeline(device,
-//                                renderPass,
-//                                vertexShaderModule,
-//                                fragmentShaderModule,
-//                                vertexInputBindingDescriptions,
-//                                vertexInputAttributeDescriptions,
-//                                pipelineLayout,
-//                                viewports,
-//                                scissors);
         return {device,
                 renderPass,
                 vertexShaderModule,
@@ -99,32 +90,6 @@ namespace vklite {
         // vertex buffer description
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();
         std::vector<vk::VertexInputAttributeDescription> vertexInputAttributeDescriptions = mVertexConfigure.createVertexInputAttributeDescriptions();
-
-        // descriptor -> uniform / sampler ...
-//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mDescriptorSetConfigures.createDescriptorSetLayouts(device);
-
-        //        std::unique_ptr<VulkanDescriptorPool> vulkanDescriptorPool = std::make_unique<VulkanDescriptorPool>(device,
-//                                                                                                            mDescriptorSetConfigures.createDescriptorPoolSizes(frameCount),
-//                                                                                                            mDescriptorSetConfigures.getSetCount(frameCount));
-
-        // frame -> set -> binding
-//        std::vector<std::unique_ptr<VulkanDescriptorBindingSets>> vulkanDescriptorBindingSets;
-//        for (uint32_t frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-//            std::unique_ptr<VulkanDescriptorBindingSets> bindingSetsOfFrame = mDescriptorSetConfigures.createVulkanDescriptorBindingSets(device, commandPool);
-//            vulkanDescriptorBindingSets.push_back(std::move(bindingSetsOfFrame));
-//        }
-
-//        // push constant
-//        std::vector<vk::PushConstantRange> pushConstantRanges = mPushConstantConfigures.createPushConstantRanges();
-//        // 检查总大小是否超出设备限制
-//        uint32_t maxPushConstantsSize = device.getMaxPushConstantsSize();
-//        uint32_t totalPushConstantSize = pipelineLayout->calcTotalPushConstantSize();
-//        if (totalPushConstantSize > maxPushConstantsSize) {
-//            throw std::runtime_error(
-//                    "Total Push Constant size (" + std::to_string(totalPushConstantSize) +
-//                    ") exceeds device limit: " + std::to_string(maxPushConstantsSize)
-//            );
-//        }
 
         return std::make_unique<GraphicsPipeline>(device,
                                                   renderPass,

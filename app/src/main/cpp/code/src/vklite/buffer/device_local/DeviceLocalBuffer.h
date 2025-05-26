@@ -28,6 +28,14 @@ namespace vklite {
 
         virtual  ~DeviceLocalBuffer();
 
+        DeviceLocalBuffer(const DeviceLocalBuffer &other) = delete;
+
+        DeviceLocalBuffer &operator=(const DeviceLocalBuffer &other) = delete;
+
+        DeviceLocalBuffer(DeviceLocalBuffer &&other) noexcept;
+
+        DeviceLocalBuffer &operator=(DeviceLocalBuffer &&other) noexcept = delete;
+
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 

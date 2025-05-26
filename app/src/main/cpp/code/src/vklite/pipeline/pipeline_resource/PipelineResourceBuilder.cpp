@@ -36,7 +36,7 @@ namespace vklite {
         return *this;
     }
 
-    PipelineResourceBuilder &PipelineResourceBuilder::addPushConstant(PushConstant &&pushConstant){
+    PipelineResourceBuilder &PipelineResourceBuilder::addPushConstant(PushConstant &&pushConstant) {
         mPushConstants.push_back(std::move(pushConstant));
         return *this;
     }
@@ -56,18 +56,24 @@ namespace vklite {
             vertexBufferOffsets.push_back(vertexBufferInfo.getOffset());
         }
 
-//        return PipelineResource(std::move(vertexBuffers),
-//                                std::move(vertexBufferOffsets),
-//                                mIndexBufferInfo->getIndexBuffer().getBuffer(),
-//                                mIndexBufferInfo->getOffset(),
-//                                mIndicesCount,
-//                                std::move(mPushConstants),
-//                                std::move(mDescriptorSets));
+        vk::Buffer indexBuffer;
+        vk::DeviceSize indexBufferOffset;
+        vk::IndexType indexType;
+        if (mIndexBufferInfo == nullptr) {
+            indexBuffer = nullptr;
+            indexBufferOffset = 0;
+            indexType = vk::IndexType::eUint32;
+        } else {
+            indexBuffer = mIndexBufferInfo->getIndexBuffer().getBuffer();
+            indexBufferOffset = mIndexBufferInfo->getOffset();
+            indexType = mIndexBufferInfo->getIndexBuffer().getIndexType();
+        }
+
         return {std::move(vertexBuffers),
                 std::move(vertexBufferOffsets),
-                mIndexBufferInfo->getIndexBuffer().getBuffer(),
-                mIndexBufferInfo->getOffset(),
-                mIndexBufferInfo->getIndexBuffer().getIndexType(),
+                indexBuffer,
+                indexBufferOffset,
+                indexType,
                 mIndicesCount,
                 std::move(mPushConstants),
                 std::move(mDescriptorSets)};

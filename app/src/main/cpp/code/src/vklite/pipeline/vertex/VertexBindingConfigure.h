@@ -28,7 +28,7 @@ namespace vklite {
     public:
         VertexBindingConfigure();
 
-        VertexBindingConfigure(VertexBindingConfigure &&other)noexcept;
+        VertexBindingConfigure(VertexBindingConfigure &&other) noexcept;
 
         ~VertexBindingConfigure();
 
@@ -39,11 +39,16 @@ namespace vklite {
         uint32_t getStride() const;
 
         [[nodiscard]]
+        vk::VertexInputRate getVertexInputRate() const;
+
+        [[nodiscard]]
         const std::unordered_map<uint32_t, VertexAttributeConfigure> &getAttributes() const;
+
+        VertexBindingConfigure &binding(uint32_t binding);
 
         VertexBindingConfigure &stride(uint32_t stride);
 
-        VertexBindingConfigure &binding(uint32_t binding);
+        VertexBindingConfigure &inputRate(vk::VertexInputRate inputRate);
 
         VertexBindingConfigure &addAttribute(uint32_t location, uint32_t binding, ShaderFormat format, uint32_t offset);
 

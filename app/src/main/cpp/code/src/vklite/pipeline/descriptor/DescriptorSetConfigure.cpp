@@ -26,6 +26,29 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure) {
+        mDescriptorBindingConfigures.emplace(bindingConfigure.getBinding(), bindingConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(uint32_t binding,
+                                                                         vk::DescriptorType descriptorType,
+                                                                         uint32_t descriptorCount,
+                                                                         vk::ShaderStageFlags shaderStageFlags) {
+        DescriptorBindingConfigure descriptorBindingConfigure(binding, descriptorType, descriptorCount, shaderStageFlags);
+        addDescriptorBinding(std::move(descriptorBindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(uint32_t binding,
+                                                                         vk::DescriptorType descriptorType,
+                                                                         std::vector<vk::Sampler> &&immutableSamplers,
+                                                                         vk::ShaderStageFlags shaderStageFlags) {
+        DescriptorBindingConfigure descriptorBindingConfigure(binding, descriptorType, std::move(immutableSamplers), shaderStageFlags);
+        addDescriptorBinding(std::move(descriptorBindingConfigure));
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(const std::function<void(DescriptorBindingConfigure &)> &configure) {
         DescriptorBindingConfigure bindingConfigure{};
         configure(bindingConfigure);
@@ -33,15 +56,16 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addDescriptorBinding(DescriptorBindingConfigure &&bindingConfigure) {
-        mDescriptorBindingConfigures.emplace(bindingConfigure.getBinding(), bindingConfigure);
-        return *this;
-    }
-
 
     DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+        UniformConfigure uniformConfigure(binding, descriptorCount, shaderStageFlags);
+        addUniform(uniformConfigure);
         return *this;
     }
 
@@ -59,6 +83,12 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+        SamplerConfigure samplerConfigure(binding, descriptorCount, shaderStageFlags);
+        addSampler(samplerConfigure);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const std::function<void(SamplerConfigure &)> &configure) {
         SamplerConfigure samplerConfigure{};
         configure(samplerConfigure);
@@ -72,10 +102,35 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addImmutableSampler(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags) {
+        ImmutableSamplerConfigure immutableSamplerConfigure(binding, std::move(samplers), shaderStageFlags);
+        addImmutableSampler(immutableSamplerConfigure);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addImmutableSampler(const std::function<void(ImmutableSamplerConfigure &)> &configure) {
         ImmutableSamplerConfigure immutableSamplerConfigure{};
         configure(immutableSamplerConfigure);
         addImmutableSampler(immutableSamplerConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(const StorageConfigure &configure) {
+        DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
+        addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+        StorageConfigure storageConfigure(binding, descriptorCount, shaderStageFlags);
+        addStorage(storageConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(const std::function<void(StorageConfigure &)> &configure) {
+        StorageConfigure storageConfigure{};
+        configure(storageConfigure);
+        addStorage(storageConfigure);
         return *this;
     }
 

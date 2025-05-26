@@ -4,32 +4,32 @@
 
 #pragma once
 
+#include <vector>
+
 #include "vulkan/vulkan.hpp"
-#include "vklite/device/Device.h"
-#include "vklite/shader/ShaderModule.h"
 
 namespace vklite {
 
     class ComputePipeline {
     private:
-        const Device &mDevice;
+        vk::Device mDevice;
         vk::Pipeline mPipeline;
-        vk::PipelineLayout mPipelineLayout;
 
     public:
-        ComputePipeline(
-                const Device &device,
-                const ShaderModule &computeShaderModule,
-                const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
-                const std::vector<vk::PushConstantRange> &pushConstantRanges);
+        ComputePipeline(vk::Device device, vk::Pipeline pipeline);
 
         ~ComputePipeline();
 
-        [[nodiscard]]
-        const vk::Pipeline &getPipeline() const;
+        ComputePipeline(const ComputePipeline &computePipeline) = delete;
+
+        ComputePipeline &operator=(const ComputePipeline &other) = delete;
+
+        ComputePipeline(ComputePipeline &&other) noexcept;
+
+        ComputePipeline &operator=(ComputePipeline &&other) noexcept;
 
         [[nodiscard]]
-        const vk::PipelineLayout &getPipelineLayout() const;
+        const vk::Pipeline &getPipeline() const;
     };
 
 } // vklite

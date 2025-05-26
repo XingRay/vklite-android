@@ -34,10 +34,20 @@ inline std::string currentDateTime() {
 
 
 #ifdef __ANDROID__
+
 #include <android/log.h>
+
 #define LOG_V(...) ((void)__android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__))
 #define LOG_D(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__))
 #define LOG_I(...) ((void)__android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__))
 #define LOG_W(...) ((void)__android_log_print(ANDROID_LOG_WARN, TAG, __VA_ARGS__))
 #define LOG_E(...) ((void)__android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__))
+
 #endif
+
+
+#define LOG_VF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_DF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_IF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_WF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_EF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())

@@ -59,6 +59,9 @@ namespace vklite {
         uint32_t getPresentQueueFamilyIndex() const;
 
         [[nodiscard]]
+        uint32_t getComputeQueueFamilyIndex() const;
+
+        [[nodiscard]]
         const std::vector<uint32_t> &getQueueFamilyIndices() const;
 
         [[nodiscard]]
@@ -70,5 +73,7 @@ namespace vklite {
         [[nodiscard]]
         const vk::Queue &getPresentQueue() const;
 
+        [[nodiscard]]
+        const vk::Queue &getComputeQueue() const;
     };
 } // vklite

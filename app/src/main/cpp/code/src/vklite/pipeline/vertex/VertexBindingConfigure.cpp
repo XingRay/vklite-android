@@ -24,6 +24,10 @@ namespace vklite {
         return mStride;
     }
 
+    vk::VertexInputRate VertexBindingConfigure::getVertexInputRate() const {
+        return mVertexInputRate;
+    }
+
     const std::unordered_map<uint32_t, VertexAttributeConfigure> &VertexBindingConfigure::getAttributes() const {
         return mAttributes;
     }
@@ -35,6 +39,11 @@ namespace vklite {
 
     VertexBindingConfigure &VertexBindingConfigure::stride(uint32_t stride) {
         mStride = stride;
+        return *this;
+    }
+
+    VertexBindingConfigure &VertexBindingConfigure::inputRate(vk::VertexInputRate inputRate) {
+        mVertexInputRate = inputRate;
         return *this;
     }
 
@@ -58,11 +67,11 @@ namespace vklite {
         return addAttribute(location, mBinding, format, offset);
     }
 
-    VertexBindingConfigure &VertexBindingConfigure::addAttribute(uint32_t location, ShaderFormat format){
+    VertexBindingConfigure &VertexBindingConfigure::addAttribute(uint32_t location, ShaderFormat format) {
         return addAttribute(location, mBinding, format, mCurrentAttributeOffset);
     }
 
-    VertexBindingConfigure &VertexBindingConfigure::addAttribute(uint32_t location, vk::Format format){
+    VertexBindingConfigure &VertexBindingConfigure::addAttribute(uint32_t location, vk::Format format) {
         return addAttribute(location, mBinding, format, mCurrentAttributeOffset);
     }
 

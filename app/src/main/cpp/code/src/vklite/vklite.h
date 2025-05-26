@@ -17,8 +17,8 @@
 #include "vklite/frame_buffer/FrameBufferBuilder.h"
 #include "vklite/frame_buffer/FrameBuffersBuilder.h"
 
-#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
-#include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
+
+// pipeline
 #include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
 #include "vklite/pipeline/descriptor/DescriptorConfigure.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
@@ -26,6 +26,13 @@
 #include "vklite/pipeline/pipeline_resource/PipelineResourceBuilder.h"
 #include "vklite/pipeline/pipeline_resource/PipelineResourcesBuilder.h"
 
+#include "vklite/pipeline/graphics_pipeline/GraphicsPipeline.h"
+#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
+
+#include "vklite/pipeline/compute_pipeline/ComputePipeline.h"
+#include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
+
+// buffer
 #include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/vertex_buffer/VertexBufferBuilder.h"
 

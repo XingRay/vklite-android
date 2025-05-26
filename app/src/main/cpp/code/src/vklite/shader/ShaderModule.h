@@ -11,14 +11,23 @@
 namespace vklite {
 
     class ShaderModule {
-        const Device &mDevice;
-
+        vk::Device mDevice;
         vk::ShaderModule mShaderModule;
 
     public:
+        ShaderModule(vk::Device device, const std::vector<uint32_t> &code);
+
         ShaderModule(const Device &device, const std::vector<uint32_t> &code);
 
         ~ShaderModule();
+
+        ShaderModule(const ShaderModule &other) = delete;
+
+        ShaderModule &operator=(const ShaderModule &other) = delete;
+
+        ShaderModule(ShaderModule &&other) noexcept;
+
+        ShaderModule &operator=(ShaderModule &&other) noexcept;
 
         const vk::ShaderModule &getShaderModule() const;
     };

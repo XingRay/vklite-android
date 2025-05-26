@@ -17,19 +17,21 @@ namespace vklite {
     class SamplerConfigure {
     private:
         uint32_t mBinding;
-        vk::ShaderStageFlags mShaderStageFlags;
         uint32_t mDescriptorCount;
+        vk::ShaderStageFlags mShaderStageFlags;
 
     public:
+        SamplerConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+
         SamplerConfigure();
 
         ~SamplerConfigure();
 
         SamplerConfigure &binding(uint32_t binding);
 
-        SamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
-
         SamplerConfigure &descriptorCount(uint32_t descriptorCount);
+
+        SamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 
         [[nodiscard]]
         DescriptorBindingConfigure createDescriptorBindingConfigure() const;

@@ -16,10 +16,14 @@ namespace vklite {
     class UniformConfigure {
     private:
         uint32_t mBinding;
-        vk::ShaderStageFlags mShaderStageFlags;
         uint32_t mDescriptorCount;
+        vk::ShaderStageFlags mShaderStageFlags;
 
     public:
+        UniformConfigure(uint32_t binding,
+                         uint32_t descriptorCount,
+                         vk::ShaderStageFlags shaderStageFlags);
+
         UniformConfigure();
 
         ~UniformConfigure();

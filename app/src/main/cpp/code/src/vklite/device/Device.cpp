@@ -154,6 +154,10 @@ namespace vklite {
         return mPresentQueueFamilyIndex;
     }
 
+    uint32_t Device::getComputeQueueFamilyIndex() const {
+        return mComputeQueueFamilyIndex;
+    }
+
     const std::vector<uint32_t> &Device::getQueueFamilyIndices() const {
         return mQueueFamilyIndices;
     }
@@ -168,6 +172,11 @@ namespace vklite {
 
     const vk::Queue &Device::getPresentQueue() const {
         return mPresentQueue;
+    }
+
+    [[nodiscard]]
+    const vk::Queue &Device::getComputeQueue() const {
+        return mComputeQueue;
     }
 
 } // vklite

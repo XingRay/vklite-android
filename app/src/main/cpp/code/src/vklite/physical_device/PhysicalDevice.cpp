@@ -37,6 +37,7 @@ namespace vklite {
 //        return surfaceSupport;
 //    }
 
+    // todo: 根据条件筛选 queue
     QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
         QueueFamilyIndices indices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();

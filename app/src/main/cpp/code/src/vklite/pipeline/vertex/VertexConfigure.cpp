@@ -22,16 +22,25 @@ namespace vklite {
     std::vector<vk::VertexInputBindingDescription> VertexConfigure::createVertexInputBindingDescriptions() const {
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions;
 
-        for (const auto &entry: mVertexBindingConfigures) {
-            uint32_t binding = entry.first;
-            const VertexBindingConfigure &vertexConfigure = entry.second;
-
-            vk::VertexInputBindingDescription bindingDescription{};
-            bindingDescription
-                    .setBinding(binding)
-                    .setStride(vertexConfigure.getStride())
-                    .setInputRate(vk::VertexInputRate::eVertex);
-            vertexInputBindingDescriptions.push_back(bindingDescription);
+//        for (const auto &entry: mVertexBindingConfigures) {
+//            uint32_t binding = entry.first;
+//            const VertexBindingConfigure &vertexConfigure = entry.second;
+//
+//            vk::VertexInputBindingDescription bindingDescription{};
+//            bindingDescription
+//                    .setBinding(binding)
+//                    .setStride(vertexConfigure.getStride())
+//                    .setInputRate(vertexConfigure.getVertexInputRate());
+//            vertexInputBindingDescriptions.push_back(bindingDescription);
+//        }
+        vertexInputBindingDescriptions.reserve(mVertexBindingConfigures.size());
+        for (const auto &[binding, vertexConfigure]: mVertexBindingConfigures) {
+            vertexInputBindingDescriptions.emplace_back(
+                    vk::VertexInputBindingDescription()
+                            .setBinding(binding)
+                            .setStride(vertexConfigure.getStride())
+                            .setInputRate(vertexConfigure.getVertexInputRate())
+            );
         }
 
         return vertexInputBindingDescriptions;
