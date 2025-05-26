@@ -36,9 +36,10 @@ namespace test08 {
         //config
         const int mFrameCount = 2;
         const std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
-        const float mClearDepth = 1.0f;
+        // vertex shader 中设置 z = 1.0, 要启用深度测试, 需要调整 mClearDepth , 满足 depth(默认视角下为 z 值) < mClearDepth 才能正常显示
+        const float mClearDepth = 2.0f;
         bool mMsaaEnable = true;
-        bool mDepthTestEnable = false;
+        bool mDepthTestEnable = true;
         static constexpr uint32_t mParticleCount = 8192;
 
 
