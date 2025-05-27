@@ -434,7 +434,7 @@ namespace test06 {
         }
 
         const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
-        commandBuffer.execute([&](const vk::CommandBuffer &vkCommandBuffer) {
+        commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
             });

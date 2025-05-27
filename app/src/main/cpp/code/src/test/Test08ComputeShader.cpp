@@ -83,10 +83,12 @@ namespace test08 {
                 .extensions(std::move(deviceExtensions))
                 .layers(std::move(deviceLayers))
                 .addQueueFamily(queueFamilyIndices.graphicQueueFamilyIndex.value())
-                .addQueueFamily(queueFamilyIndices.graphicQueueFamilyIndex.value())
                 .addQueueFamily(queueFamilyIndices.presentQueueFamilyIndex.value())
 //                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
                 .buildUnique();
+        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.graphicQueueFamilyIndex.value(), 0));
+        mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.presentQueueFamilyIndex.value(), 0));
+        mComputeQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.graphicQueueFamilyIndex.value(), 0));
 
         mSwapchain = vklite::SwapchainBuilder()
                 .build(*mPhysicalDevice, *mDevice, *mSurface, {queueFamilyIndices.presentQueueFamilyIndex.value()});
@@ -186,20 +188,9 @@ namespace test08 {
                 })
                 .build();
 
-        mSyncObject = vklite::SyncObjectBuilder()
-                .frameCount(mFrameCount)
-                .build(*mDevice);
-
-//        vklite::DescriptorConfigure graphicsDescriptorConfigure = vklite::DescriptorConfigure()
-//                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-//                    descriptorSetConfigure
-//                            .set(0)
-//                            .addSampler([](vklite::SamplerConfigure &samplerConfigure) {
-//                                samplerConfigure
-//                                        .binding(0)
-//                                        .shaderStageFlags(vk::ShaderStageFlagBits::eFragment);
-//                            });
-//                });
+        mImageAvailableSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mRenderFinishedSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mFences = vklite::FenceBuilder().device(mDevice->getDevice()).build(mFrameCount);
 
         mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
 //                .descriptorPoolSizes(graphicsDescriptorConfigure.calcDescriptorPoolSizes())
@@ -244,43 +235,6 @@ namespace test08 {
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique(*mDevice, *mRenderPass, *mGraphicsPipelineLayout, mViewports, mScissors);
-
-//        mIndexBuffer = vklite::IndexBufferBuilder()
-//                .bufferSize(indices.size() * sizeof(uint32_t))
-//                .build(*mDevice);
-//        mIndexBuffer->update(*mCommandPool, indices);
-
-//        mVertexBuffer = vklite::VertexBufferBuilder()
-//                .bufferSize(vertices.size() * sizeof(Vertex))
-//                .build(*mDevice);
-//        mVertexBuffer->update(*mCommandPool, vertices);
-
-//        mGraphicsPipelineResources = vklite::PipelineResourcesBuilder()
-//                .frameCount(mFrameCount)
-//                .pipelineResourceBuilder([&](uint32_t frameIndex) {
-//                    return vklite::PipelineResourceBuilder()
-//                            .addVertexBuffer(*mVertexBuffer)
-//                            .indexBuffer(*mIndexBuffer)
-//                            .indicesCount(indices.size())
-//                            .descriptorSets(mGraphicsDescriptorPool->allocateDescriptorSets(graphicsDescriptorSetLayouts))
-//                            .build();
-//                })
-//                .build();
-
-//        vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
-//                .frameCount(mFrameCount)
-//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
-//                    descriptorSetMappingConfigure
-//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-//                                mapping
-//                                        .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
-//                                        .binding(0)
-//                                        .descriptorType(vk::DescriptorType::eCombinedImageSampler);
-////                                        .addImageInfo(*mSamplers[frameIndex], *mImageViews[frameIndex]);
-//                            });
-//                })
-//                .build();
-//        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
 
         // compute pipeline
         mComputeCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
@@ -331,16 +285,10 @@ namespace test08 {
 
             std::unique_ptr<vklite::UniformBuffer> uniformBuffer = std::make_unique<vklite::UniformBuffer>(*mPhysicalDevice, *mDevice, sizeof(UniformBufferObject));
             mUniformBuffers.push_back(std::move(uniformBuffer));
-
-            vk::SemaphoreCreateInfo semaphoreCreateInfo{};
-            vk::FenceCreateInfo fenceCreateInfo{};
-            // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
-            fenceCreateInfo.setFlags(vk::FenceCreateFlagBits::eSignaled);
-
-            vk::Device vkDevice = (*mDevice).getDevice();
-            mComputeFences.push_back(vkDevice.createFence(fenceCreateInfo));
-            mComputeFinishSemaphores.push_back(vkDevice.createSemaphore(semaphoreCreateInfo));
         }
+
+        mComputeFences = vklite::FenceBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mComputeFinishSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
 
         vklite::DescriptorSetWriter computePipelineDescriptorSetWriter = vklite::DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
@@ -386,26 +334,28 @@ namespace test08 {
 
     // 绘制三角形帧
     void Test08ComputeShader::drawFrame() {
+        // update data by frame
+        UniformBufferObject ubo{};
+        ubo.deltaTime = static_cast<double>(mTimer.getDeltaTimeMs()) * 2.0f;
+        mUniformBuffers[mCurrentFrameIndex]->update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
+
+
         const vk::Device vkDevice = mDevice->getDevice();
 
         // compute pipeline
-        vk::Result result = vkDevice.waitForFences(mComputeFences[mCurrentFrameIndex], vk::True, std::numeric_limits<uint64_t>::max());
+        vk::Result result = mComputeFences[mCurrentFrameIndex].wait();
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
         }
 
-        UniformBufferObject ubo{};
-        ubo.deltaTime = static_cast<double>(mTimer.getDeltaTimeMs()) * 2.0f;
-        mUniformBuffers[mCurrentFrameIndex]->update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
-
-        result = vkDevice.resetFences(1, &mComputeFences[mCurrentFrameIndex]);
+        result = mComputeFences[mCurrentFrameIndex].reset();
         if (result != vk::Result::eSuccess) {
             throw std::runtime_error("mComputeFences[mCurrentFrameIndex] resetFences failed");
         }
 
         const vklite::CommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
-        computeCommandBuffer.execute([&](const vk::CommandBuffer &commandBuffer) {
+        computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
             commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getPipeline());
             const std::vector<vk::DescriptorSet> &descriptorSets = mComputePipelineResources[mCurrentFrameIndex].getDescriptorSets();
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipelineLayout->getPipelineLayout(), 0, descriptorSets, nullptr);
@@ -413,38 +363,30 @@ namespace test08 {
             vkCmdDispatch(commandBuffer, mParticleCount / 256, 1, 1);
         });
 
-        std::array<vk::CommandBuffer, 1> computeCommandBuffers = {computeCommandBuffer.getCommandBuffer()};
-        std::array<vk::Semaphore, 1> computeSignalSemaphores = {mComputeFinishSemaphores[mCurrentFrameIndex]};
+        mComputeQueue->submit(computeCommandBuffer.getCommandBuffer(),
+                              mComputeFinishSemaphores[mCurrentFrameIndex].getSemaphore(),
+                              mComputeFences[mCurrentFrameIndex].getFence());
 
-        vk::SubmitInfo computeSubmitInfo{};
-        computeSubmitInfo
-                .setCommandBuffers(computeCommandBuffers)
-                .setSignalSemaphores(computeSignalSemaphores);
-
-        std::array<vk::SubmitInfo, 1> computeSubmitInfos = {computeSubmitInfo};
-        //todo:
-//        mDevice->getComputeQueue().submit(computeSubmitInfos, mComputeFences[mCurrentFrameIndex]);
-        std::array<vk::Fence, 1> computeWaitFences = {mComputeFences[mCurrentFrameIndex]};
-        result = vkDevice.waitForFences(computeWaitFences, vk::True, std::numeric_limits<uint64_t>::max());
+        result = mComputeFences[mCurrentFrameIndex].wait();
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
         }
 
         // graphic pipeline
-        vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
-        vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
-        vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
-        std::array<vk::Fence, 1> waitFences = {fence};
-
-        result = vkDevice.waitForFences(waitFences, vk::True, std::numeric_limits<uint64_t>::max());
+        // GPU-GPU 同步（跨队列或同一队列不同提交批次）
+        vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
+        vklite::Semaphore &renderFinishedSemaphore = mRenderFinishedSemaphores[mCurrentFrameIndex];
+        // Fence主要用于CPU和GPU之间的同步，比如让CPU等待GPU完成某个任务
+        vklite::Fence &fence = mFences[mCurrentFrameIndex];
+        result = fence.wait();
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-        auto [acquireResult, imageIndex] = vkDevice.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
+        auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getSemaphore());
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
                 // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。
@@ -461,7 +403,7 @@ namespace test08 {
         }
 
         const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
-        commandBuffer.execute([&](const vk::CommandBuffer &vkCommandBuffer) {
+        commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicsPipeline->getPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
@@ -473,44 +415,15 @@ namespace test08 {
             });
         });
 
-        result = mSyncObject->resetFence(mCurrentFrameIndex);
+        result = mFences[mCurrentFrameIndex].reset();
         if (result != vk::Result::eSuccess) {
             throw std::runtime_error("resetFences failed");
         }
 
-        std::array<vk::Semaphore, 1> waitSemaphores = {imageAvailableSemaphore};
-        std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
-        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer.getCommandBuffer()};
-        std::array<vk::Semaphore, 1> signalSemaphores = {renderFinishedSemaphore};
+        mGraphicQueue->submit(commandBuffer.getCommandBuffer(), vk::PipelineStageFlagBits::eColorAttachmentOutput,
+                              imageAvailableSemaphore.getSemaphore(), renderFinishedSemaphore.getSemaphore(), fence.getFence());
 
-        vk::SubmitInfo submitInfo{};
-        submitInfo
-                .setWaitSemaphores(waitSemaphores)
-                .setWaitDstStageMask(waitStages)
-                .setCommandBuffers(commandBuffers)
-                .setSignalSemaphores(signalSemaphores);
-
-        std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
-        // todo:
-//        mDevice->getGraphicsQueue().submit(submitInfos, fence);
-
-        std::array<vk::SwapchainKHR, 1> swapChains = {mSwapchain->getSwapChain()};
-        std::array<uint32_t, 1> imageIndices = {imageIndex};
-        vk::PresentInfoKHR presentInfo{};
-        presentInfo
-                .setWaitSemaphores(signalSemaphores)
-                .setSwapchains(swapChains)
-                .setImageIndices(imageIndices);
-
-        // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
-        // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
-        try {
-//            result = mDevice->getPresentQueue().presentKHR(presentInfo);
-        } catch (const vk::OutOfDateKHRError &e) {
-            LOG_E("mPresentQueue.presentKHR => OutOfDateKHRError");
-            result = vk::Result::eErrorOutOfDateKHR;
-        }
-
+        result = mPresentQueue->present(mSwapchain->getSwapChain(), imageIndex, renderFinishedSemaphore.getSemaphore());
         if (result != vk::Result::eSuccess) {
             if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFrameBufferResized) {
                 mFrameBufferResized = false;

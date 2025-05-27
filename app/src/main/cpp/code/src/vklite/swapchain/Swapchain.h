@@ -47,5 +47,8 @@ namespace vklite {
         [[nodiscard]]
         const std::vector<vk::Image> &getDisplayImages() const;
 
+        vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout);
+
+        vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore);
     };
 }

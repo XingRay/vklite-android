@@ -27,7 +27,7 @@ namespace vklite {
 
         void execute(vk::CommandBufferUsageFlagBits usage, const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
 
-        void execute(const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
+        void record(const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
     };
 
 } // vklite

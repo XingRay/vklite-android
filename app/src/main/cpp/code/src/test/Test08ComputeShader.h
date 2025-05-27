@@ -57,6 +57,11 @@ namespace test08 {
         std::vector<vk::PresentModeKHR> mPresentModes;
 
         std::unique_ptr<vklite::Device> mDevice;
+
+        std::unique_ptr<vklite::Queue> mGraphicQueue;
+        std::unique_ptr<vklite::Queue> mPresentQueue;
+        std::unique_ptr<vklite::Queue> mComputeQueue;
+
         std::unique_ptr<vklite::Swapchain> mSwapchain;
         std::unique_ptr<vklite::CommandPool> mCommandPool;
         std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
@@ -73,7 +78,9 @@ namespace test08 {
 //        std::vector<vklite::FrameBuffer> mFrameBuffers;
         vklite::FrameBuffers mFrameBuffers;
 
-        std::unique_ptr<vklite::SyncObject> mSyncObject;
+        std::vector<vklite::Semaphore> mImageAvailableSemaphores;
+        std::vector<vklite::Semaphore> mRenderFinishedSemaphores;
+        std::vector<vklite::Fence> mFences;
 
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
@@ -93,8 +100,8 @@ namespace test08 {
         std::vector<vklite::PipelineResource> mComputePipelineResources;
         std::vector<vklite::DeviceLocalBuffer> mShaderStorageBuffers;
         std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
-        std::vector<vk::Fence> mComputeFences;
-        std::vector<vk::Semaphore> mComputeFinishSemaphores;
+        std::vector<vklite::Fence> mComputeFences;
+        std::vector<vklite::Semaphore> mComputeFinishSemaphores;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

@@ -28,7 +28,7 @@ namespace vklite {
 //        std::vector<uint32_t> queueFamilyIndices = device.getQueueFamilyIndices();
         vk::SharingMode sharingMode;
 //        if (queueFamilyIndices.size() == 1) {
-            sharingMode = vk::SharingMode::eExclusive;
+        sharingMode = vk::SharingMode::eExclusive;
 //        } else {
 //            sharingMode = vk::SharingMode::eConcurrent;
 //        }
@@ -84,5 +84,13 @@ namespace vklite {
 
     const std::vector<vk::Image> &Swapchain::getDisplayImages() const {
         return mDisplayImages;
+    }
+
+    vk::ResultValue<uint32_t> Swapchain::acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout) {
+        return mDevice.getDevice().acquireNextImageKHR(mSwapChain, timeout, semaphore);
+    }
+
+    vk::ResultValue<uint32_t> Swapchain::acquireNextImage(const vk::Semaphore &semaphore) {
+        return acquireNextImage(semaphore, std::numeric_limits<uint64_t>::max());
     }
 }

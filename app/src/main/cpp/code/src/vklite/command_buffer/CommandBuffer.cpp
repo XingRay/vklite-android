@@ -30,7 +30,7 @@ namespace vklite {
         mCommandBuffer.end();
     }
 
-    void CommandBuffer::execute(const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const {
+    void CommandBuffer::record(const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const {
         execute(vk::CommandBufferUsageFlagBits::eSimultaneousUse, handler);
     }
 
