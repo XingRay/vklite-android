@@ -7,7 +7,7 @@
 #include <string>
 
 #include "VkLiteEngine.h"
-#include "vklite/util/selector/StringListSelector.h"
+#include "vklite/util/selector/string/StringListSelector.h"
 #include "vklite/util/VkCheckCpp.h"
 #include "vklite/util/VkCheck.h"
 #include "vklite/Log.h"

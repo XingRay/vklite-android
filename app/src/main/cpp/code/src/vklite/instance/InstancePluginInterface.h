@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include <vector>
+
+#include <vulkan/vulkan.hpp>
+
 #include "Instance.h"
 
 namespace vklite {
@@ -15,7 +19,14 @@ namespace vklite {
 
         virtual ~InstancePluginInterface();
 
-        virtual void onInstanceCreated(const Instance &instance) = 0;
+
+        virtual std::vector<const char *> getExtensions() = 0;
+
+        virtual std::vector<const char *> getLayers() = 0;
+
+        virtual void onPreCreateInstance(vk::InstanceCreateInfo &instanceCreateInfo) = 0;
+
+        virtual void onInstanceCreated(Instance &instance) = 0;
     };
 
 } // vklite

@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 
 namespace vklite {

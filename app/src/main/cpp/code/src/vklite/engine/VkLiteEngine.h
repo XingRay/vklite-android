@@ -26,7 +26,7 @@
 #include "vklite/sync/SyncObject.h"
 #include "vklite/frame_buffer/FrameBuffer.h"
 #include "vklite/sampler/Sampler.h"
-#include "vklite/util/selector/StringListSelector.h"
+#include "vklite/util/selector/string/StringListSelector.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
 
 

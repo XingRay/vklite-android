@@ -4,37 +4,31 @@
 
 #pragma once
 
-#ifndef VULKAN_HPP_DISPATCH_LOADER_DYNAMIC
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-#endif
-
-#include <string>
-
 #include <vulkan/vulkan.hpp>
-
-#include "vklite/util/selector/ListSelector.h"
-#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
     class Instance {
     private:
         vk::Instance mInstance;
-        vk::DebugReportCallbackEXT mDebugReportCallback;
-        std::vector<std::string> mEnabledInstanceExtensionNames;
-        std::vector<std::string> mEnabledLayerNames;
-
-        vk::DebugUtilsMessengerEXT mDebugMessenger;
+//        vk::DebugReportCallbackEXT mDebugReportCallback;
+//        std::vector<std::string> mEnabledInstanceExtensionNames;
+//        std::vector<std::string> mEnabledLayerNames;
+//
+//        vk::DebugUtilsMessengerEXT mDebugMessenger;
 
     public:
-        Instance(const std::string &applicationName,
-                 uint32_t applicationVersion,
-                 const std::string &engineName,
-                 uint32_t engineVersion,
-                 const ListSelector<std::string> &extensionsSelector,
-                 const ListSelector<std::string> &layersSelector);
+        Instance(vk::Instance instance);
 
         ~Instance();
+
+        Instance(const Instance &other) = delete;
+
+        Instance &operator=(const Instance &other) = delete;
+
+        Instance(Instance &&other) noexcept;
+
+        Instance &operator=(Instance &&other) noexcept;
 
         [[nodiscard]]
         const vk::Instance &getInstance() const;
@@ -46,7 +40,7 @@ namespace vklite {
         const std::vector<std::string> &getEnabledLayers() const;
 
         [[nodiscard]]
-        std::vector<PhysicalDevice> listPhysicalDevices() const;
+        std::vector<vk::PhysicalDevice> enumeratePhysicalDevices() const;
 
     private:
         void setupDebugCallback();

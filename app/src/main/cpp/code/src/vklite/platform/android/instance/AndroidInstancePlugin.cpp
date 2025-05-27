@@ -11,16 +11,20 @@ namespace vklite {
 
     AndroidInstancePlugin::~AndroidInstancePlugin() = default;
 
-    void AndroidInstancePlugin::onInstanceCreated(const Instance &instance) {
-        const vk::Instance &vkInstance = instance.getInstance();
+    std::vector<const char *> AndroidInstancePlugin::getExtensions() {
+        return {};
+    }
 
-        vkGetAndroidHardwareBufferPropertiesANDROID = (PFN_vkGetAndroidHardwareBufferPropertiesANDROID) vkGetInstanceProcAddr(vkInstance, "vkGetAndroidHardwareBufferPropertiesANDROID");
-        vkBindImageMemory2KHR = (PFN_vkBindImageMemory2KHR) vkGetInstanceProcAddr(vkInstance, "vkBindImageMemory2KHR");
+    std::vector<const char *> AndroidInstancePlugin::getLayers() {
+        return {};
+    }
 
-        vkCreateSamplerYcbcrConversion = (PFN_vkCreateSamplerYcbcrConversion) vkGetInstanceProcAddr(vkInstance, "vkCreateSamplerYcbcrConversion");
-        vkDestroySamplerYcbcrConversion = (PFN_vkDestroySamplerYcbcrConversion) vkGetInstanceProcAddr(vkInstance, "vkDestroySamplerYcbcrConversion");
+    void AndroidInstancePlugin::onPreCreateInstance(vk::InstanceCreateInfo &instanceCreateInfo) {
 
-        vkGetImageMemoryRequirements2KHR = (PFN_vkGetImageMemoryRequirements2KHR) vkGetInstanceProcAddr(vkInstance, "vkGetImageMemoryRequirements2KHR");
+    }
+
+    void AndroidInstancePlugin::onInstanceCreated(Instance &instance) {
+        VulkanAndroidApi::initApi(instance);
     }
 
 } // vklite

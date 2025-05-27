@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/buffer/BufferInterface.h"
 #include "vklite/command_buffer/CommandPool.h"
 

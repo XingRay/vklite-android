@@ -8,7 +8,7 @@
 #include <memory>
 #include <functional>
 
-#include "vklite/util/selector/StringListSelector.h"
+#include "vklite/util/selector/string/StringListSelector.h"
 
 #ifndef APPLICATION_NAME
 #define APPLICATION_NAME "vklite_app"
@@ -18,7 +18,7 @@
 #define ENGINE_NAME "vklite"
 #endif
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/instance/Instance.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"

@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
 

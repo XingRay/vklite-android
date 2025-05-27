@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 
 namespace vklite {

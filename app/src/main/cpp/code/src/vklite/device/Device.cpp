@@ -20,6 +20,7 @@ namespace vklite {
     Device::~Device() {
         if (mDevice != nullptr) {
             mDevice.destroy();
+            mDevice = nullptr;
         }
     }
 

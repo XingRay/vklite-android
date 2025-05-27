@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
+
+#include "vklite/instance/Instance.h"
 
 namespace vklite {
 
@@ -15,5 +17,10 @@ namespace vklite {
     extern PFN_vkDestroySamplerYcbcrConversion vkDestroySamplerYcbcrConversion;
 
     extern PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
+
+    class VulkanAndroidApi{
+    public:
+        static void initApi(const Instance &instance);
+    };
 
 } // vklite

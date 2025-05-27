@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 namespace vklite {
 

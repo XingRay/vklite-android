@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/device/Device.h"
 #include "vklite/image_view/ImageView.h"

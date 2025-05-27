@@ -9,7 +9,7 @@
 #include <memory>
 #include <functional>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
 #include "vklite/sampler/SamplerInterface.h"

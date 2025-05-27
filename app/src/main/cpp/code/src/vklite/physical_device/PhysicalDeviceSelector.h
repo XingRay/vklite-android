@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/instance/Instance.h"
 #include "vklite/surface/Surface.h"
@@ -31,6 +31,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::unique_ptr<PhysicalDevice> select(const std::vector<PhysicalDevice> &physicalDevices);
+
+        [[nodiscard]]
+        std::unique_ptr<PhysicalDevice> select(const std::vector<vk::PhysicalDevice> &physicalDevices);
 
         // static
     public:

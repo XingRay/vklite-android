@@ -7,7 +7,7 @@
 #include <functional>
 #include <vector>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 #include "vklite/command_buffer/CommandBuffers.h"
 

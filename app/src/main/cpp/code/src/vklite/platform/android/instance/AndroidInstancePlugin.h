@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/instance/Instance.h"
@@ -18,7 +20,13 @@ namespace vklite {
 
         ~AndroidInstancePlugin() override;
 
-        void onInstanceCreated(const Instance &instance) override;
+        std::vector<const char *> getExtensions() override;
+
+        std::vector<const char *> getLayers() override;
+
+        void onPreCreateInstance(vk::InstanceCreateInfo &instanceCreateInfo) override;
+
+        void onInstanceCreated(Instance &instance) override;
     };
 
 } // vklite

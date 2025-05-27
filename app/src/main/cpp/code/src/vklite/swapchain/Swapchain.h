@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 #include "vklite/surface/Surface.h"
 

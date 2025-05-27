@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {

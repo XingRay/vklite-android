@@ -53,6 +53,15 @@ namespace vklite {
         return std::make_unique<PhysicalDevice>(*bestPhysicalDevice);
     }
 
+    std::unique_ptr<PhysicalDevice> PhysicalDeviceSelector::select(const std::vector<vk::PhysicalDevice> &vkPhysicalDevices) {
+        std::vector<PhysicalDevice> physicalDevices;
+        physicalDevices.reserve(vkPhysicalDevices.size());
+        for (const vk::PhysicalDevice &vkPhysicalDevice: vkPhysicalDevices) {
+            physicalDevices.emplace_back(vkPhysicalDevice);
+        }
+        return select(physicalDevices);
+    }
+
     std::unique_ptr<PhysicalDeviceSelector> PhysicalDeviceSelector::makeDefault(const Surface &surface, vk::QueueFlags queueFlags) {
         std::unique_ptr<PhysicalDeviceScoreCalculator> calculator = std::make_unique<PhysicalDeviceScoreCalculator>();
         std::unique_ptr<PhysicalDeviceSelector> deviceSelector = std::make_unique<PhysicalDeviceSelector>(std::move(calculator));

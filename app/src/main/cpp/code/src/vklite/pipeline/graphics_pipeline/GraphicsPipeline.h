@@ -7,7 +7,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 #include "vklite/swapchain/Swapchain.h"
 #include "vklite/render_pass/RenderPass.h"

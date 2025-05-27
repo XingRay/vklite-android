@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 
 namespace vklite {

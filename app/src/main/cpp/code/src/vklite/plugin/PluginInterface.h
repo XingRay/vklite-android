@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 #include "vklite/device/DevicePluginInterface.h"
 #include "vklite/instance/InstancePluginInterface.h"
