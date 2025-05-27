@@ -10,8 +10,8 @@ namespace vklite {
 
     UniformBufferBuilder::~UniformBufferBuilder() = default;
 
-    std::unique_ptr<BufferInterface> UniformBufferBuilder::build(const Device &device, vk::DeviceSize bufferSize) {
-        return std::make_unique<UniformBuffer>(device, bufferSize);
+    std::unique_ptr<BufferInterface> UniformBufferBuilder::build(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize) {
+        return std::make_unique<UniformBuffer>(physicalDevice, device, bufferSize);
     }
 
 } // vklite

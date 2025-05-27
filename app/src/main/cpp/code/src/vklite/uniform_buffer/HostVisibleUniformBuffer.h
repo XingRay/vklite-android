@@ -13,7 +13,7 @@ namespace vklite {
         HostVisibleBuffer mUniformBuffer;
 
     public:
-        HostVisibleUniformBuffer(const Device &device, vk::DeviceSize bufferSize);
+        HostVisibleUniformBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize);
 
         ~HostVisibleUniformBuffer();
 

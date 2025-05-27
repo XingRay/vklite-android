@@ -7,11 +7,13 @@
 #include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
-    Swapchain::Swapchain(const Device &device, const Surface &surface,
+    Swapchain::Swapchain(const Device &device,
+                         const Surface &surface,
                          const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
                          vk::Extent2D displaySize,
                          vk::SurfaceFormatKHR imageFormat,
-                         vk::PresentModeKHR presentMode)
+                         vk::PresentModeKHR presentMode,
+                         std::vector<uint32_t> queueFamilyIndices)
             : mDevice(device), mDisplaySize(displaySize), mSwapChainImageFormat(imageFormat) {
         const vk::Device &vkDevice = device.getDevice();
 
@@ -23,13 +25,13 @@ namespace vklite {
         }
         LOG_D("imageCount: %d", imageCount);
 
-        std::vector<uint32_t> queueFamilyIndices = device.getQueueFamilyIndices();
+//        std::vector<uint32_t> queueFamilyIndices = device.getQueueFamilyIndices();
         vk::SharingMode sharingMode;
-        if (queueFamilyIndices.size() == 1) {
+//        if (queueFamilyIndices.size() == 1) {
             sharingMode = vk::SharingMode::eExclusive;
-        } else {
-            sharingMode = vk::SharingMode::eConcurrent;
-        }
+//        } else {
+//            sharingMode = vk::SharingMode::eConcurrent;
+//        }
 
         vk::SwapchainCreateInfoKHR swapchainCreateInfo = vk::SwapchainCreateInfoKHR{}
                 .setSurface(surface.getSurface())
@@ -55,7 +57,7 @@ namespace vklite {
 
     Swapchain::~Swapchain() {
         LOG_D("Swapchain::~Swapchain()");
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
         // 通过 getSwapchainImagesKHR 获取的对象, 不是create的对象,不需要destroy, swapchain 会自动销毁
         vkDevice.destroy(mSwapChain);
     }

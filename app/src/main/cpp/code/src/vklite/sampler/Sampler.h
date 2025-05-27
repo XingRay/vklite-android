@@ -21,7 +21,7 @@ namespace vklite {
 
     public:
 
-        Sampler(const Device &device, float maxLoad);
+        Sampler(const PhysicalDevice &physicalDevice, const Device &device, float maxLoad);
 
         ~Sampler() override;
 

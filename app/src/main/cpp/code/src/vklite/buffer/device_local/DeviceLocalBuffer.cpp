@@ -11,11 +11,10 @@
 
 namespace vklite {
 
-    DeviceLocalBuffer::DeviceLocalBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits)
+    DeviceLocalBuffer::DeviceLocalBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits)
             : mDevice(device), mBufferSize(bufferSize) {
 
         vk::Device vkDevice = mDevice.getDevice();
-        PhysicalDevice physicalDevice = mDevice.getPhysicalDevice();
 
         vk::BufferCreateInfo bufferCreateInfo{};
         bufferCreateInfo.setSize(bufferSize)

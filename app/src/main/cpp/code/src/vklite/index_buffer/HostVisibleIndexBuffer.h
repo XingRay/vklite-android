@@ -15,7 +15,7 @@ namespace vklite {
         uint32_t mIndicesCount;
 
     public:
-        HostVisibleIndexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        HostVisibleIndexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize);
 
         ~HostVisibleIndexBuffer();
 
@@ -31,7 +31,7 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getIndicesCount() const;
 
-        void update(const std::vector<uint32_t>& indices);
+        void update(const std::vector<uint32_t> &indices);
     };
 
 } // vklite

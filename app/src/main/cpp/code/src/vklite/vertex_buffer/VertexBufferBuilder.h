@@ -21,7 +21,7 @@ namespace vklite {
 
         VertexBufferBuilder &bufferSize(vk::DeviceSize bufferSize);
 
-        std::unique_ptr<VertexBuffer> build(const Device &device);
+        std::unique_ptr<VertexBuffer> build(const PhysicalDevice &physicalDevice, const Device &device);
     };
 
 } // vklite

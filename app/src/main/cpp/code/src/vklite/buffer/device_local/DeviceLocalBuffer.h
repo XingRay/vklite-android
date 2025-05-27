@@ -24,7 +24,7 @@ namespace vklite {
         vk::DeviceMemory mDeviceMemory;
 
     public:
-        DeviceLocalBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits);
+        DeviceLocalBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits);
 
         virtual  ~DeviceLocalBuffer();
 

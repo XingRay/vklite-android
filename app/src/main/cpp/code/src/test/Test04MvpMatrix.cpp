@@ -72,16 +72,17 @@ namespace test04 {
         mDevice = vklite::DeviceBuilder()
                 .extensions(std::move(deviceExtensions))
                 .layers(std::move(deviceLayers))
-                .addGraphicQueueIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
-                .addPresentQueueIndex(queueFamilyIndices.presentQueueFamilyIndex.value())
-                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
-                .build(*mPhysicalDevice);
+//                .addGraphicQueueIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
+//                .addPresentQueueIndex(queueFamilyIndices.presentQueueFamilyIndex.value())
+//                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
+//                .buildUnique(*mPhysicalDevice);
+                .buildUnique();
 
         mSwapchain = vklite::SwapchainBuilder()
-                .build(*mDevice, *mSurface);
+                .build(*mPhysicalDevice, *mDevice, *mSurface, {/*todo*/});
 
         mCommandPool = vklite::CommandPoolBuilder()
-                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
+//                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
                 .build(*mDevice);
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
@@ -96,7 +97,7 @@ namespace test04 {
                     .height(mSwapchain->getDisplaySize().height)
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
-                    .buildUnique(*mDevice);
+                    .buildUnique(*mPhysicalDevice, *mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
                     .format(mSwapchain->getDisplayFormat())
                     .buildUnique(*mDevice, *mColorImage);
@@ -110,7 +111,7 @@ namespace test04 {
                     .height(mSwapchain->getDisplaySize().height)
                     .format(depthFormat)
                     .sampleCount(sampleCount)
-                    .buildUnique(*mDevice);
+                    .buildUnique(*mPhysicalDevice, *mDevice);
             depthImage->transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
                                               vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
             mDepthImage = std::move(depthImage);
@@ -224,12 +225,12 @@ namespace test04 {
 
         mIndexBuffer = vklite::IndexBufferBuilder()
                 .bufferSize(indices.size() * sizeof(uint32_t))
-                .build(*mDevice);
+                .build(*mPhysicalDevice, *mDevice);
         mIndexBuffer->update(*mCommandPool, indices);
 
         mVertexBuffer = vklite::VertexBufferBuilder()
                 .bufferSize(vertices.size() * sizeof(Vertex))
-                .build(*mDevice);
+                .build(*mPhysicalDevice, *mDevice);
         mVertexBuffer->update(*mCommandPool, vertices);
 
 //        sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex
@@ -332,7 +333,7 @@ namespace test04 {
                 .setSignalSemaphores(signalSemaphores);
 
         std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
-        mDevice->getGraphicsQueue().submit(submitInfos, fence);
+//        mDevice->getGraphicsQueue().submit(submitInfos, fence);
 
         std::array<vk::SwapchainKHR, 1> swapChains = {mSwapchain->getSwapChain()};
         std::array<uint32_t, 1> imageIndices = {imageIndex};
@@ -345,7 +346,7 @@ namespace test04 {
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
         // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
         try {
-            result = mDevice->getPresentQueue().presentKHR(presentInfo);
+//            result = mDevice->getPresentQueue().presentKHR(presentInfo);
         } catch (const vk::OutOfDateKHRError &e) {
             LOG_E("mPresentQueue.presentKHR => OutOfDateKHRError");
             result = vk::Result::eErrorOutOfDateKHR;

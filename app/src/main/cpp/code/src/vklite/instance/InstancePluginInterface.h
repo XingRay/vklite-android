@@ -8,12 +8,12 @@
 
 namespace vklite {
 
-    class InstancePlugin {
+    class InstancePluginInterface {
 
     public:
-        InstancePlugin();
+        InstancePluginInterface();
 
-        virtual ~InstancePlugin();
+        virtual ~InstancePluginInterface();
 
         virtual void onInstanceCreated(const Instance &instance) = 0;
     };

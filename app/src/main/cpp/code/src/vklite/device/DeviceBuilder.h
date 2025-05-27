@@ -6,47 +6,91 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
+#include <unordered_map>
+#include <functional>
+#include <optional>
 
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
-#include "vklite/plugin/PluginInterface.h"
+#include "vklite/device/DevicePluginInterface.h"
+#include "vklite/device/QueueFamilyConfigure.h"
 
 namespace vklite {
 
     class DeviceBuilder {
     private:
+        // flags
+        vk::DeviceCreateFlags mFlags;
+
+
+        // physcial device
+        vk::PhysicalDevice mPhysicalDevice;
+
+
+        // queue create info
+        std::unordered_map<uint32_t, QueueFamilyConfigure> mQueueFamilyConfigures;
+
+        // physical device properties
+        vk::PhysicalDeviceFeatures mRequiredPhysicalDeviceFeatures;
+        bool mCheckPhysicalDeviceFeatures;
+
+        // extentions and layers
         std::vector<const char *> mExtensions;
         std::vector<const char *> mLayers;
-        std::vector<std::unique_ptr<PluginInterface>> mDevicePlugins;
 
-        std::vector<uint32_t> mGraphicQueueIndices;
-        std::vector<uint32_t> mPresentQueueIndices;
-        std::vector<uint32_t> mComputeQueueIndices;
+        // plugins
+        std::vector<std::unique_ptr<DevicePluginInterface>> mDevicePlugins;
 
-        vk::PhysicalDeviceFeatures mPhysicalDeviceFeatures;
 
     public:
         DeviceBuilder();
 
         ~DeviceBuilder();
 
-        DeviceBuilder &addDevicePlugin(std::unique_ptr<PluginInterface> devicePlugin);
+        // flags
+        DeviceBuilder &flags(vk::DeviceCreateFlags flags);
 
-        DeviceBuilder &addGraphicQueueIndex(uint32_t queueIndex);
+        // physicalDevice
+        DeviceBuilder &physicalDevice(vk::PhysicalDevice physicalDevice);
 
-        DeviceBuilder &addPresentQueueIndex(uint32_t queueIndex);
+        // addDevicePlugin
+        DeviceBuilder &addDevicePlugin(std::unique_ptr<DevicePluginInterface> devicePlugin);
 
-        DeviceBuilder &addComputeQueueIndex(uint32_t queueIndex);
 
+        // addQueueFamily
+        DeviceBuilder &addQueueFamily(QueueFamilyConfigure &&queueFamilyConfigure);
+
+        DeviceBuilder &addQueueFamily(const std::function<void(QueueFamilyConfigure &)> &configure);
+
+        DeviceBuilder &addQueueFamily(uint32_t queueFamilyIndex);
+
+
+        // extensions and layers
         DeviceBuilder &extensions(std::vector<const char *> &&extensions);
 
         DeviceBuilder &layers(std::vector<const char *> &&layers);
+
+
+        // features
+        DeviceBuilder &physicalDeviceFeaturesConfigure(const std::function<void(vk::PhysicalDeviceFeatures &physicalDeviceFeatures)> &configure);
 
         DeviceBuilder &enableSamplerAnisotropy();
 
         DeviceBuilder &enableSampleRateShading();
 
-        std::unique_ptr<Device> build(const PhysicalDevice &physicalDevice);
+        DeviceBuilder &checkPhysicalDeviceFeatures(bool enable);
+
+
+        // build
+        std::optional<Device>
+
+        build();
+
+        std::unique_ptr<Device> buildUnique();
+
+    private:
+        void checkPhysicalDeviceFeatures();
     };
 
 } // vklite

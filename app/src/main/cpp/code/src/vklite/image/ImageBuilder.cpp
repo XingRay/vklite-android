@@ -118,8 +118,8 @@ namespace vklite {
 //        return depthImage;
 //    }
 
-    Image ImageBuilder::build(const Device &device) {
-        Image image = Image(device, mImageCreateInfo);
+    Image ImageBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
+        Image image = Image(physicalDevice, device, mImageCreateInfo);
         if (mPostCreatedHandler != nullptr) {
             mPostCreatedHandler(image);
         }
@@ -127,8 +127,8 @@ namespace vklite {
     }
 
     [[nodiscard]]
-    std::unique_ptr<Image> ImageBuilder::buildUnique(const Device &device) {
-        std::unique_ptr<Image> image = std::make_unique<Image>(device, mImageCreateInfo);
+    std::unique_ptr<Image> ImageBuilder::buildUnique(const PhysicalDevice &physicalDevice, const Device &device) {
+        std::unique_ptr<Image> image = std::make_unique<Image>(physicalDevice, device, mImageCreateInfo);
         if (mPostCreatedHandler != nullptr) {
             mPostCreatedHandler(*image);
         }

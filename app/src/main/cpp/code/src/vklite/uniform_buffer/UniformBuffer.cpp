@@ -6,9 +6,9 @@
 
 namespace vklite {
 
-    UniformBuffer::UniformBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mUniformBuffer(device, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer),
-              mStagingBuffer(device, bufferSize) {
+    UniformBuffer::UniformBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
+            : mUniformBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer),
+              mStagingBuffer(physicalDevice, device, bufferSize) {
 
     }
 

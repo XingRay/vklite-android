@@ -12,42 +12,26 @@
 #include "vklite/swapchain/SwapChainSupportDetail.h"
 #include "vklite/physical_device/QueueFamilyIndices.h"
 #include "vklite/physical_device/PhysicalDevice.h"
-#include "vklite/plugin/PluginInterface.h"
+#include "vklite/device/DevicePluginInterface.h"
 
 namespace vklite {
 
     class Device {
     private:
-        const PhysicalDevice &mPhysicalDevice;
         vk::Device mDevice;
 
-        std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> mQueueFamilyIndicesMap;
-        std::vector<uint32_t> mPresentQueueFamilyIndices;
-
-        std::vector<uint32_t> mQueueFamilyIndices;
-
-        vk::Queue mGraphicsQueue;
-        uint32_t mGraphicQueueFamilyIndex;
-
-        vk::Queue mPresentQueue;
-        uint32_t mPresentQueueFamilyIndex;
-
-        vk::Queue mComputeQueue;
-        uint32_t mComputeQueueFamilyIndex;
-
     public:
-        Device(const PhysicalDevice &physicalDevice,
-               std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> &queueFamilyIndicesMap,
-               std::vector<uint32_t> &presentQueueFamilyIndices,
-               std::vector<const char *> &&extensions,
-               std::vector<const char *> &&layers,
-               const vk::PhysicalDeviceFeatures &physicalDeviceFeatures,
-               const std::vector<std::unique_ptr<PluginInterface>> &devicePlugins);
+        explicit Device(vk::Device device);
 
         ~Device();
 
-        [[nodiscard]]
-        const PhysicalDevice &getPhysicalDevice() const;
+        Device(const Device &other) = delete;
+
+        Device &operator=(const Device &other) = delete;
+
+        Device(Device &&other) noexcept;
+
+        Device &operator=(Device &&other) noexcept;
 
         [[nodiscard]]
         const vk::Device &getDevice() const;

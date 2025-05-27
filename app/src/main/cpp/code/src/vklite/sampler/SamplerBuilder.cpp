@@ -12,8 +12,8 @@ namespace vklite {
 
     SamplerBuilder::~SamplerBuilder() = default;
 
-    std::unique_ptr<SamplerInterface> SamplerBuilder::build(const Device &device) {
-        return std::make_unique<Sampler>(device, mMaxLoad);
+    std::unique_ptr<SamplerInterface> SamplerBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
+        return std::make_unique<Sampler>(physicalDevice, device, mMaxLoad);
     }
 
     SamplerBuilder &SamplerBuilder::maxLoad(float maxLoad) {

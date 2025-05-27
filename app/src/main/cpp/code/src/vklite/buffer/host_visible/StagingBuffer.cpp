@@ -8,10 +8,8 @@
 
 namespace vklite {
 
-    StagingBuffer::StagingBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mHostVisibleBuffer(device, bufferSize, vk::BufferUsageFlagBits::eTransferSrc) {
-
-    }
+    StagingBuffer::StagingBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
+            : mHostVisibleBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eTransferSrc) {}
 
     StagingBuffer::~StagingBuffer() = default;
 

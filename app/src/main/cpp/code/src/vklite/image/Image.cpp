@@ -7,7 +7,7 @@
 
 namespace vklite {
 
-    Image::Image(const Device &device, const vk::ImageCreateInfo &imageCreateInfo)
+    Image::Image(const PhysicalDevice& physicalDevice,const Device &device, const vk::ImageCreateInfo &imageCreateInfo)
             : mDevice(device),
               mFormat(imageCreateInfo.format),
               mMipLevels(imageCreateInfo.mipLevels),
@@ -18,7 +18,7 @@ namespace vklite {
         mImage = vkDevice.createImage(imageCreateInfo);
 
         vk::MemoryRequirements memoryRequirements = vkDevice.getImageMemoryRequirements(mImage);
-        uint32_t memoryTypeIndex = device.getPhysicalDevice().findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+        uint32_t memoryTypeIndex = physicalDevice.findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         vk::MemoryAllocateInfo memoryAllocateInfo;
         memoryAllocateInfo
@@ -221,9 +221,9 @@ namespace vklite {
     }
 
     Image &Image::generateMipmaps(const CommandPool &commandPool) {
-        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
-            throw std::runtime_error("texture image format does not support linear tiling!");
-        }
+//        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
+//            throw std::runtime_error("texture image format does not support linear tiling!");
+//        }
 
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
             recordGenerateMipmaps(commandBuffer);

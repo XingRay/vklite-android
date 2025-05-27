@@ -25,7 +25,7 @@ namespace vklite {
         IndexBufferBuilder & indexType(vk::IndexType indexType);
 
         [[nodiscard]]
-        std::unique_ptr<IndexBuffer> build(const Device &device) const;
+        std::unique_ptr<IndexBuffer> build(const PhysicalDevice& physicalDevice,const Device &device) const;
     };
 
 } // vklite

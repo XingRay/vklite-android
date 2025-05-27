@@ -29,7 +29,8 @@ namespace vklite {
         vk::ImageView mImageView;
 
     public:
-        HardwareBufferImage(const Device &device,
+        HardwareBufferImage(const PhysicalDevice &physicalDevice,
+                            const Device &device,
                             const HardwareBuffer &androidHardwareBuffer,
                             const HardwareBufferYcbcrConversion &conversion);
 

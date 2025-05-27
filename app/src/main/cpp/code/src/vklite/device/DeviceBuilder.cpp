@@ -4,29 +4,61 @@
 
 #include "DeviceBuilder.h"
 
+#include <unordered_set>
+
+#include "vklite/Log.h"
+#include "vklite/util/CStringUtil.h"
+
 namespace vklite {
 
-    DeviceBuilder::DeviceBuilder() = default;
+    DeviceBuilder::DeviceBuilder()
+            : mFlags(vk::DeviceCreateFlags{}),
+              mCheckPhysicalDeviceFeatures(false) {}
 
     DeviceBuilder::~DeviceBuilder() = default;
 
-    DeviceBuilder &DeviceBuilder::addDevicePlugin(std::unique_ptr<PluginInterface> devicePlugin) {
+    DeviceBuilder &DeviceBuilder::flags(vk::DeviceCreateFlags flags) {
+        mFlags = flags;
+        return *this;
+    }
+
+    DeviceBuilder &DeviceBuilder::physicalDevice(vk::PhysicalDevice physicalDevice) {
+        mPhysicalDevice = physicalDevice;
+        return *this;
+    }
+
+    DeviceBuilder &DeviceBuilder::addDevicePlugin(std::unique_ptr<DevicePluginInterface> devicePlugin) {
         mDevicePlugins.push_back(std::move(devicePlugin));
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::addGraphicQueueIndex(uint32_t queueIndex) {
-        mGraphicQueueIndices.push_back(queueIndex);
+    DeviceBuilder &DeviceBuilder::addQueueFamily(QueueFamilyConfigure &&queueFamilyConfigure) {
+        auto it = mQueueFamilyConfigures.find(queueFamilyConfigure.getQueueFamilyIndex());
+        if (it != mQueueFamilyConfigures.end()) {
+            // exist
+            LOG_DF("Queue family index {} already exists, overwriting.", queueFamilyConfigure.getQueueFamilyIndex());
+            it->second = std::move(queueFamilyConfigure);
+        } else {
+            mQueueFamilyConfigures.emplace(queueFamilyConfigure.getQueueFamilyIndex(), std::move(queueFamilyConfigure));
+        }
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::addPresentQueueIndex(uint32_t queueIndex) {
-        mPresentQueueIndices.push_back(queueIndex);
+    DeviceBuilder &DeviceBuilder::addQueueFamily(const std::function<void(QueueFamilyConfigure &)> &configure) {
+        QueueFamilyConfigure queueFamilyConfigure;
+        configure(queueFamilyConfigure);
+        addQueueFamily(std::move(queueFamilyConfigure));
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::addComputeQueueIndex(uint32_t queueIndex) {
-        mComputeQueueIndices.push_back(queueIndex);
+    DeviceBuilder &DeviceBuilder::addQueueFamily(uint32_t queueFamilyIndex) {
+        QueueFamilyConfigure queueFamilyConfigure{};
+        queueFamilyConfigure
+                .familyIndex(queueFamilyIndex)
+                .addQueue(1.0);
+
+        addQueueFamily(std::move(queueFamilyConfigure));
+
         return *this;
     }
 
@@ -40,24 +72,416 @@ namespace vklite {
         return *this;
     }
 
+    DeviceBuilder &DeviceBuilder::physicalDeviceFeaturesConfigure(const std::function<void(vk::PhysicalDeviceFeatures &physicalDeviceFeatures)> &configure) {
+        configure(mRequiredPhysicalDeviceFeatures);
+        return *this;
+    }
+
     DeviceBuilder &DeviceBuilder::enableSamplerAnisotropy() {
-        mPhysicalDeviceFeatures.setSamplerAnisotropy(vk::True);
+        mRequiredPhysicalDeviceFeatures.setSamplerAnisotropy(vk::True);
         return *this;
     }
 
     DeviceBuilder &DeviceBuilder::enableSampleRateShading() {
-        mPhysicalDeviceFeatures.setSampleRateShading(vk::True);
+        mRequiredPhysicalDeviceFeatures.setSampleRateShading(vk::True);
         return *this;
     }
 
-    std::unique_ptr<Device> DeviceBuilder::build(const PhysicalDevice &physicalDevice) {
-        std::unordered_map<vk::QueueFlagBits, std::vector<uint32_t>> queueFamilyIndicesMap;
-        queueFamilyIndicesMap.try_emplace(vk::QueueFlagBits::eGraphics, std::move(mGraphicQueueIndices));
-        queueFamilyIndicesMap.try_emplace(vk::QueueFlagBits::eCompute, std::move(mComputeQueueIndices));
+    DeviceBuilder &DeviceBuilder::checkPhysicalDeviceFeatures(bool enable) {
+        mCheckPhysicalDeviceFeatures = enable;
+        return *this;
+    }
 
-        return std::make_unique<Device>(physicalDevice, queueFamilyIndicesMap, mPresentQueueIndices,
-                                        std::move(mExtensions), std::move(mLayers),
-                                        mPhysicalDeviceFeatures, std::move(mDevicePlugins));
+    std::optional<Device> DeviceBuilder::build() {
+        std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
+        queueCreateInfos.reserve(mQueueFamilyConfigures.size());
+
+        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
+        uint32_t queueFamilyPropertiesSize = queueFamilyProperties.size();
+        for (const auto &[familyIndex, queueFamilyConfigure]: mQueueFamilyConfigures) {
+            if (familyIndex >= queueFamilyPropertiesSize) {
+                LOG_EF("Invalid queue family index:{}", familyIndex);
+                throw std::runtime_error("Invalid queue family index: " + std::to_string(familyIndex));
+            }
+            // 验证队列家族支持的最小队列数
+            const uint32_t maxQueues = queueFamilyProperties[familyIndex].queueCount;
+            if (maxQueues < 1) {
+                throw std::runtime_error("Queue family " + std::to_string(familyIndex) + " does not support any queues.");
+            }
+        }
+
+
+        for (const auto &[familyIndex, queueFamilyConfigure]: mQueueFamilyConfigures) {
+            vk::DeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo
+                    .setQueueFamilyIndex(queueFamilyConfigure.getQueueFamilyIndex())
+                            // queuePriorities 数组的长度必须等于 queueCount,
+                            // 例如，若 queueCount = 2，则 queuePriorities 必须是一个包含 2 个浮点数的数组，每个元素对应一个队列的优先级
+                    .setQueueCount(queueFamilyConfigure.getPriorities().size())
+                            // 优先级范围：值必须在 [0.0, 1.0] 之间，数值越高表示队列在 GPU 调度中的权重越大。
+                    .setQueuePriorities(queueFamilyConfigure.getPriorities());
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
+
+
+        // features
+        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
+            devicePlugin->physicalDeviceFeaturesConfigure(mRequiredPhysicalDeviceFeatures);
+        }
+
+        // checking
+        if (mCheckPhysicalDeviceFeatures) {
+            checkPhysicalDeviceFeatures();
+        }
+
+
+//        std::unordered_set<std::string> existingExtensions; // 扩展名去重集合
+//        std::unordered_set<std::string> existingLayers; // 层名去重集合
+//
+//        for (const char *extension: mExtensions) {
+//            existingExtensions.insert(extension);
+//        }
+//
+//        for (const char *layer: mLayers) {
+//            existingLayers.insert(layer);
+//        }
+//
+//        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
+//            std::vector<const char *> deviceExtensions = devicePlugin->getDeviceExtensions();
+//            std::vector<const char *> layers = devicePlugin->getLayers();
+//
+//            // 合并设备扩展（自动去重）
+//            for (const char *extension: deviceExtensions) {
+//                // unordered_set的emplace方法会尝试插入元素，返回的是一个pair, 其中.second是一个布尔值
+//                // 如果元素已存在, 则不会插入。.second为false
+//                // 如果元素不存在, 则会插入。.second为true
+//                if (existingExtensions.emplace(extension).second) {
+//                    mExtensions.push_back(extension); // 无重复则添加
+//                }
+//            }
+//
+//            // 合并设备层（自动去重）
+//            for (const char *layer: layers) {
+//                if (existingLayers.emplace(layer).second) {
+//                    mLayers.push_back(layer);
+//                }
+//            }
+//        }
+
+        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
+            std::vector<const char *> deviceExtensions = devicePlugin->getDeviceExtensions();
+            mExtensions.insert(mExtensions.end(), deviceExtensions.begin(), deviceExtensions.end());
+
+            std::vector<const char *> layers = devicePlugin->getLayers();
+            mLayers.insert(mLayers.end(), layers.begin(), layers.end());
+        }
+
+        mExtensions = CStringUtil::removeDuplicates(mExtensions);
+        mLayers = CStringUtil::removeDuplicates(mExtensions);
+
+        vk::DeviceCreateInfo deviceCreateInfo;
+        deviceCreateInfo
+                .setFlags(mFlags)
+                .setQueueCreateInfos(queueCreateInfos)
+                .setPEnabledFeatures(&mRequiredPhysicalDeviceFeatures)
+                .setPEnabledExtensionNames(mExtensions)
+                .setPEnabledLayerNames(mLayers);
+
+        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
+            devicePlugin->onPreCreateDevice(deviceCreateInfo);
+        }
+
+        vk::Device device = mPhysicalDevice.createDevice(deviceCreateInfo);
+
+//        if (mQueueFamilyIndicesMap.contains(vk::QueueFlagBits::eGraphics)) {
+//            const std::vector<uint32_t> &graphicQueueFamilyIndices = mQueueFamilyIndicesMap[vk::QueueFlagBits::eGraphics];
+//            if (graphicQueueFamilyIndices.empty()) {
+//                mGraphicQueueFamilyIndex = -1;
+//                mGraphicsQueue = nullptr;
+//            } else {
+//                mGraphicQueueFamilyIndex = graphicQueueFamilyIndices[0];
+//                mGraphicsQueue = mDevice.getQueue(mGraphicQueueFamilyIndex, 0);
+//            }
+//        } else {
+//            mGraphicQueueFamilyIndex = -1;
+//            mGraphicsQueue = nullptr;
+//        }
+//
+//        if (mPresentQueueFamilyIndices.empty()) {
+//            mPresentQueueFamilyIndex = -1;
+//            mPresentQueue = nullptr;
+//        } else {
+//            mPresentQueueFamilyIndex = mPresentQueueFamilyIndices[0];
+//            mPresentQueue = mDevice.getQueue(mPresentQueueFamilyIndex, 0);
+//        }
+//
+//        if (mQueueFamilyIndicesMap.contains(vk::QueueFlagBits::eCompute)) {
+//            const std::vector<uint32_t> &computeQueueFamilyIndices = mQueueFamilyIndicesMap[vk::QueueFlagBits::eCompute];
+//            if (computeQueueFamilyIndices.empty()) {
+//                mComputeQueueFamilyIndex = -1;
+//                mComputeQueue = nullptr;
+//            } else {
+//                mComputeQueueFamilyIndex = computeQueueFamilyIndices[0];
+//                mComputeQueue = mDevice.getQueue(mComputeQueueFamilyIndex, 0);
+//            }
+//        } else {
+//            mComputeQueueFamilyIndex = -1;
+//            mComputeQueue = nullptr;
+//        }
+
+        return Device(device);
+    }
+
+    std::unique_ptr<Device> DeviceBuilder::buildUnique() {
+        std::optional<Device> device = build();
+        if (!device.has_value()) {
+            return nullptr;
+        }
+        return std::make_unique<Device>(std::move(device.value()));
+    }
+
+    void DeviceBuilder::checkPhysicalDeviceFeatures() {
+        vk::PhysicalDeviceFeatures supportedPhysicalDeviceFeatures = mPhysicalDevice.getFeatures();
+
+        // 核心图形特性检查
+        if (mRequiredPhysicalDeviceFeatures.robustBufferAccess && !supportedPhysicalDeviceFeatures.robustBufferAccess) {
+            throw std::runtime_error("robustBufferAccess not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.fullDrawIndexUint32 && !supportedPhysicalDeviceFeatures.fullDrawIndexUint32) {
+            throw std::runtime_error("fullDrawIndexUint32 not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.imageCubeArray && !supportedPhysicalDeviceFeatures.imageCubeArray) {
+            throw std::runtime_error("imageCubeArray not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.independentBlend && !supportedPhysicalDeviceFeatures.independentBlend) {
+            throw std::runtime_error("independentBlend not supported");
+        }
+
+        // 着色器阶段支持检查
+        if (mRequiredPhysicalDeviceFeatures.geometryShader && !supportedPhysicalDeviceFeatures.geometryShader) {
+            throw std::runtime_error("geometryShader not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.tessellationShader && !supportedPhysicalDeviceFeatures.tessellationShader) {
+            throw std::runtime_error("tessellationShader not supported");
+        }
+
+        // 采样与混合特性检查
+        if (mRequiredPhysicalDeviceFeatures.sampleRateShading && !supportedPhysicalDeviceFeatures.sampleRateShading) {
+            throw std::runtime_error("sampleRateShading not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.dualSrcBlend && !supportedPhysicalDeviceFeatures.dualSrcBlend) {
+            throw std::runtime_error("dualSrcBlend not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.logicOp && !supportedPhysicalDeviceFeatures.logicOp) {
+            throw std::runtime_error("logicOp not supported");
+        }
+
+        // 绘制命令特性检查
+        if (mRequiredPhysicalDeviceFeatures.multiDrawIndirect && !supportedPhysicalDeviceFeatures.multiDrawIndirect) {
+            throw std::runtime_error("multiDrawIndirect not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.drawIndirectFirstInstance && !supportedPhysicalDeviceFeatures.drawIndirectFirstInstance) {
+            throw std::runtime_error("drawIndirectFirstInstance not supported");
+        }
+
+        // 深度与模板特性检查
+        if (mRequiredPhysicalDeviceFeatures.depthClamp && !supportedPhysicalDeviceFeatures.depthClamp) {
+            throw std::runtime_error("depthClamp not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.depthBiasClamp && !supportedPhysicalDeviceFeatures.depthBiasClamp) {
+            throw std::runtime_error("depthBiasClamp not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.fillModeNonSolid && !supportedPhysicalDeviceFeatures.fillModeNonSolid) {
+            throw std::runtime_error("fillModeNonSolid not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.depthBounds && !supportedPhysicalDeviceFeatures.depthBounds) {
+            throw std::runtime_error("depthBounds not supported");
+        }
+
+        // 图元特性检查
+        if (mRequiredPhysicalDeviceFeatures.wideLines && !supportedPhysicalDeviceFeatures.wideLines) {
+            throw std::runtime_error("wideLines not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.largePoints && !supportedPhysicalDeviceFeatures.largePoints) {
+            throw std::runtime_error("largePoints not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.alphaToOne && !supportedPhysicalDeviceFeatures.alphaToOne) {
+            throw std::runtime_error("alphaToOne not supported");
+        }
+
+        // 视口与裁剪特性检查
+        if (mRequiredPhysicalDeviceFeatures.multiViewport && !supportedPhysicalDeviceFeatures.multiViewport) {
+            throw std::runtime_error("multiViewport not supported");
+        }
+
+        // 采样器特性检查
+        if (mRequiredPhysicalDeviceFeatures.samplerAnisotropy && !supportedPhysicalDeviceFeatures.samplerAnisotropy) {
+            throw std::runtime_error("samplerAnisotropy not supported");
+        }
+
+        // 纹理压缩格式检查
+        if (mRequiredPhysicalDeviceFeatures.textureCompressionETC2 && !supportedPhysicalDeviceFeatures.textureCompressionETC2) {
+            throw std::runtime_error("textureCompressionETC2 not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.textureCompressionASTC_LDR && !supportedPhysicalDeviceFeatures.textureCompressionASTC_LDR) {
+            throw std::runtime_error("textureCompressionASTC_LDR not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.textureCompressionBC && !supportedPhysicalDeviceFeatures.textureCompressionBC) {
+            throw std::runtime_error("textureCompressionBC not supported");
+        }
+
+        // 查询特性检查
+        if (mRequiredPhysicalDeviceFeatures.occlusionQueryPrecise && !supportedPhysicalDeviceFeatures.occlusionQueryPrecise) {
+            throw std::runtime_error("occlusionQueryPrecise not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.pipelineStatisticsQuery && !supportedPhysicalDeviceFeatures.pipelineStatisticsQuery) {
+            throw std::runtime_error("pipelineStatisticsQuery not supported");
+        }
+
+        // 原子操作特性检查
+        if (mRequiredPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics && !supportedPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics) {
+            throw std::runtime_error("vertexPipelineStoresAndAtomics not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.fragmentStoresAndAtomics && !supportedPhysicalDeviceFeatures.fragmentStoresAndAtomics) {
+            throw std::runtime_error("fragmentStoresAndAtomics not supported");
+        }
+
+        // 着色器特性检查
+        if (mRequiredPhysicalDeviceFeatures.shaderTessellationAndGeometryPointSize && !supportedPhysicalDeviceFeatures.shaderTessellationAndGeometryPointSize) {
+            throw std::runtime_error("shaderTessellationAndGeometryPointSize not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderImageGatherExtended && !supportedPhysicalDeviceFeatures.shaderImageGatherExtended) {
+            throw std::runtime_error("shaderImageGatherExtended not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageImageExtendedFormats && !supportedPhysicalDeviceFeatures.shaderStorageImageExtendedFormats) {
+            throw std::runtime_error("shaderStorageImageExtendedFormats not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageImageMultisample && !supportedPhysicalDeviceFeatures.shaderStorageImageMultisample) {
+            throw std::runtime_error("shaderStorageImageMultisample not supported");
+        }
+
+        // 存储图像格式检查
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageImageReadWithoutFormat && !supportedPhysicalDeviceFeatures.shaderStorageImageReadWithoutFormat) {
+            throw std::runtime_error("shaderStorageImageReadWithoutFormat not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageImageWriteWithoutFormat && !supportedPhysicalDeviceFeatures.shaderStorageImageWriteWithoutFormat) {
+            throw std::runtime_error("shaderStorageImageWriteWithoutFormat not supported");
+        }
+
+        // 动态索引特性检查
+        if (mRequiredPhysicalDeviceFeatures.shaderUniformBufferArrayDynamicIndexing && !supportedPhysicalDeviceFeatures.shaderUniformBufferArrayDynamicIndexing) {
+            throw std::runtime_error("shaderUniformBufferArrayDynamicIndexing not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderSampledImageArrayDynamicIndexing && !supportedPhysicalDeviceFeatures.shaderSampledImageArrayDynamicIndexing) {
+            throw std::runtime_error("shaderSampledImageArrayDynamicIndexing not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageBufferArrayDynamicIndexing && !supportedPhysicalDeviceFeatures.shaderStorageBufferArrayDynamicIndexing) {
+            throw std::runtime_error("shaderStorageBufferArrayDynamicIndexing not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderStorageImageArrayDynamicIndexing && !supportedPhysicalDeviceFeatures.shaderStorageImageArrayDynamicIndexing) {
+            throw std::runtime_error("shaderStorageImageArrayDynamicIndexing not supported");
+        }
+
+        // 裁剪与距离特性检查
+        if (mRequiredPhysicalDeviceFeatures.shaderClipDistance && !supportedPhysicalDeviceFeatures.shaderClipDistance) {
+            throw std::runtime_error("shaderClipDistance not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderCullDistance && !supportedPhysicalDeviceFeatures.shaderCullDistance) {
+            throw std::runtime_error("shaderCullDistance not supported");
+        }
+
+        // 数值精度特性检查
+        if (mRequiredPhysicalDeviceFeatures.shaderFloat64 && !supportedPhysicalDeviceFeatures.shaderFloat64) {
+            throw std::runtime_error("shaderFloat64 not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderInt64 && !supportedPhysicalDeviceFeatures.shaderInt64) {
+            throw std::runtime_error("shaderInt64 not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderInt16 && !supportedPhysicalDeviceFeatures.shaderInt16) {
+            throw std::runtime_error("shaderInt16 not supported");
+        }
+
+        // 资源管理特性检查
+        if (mRequiredPhysicalDeviceFeatures.shaderResourceResidency && !supportedPhysicalDeviceFeatures.shaderResourceResidency) {
+            throw std::runtime_error("shaderResourceResidency not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.shaderResourceMinLod && !supportedPhysicalDeviceFeatures.shaderResourceMinLod) {
+            throw std::runtime_error("shaderResourceMinLod not supported");
+        }
+
+        // 稀疏内存特性检查
+        if (mRequiredPhysicalDeviceFeatures.sparseBinding && !supportedPhysicalDeviceFeatures.sparseBinding) {
+            throw std::runtime_error("sparseBinding not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidencyBuffer && !supportedPhysicalDeviceFeatures.sparseResidencyBuffer) {
+            throw std::runtime_error("sparseResidencyBuffer not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidencyImage2D && !supportedPhysicalDeviceFeatures.sparseResidencyImage2D) {
+            throw std::runtime_error("sparseResidencyImage2D not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidencyImage3D && !supportedPhysicalDeviceFeatures.sparseResidencyImage3D) {
+            throw std::runtime_error("sparseResidencyImage3D not supported");
+        }
+
+        // 稀疏采样特性检查
+        if (mRequiredPhysicalDeviceFeatures.sparseResidency2Samples && !supportedPhysicalDeviceFeatures.sparseResidency2Samples) {
+            throw std::runtime_error("sparseResidency2Samples not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidency4Samples && !supportedPhysicalDeviceFeatures.sparseResidency4Samples) {
+            throw std::runtime_error("sparseResidency4Samples not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidency8Samples && !supportedPhysicalDeviceFeatures.sparseResidency8Samples) {
+            throw std::runtime_error("sparseResidency8Samples not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidency16Samples && !supportedPhysicalDeviceFeatures.sparseResidency16Samples) {
+            throw std::runtime_error("sparseResidency16Samples not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.sparseResidencyAliased && !supportedPhysicalDeviceFeatures.sparseResidencyAliased) {
+            throw std::runtime_error("sparseResidencyAliased not supported");
+        }
+
+        // 其他特性检查
+        if (mRequiredPhysicalDeviceFeatures.variableMultisampleRate && !supportedPhysicalDeviceFeatures.variableMultisampleRate) {
+            throw std::runtime_error("variableMultisampleRate not supported");
+        }
+
+        if (mRequiredPhysicalDeviceFeatures.inheritedQueries && !supportedPhysicalDeviceFeatures.inheritedQueries) {
+            throw std::runtime_error("inheritedQueries not supported");
+        }
     }
 
 } // vklite

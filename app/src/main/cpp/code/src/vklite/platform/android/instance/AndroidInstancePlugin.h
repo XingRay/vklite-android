@@ -7,11 +7,11 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/instance/Instance.h"
-#include "vklite/instance/InstancePlugin.h"
+#include "vklite/instance/InstancePluginInterface.h"
 
 namespace vklite {
 
-    class AndroidInstancePlugin : public InstancePlugin {
+    class AndroidInstancePlugin : public InstancePluginInterface {
 
     public:
         AndroidInstancePlugin();

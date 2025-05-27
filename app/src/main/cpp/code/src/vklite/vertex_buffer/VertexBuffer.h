@@ -16,7 +16,7 @@ namespace vklite {
         StagingBuffer mStagingBuffer;
 
     public:
-        VertexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        VertexBuffer(const PhysicalDevice &physicalDevice,const Device &device, vk::DeviceSize bufferSize);
 
         ~VertexBuffer();
 

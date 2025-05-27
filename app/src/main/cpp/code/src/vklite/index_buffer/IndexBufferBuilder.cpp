@@ -21,8 +21,8 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<IndexBuffer> IndexBufferBuilder::build(const Device &device) const {
-        return std::make_unique<IndexBuffer>(device, mBufferSize);
+    std::unique_ptr<IndexBuffer> IndexBufferBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) const {
+        return std::make_unique<IndexBuffer>(physicalDevice, device, mBufferSize);
     }
 
 } // vklite

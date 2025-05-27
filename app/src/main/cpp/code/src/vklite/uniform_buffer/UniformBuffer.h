@@ -17,7 +17,7 @@ namespace vklite {
         StagingBuffer mStagingBuffer;
 
     public:
-        UniformBuffer(const Device &device, vk::DeviceSize bufferSize);
+        UniformBuffer(const PhysicalDevice &physicalDevice,const Device &device, vk::DeviceSize bufferSize);
 
         ~UniformBuffer() override;
 

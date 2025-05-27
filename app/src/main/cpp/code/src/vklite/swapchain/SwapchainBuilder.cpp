@@ -11,9 +11,8 @@ namespace vklite {
 
     SwapchainBuilder::~SwapchainBuilder() = default;
 
-    std::unique_ptr<Swapchain> SwapchainBuilder::build(const Device &device, const Surface &surface) {
+    std::unique_ptr<Swapchain> SwapchainBuilder::build(const PhysicalDevice &physicalDevice,const Device &device, const Surface &surface, std::vector<uint32_t> queueFamilyIndices) {
 
-        const PhysicalDevice &physicalDevice = device.getPhysicalDevice();
         vk::SurfaceCapabilitiesKHR surfaceCapabilities = physicalDevice.getCapabilities(surface);
         vk::Extent2D currentExtent = surfaceCapabilities.currentExtent;
 
@@ -21,7 +20,7 @@ namespace vklite {
         vk::SurfaceFormatKHR imageFormat = VulkanUtil::chooseSwapSurfaceFormat(physicalDevice.getFormats(surface));
         vk::PresentModeKHR presentMode = VulkanUtil::choosePresentMode(physicalDevice.getPresentModes(surface));
 
-        return std::make_unique<Swapchain>(device, surface, surfaceCapabilities, displaySize, imageFormat, presentMode);
+        return std::make_unique<Swapchain>(device, surface, surfaceCapabilities, displaySize, imageFormat, presentMode, queueFamilyIndices);
     }
 
 } // vklite

@@ -5,8 +5,8 @@
 #include "HostVisibleIndexBuffer.h"
 
 namespace vklite {
-    HostVisibleIndexBuffer::HostVisibleIndexBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mIndexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer) {
+    HostVisibleIndexBuffer::HostVisibleIndexBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize)
+            : mIndexBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer) {
 
     }
 

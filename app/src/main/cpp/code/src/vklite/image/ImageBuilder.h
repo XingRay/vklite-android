@@ -61,10 +61,10 @@ namespace vklite {
         ImageBuilder &postCreated(std::function<void(Image &)> &&postCreatedHandler);
 
         [[nodiscard]]
-        Image build(const Device &device);
+        Image build(const PhysicalDevice& physicalDevice,const Device &device);
 
         [[nodiscard]]
-        std::unique_ptr<Image> buildUnique(const Device &device);
+        std::unique_ptr<Image> buildUnique(const PhysicalDevice& physicalDevice,const Device &device);
 
     public:// static
 

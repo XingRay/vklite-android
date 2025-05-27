@@ -8,6 +8,9 @@
 
 #include "vulkan/vulkan.hpp"
 
+#include "vklite/device/DevicePluginInterface.h"
+#include "vklite/instance/InstancePluginInterface.h"
+
 namespace vklite {
 
     class PluginInterface {
@@ -16,13 +19,9 @@ namespace vklite {
 
         virtual ~PluginInterface();
 
-        virtual std::vector<const char *> getInstanceExtensions() = 0;
+        virtual std::unique_ptr<DevicePluginInterface> createDevicePlugin() = 0;
 
-        virtual std::vector<const char *> getDeviceExtensions() = 0;
-
-        virtual std::vector<const char *> getLayers() = 0;
-
-        virtual void onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) = 0;
+        virtual std::unique_ptr<InstancePluginInterface> createInstancePlugin() = 0;
     };
 
 } // vklite

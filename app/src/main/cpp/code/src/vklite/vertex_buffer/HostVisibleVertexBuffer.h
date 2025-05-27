@@ -13,7 +13,7 @@ namespace vklite {
         HostVisibleBuffer mVertexBuffer;
 
     public:
-        HostVisibleVertexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        HostVisibleVertexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize);
 
         ~HostVisibleVertexBuffer();
 

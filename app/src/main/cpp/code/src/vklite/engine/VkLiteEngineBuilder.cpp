@@ -202,13 +202,13 @@ namespace vklite {
 ////        std::unique_ptr<GraphicsPipeline> vulkanGraphicsPipeline = nullptr;
 ////        if (mGraphicsPipelineConfigure != nullptr) {
 ////            LOG_D("create VulkanGraphicsPipeline");
-////            vulkanGraphicsPipeline = mGraphicsPipelineConfigure->build(*device, *swapchain, *renderPass);
+////            vulkanGraphicsPipeline = mGraphicsPipelineConfigure->buildUnique(*device, *swapchain, *renderPass);
 ////        }
 ////
 ////        std::unique_ptr<ComputePipeline> vulkanComputePipeline = nullptr;
 ////        if (mComputePipelineConfigure != nullptr) {
 ////            LOG_D("create VulkanGraphicsPipeline");
-////            vulkanComputePipeline = mComputePipelineConfigure->build();//std::make_unique<VulkanGraphicsPipeline>(*device, *swapchain, *renderPass, *vulkanShader);
+////            vulkanComputePipeline = mComputePipelineConfigure->buildUnique();//std::make_unique<VulkanGraphicsPipeline>(*device, *swapchain, *renderPass, *vulkanShader);
 ////        }
 ////
 ////        std::vector<PipelineResource> pipelineResources = mPipelineResourceConfigure->createPipelineResources(mFrameCount);

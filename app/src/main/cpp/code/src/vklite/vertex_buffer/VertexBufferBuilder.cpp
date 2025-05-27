@@ -16,8 +16,8 @@ namespace vklite {
         return *this;
     }
 
-    std::unique_ptr<VertexBuffer> VertexBufferBuilder::build(const Device &device) {
-        return std::make_unique<VertexBuffer>(device, mBufferSize);
+    std::unique_ptr<VertexBuffer> VertexBufferBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
+        return std::make_unique<VertexBuffer>(physicalDevice, device, mBufferSize);
     }
 
 } // vklite

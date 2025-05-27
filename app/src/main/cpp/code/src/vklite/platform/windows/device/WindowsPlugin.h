@@ -8,17 +8,17 @@
 
 namespace vklite {
 
-    class WindowsPlugin : public PluginInterface {
+    class WindowsPlugin {
     private:
     public:
 
-        std::vector<const char *> getInstanceExtensions() override;
+        std::vector<const char *> getInstanceExtensions();
 
-        std::vector<const char *> getDeviceExtensions() override;
+        std::vector<const char *> getDeviceExtensions();
 
-        std::vector<const char *> getLayers() override;
+        std::vector<const char *> getLayers();
 
-        void onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) override;
+        void onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo);
     };
 
 } // vklite

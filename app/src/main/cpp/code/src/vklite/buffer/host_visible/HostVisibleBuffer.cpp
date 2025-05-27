@@ -9,14 +9,13 @@
 
 namespace vklite {
 
-    HostVisibleBuffer::HostVisibleBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits)
+    HostVisibleBuffer::HostVisibleBuffer(const PhysicalDevice& physicalDevice, const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits)
             : mDevice(device), mBufferSize(bufferSize) {
 
 //        std::tie(mBuffer, mDeviceMemory) = device.createBuffer(bufferSize, bufferUsageFlagBits,
 //                                                               vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 
         vk::Device vkDevice = mDevice.getDevice();
-        PhysicalDevice physicalDevice = mDevice.getPhysicalDevice();
 
         vk::BufferCreateInfo bufferCreateInfo{};
         bufferCreateInfo.setSize(bufferSize)
@@ -27,7 +26,6 @@ namespace vklite {
 
 
         vk::MemoryRequirements memoryRequirements = vkDevice.getBufferMemoryRequirements(mBuffer);
-        vk::PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.getPhysicalDevice().getMemoryProperties();
 
         uint32_t memoryType = physicalDevice.findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
         vk::MemoryAllocateInfo memoryAllocateInfo{};

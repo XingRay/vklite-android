@@ -23,7 +23,7 @@ namespace vklite {
 
         ~HardwareBufferImageBuilder();
 
-        std::unique_ptr<ImageInterface> build(const Device &device, uint32_t width, uint32_t height, vk::Format format);
+        std::unique_ptr<ImageInterface> build(const PhysicalDevice& physicalDevice,const Device &device, uint32_t width, uint32_t height, vk::Format format);
     };
 
 } // vklite

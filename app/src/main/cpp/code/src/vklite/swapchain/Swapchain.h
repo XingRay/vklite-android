@@ -24,7 +24,8 @@ namespace vklite {
                   const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
                   vk::Extent2D displaySize,
                   vk::SurfaceFormatKHR imageFormat,
-                  vk::PresentModeKHR presentMode);
+                  vk::PresentModeKHR presentMode,
+                  std::vector<uint32_t> queueFamilyIndices);
 
         ~Swapchain();
 

@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    class AndroidPlugin : public PluginInterface {
+    class AndroidPlugin {
     private:
         vk::PhysicalDeviceFeatures2 mPhysicalDeviceFeatures2;
         vk::PhysicalDeviceSamplerYcbcrConversionFeatures mPhysicalDeviceSamplerYcbcrConversionFeatures;
@@ -17,15 +17,15 @@ namespace vklite {
 
         AndroidPlugin();
 
-        ~AndroidPlugin() override;
+        ~AndroidPlugin();
 
-        std::vector<const char *> getInstanceExtensions() override;
+        std::vector<const char *> getInstanceExtensions();
 
-        std::vector<const char *> getDeviceExtensions() override;
+        std::vector<const char *> getDeviceExtensions();
 
-        std::vector<const char *> getLayers() override;
+        std::vector<const char *> getLayers();
 
-        void onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) override;
+        void onCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo);
     };
 
 } // vklite

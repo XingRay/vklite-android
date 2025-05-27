@@ -5,14 +5,11 @@
 #include "VertexBuffer.h"
 
 namespace vklite {
-    VertexBuffer::VertexBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mVertexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer),
-              mStagingBuffer(device, bufferSize){
+    VertexBuffer::VertexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
+            : mVertexBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer),
+              mStagingBuffer(physicalDevice, device, bufferSize) {}
 
-
-    }
-
-    VertexBuffer::~VertexBuffer() =default;
+    VertexBuffer::~VertexBuffer() = default;
 
     const vk::Buffer &VertexBuffer::getBuffer() const {
         return mVertexBuffer.getBuffer();

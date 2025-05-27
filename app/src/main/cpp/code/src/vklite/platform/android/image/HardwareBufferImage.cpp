@@ -10,11 +10,12 @@
 
 namespace vklite {
 
-    HardwareBufferImage::HardwareBufferImage(const Device &device,
+    HardwareBufferImage::HardwareBufferImage(const PhysicalDevice &physicalDevice,
+                                             const Device &device,
                                              const HardwareBuffer &androidHardwareBuffer,
                                              const HardwareBufferYcbcrConversion &conversion)
             : mDevice(device) {
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
         AHardwareBuffer_Desc hardwareBufferDescription = androidHardwareBuffer.getAndroidHardwareBufferDescription();
         vk::AndroidHardwareBufferPropertiesANDROID properties = androidHardwareBuffer.getProperties();
@@ -67,7 +68,7 @@ namespace vklite {
                 .setPNext(&hardwareBufferInfo);
 
         // 获取图像的内存需求
-        uint32_t memoryType = mDevice.getPhysicalDevice().findMemoryType(properties.memoryTypeBits);
+        uint32_t memoryType = physicalDevice.findMemoryType(properties.memoryTypeBits);
 
         // 分配内存并绑定到图像
         vk::MemoryAllocateInfo memoryAllocateInfo{};
@@ -137,7 +138,7 @@ namespace vklite {
     }
 
     HardwareBufferImage::~HardwareBufferImage() {
-        const vk::Device& vkDevice = mDevice.getDevice();
+        const vk::Device &vkDevice = mDevice.getDevice();
 
         vkDevice.destroyImageView(mImageView);
         vkDevice.destroyImage(mImage);

@@ -18,7 +18,7 @@ namespace vklite {
 
         ~UniformBufferBuilder() override;
 
-        std::unique_ptr<BufferInterface> build(const Device &device, vk::DeviceSize bufferSize) override;
+        std::unique_ptr<BufferInterface> build(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize) override;
     };
 
 } // vklite

@@ -265,7 +265,7 @@ namespace vklite {
                 .setSignalSemaphores(signalSemaphores);
 
         std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
-        mDevice->getGraphicsQueue().submit(submitInfos, fence);
+//        mDevice->getGraphicsQueue().submit(submitInfos, fence);
 
         std::array<vk::SwapchainKHR, 1> swapChains = {mSwapchain->getSwapChain()};
         std::array<uint32_t, 1> imageIndices = {imageIndex};
@@ -280,7 +280,7 @@ namespace vklite {
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
         // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
         try {
-            result = mDevice->getPresentQueue().presentKHR(presentInfo);
+//            result = mDevice->getPresentQueue().presentKHR(presentInfo);
         } catch (const vk::OutOfDateKHRError &e) {
             LOG_E("mPresentQueue.presentKHR => OutOfDateKHRError");
             result = vk::Result::eErrorOutOfDateKHR;

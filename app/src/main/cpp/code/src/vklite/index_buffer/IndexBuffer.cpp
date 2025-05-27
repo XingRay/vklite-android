@@ -6,11 +6,11 @@
 
 namespace vklite {
 
-    IndexBuffer::IndexBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mIndexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer),
+    IndexBuffer::IndexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
+            : mIndexBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eIndexBuffer),
               mIndexType(vk::IndexType::eUint32),
               mIndicesCount(0),
-              mStagingBuffer(device, bufferSize) {}
+              mStagingBuffer(physicalDevice, device, bufferSize) {}
 
     IndexBuffer::~IndexBuffer() = default;
 

@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~BufferBuilderInterface() = 0;
 
-        virtual std::unique_ptr<BufferInterface> build(const Device &device, vk::DeviceSize bufferSize) = 0;
+        virtual std::unique_ptr<BufferInterface> build(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize) = 0;
     };
 
 } // vklite

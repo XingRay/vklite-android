@@ -17,7 +17,7 @@ namespace vklite {
 
         virtual ~SamplerBuilderInterface() = 0;
 
-        virtual std::unique_ptr<SamplerInterface> build(const Device &device) = 0;
+        virtual std::unique_ptr<SamplerInterface> build(const PhysicalDevice &physicalDevice, const Device &device) = 0;
     };
 
 } // vklite

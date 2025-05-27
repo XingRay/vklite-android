@@ -20,7 +20,7 @@ namespace vklite {
 
         ~SwapchainBuilder();
 
-        std::unique_ptr<Swapchain> build(const Device &device, const Surface &surface);
+        std::unique_ptr<Swapchain> build(const PhysicalDevice &physicalDevice, const Device &device, const Surface &surface, std::vector<uint32_t> queueFamilyIndices);
     };
 
 } // vklite

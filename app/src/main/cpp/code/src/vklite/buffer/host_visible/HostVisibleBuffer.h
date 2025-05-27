@@ -24,7 +24,7 @@ namespace vklite {
         void *mMappedMemoryPointer;
 
     public:
-        HostVisibleBuffer(const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
+        HostVisibleBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
 
         virtual  ~HostVisibleBuffer();
 

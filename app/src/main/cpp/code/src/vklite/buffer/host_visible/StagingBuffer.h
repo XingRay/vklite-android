@@ -13,7 +13,7 @@ namespace vklite {
         HostVisibleBuffer mHostVisibleBuffer;
 
     public:
-        StagingBuffer(const Device &device, vk::DeviceSize bufferSize);
+        StagingBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize);
 
         ~StagingBuffer();
 

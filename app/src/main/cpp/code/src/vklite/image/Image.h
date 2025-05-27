@@ -26,7 +26,7 @@ namespace vklite {
         vk::DeviceMemory mDeviceMemory;
 
     public:
-        Image(const Device &device, const vk::ImageCreateInfo &imageCreateInfo);
+        Image(const PhysicalDevice& physicalDevice,const Device &device, const vk::ImageCreateInfo &imageCreateInfo);
 
         ~Image() override;
 

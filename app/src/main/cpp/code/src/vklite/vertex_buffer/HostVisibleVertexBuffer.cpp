@@ -5,8 +5,8 @@
 #include "HostVisibleVertexBuffer.h"
 
 namespace vklite {
-    HostVisibleVertexBuffer::HostVisibleVertexBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mVertexBuffer(device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer) {
+    HostVisibleVertexBuffer::HostVisibleVertexBuffer(const PhysicalDevice &physicalDevice,const Device &device, vk::DeviceSize bufferSize)
+            : mVertexBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer) {
 
     }
 

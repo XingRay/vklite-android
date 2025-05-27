@@ -19,7 +19,7 @@ namespace vklite {
         StagingBuffer mStagingBuffer;
 
     public:
-        IndexBuffer(const Device &device, vk::DeviceSize bufferSize);
+        IndexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize);
 
         ~IndexBuffer();
 
@@ -35,9 +35,9 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getIndicesCount() const;
 
-        IndexBuffer& recordCommandUpdate(const vk::CommandBuffer& commandBuffer, const std::vector<uint32_t>& indices);
+        IndexBuffer &recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices);
 
-        IndexBuffer& update(const CommandPool& commandPool, const std::vector<uint32_t>& indices);
+        IndexBuffer &update(const CommandPool &commandPool, const std::vector<uint32_t> &indices);
     };
 
 } // vklite

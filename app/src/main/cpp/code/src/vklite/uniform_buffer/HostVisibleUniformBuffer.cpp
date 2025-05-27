@@ -5,10 +5,8 @@
 #include "HostVisibleUniformBuffer.h"
 
 namespace vklite {
-    HostVisibleUniformBuffer::HostVisibleUniformBuffer(const Device &device, vk::DeviceSize bufferSize)
-            : mUniformBuffer(device, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer) {
-
-    }
+    HostVisibleUniformBuffer::HostVisibleUniformBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
+            : mUniformBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eUniformBuffer) {}
 
     HostVisibleUniformBuffer::~HostVisibleUniformBuffer() = default;
 
