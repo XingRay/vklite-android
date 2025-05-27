@@ -190,7 +190,11 @@ namespace test08 {
 
         mImageAvailableSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
         mRenderFinishedSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
-        mFences = vklite::FenceBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mFences = vklite::FenceBuilder()
+                .device(mDevice->getDevice())
+                        // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
+                .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
+                .build(mFrameCount);
 
         mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
 //                .descriptorPoolSizes(graphicsDescriptorConfigure.calcDescriptorPoolSizes())
@@ -287,7 +291,11 @@ namespace test08 {
             mUniformBuffers.push_back(std::move(uniformBuffer));
         }
 
-        mComputeFences = vklite::FenceBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mComputeFences = vklite::FenceBuilder()
+                .device(mDevice->getDevice())
+                        // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
+                .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
+                .build(mFrameCount);
         mComputeFinishSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
 
         vklite::DescriptorSetWriter computePipelineDescriptorSetWriter = vklite::DescriptorSetWriterBuilder()
@@ -332,7 +340,7 @@ namespace test08 {
         return true;
     }
 
-    // 绘制三角形帧
+    // 绘制帧
     void Test08ComputeShader::drawFrame() {
         // update data by frame
         UniformBufferObject ubo{};

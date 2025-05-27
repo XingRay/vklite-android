@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include <chrono>
 #include <cstdint>
 
@@ -21,7 +20,7 @@ namespace util {
 
         void start();
 
-        uint32_t getDeltaTimeMs();
+        uint64_t getDeltaTimeMs();
     };
 
 } // util

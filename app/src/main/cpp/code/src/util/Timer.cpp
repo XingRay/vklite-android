@@ -14,7 +14,7 @@ namespace util {
         mStartTime = std::chrono::steady_clock::now();
     }
 
-    uint32_t Timer::getDeltaTimeMs() {
+    uint64_t Timer::getDeltaTimeMs() {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - mStartTime).count();
         mStartTime = currentTime;
