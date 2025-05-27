@@ -386,6 +386,8 @@ namespace test08 {
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
+        // while(gpu.imageAvailableSemaphore != 1){/* wait */}
+        // imageIndex = acquireNextImage();
         auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getSemaphore());
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
@@ -420,9 +422,16 @@ namespace test08 {
             throw std::runtime_error("resetFences failed");
         }
 
+        // while(gpu.imageAvailableSemaphore != 1){ /* wait */ }
+        // render();
+        // gpu.renderFinishedSemaphore = 1;
+        // cpu.fence = 1;
         mGraphicQueue->submit(commandBuffer.getCommandBuffer(), vk::PipelineStageFlagBits::eColorAttachmentOutput,
                               imageAvailableSemaphore.getSemaphore(), renderFinishedSemaphore.getSemaphore(), fence.getFence());
 
+        //while(gpu.renderFinishedSemaphore != 1){ /* wait */ }
+        // present()
+        // gpu.imageAvailableSemaphore = 1;
         result = mPresentQueue->present(mSwapchain->getSwapChain(), imageIndex, renderFinishedSemaphore.getSemaphore());
         if (result != vk::Result::eSuccess) {
             if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFrameBufferResized) {
