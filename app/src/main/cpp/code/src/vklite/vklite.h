@@ -17,6 +17,10 @@
 #include "vklite/device/DeviceBuilder.h"
 #include "vklite/device/Queue.h"
 
+// msaa selector
+#include "vklite/physical_device/msaa/MsaaSampleCountSelector.h"
+#include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
+
 // command
 #include "vklite/command_buffer/CommandPool.h"
 #include "vklite/command_buffer/CommandPoolBuilder.h"

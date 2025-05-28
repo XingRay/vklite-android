@@ -15,7 +15,7 @@ namespace test01 {
 
         LOG_D("Test01SimpleTriangle::Test01SimpleTriangle");
 
-        std::vector<const char*> instanceExtensions = {
+        std::vector<const char *> instanceExtensions = {
                 VK_KHR_SURFACE_EXTENSION_NAME,
                 VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
 
@@ -25,7 +25,7 @@ namespace test01 {
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         };
 
-        std::vector<const char*> instanceLayers = {
+        std::vector<const char *> instanceLayers = {
                 "VK_LAYER_KHRONOS_validation"
         };
 
@@ -60,7 +60,7 @@ namespace test01 {
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {
-            sampleCount = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+            sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
         LOG_D("sampleCount:%d", sampleCount);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);

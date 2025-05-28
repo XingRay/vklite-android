@@ -126,7 +126,7 @@ namespace test05 {
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {
-            sampleCount = mPhysicalDevice->selectMaxMsaaSampleCountFlagBits(4);
+            sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
         LOG_D("sampleCount:%d", sampleCount);
         vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
