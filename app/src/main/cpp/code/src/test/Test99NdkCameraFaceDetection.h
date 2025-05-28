@@ -8,7 +8,6 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/engine/VkLiteEngine.h"
-#include "vklite/platform/android/surface/AndroidSurface.h"
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
 #include "test/common/glm.h"

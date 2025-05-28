@@ -11,7 +11,7 @@ namespace test04 {
     Test04MvpMatrix::Test04MvpMatrix(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app), mMvpMatrix(glm::mat4(1.0f)) {
 
-        std::vector<const char*> instanceExtensions = {
+        std::vector<const char *> instanceExtensions = {
                 VK_KHR_SURFACE_EXTENSION_NAME,
                 VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
 
@@ -21,7 +21,7 @@ namespace test04 {
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         };
 
-        std::vector<const char*> instanceLayers = {
+        std::vector<const char *> instanceLayers = {
                 "VK_LAYER_KHRONOS_validation"
         };
 
@@ -59,7 +59,10 @@ namespace test04 {
                 .extensions({}, std::move(instanceExtensions))
                 .layers({}, std::move(instanceLayers))
                 .buildUnique();
-        mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
+        mSurface = vklite::AndroidSurfaceBuilder()
+                .instance(mInstance->getInstance())
+                .nativeWindow(mApp.window)
+                .buildUnique();
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->enumeratePhysicalDevices());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;

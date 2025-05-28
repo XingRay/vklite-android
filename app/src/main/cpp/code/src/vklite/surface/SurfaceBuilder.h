@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "Surface.h"
 #include "vklite/instance/Instance.h"
@@ -12,11 +13,17 @@
 namespace vklite {
 
     class SurfaceBuilder {
+    private:
 
     public:
-        virtual ~SurfaceBuilder() = default;
+        SurfaceBuilder();
+
+        virtual ~SurfaceBuilder();
 
         [[nodiscard]]
-        virtual std::unique_ptr<Surface> build(const Instance &) const = 0;
+        virtual std::optional<Surface> build() const = 0;
+
+        [[nodiscard]]
+        std::unique_ptr<Surface> buildUnique() const;
     };
 }

@@ -52,7 +52,10 @@ namespace test01 {
                 .extensions({}, std::move(instanceExtensions))
                 .layers({}, std::move(instanceLayers))
                 .buildUnique();
-        mSurface = vklite::AndroidSurfaceBuilder(mApp.window).build(*mInstance);
+        mSurface = vklite::AndroidSurfaceBuilder()
+                .instance(mInstance->getInstance())
+                .nativeWindow(mApp.window)
+                .buildUnique();
         mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->enumeratePhysicalDevices());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;

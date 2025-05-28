@@ -9,19 +9,25 @@
 namespace vklite {
 
     class Surface {
+        vk::Instance mInstance;
+        vk::SurfaceKHR mSurface;
+
     public:
-        virtual ~Surface() = default;
 
-        // 禁用拷贝和赋值操作符
-        Surface(const Surface &) = delete;
-        Surface &operator=(const Surface &) = delete;
+        Surface(vk::Instance instance, vk::SurfaceKHR surface);
 
-        // 获取 Vulkan Surface
+        ~Surface();
+
+        Surface(const Surface &other) = delete;
+
+        Surface &operator=(const Surface &other) = delete;
+
+        Surface(Surface &&other) noexcept;
+
+        Surface &operator=(Surface &&other) noexcept;
+
         [[nodiscard]]
-        virtual vk::SurfaceKHR getSurface() const = 0;
-
-    protected:
-        Surface() = default;
+        const vk::SurfaceKHR &getSurface() const;
     };
 
 } // namespace engine

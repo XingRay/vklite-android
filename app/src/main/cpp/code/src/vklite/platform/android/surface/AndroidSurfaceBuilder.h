@@ -8,22 +8,30 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/surface/Surface.h"
-#include "vklite/instance/Instance.h"
 #include "vklite/surface/SurfaceBuilder.h"
 
 namespace vklite {
 
     class AndroidSurfaceBuilder : public SurfaceBuilder {
     private:
-        ANativeWindow *mWindow;
+        vk::Instance mInstance;
+
+        vk::AndroidSurfaceCreateFlagsKHR mFlags;
+        ANativeWindow *mNativeWindow;
 
     public:
-        explicit AndroidSurfaceBuilder(ANativeWindow *window);
+        AndroidSurfaceBuilder();
 
         ~AndroidSurfaceBuilder() override;
 
+        AndroidSurfaceBuilder &instance(vk::Instance instance);
+
+        AndroidSurfaceBuilder & flags(vk::AndroidSurfaceCreateFlagsKHR flags);
+
+        AndroidSurfaceBuilder &nativeWindow(ANativeWindow *nativeWindow);
+
         [[nodiscard]]
-        std::unique_ptr<Surface> build(const Instance &instance) const override;
+        std::optional<Surface> build() const override;
     };
 
 } // vklite
