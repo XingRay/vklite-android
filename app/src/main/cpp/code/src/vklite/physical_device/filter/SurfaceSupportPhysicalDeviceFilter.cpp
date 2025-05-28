@@ -6,14 +6,14 @@
 
 namespace vklite {
 
-    SurfaceSupportPhysicalDeviceFilter::SurfaceSupportPhysicalDeviceFilter(const Surface &surface, vk::QueueFlags queueFlags)
-            : mSurface(surface), mQueueFlags(queueFlags) {}
+    SurfaceSupportPhysicalDeviceFilter::SurfaceSupportPhysicalDeviceFilter(const Surface &surface)
+            : mSurface(surface) {}
 
     SurfaceSupportPhysicalDeviceFilter::~SurfaceSupportPhysicalDeviceFilter() = default;
 
     bool SurfaceSupportPhysicalDeviceFilter::test(const PhysicalDevice &physicalDevice) const {
-        QueueFamilyIndices indices = physicalDevice.queryQueueFamilies(mSurface.getSurface(), mQueueFlags);
-        return indices.isComplete();
+        std::vector<uint32_t> indices = physicalDevice.queryQueueFamilyIndicesBySurface(mSurface.getSurface());
+        return !indices.empty();
     }
 
 } // vklite

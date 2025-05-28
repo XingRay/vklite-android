@@ -8,12 +8,26 @@
 #include "vklite/util/StringUtil.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 
+#include <utility>
+
 namespace vklite {
 
     PhysicalDevice::PhysicalDevice(const vk::PhysicalDevice &physicalDevice)
             : mPhysicalDevice(physicalDevice) {}
 
-    PhysicalDevice::~PhysicalDevice() = default;
+    PhysicalDevice::~PhysicalDevice() {
+        mPhysicalDevice = nullptr;
+    }
+
+    PhysicalDevice::PhysicalDevice(PhysicalDevice &&other) noexcept
+            : mPhysicalDevice(std::exchange(other.mPhysicalDevice, nullptr)) {}
+
+    PhysicalDevice &PhysicalDevice::operator=(PhysicalDevice &&other) noexcept {
+        if(this!=&other){
+            mPhysicalDevice = std::exchange(other.mPhysicalDevice, nullptr);
+        }
+        return *this;
+    }
 
 //    std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
 //        const vk::SurfaceKHR &vkSurface = surface.getSurface();
@@ -81,9 +95,7 @@ namespace vklite {
     std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesBySurface(const vk::SurfaceKHR &surface) const {
         std::vector<uint32_t> queueFamilyIndices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
-
         for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
-            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
             if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
                 queueFamilyIndices.push_back(queueFamilyIndex);
             }

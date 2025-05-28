@@ -4,29 +4,46 @@
 
 #include "PhysicalDeviceSelector.h"
 #include "vklite/physical_device/filter/SurfaceSupportPhysicalDeviceFilter.h"
+#include "vklite/physical_device/filter/QueueSupportPhysicalDeviceFilter.h"
 
 namespace vklite {
 
-    PhysicalDeviceSelector::PhysicalDeviceSelector(std::unique_ptr<PhysicalDeviceScoreCalculator> scoreCalculator)
-            : mScoreCalculator(std::move(scoreCalculator)) {}
+    PhysicalDeviceSelector::PhysicalDeviceSelector() = default;
 
     PhysicalDeviceSelector::~PhysicalDeviceSelector() = default;
+
+    PhysicalDeviceSelector::PhysicalDeviceSelector(PhysicalDeviceSelector &&other) noexcept
+            : mScoreCalculator(std::move(other.mScoreCalculator)),
+              mPhysicalDeviceFilters(std::move(other.mPhysicalDeviceFilters)) {}
+
+    PhysicalDeviceSelector &PhysicalDeviceSelector::operator=(PhysicalDeviceSelector &&other) noexcept {
+        if (this != &other) {
+            mScoreCalculator = std::move(other.mScoreCalculator);
+            mPhysicalDeviceFilters = std::move(other.mPhysicalDeviceFilters);
+        }
+        return *this;
+    }
+
+    PhysicalDeviceSelector &PhysicalDeviceSelector::scoreCalculator(std::unique_ptr<PhysicalDeviceScoreCalculator> scoreCalculator) {
+        mScoreCalculator = std::move(scoreCalculator);
+        return *this;
+    }
 
     PhysicalDeviceSelector &PhysicalDeviceSelector::addPhysicalDeviceFilter(std::unique_ptr<PhysicalDeviceFilter> filter) {
         mPhysicalDeviceFilters.push_back(std::move(filter));
         return *this;
     }
 
-    std::unique_ptr<PhysicalDevice> PhysicalDeviceSelector::select(const std::vector<PhysicalDevice> &physicalDevices) {
+    std::optional<PhysicalDevice *> PhysicalDeviceSelector::select(std::vector<PhysicalDevice> &physicalDevices) {
         if (physicalDevices.empty()) {
             LOG_D("No physical devices found!");
-            return nullptr;
+            return std::nullopt;
         }
 
         uint32_t maxScore = 0;
-        const PhysicalDevice *bestPhysicalDevice;
+        PhysicalDevice *bestPhysicalDevice;
 
-        for (const PhysicalDevice &physicalDevice: physicalDevices) {
+        for (PhysicalDevice &physicalDevice: physicalDevices) {
             bool filterPassed = true;
             for (const std::unique_ptr<PhysicalDeviceFilter> &filter: mPhysicalDeviceFilters) {
                 if (!filter->test(physicalDevice)) {
@@ -50,7 +67,7 @@ namespace vklite {
             throw std::runtime_error("suitable PhysicalDevice not found !");
         }
 
-        return std::make_unique<PhysicalDevice>(*bestPhysicalDevice);
+        return bestPhysicalDevice;
     }
 
     std::unique_ptr<PhysicalDevice> PhysicalDeviceSelector::select(const std::vector<vk::PhysicalDevice> &vkPhysicalDevices) {
@@ -59,14 +76,26 @@ namespace vklite {
         for (const vk::PhysicalDevice &vkPhysicalDevice: vkPhysicalDevices) {
             physicalDevices.emplace_back(vkPhysicalDevice);
         }
-        return select(physicalDevices);
+        std::optional<PhysicalDevice *> selected = select(physicalDevices);
+        if (!selected.has_value()) {
+            return nullptr;
+        }
+        return std::make_unique<PhysicalDevice>(std::move(*(selected.value())));
     }
 
-    std::unique_ptr<PhysicalDeviceSelector> PhysicalDeviceSelector::makeDefault(const Surface &surface, vk::QueueFlags queueFlags) {
-        std::unique_ptr<PhysicalDeviceScoreCalculator> calculator = std::make_unique<PhysicalDeviceScoreCalculator>();
-        std::unique_ptr<PhysicalDeviceSelector> deviceSelector = std::make_unique<PhysicalDeviceSelector>(std::move(calculator));
-        deviceSelector->addPhysicalDeviceFilter(std::make_unique<SurfaceSupportPhysicalDeviceFilter>(surface, queueFlags));
-        return deviceSelector;
+    PhysicalDeviceSelector PhysicalDeviceSelector::makeDefault(const Surface &surface, vk::QueueFlags queueFlags) {
+        PhysicalDeviceSelector deviceSelector = PhysicalDeviceSelector();
+
+        // set score calculator
+        deviceSelector.scoreCalculator(std::make_unique<PhysicalDeviceScoreCalculator>());
+
+        // surface support required
+        deviceSelector.addPhysicalDeviceFilter(std::make_unique<SurfaceSupportPhysicalDeviceFilter>(surface));
+
+        // queue flags support required
+        deviceSelector.addPhysicalDeviceFilter(std::make_unique<QueueSupportPhysicalDeviceFilter>(queueFlags));
+
+        return std::move(deviceSelector);
     }
 
 } // vklite

@@ -5,7 +5,9 @@
 #ifndef VULKAN_HPP_DISPATCH_LOADER_DYNAMIC
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
 #endif
+
 #include <vulkan/vulkan.hpp>
+
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #include "InstanceBuilder.h"
@@ -78,26 +80,6 @@ namespace vklite {
         LOG_D("Instance::Instance");
         vk::DynamicLoader dynamicLoader;
         InstanceApi::initInstanceApi(dynamicLoader);
-
-//        auto vkGetInstanceProcAddr = dynamicLoader.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
-//        if (vkGetInstanceProcAddr == nullptr) {
-//            throw std::runtime_error("Failed to load vkGetInstanceProcAddr");
-//        }
-//
-//        auto vkEnumerateInstanceExtensionProperties = dynamicLoader.getProcAddress<PFN_vkEnumerateInstanceExtensionProperties>("vkEnumerateInstanceExtensionProperties");
-//        if (vkEnumerateInstanceExtensionProperties == nullptr) {
-//            throw std::runtime_error("Failed to load vkEnumerateInstanceExtensionProperties");
-//        }
-//
-//        auto vkEnumerateInstanceLayerProperties = dynamicLoader.getProcAddress<PFN_vkEnumerateInstanceLayerProperties>("vkEnumerateInstanceLayerProperties");
-//        if (vkEnumerateInstanceLayerProperties == nullptr) {
-//            throw std::runtime_error("Failed to load vkEnumerateInstanceLayerProperties");
-//        }
-//
-//        auto vkCreateInstance = dynamicLoader.getProcAddress<PFN_vkCreateInstance>("vkCreateInstance");
-//        if (vkCreateInstance == nullptr) {
-//            throw std::runtime_error("Failed to load vkCreateInstance");
-//        }
 
         // InstanceExtension
         uint32_t extensionCount = 0;

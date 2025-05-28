@@ -16,7 +16,7 @@ namespace test08 {
     Test08ComputeShader::Test08ComputeShader(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app) {
 
-        std::vector<const char*> instanceExtensions = {
+        std::vector<const char *> instanceExtensions = {
                 VK_KHR_SURFACE_EXTENSION_NAME,
                 VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
 
@@ -26,7 +26,7 @@ namespace test08 {
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         };
 
-        std::vector<const char*> instanceLayers = {
+        std::vector<const char *> instanceLayers = {
                 "VK_LAYER_KHRONOS_validation"
         };
 
@@ -72,7 +72,8 @@ namespace test08 {
                 .instance(mInstance->getInstance())
                 .nativeWindow(mApp.window)
                 .buildUnique();
-        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)->select(mInstance->enumeratePhysicalDevices());
+        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface, vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)
+                .select(mInstance->enumeratePhysicalDevices());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {

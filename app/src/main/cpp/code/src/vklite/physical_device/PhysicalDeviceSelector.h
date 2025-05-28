@@ -23,22 +23,31 @@ namespace vklite {
         std::vector<std::unique_ptr<PhysicalDeviceFilter>> mPhysicalDeviceFilters;
 
     public:
-        explicit PhysicalDeviceSelector(std::unique_ptr<PhysicalDeviceScoreCalculator> scoreCalculator);
+        PhysicalDeviceSelector();
 
         ~PhysicalDeviceSelector();
+
+        PhysicalDeviceSelector(const PhysicalDeviceSelector &other)=delete;
+
+        PhysicalDeviceSelector &operator=(const PhysicalDeviceSelector &other)=delete;
+
+        PhysicalDeviceSelector(PhysicalDeviceSelector &&other) noexcept;
+
+        PhysicalDeviceSelector &operator=(PhysicalDeviceSelector &&other) noexcept;
+
+        PhysicalDeviceSelector &scoreCalculator(std::unique_ptr<PhysicalDeviceScoreCalculator> scoreCalculator);
 
         PhysicalDeviceSelector &addPhysicalDeviceFilter(std::unique_ptr<PhysicalDeviceFilter> filter);
 
         [[nodiscard]]
-        std::unique_ptr<PhysicalDevice> select(const std::vector<PhysicalDevice> &physicalDevices);
+        std::optional<PhysicalDevice *> select(std::vector<PhysicalDevice> &physicalDevices);
 
         [[nodiscard]]
         std::unique_ptr<PhysicalDevice> select(const std::vector<vk::PhysicalDevice> &physicalDevices);
 
         // static
     public:
-        static std::unique_ptr<PhysicalDeviceSelector> makeDefault(const Surface &surface,
-                                                  vk::QueueFlags queueFlags = vk::QueueFlagBits::eGraphics);
+        static PhysicalDeviceSelector makeDefault(const Surface &surface, vk::QueueFlags queueFlags = vk::QueueFlagBits::eGraphics);
     };
 
 

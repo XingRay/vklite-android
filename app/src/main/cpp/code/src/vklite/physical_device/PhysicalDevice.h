@@ -22,6 +22,14 @@ namespace vklite {
 
         ~PhysicalDevice();
 
+        PhysicalDevice(const PhysicalDevice &other) = delete;
+
+        PhysicalDevice &operator=(const PhysicalDevice &other) = delete;
+
+        PhysicalDevice(PhysicalDevice &&other) noexcept;
+
+        PhysicalDevice &operator=(PhysicalDevice &&other) noexcept;
+
 //        [[nodiscard]]
 //        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
 

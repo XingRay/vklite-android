@@ -12,10 +12,9 @@ namespace vklite {
     class SurfaceSupportPhysicalDeviceFilter : public PhysicalDeviceFilter {
     private:
         const Surface &mSurface;
-        vk::QueueFlags mQueueFlags;
 
     public:
-        explicit SurfaceSupportPhysicalDeviceFilter(const Surface &surface, vk::QueueFlags queueFlags = vk::QueueFlagBits::eGraphics);
+        explicit SurfaceSupportPhysicalDeviceFilter(const Surface &surface);
 
         ~SurfaceSupportPhysicalDeviceFilter() override;
 
