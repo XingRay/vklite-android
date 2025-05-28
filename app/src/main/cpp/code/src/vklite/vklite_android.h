@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vklite/platform/android/plugin/AndroidPlugin.h"
+#include "vklite/platform/android/plugin/HardwareBufferPlugin.h"
 #include "vklite/platform/android/surface/AndroidSurface.h"
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 

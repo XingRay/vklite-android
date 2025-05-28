@@ -5,4 +5,9 @@
 #include "DevicePluginInterface.h"
 
 namespace vklite {
+
+    DevicePluginInterface::DevicePluginInterface() = default;
+
+    DevicePluginInterface::~DevicePluginInterface() = default;
+
 } // vklite

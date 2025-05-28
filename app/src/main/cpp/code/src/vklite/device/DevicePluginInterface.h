@@ -11,6 +11,8 @@
 namespace vklite {
 
     class DevicePluginInterface {
+    private:
+
     public:
 
         DevicePluginInterface();
