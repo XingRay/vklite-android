@@ -10,7 +10,7 @@
 #include "GraphicsPipeline.h"
 #include "vklite/pipeline/vertex/VertexConfigure.h"
 #include "vklite/index_buffer/IndexBufferBuilder.h"
-#include "vklite/configure/push_constants/PushConstantConfigures.h"
+#include "vklite/pipeline/push_constants/PushConstantConfigures.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
 #include "vklite/pipeline/vertex/VertexBindingConfigure.h"
 #include "vklite/pipeline/descriptor/DescriptorSetConfigure.h"

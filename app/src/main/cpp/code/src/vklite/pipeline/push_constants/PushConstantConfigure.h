@@ -19,12 +19,16 @@ namespace vklite {
 
         ~PushConstantConfigure();
 
+        [[nodiscard]]
         uint32_t getSize() const;
 
+        [[nodiscard]]
         uint32_t getOffset() const;
 
+        [[nodiscard]]
         vk::ShaderStageFlagBits getStageFlagBits() const;
 
+        [[nodiscard]]
         vk::PushConstantRange createPushConstantRange() const;
     };
 
