@@ -140,9 +140,9 @@ namespace test07 {
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
-        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
-                .format(mSwapchain->getDisplayFormat())
-                .build(*mDevice, mSwapchain->getDisplayImages());
+//        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
+//                .format(mSwapchain->getDisplayFormat())
+//                .build(*mDevice, mSwapchain->getDisplayImages());
 
         if (mMsaaEnable) {
             mColorImage = vklite::ImageBuilder::colorImageBuilder()
@@ -150,9 +150,9 @@ namespace test07 {
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
                     .buildUnique(*mPhysicalDevice, *mDevice);
-            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
-                    .format(mSwapchain->getDisplayFormat())
-                    .buildUnique(*mDevice, *mColorImage);
+//            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+//                    .format(mSwapchain->getDisplayFormat())
+//                    .buildUnique(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
@@ -167,9 +167,9 @@ namespace test07 {
                     })
                     .buildUnique(*mPhysicalDevice, *mDevice);
 
-            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
-                    .format(depthFormat)
-                    .buildUnique(*mDevice, *mDepthImage);
+//            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+//                    .format(depthFormat)
+//                    .buildUnique(*mDevice, *mDepthImage);
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();

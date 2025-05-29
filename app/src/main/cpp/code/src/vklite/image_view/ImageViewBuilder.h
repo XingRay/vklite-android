@@ -16,12 +16,19 @@ namespace vklite {
 
     class ImageViewBuilder {
     private:
+        vk::Device mDevice;
         vk::ImageViewCreateInfo mImageViewCreateInfo;
 
     public:
         ImageViewBuilder();
 
         ~ImageViewBuilder();
+
+        ImageViewBuilder &device(vk::Device device);
+
+        ImageViewBuilder &image(vk::Image image);
+
+        ImageViewBuilder &image(const ImageInterface& image);
 
         ImageViewBuilder &aspectMask(vk::ImageAspectFlags aspectMask);
 
@@ -47,17 +54,13 @@ namespace vklite {
 
         ImageViewBuilder &next(const void *next);
 
-        ImageView build(const Device &device, const vk::Image &image);
+        ImageView build();
 
-        std::unique_ptr<ImageView> buildUnique(const Device &device, const vk::Image &image);
+        std::unique_ptr<ImageView> buildUnique();
 
-        ImageView build(const Device &device, const ImageInterface &image);
+        std::vector<ImageView> build(const std::vector<vk::Image> &images);
 
-        std::unique_ptr<ImageView> buildUnique(const Device &device, const ImageInterface &image);
-
-        std::vector<ImageView> build(const Device &device, const std::vector<vk::Image> &images);
-
-        std::vector<ImageView> build(const Device &device, const std::vector<ImageInterface> &images);
+        std::vector<ImageView> build(const std::vector<ImageInterface> &images);
 
     public://static
 

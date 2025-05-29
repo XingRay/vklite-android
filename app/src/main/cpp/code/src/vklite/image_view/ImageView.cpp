@@ -5,23 +5,31 @@
 #include "ImageView.h"
 #include "vklite/Log.h"
 
+#include <utility>
+
 namespace vklite {
 
-    ImageView::ImageView(const Device &device, const vk::ImageViewCreateInfo &imageViewCreateInfo)
-            : mDevice(device) {
+    ImageView::ImageView(vk::Device device, vk::ImageView imageView)
+            : mDevice(device), mImageView(imageView) {}
 
-        mImageView = mDevice.getDevice().createImageView(imageViewCreateInfo);
+    ImageView::~ImageView() {
+        if (mDevice != nullptr && mImageView != nullptr) {
+            mDevice.destroy(mImageView);
+            mDevice = nullptr;
+            mImageView = nullptr;
+        }
     }
 
     ImageView::ImageView(ImageView &&other) noexcept
-            : mDevice(other.mDevice),
+            : mDevice(std::exchange(other.mDevice, nullptr)),
               mImageView(std::exchange(other.mImageView, nullptr)) {}
 
-    ImageView::~ImageView() {
-        if (mImageView != nullptr) {
-            const vk::Device &vkDevice = mDevice.getDevice();
-            vkDevice.destroy(mImageView);
+    ImageView &ImageView::operator=(ImageView &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mImageView = std::exchange(other.mImageView, nullptr);
         }
+        return *this;
     }
 
     const vk::ImageView &ImageView::getImageView() const {

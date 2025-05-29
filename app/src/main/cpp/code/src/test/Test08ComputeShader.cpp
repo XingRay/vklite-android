@@ -111,8 +111,9 @@ namespace test08 {
 
         // 创建附件
         mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
+                .device(mDevice->getDevice())
                 .format(mSwapchain->getDisplayFormat())
-                .build(*mDevice, mSwapchain->getDisplayImages());
+                .build(mSwapchain->getDisplayImages());
 
         if (mMsaaEnable) {
             mColorImage = vklite::ImageBuilder::colorImageBuilder()
@@ -122,8 +123,10 @@ namespace test08 {
                     .sampleCount(sampleCount)
                     .buildUnique(*mPhysicalDevice, *mDevice);
             mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+                    .device(mDevice->getDevice())
+                    .image(mColorImage->getImage())
                     .format(mSwapchain->getDisplayFormat())
-                    .buildUnique(*mDevice, *mColorImage);
+                    .buildUnique();
         }
 
         if (mDepthTestEnable) {
@@ -140,8 +143,10 @@ namespace test08 {
             mDepthImage = std::move(depthImage);
 
             mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+                    .device(mDevice->getDevice())
+                    .image(mDepthImage->getImage())
                     .format(depthFormat)
-                    .buildUnique(*mDevice, *mDepthImage);
+                    .buildUnique();
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
@@ -355,7 +360,7 @@ namespace test08 {
     void Test08ComputeShader::drawFrame() {
         // update data by frame
         UniformBufferObject ubo{};
-        ubo.deltaTime = static_cast<double>(mTimer.getDeltaTimeMs()) * 2.0f;
+        ubo.deltaTime = static_cast<float >(mTimer.getDeltaTimeMs()) * 2.0f;
         mUniformBuffers[mCurrentFrameIndex]->update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
 
 

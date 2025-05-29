@@ -160,9 +160,9 @@ namespace test06 {
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
-        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
-                .format(mSwapchain->getDisplayFormat())
-                .build(*mDevice, mSwapchain->getDisplayImages());
+//        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
+//                .format(mSwapchain->getDisplayFormat())
+//                .build(*mDevice, mSwapchain->getDisplayImages());
 
         if (mMsaaEnable) {
             mColorImage = vklite::ImageBuilder::colorImageBuilder()
@@ -170,9 +170,9 @@ namespace test06 {
                     .format(mSwapchain->getDisplayFormat())
                     .sampleCount(sampleCount)
                     .buildUnique(*mPhysicalDevice, *mDevice);
-            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
-                    .format(mSwapchain->getDisplayFormat())
-                    .buildUnique(*mDevice, *mColorImage);
+//            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
+//                    .format(mSwapchain->getDisplayFormat())
+//                    .buildUnique(*mDevice, *mColorImage);
         }
 
         if (mDepthTestEnable) {
@@ -187,9 +187,9 @@ namespace test06 {
                     })
                     .buildUnique(*mPhysicalDevice, *mDevice);
 
-            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
-                    .format(depthFormat)
-                    .buildUnique(*mDevice, *mDepthImage);
+//            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
+//                    .format(depthFormat)
+//                    .buildUnique(*mDevice, *mDepthImage);
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
@@ -356,9 +356,9 @@ namespace test06 {
                                       })
                                       .buildUnique(*mPhysicalDevice, *mDevice));
 
-            mImageViews.push_back(vklite::ImageViewBuilder::defaultImageViewBuilder()
-                                          .format(textureImage->getFormat())
-                                          .buildUnique(*mDevice, *mImages[i]));
+//            mImageViews.push_back(vklite::ImageViewBuilder::defaultImageViewBuilder()
+//                                          .format(textureImage->getFormat())
+//                                          .buildUnique(*mDevice, *mImages[i]));
             mSamplers.push_back(vklite::SamplerBuilder().build(*mPhysicalDevice, *mDevice));
         }
 

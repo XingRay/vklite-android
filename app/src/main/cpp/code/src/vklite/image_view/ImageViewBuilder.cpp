@@ -11,6 +11,21 @@ namespace vklite {
 
     ImageViewBuilder::~ImageViewBuilder() = default;
 
+    ImageViewBuilder &ImageViewBuilder::device(vk::Device device) {
+        mDevice = device;
+        return *this;
+    }
+
+    ImageViewBuilder &ImageViewBuilder::image(vk::Image image) {
+        mImageViewCreateInfo.image = image;
+        return *this;
+    }
+
+    ImageViewBuilder &ImageViewBuilder::image(const ImageInterface &image) {
+        mImageViewCreateInfo.image = image.getImage();
+        return *this;
+    }
+
     ImageViewBuilder &ImageViewBuilder::aspectMask(vk::ImageAspectFlags aspectMask) {
         mImageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
         return *this;
@@ -71,47 +86,34 @@ namespace vklite {
         return *this;
     }
 
-    ImageView ImageViewBuilder::build(const Device &device, const vk::Image &image) {
-        mImageViewCreateInfo.image = image;
-//        return ImageView(device, mImageViewCreateInfo);
-        return {device, mImageViewCreateInfo};
+    ImageView ImageViewBuilder::build() {
+        vk::ImageView imageView = mDevice.createImageView(mImageViewCreateInfo);
+        return {mDevice, imageView};
     }
 
-    std::unique_ptr<ImageView> ImageViewBuilder::buildUnique(const Device &device, const vk::Image &image) {
-        mImageViewCreateInfo.image = image;
-        return std::make_unique<ImageView>(device, mImageViewCreateInfo);
+    std::unique_ptr<ImageView> ImageViewBuilder::buildUnique() {
+        return std::make_unique<ImageView>(build());
     }
 
-    ImageView ImageViewBuilder::build(const Device &device, const ImageInterface &image) {
-        mImageViewCreateInfo.image = image.getImage();
-//        return ImageView(device, mImageViewCreateInfo);
-        return {device, mImageViewCreateInfo};
-    }
-
-    std::unique_ptr<ImageView> ImageViewBuilder::buildUnique(const Device &device, const ImageInterface &image) {
-        mImageViewCreateInfo.image = image.getImage();
-        return std::make_unique<ImageView>(device, mImageViewCreateInfo);
-    }
-
-    std::vector<ImageView> ImageViewBuilder::build(const Device &device, const std::vector<vk::Image> &images) {
+    std::vector<ImageView> ImageViewBuilder::build(const std::vector<vk::Image> &images) {
         std::vector<ImageView> imageViews;
         imageViews.reserve(images.size());
 
         for (const vk::Image &image: images) {
-            mImageViewCreateInfo.image = image;
-            imageViews.emplace_back(device, mImageViewCreateInfo);
+            this->image(image);
+            imageViews.emplace_back(build());
         }
 
         return imageViews;
     }
 
-    std::vector<ImageView> ImageViewBuilder::build(const Device &device, const std::vector<ImageInterface> &images) {
+    std::vector<ImageView> ImageViewBuilder::build(const std::vector<ImageInterface> &images) {
         std::vector<ImageView> imageViews;
         imageViews.reserve(images.size());
 
         for (const ImageInterface &image: images) {
-            mImageViewCreateInfo.image = image.getImage();
-            imageViews.emplace_back(device, mImageViewCreateInfo);
+            this->image(image);
+            imageViews.emplace_back(build());
         }
 
         return imageViews;
