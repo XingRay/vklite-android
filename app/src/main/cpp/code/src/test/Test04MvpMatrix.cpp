@@ -88,8 +88,9 @@ namespace test04 {
                 .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()
+                .device(mDevice->getDevice())
 //                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
-                .build(*mDevice);
+                .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
@@ -314,7 +315,7 @@ namespace test04 {
             }
         }
 
-        const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);

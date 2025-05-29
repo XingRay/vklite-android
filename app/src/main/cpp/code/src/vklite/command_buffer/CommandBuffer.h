@@ -1,33 +1,35 @@
 //
-// Created by leixing on 2025/5/16.
+// Created by leixing on 2025/5/30.
 //
 
 #pragma once
 
-#include <vulkan/vulkan.hpp>
-#include <vklite/device/Device.h>
+#include "CommandBufferInterface.h"
 
 namespace vklite {
 
-    class CommandPool;
-
-    class CommandBuffer {
+    class CommandBuffer : public CommandBufferInterface {
     private:
-        const Device &mDevice;
-        const CommandPool &mCommandPool;
+        vk::Device mDevice;
+        vk::CommandPool mCommandPool;
         vk::CommandBuffer mCommandBuffer;
 
     public:
-        CommandBuffer(const Device &device, const CommandPool &commandPool, const vk::CommandBuffer &commandBuffer);
+        CommandBuffer(vk::Device device, vk::CommandPool commandPool, vk::CommandBuffer commandBuffer);
 
-        ~CommandBuffer();
+        ~CommandBuffer() override;
+
+        CommandBuffer(const CommandBuffer &other) = delete;
+
+        CommandBuffer &operator=(const CommandBuffer &other) = delete;
+
+        CommandBuffer(CommandBuffer &&other) noexcept;
+
+        CommandBuffer &operator=(CommandBuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::CommandBuffer &getCommandBuffer() const;
+        const vk::CommandBuffer &getCommandBuffer() const override;
 
-        void execute(vk::CommandBufferUsageFlagBits usage, const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
-
-        void record(const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
     };
 
 } // vklite

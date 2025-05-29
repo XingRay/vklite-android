@@ -104,8 +104,9 @@ namespace test08 {
                 .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()
+                .device(mDevice->getDevice())
                 .queueFamilyIndex(graphicAndComputeQueueFamilyIndices[0])
-                .build(*mDevice);
+                .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
@@ -372,7 +373,7 @@ namespace test08 {
             throw std::runtime_error("mComputeFences[mCurrentFrameIndex] resetFences failed");
         }
 
-        const vklite::CommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
+        const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
             commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getPipeline());
             const std::vector<vk::DescriptorSet> &descriptorSets = mComputePipelineResources[mCurrentFrameIndex].getDescriptorSets();
@@ -422,7 +423,7 @@ namespace test08 {
             }
         }
 
-        const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicsPipeline->getPipeline());

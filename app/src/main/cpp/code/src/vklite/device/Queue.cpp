@@ -27,7 +27,7 @@ namespace vklite {
         return mQueue;
     }
 
-    vk::Result Queue::present(vk::SwapchainKHR swapchain, uint32_t imageIndex, vk::Semaphore waitSemaphore) {
+    vk::Result Queue::present(vk::SwapchainKHR swapchain, uint32_t imageIndex, vk::Semaphore waitSemaphore) const {
         std::array<vk::SwapchainKHR, 1> swapChains = {swapchain};
         std::array<uint32_t, 1> imageIndices = {imageIndex};
         std::array<vk::Semaphore, 1> signalSemaphores = {waitSemaphore};
@@ -49,7 +49,7 @@ namespace vklite {
         return result;
     }
 
-    void Queue::submit(const vk::CommandBuffer &commandBuffer, const vk::Semaphore &signalSemaphore, const vk::Fence &fence) {
+    void Queue::submit(const vk::CommandBuffer &commandBuffer, const vk::Semaphore &signalSemaphore, const vk::Fence &fence) const {
         std::array<vk::CommandBuffer, 1> computeCommandBuffers = {commandBuffer};
         std::array<vk::Semaphore, 1> computeSignalSemaphores = {signalSemaphore};
 
@@ -63,7 +63,7 @@ namespace vklite {
         mQueue.submit(submitInfos, fence);
     }
 
-    void Queue::submit(const vk::CommandBuffer& commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore& waitSemaphore, const vk::Semaphore& signalSemaphore, vk::Fence fence){
+    void Queue::submit(const vk::CommandBuffer &commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore &waitSemaphore, const vk::Semaphore &signalSemaphore, vk::Fence fence) const {
         std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
         std::array<vk::PipelineStageFlags, 1> waitStages = {waitStage};
         std::array<vk::Semaphore, 1> waitSemaphores = {waitSemaphore};
@@ -79,6 +79,20 @@ namespace vklite {
         std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
 
         mQueue.submit(submitInfos, fence);
+    }
+
+    void Queue::submit(const vk::CommandBuffer &commandBuffer) const {
+
+        vk::SubmitInfo submitInfo{};
+        submitInfo
+                .setCommandBufferCount(1)
+                .setPCommandBuffers(&commandBuffer);
+
+        mQueue.submit(submitInfo);
+    }
+
+    void Queue::waitIdle() const {
+        mQueue.waitIdle();
     }
 
 } // vklite

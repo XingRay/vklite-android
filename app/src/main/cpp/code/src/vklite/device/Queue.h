@@ -24,13 +24,18 @@ namespace vklite {
 
         Queue &operator=(Queue &&other) noexcept;
 
+        [[nodiscard]]
         const vk::Queue &getQueue() const;
 
-        vk::Result present(vk::SwapchainKHR swapchain, uint32_t imageIndex, vk::Semaphore waitSemaphore);
+        vk::Result present(vk::SwapchainKHR swapchain, uint32_t imageIndex, vk::Semaphore waitSemaphore)const;
 
-        void submit(const vk::CommandBuffer &commandBuffer, const vk::Semaphore &signalSemaphore, const vk::Fence &fence);
+        void submit(const vk::CommandBuffer &commandBuffer, const vk::Semaphore &signalSemaphore, const vk::Fence &fence)const;
 
-        void submit(const vk::CommandBuffer &commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore &waitSemaphore, const vk::Semaphore &signalSemaphore, vk::Fence fence);
+        void submit(const vk::CommandBuffer &commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore &waitSemaphore, const vk::Semaphore &signalSemaphore, vk::Fence fence)const;
+
+        void submit(const vk::CommandBuffer& commandBuffer)const;
+
+        void waitIdle()const;
     };
 
 } // vklite

@@ -6,7 +6,7 @@
 
 #include "vklite/buffer/device_local/DeviceLocalBuffer.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
-#include "vklite/command_buffer/CommandPool.h"
+#include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/BufferInterface.h"
 
 namespace vklite {

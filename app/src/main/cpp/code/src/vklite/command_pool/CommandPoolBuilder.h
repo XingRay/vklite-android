@@ -7,27 +7,33 @@
 #include <cstdint>
 #include <memory>
 
-#include "vklite/command_buffer/CommandPool.h"
+#include "CommandPool.h"
+#include "vklite/command_pool/CommandPoolMeta.h"
 #include "vklite/device/Device.h"
 
 namespace vklite {
 
     class CommandPoolBuilder {
     private:
-        vk::CommandPoolCreateFlags mFlags;
-        uint32_t mQueueFamilyIndex;
+        vk::Device mDevice;
+        vk::CommandPoolCreateInfo mCommandPoolCreateInfo;
 
     public:
         CommandPoolBuilder();
 
         ~CommandPoolBuilder();
 
+        CommandPoolBuilder &device(vk::Device device);
+
         CommandPoolBuilder &flags(vk::CommandPoolCreateFlags flags);
 
         CommandPoolBuilder &queueFamilyIndex(uint32_t queueFamilyIndex);
 
         [[nodiscard]]
-        std::unique_ptr<CommandPool> build(const Device &device);
+        CommandPool build();
+
+        [[nodiscard]]
+        std::unique_ptr<CommandPool> buildUnique();
     };
 
 } // vklite

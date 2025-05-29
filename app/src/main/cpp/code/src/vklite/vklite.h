@@ -21,9 +21,15 @@
 #include "vklite/physical_device/msaa/MsaaSampleCountSelector.h"
 #include "vklite/physical_device/msaa/MaxMsaaSampleCountSelector.h"
 
-// command
-#include "vklite/command_buffer/CommandPool.h"
-#include "vklite/command_buffer/CommandPoolBuilder.h"
+// command pool
+#include "vklite/command_pool/CommandPool.h"
+#include "vklite/command_pool/CommandPoolBuilder.h"
+
+// command buffer
+#include "vklite/command_buffer/CommandBufferInterface.h"
+#include "vklite/command_buffer/CommandBuffer.h"
+#include "vklite/command_buffer/PooledCommandBuffer.h"
+#include "vklite/command_buffer/CommandBuffers.h"
 
 // sync objects
 #include "vklite/sync/Fence.h"

@@ -14,7 +14,7 @@ namespace test02 {
 
         LOG_D("Test01SimpleTriangle::Test01SimpleTriangle");
 
-        std::vector<const char*> instanceExtensions = {
+        std::vector<const char *> instanceExtensions = {
                 VK_KHR_SURFACE_EXTENSION_NAME,
                 VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
 
@@ -24,7 +24,7 @@ namespace test02 {
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         };
 
-        std::vector<const char*> instanceLayers = {
+        std::vector<const char *> instanceLayers = {
                 "VK_LAYER_KHRONOS_validation"
         };
 
@@ -82,8 +82,9 @@ namespace test02 {
                 .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()
+                .device(mDevice->getDevice())
 //                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())
-                .build(*mDevice);
+                .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
@@ -317,7 +318,7 @@ namespace test02 {
             }
         }
 
-        const vklite::CommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
+        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
