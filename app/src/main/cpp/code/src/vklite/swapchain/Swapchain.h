@@ -5,9 +5,9 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
-#include "vklite/device/Device.h"
-#include "vklite/surface/Surface.h"
+
 #include "SwapchainMeta.h"
+#include "vklite/image_view/ImageView.h"
 
 namespace vklite {
 
@@ -49,6 +49,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::vector<vk::Image> getDisplayImages() const;
+
+        [[nodiscard]]
+        std::vector<ImageView> createDisplayImageViews() const;
 
         vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout);
 

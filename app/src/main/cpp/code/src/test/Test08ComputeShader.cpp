@@ -110,10 +110,7 @@ namespace test08 {
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
-        mDisplayImageViews = vklite::ImageViewBuilder::colorImageViewBuilder()
-                .device(mDevice->getDevice())
-                .format(mSwapchain->getDisplayFormat())
-                .build(mSwapchain->getDisplayImages());
+        mDisplayImageViews = mSwapchain->createDisplayImageViews();
 
         if (mMsaaEnable) {
             mColorImage = vklite::ImageBuilder::colorImageBuilder()

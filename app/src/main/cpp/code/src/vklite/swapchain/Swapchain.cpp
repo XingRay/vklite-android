@@ -3,9 +3,12 @@
 //
 
 #include "Swapchain.h"
+
+#include <utility>
+
 #include "vklite/Log.h"
 #include "vklite/util/VulkanUtil.h"
-#include <utility>
+#include "vklite/image_view/ImageViewBuilder.h"
 
 namespace vklite {
     Swapchain::Swapchain(vk::Device device, vk::SwapchainKHR swapChain, SwapchainMeta meta)
@@ -55,6 +58,13 @@ namespace vklite {
 
     std::vector<vk::Image> Swapchain::getDisplayImages() const {
         return mDevice.getSwapchainImagesKHR(mSwapChain);
+    }
+
+    std::vector<ImageView> Swapchain::createDisplayImageViews() const {
+        return ImageViewBuilder::colorImageViewBuilder()
+                .device(mDevice)
+                .format(getDisplayFormat())
+                .build(getDisplayImages());
     }
 
     vk::ResultValue<uint32_t> Swapchain::acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout) {
