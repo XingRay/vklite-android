@@ -72,8 +72,8 @@ namespace test08 {
                 .instance(mInstance->getInstance())
                 .nativeWindow(mApp.window)
                 .buildUnique();
-        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface, vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)
-                .select(mInstance->enumeratePhysicalDevices());
+        mPhysicalDevice = std::make_unique<vklite::PhysicalDevice>(vklite::PhysicalDeviceSelector::makeDefault(*mSurface, vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)
+                                                                           .select(mInstance->enumeratePhysicalDevices()).value());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {
@@ -99,8 +99,8 @@ namespace test08 {
         mSwapchain = vklite::SwapchainBuilder()
                 .device(mDevice->getDevice())
                 .surface(mSurface->getSurface())
-                .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
                 .queueFamilyIndices({presentQueueFamilyIndices[0]})
+                .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
                 .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()

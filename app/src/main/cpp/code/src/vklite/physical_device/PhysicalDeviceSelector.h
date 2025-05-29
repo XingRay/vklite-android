@@ -27,9 +27,9 @@ namespace vklite {
 
         ~PhysicalDeviceSelector();
 
-        PhysicalDeviceSelector(const PhysicalDeviceSelector &other)=delete;
+        PhysicalDeviceSelector(const PhysicalDeviceSelector &other) = delete;
 
-        PhysicalDeviceSelector &operator=(const PhysicalDeviceSelector &other)=delete;
+        PhysicalDeviceSelector &operator=(const PhysicalDeviceSelector &other) = delete;
 
         PhysicalDeviceSelector(PhysicalDeviceSelector &&other) noexcept;
 
@@ -43,7 +43,11 @@ namespace vklite {
         std::optional<PhysicalDevice *> select(std::vector<PhysicalDevice> &physicalDevices);
 
         [[nodiscard]]
-        std::unique_ptr<PhysicalDevice> select(const std::vector<vk::PhysicalDevice> &physicalDevices);
+        std::unique_ptr<PhysicalDevice> selectUnique(const std::vector<vk::PhysicalDevice> &physicalDevices);
+
+        [[nodiscard]]
+        std::optional<vk::PhysicalDevice> select(const std::vector<vk::PhysicalDevice> &physicalDevices);
+
 
         // static
     public:

@@ -110,7 +110,7 @@ namespace test07 {
                 .instance(mInstance->getInstance())
                 .nativeWindow(mApp.window)
                 .buildUnique();
-        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface).select(mInstance->enumeratePhysicalDevices());
+        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface).selectUnique(mInstance->enumeratePhysicalDevices());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {

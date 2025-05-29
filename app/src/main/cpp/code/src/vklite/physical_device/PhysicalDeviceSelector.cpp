@@ -70,9 +70,9 @@ namespace vklite {
         return bestPhysicalDevice;
     }
 
-    std::unique_ptr<PhysicalDevice> PhysicalDeviceSelector::select(const std::vector<vk::PhysicalDevice> &vkPhysicalDevices) {
+    std::unique_ptr<PhysicalDevice> PhysicalDeviceSelector::selectUnique(const std::vector<vk::PhysicalDevice> &vkPhysicalDevices) {
         std::vector<PhysicalDevice> physicalDevices;
-        physicalDevices.reserve(vkPhysicalDevices.size());
+        physicalDevices.reserve(physicalDevices.size());
         for (const vk::PhysicalDevice &vkPhysicalDevice: vkPhysicalDevices) {
             physicalDevices.emplace_back(vkPhysicalDevice);
         }
@@ -82,6 +82,15 @@ namespace vklite {
         }
         return std::make_unique<PhysicalDevice>(std::move(*(selected.value())));
     }
+
+    std::optional<vk::PhysicalDevice> PhysicalDeviceSelector::select(const std::vector<vk::PhysicalDevice> &physicalDevices) {
+        std::unique_ptr<PhysicalDevice> physicalDevice = selectUnique(physicalDevices);
+        if (physicalDevice == nullptr) {
+            return std::nullopt;
+        }
+        return physicalDevice->getPhysicalDevice();
+    }
+
 
     PhysicalDeviceSelector PhysicalDeviceSelector::makeDefault(const Surface &surface, vk::QueueFlags queueFlags) {
         PhysicalDeviceSelector deviceSelector = PhysicalDeviceSelector();
