@@ -129,7 +129,7 @@ namespace test05 {
             sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
         LOG_D("sampleCount:%d", sampleCount);
-        vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
+//        vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics);
 
         mDevice = vklite::DeviceBuilder()
                 .extensions(std::move(deviceExtensions))
@@ -141,7 +141,10 @@ namespace test05 {
                 .buildUnique();
 
         mSwapchain = vklite::SwapchainBuilder()
-                .build(*mPhysicalDevice, *mDevice, *mSurface, {/*todo*/});
+                .device(mDevice->getDevice())
+                .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
+//                .queueFamilyIndices({presentQueueFamilyIndices[0]})
+                .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()
 //                .queueFamilyIndex(mDevice->getGraphicQueueFamilyIndex())

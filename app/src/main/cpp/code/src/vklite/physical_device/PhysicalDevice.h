@@ -8,7 +8,6 @@
 #include <optional>
 
 #include "vklite/surface/Surface.h"
-#include "vklite/physical_device/QueueFamilyIndices.h"
 
 namespace vklite {
 
@@ -33,8 +32,8 @@ namespace vklite {
 //        [[nodiscard]]
 //        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
 
-        [[nodiscard]]
-        QueueFamilyIndices queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
+//        [[nodiscard]]
+//        QueueFamilyIndices queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
 
         [[nodiscard]]
         std::vector<uint32_t> queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const;

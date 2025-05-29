@@ -9,8 +9,6 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/util/selector/string/StringListSelector.h"
-#include "vklite/swapchain/SwapChainSupportDetail.h"
-#include "vklite/physical_device/QueueFamilyIndices.h"
 #include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/DevicePluginInterface.h"
 

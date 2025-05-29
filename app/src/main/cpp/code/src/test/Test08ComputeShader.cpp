@@ -80,25 +80,31 @@ namespace test08 {
             sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
         LOG_D("sampleCount:%d", sampleCount);
-        vklite::QueueFamilyIndices queueFamilyIndices = mPhysicalDevice->queryQueueFamilies(mSurface->getSurface(), vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute);
+        std::vector<uint32_t> presentQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface());
+        std::vector<uint32_t> graphicAndComputeQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute);
 
         mDevice = vklite::DeviceBuilder()
                 .physicalDevice(mPhysicalDevice->getPhysicalDevice())
                 .extensions(std::move(deviceExtensions))
                 .layers(std::move(deviceLayers))
-                .addQueueFamily(queueFamilyIndices.graphicQueueFamilyIndex.value())
-                .addQueueFamily(queueFamilyIndices.presentQueueFamilyIndex.value())
+                .addQueueFamily(presentQueueFamilyIndices[0])
+                .addQueueFamily(graphicAndComputeQueueFamilyIndices[0])
 //                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
                 .buildUnique();
-        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.graphicQueueFamilyIndex.value(), 0));
-        mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.presentQueueFamilyIndex.value(), 0));
-        mComputeQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(queueFamilyIndices.graphicQueueFamilyIndex.value(), 0));
+
+        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndices[0], 0));
+        mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(presentQueueFamilyIndices[0], 0));
+        mComputeQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndices[0], 0));
 
         mSwapchain = vklite::SwapchainBuilder()
-                .build(*mPhysicalDevice, *mDevice, *mSurface, {queueFamilyIndices.presentQueueFamilyIndex.value()});
+                .device(mDevice->getDevice())
+                .surface(mSurface->getSurface())
+                .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
+                .queueFamilyIndices({presentQueueFamilyIndices[0]})
+                .buildUnique();
 
         mCommandPool = vklite::CommandPoolBuilder()
-                .queueFamilyIndex(queueFamilyIndices.graphicQueueFamilyIndex.value())
+                .queueFamilyIndex(graphicAndComputeQueueFamilyIndices[0])
                 .build(*mDevice);
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 

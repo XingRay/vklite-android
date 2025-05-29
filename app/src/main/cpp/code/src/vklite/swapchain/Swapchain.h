@@ -7,27 +7,30 @@
 #include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 #include "vklite/surface/Surface.h"
+#include "SwapchainMeta.h"
 
 namespace vklite {
 
     class Swapchain {
     private://fields
-        const Device &mDevice;
-        vk::Extent2D mDisplaySize;
-        vk::SurfaceFormatKHR mSwapChainImageFormat;
-
+        vk::Device mDevice;
         vk::SwapchainKHR mSwapChain;
-        std::vector<vk::Image> mDisplayImages;
+        SwapchainMeta mMeta;
 
     public:
-        Swapchain(const Device &device, const Surface &surface,
-                  const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
-                  vk::Extent2D displaySize,
-                  vk::SurfaceFormatKHR imageFormat,
-                  vk::PresentModeKHR presentMode,
-                  std::vector<uint32_t> queueFamilyIndices);
+
+        Swapchain(vk::Device device, vk::SwapchainKHR swapChain, SwapchainMeta meta);
 
         ~Swapchain();
+
+        Swapchain(const Swapchain &other) = delete;
+
+        Swapchain &operator=(const Swapchain &other) = delete;
+
+        Swapchain(Swapchain &&other) noexcept;
+
+        Swapchain &operator=(Swapchain &&other) noexcept;
+
 
         [[nodiscard]]
         const vk::SwapchainKHR &getSwapChain() const;
@@ -45,7 +48,7 @@ namespace vklite {
         vk::Extent2D getDisplaySize() const;
 
         [[nodiscard]]
-        const std::vector<vk::Image> &getDisplayImages() const;
+        std::vector<vk::Image> getDisplayImages() const;
 
         vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout);
 

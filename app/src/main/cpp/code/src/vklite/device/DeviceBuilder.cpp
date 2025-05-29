@@ -134,40 +134,6 @@ namespace vklite {
             checkPhysicalDeviceFeatures();
         }
 
-
-//        std::unordered_set<std::string> existingExtensions; // 扩展名去重集合
-//        std::unordered_set<std::string> existingLayers; // 层名去重集合
-//
-//        for (const char *extension: mExtensions) {
-//            existingExtensions.insert(extension);
-//        }
-//
-//        for (const char *layer: mLayers) {
-//            existingLayers.insert(layer);
-//        }
-//
-//        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
-//            std::vector<const char *> deviceExtensions = devicePlugin->getDeviceExtensions();
-//            std::vector<const char *> layers = devicePlugin->getLayers();
-//
-//            // 合并设备扩展（自动去重）
-//            for (const char *extension: deviceExtensions) {
-//                // unordered_set的emplace方法会尝试插入元素，返回的是一个pair, 其中.second是一个布尔值
-//                // 如果元素已存在, 则不会插入。.second为false
-//                // 如果元素不存在, 则会插入。.second为true
-//                if (existingExtensions.emplace(extension).second) {
-//                    mExtensions.push_back(extension); // 无重复则添加
-//                }
-//            }
-//
-//            // 合并设备层（自动去重）
-//            for (const char *layer: layers) {
-//                if (existingLayers.emplace(layer).second) {
-//                    mLayers.push_back(layer);
-//                }
-//            }
-//        }
-
         for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
             std::vector<const char *> deviceExtensions = devicePlugin->getDeviceExtensions();
             mExtensions.insert(mExtensions.end(), deviceExtensions.begin(), deviceExtensions.end());
@@ -192,43 +158,6 @@ namespace vklite {
         }
 
         vk::Device device = mPhysicalDevice.createDevice(deviceCreateInfo);
-
-//        if (mQueueFamilyIndicesMap.contains(vk::QueueFlagBits::eGraphics)) {
-//            const std::vector<uint32_t> &graphicQueueFamilyIndices = mQueueFamilyIndicesMap[vk::QueueFlagBits::eGraphics];
-//            if (graphicQueueFamilyIndices.empty()) {
-//                mGraphicQueueFamilyIndex = -1;
-//                mGraphicsQueue = nullptr;
-//            } else {
-//                mGraphicQueueFamilyIndex = graphicQueueFamilyIndices[0];
-//                mGraphicsQueue = mDevice.getQueue(mGraphicQueueFamilyIndex, 0);
-//            }
-//        } else {
-//            mGraphicQueueFamilyIndex = -1;
-//            mGraphicsQueue = nullptr;
-//        }
-//
-//        if (mPresentQueueFamilyIndices.empty()) {
-//            mPresentQueueFamilyIndex = -1;
-//            mPresentQueue = nullptr;
-//        } else {
-//            mPresentQueueFamilyIndex = mPresentQueueFamilyIndices[0];
-//            mPresentQueue = mDevice.getQueue(mPresentQueueFamilyIndex, 0);
-//        }
-//
-//        if (mQueueFamilyIndicesMap.contains(vk::QueueFlagBits::eCompute)) {
-//            const std::vector<uint32_t> &computeQueueFamilyIndices = mQueueFamilyIndicesMap[vk::QueueFlagBits::eCompute];
-//            if (computeQueueFamilyIndices.empty()) {
-//                mComputeQueueFamilyIndex = -1;
-//                mComputeQueue = nullptr;
-//            } else {
-//                mComputeQueueFamilyIndex = computeQueueFamilyIndices[0];
-//                mComputeQueue = mDevice.getQueue(mComputeQueueFamilyIndex, 0);
-//            }
-//        } else {
-//            mComputeQueueFamilyIndex = -1;
-//            mComputeQueue = nullptr;
-//        }
-
         return Device(device);
     }
 

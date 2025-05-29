@@ -52,30 +52,30 @@ namespace vklite {
 //    }
 
     // todo: 根据条件筛选 queue
-    QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
-        QueueFamilyIndices indices;
-        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
-
-        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
-            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
-
-            if ((queueFamilyProperty.queueFlags & requiredFlags) == requiredFlags) {
-                LOG_D("graphicQueueFamily found, index:%d", queueFamilyIndex);
-                indices.graphicQueueFamilyIndex = queueFamilyIndex;
-            }
-
-            if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
-                LOG_D("presentQueueFamily found, index:%d", queueFamilyIndex);
-                indices.presentQueueFamilyIndex = queueFamilyIndex;
-            }
-
-            if (indices.isComplete()) {
-                break;
-            }
-        }
-
-        return indices;
-    }
+//    QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
+//        QueueFamilyIndices indices;
+//        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
+//
+//        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
+//            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
+//
+//            if ((queueFamilyProperty.queueFlags & requiredFlags) == requiredFlags) {
+//                LOG_D("graphicQueueFamily found, index:%d", queueFamilyIndex);
+//                indices.graphicQueueFamilyIndex = queueFamilyIndex;
+//            }
+//
+//            if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
+//                LOG_D("presentQueueFamily found, index:%d", queueFamilyIndex);
+//                indices.presentQueueFamilyIndex = queueFamilyIndex;
+//            }
+//
+//            if (indices.isComplete()) {
+//                break;
+//            }
+//        }
+//
+//        return indices;
+//    }
 
     std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
         std::vector<uint32_t> queueFamilyIndices;

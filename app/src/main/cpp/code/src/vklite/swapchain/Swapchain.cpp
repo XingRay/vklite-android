@@ -5,61 +5,32 @@
 #include "Swapchain.h"
 #include "vklite/Log.h"
 #include "vklite/util/VulkanUtil.h"
+#include <utility>
 
 namespace vklite {
-    Swapchain::Swapchain(const Device &device,
-                         const Surface &surface,
-                         const vk::SurfaceCapabilitiesKHR &surfaceCapabilities,
-                         vk::Extent2D displaySize,
-                         vk::SurfaceFormatKHR imageFormat,
-                         vk::PresentModeKHR presentMode,
-                         std::vector<uint32_t> queueFamilyIndices)
-            : mDevice(device), mDisplaySize(displaySize), mSwapChainImageFormat(imageFormat) {
-        const vk::Device &vkDevice = device.getDevice();
-
-        LOG_D("capabilities.minImageCount:%d, maxImageCount:%d", surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
-        uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
-        // capabilities.maxImageCount == 0 表示不做限制
-        if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount) {
-            imageCount = surfaceCapabilities.maxImageCount;
-        }
-        LOG_D("imageCount: %d", imageCount);
-
-//        std::vector<uint32_t> queueFamilyIndices = device.getQueueFamilyIndices();
-        vk::SharingMode sharingMode;
-//        if (queueFamilyIndices.size() == 1) {
-        sharingMode = vk::SharingMode::eExclusive;
-//        } else {
-//            sharingMode = vk::SharingMode::eConcurrent;
-//        }
-
-        vk::SwapchainCreateInfoKHR swapchainCreateInfo = vk::SwapchainCreateInfoKHR{}
-                .setSurface(surface.getSurface())
-                .setMinImageCount(imageCount)
-                .setImageFormat(mSwapChainImageFormat.format)
-                .setImageColorSpace(mSwapChainImageFormat.colorSpace)
-                .setImageExtent(mDisplaySize)
-                .setImageArrayLayers(1)
-                .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment)
-//                .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment| vk::ImageUsageFlagBits::eTransferDst)
-                .setImageSharingMode(sharingMode)
-                .setQueueFamilyIndices(queueFamilyIndices)
-                .setPreTransform(surfaceCapabilities.currentTransform)
-                .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eOpaque)
-//                .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eInherit)
-                .setPresentMode(presentMode)
-                .setClipped(vk::True)
-                .setOldSwapchain(nullptr);
-
-        mSwapChain = vkDevice.createSwapchainKHR(swapchainCreateInfo);
-        mDisplayImages = vkDevice.getSwapchainImagesKHR(mSwapChain);
-    }
+    Swapchain::Swapchain(vk::Device device, vk::SwapchainKHR swapChain, SwapchainMeta meta)
+            : mDevice(device), mSwapChain(swapChain), mMeta(meta) {}
 
     Swapchain::~Swapchain() {
-        LOG_D("Swapchain::~Swapchain()");
-        const vk::Device &vkDevice = mDevice.getDevice();
-        // 通过 getSwapchainImagesKHR 获取的对象, 不是create的对象,不需要destroy, swapchain 会自动销毁
-        vkDevice.destroy(mSwapChain);
+        if (mDevice != nullptr && mSwapChain != nullptr) {
+            mDevice.destroy(mSwapChain);
+            mDevice = nullptr;
+            mSwapChain = nullptr;
+        }
+    }
+
+    Swapchain::Swapchain(Swapchain &&other) noexcept
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mSwapChain(std::exchange(other.mSwapChain, nullptr)),
+              mMeta(other.mMeta) {}
+
+    Swapchain &Swapchain::operator=(Swapchain &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mSwapChain = std::exchange(other.mSwapChain, nullptr);
+            mMeta = other.mMeta;
+        }
+        return *this;
     }
 
     const vk::SwapchainKHR &Swapchain::getSwapChain() const {
@@ -67,27 +38,27 @@ namespace vklite {
     }
 
     vk::Format Swapchain::getDisplayFormat() const {
-        return mSwapChainImageFormat.format;
+        return mMeta.surfaceFormat.format;
     }
 
     vk::SurfaceFormatKHR Swapchain::getSurfaceFormat() const {
-        return mSwapChainImageFormat;
+        return mMeta.surfaceFormat;
     }
 
     uint32_t Swapchain::getImageCount() const {
-        return mDisplayImages.size();
+        return mMeta.imageCount;
     }
 
     vk::Extent2D Swapchain::getDisplaySize() const {
-        return mDisplaySize;
+        return mMeta.displaySize;
     }
 
-    const std::vector<vk::Image> &Swapchain::getDisplayImages() const {
-        return mDisplayImages;
+    std::vector<vk::Image> Swapchain::getDisplayImages() const {
+        return mDevice.getSwapchainImagesKHR(mSwapChain);
     }
 
     vk::ResultValue<uint32_t> Swapchain::acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout) {
-        return mDevice.getDevice().acquireNextImageKHR(mSwapChain, timeout, semaphore);
+        return mDevice.acquireNextImageKHR(mSwapChain, timeout, semaphore);
     }
 
     vk::ResultValue<uint32_t> Swapchain::acquireNextImage(const vk::Semaphore &semaphore) {
