@@ -213,10 +213,10 @@ namespace test07 {
 //                .renderAreaExtend(mSwapchain->getDisplaySize())
 //                .buildUnique(*mDevice);
 //
-//        mFrameBuffers = vklite::FrameBuffersBuilder()
+//        mFramebuffers = vklite::FramebuffersBuilder()
 //                .count(mDisplayImageViews.size())
-//                .frameBufferBuilder([&](uint32_t index) {
-//                    return vklite::FrameBufferBuilder()
+//                .FramebufferBuilder([&](uint32_t index) {
+//                    return vklite::FramebufferBuilder()
 //                            .width(mSwapchain->getDisplaySize().width)
 //                            .height(mSwapchain->getDisplaySize().height)
 //                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
@@ -413,7 +413,7 @@ namespace test07 {
 //
 //        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
 //        commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-//            mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+//            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
 //                mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
 //            });
 //        });

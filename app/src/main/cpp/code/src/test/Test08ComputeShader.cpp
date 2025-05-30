@@ -174,10 +174,10 @@ namespace test08 {
                 })
                 .buildUnique();
 
-        mFrameBuffers = vklite::FrameBuffersBuilder()
+        mFramebuffers = vklite::FramebuffersBuilder()
                 .count(mDisplayImageViews.size())
-                .frameBufferBuilder([&](uint32_t index) {
-                    return vklite::FrameBufferBuilder()
+                .FramebufferBuilder([&](uint32_t index) {
+                    return vklite::FramebufferBuilder()
                             .device(mDevice->getDevice())
                             .renderPass(mRenderPass->getRenderPass())
                             .width(mSwapchain->getDisplaySize().width)
@@ -416,7 +416,7 @@ namespace test08 {
 
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-            mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicsPipeline->getPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);

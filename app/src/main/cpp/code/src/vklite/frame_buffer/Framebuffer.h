@@ -12,23 +12,23 @@
 
 namespace vklite {
 
-    class FrameBuffer {
+    class Framebuffer {
     private:
         vk::Device mDevice;
-        vk::Framebuffer mFrameBuffer;
+        vk::Framebuffer mFramebuffer;
 
     public:
-        FrameBuffer(vk::Device device, vk::Framebuffer frameBuffer);
+        Framebuffer(vk::Device device, vk::Framebuffer frameBuffer);
 
-        ~FrameBuffer();
+        ~Framebuffer();
 
-        FrameBuffer(const FrameBuffer &other) = delete;
+        Framebuffer(const Framebuffer &other) = delete;
 
-        FrameBuffer &operator=(const FrameBuffer &&other) = delete;
+        Framebuffer &operator=(const Framebuffer &&other) = delete;
 
-        FrameBuffer(FrameBuffer &&other) noexcept;
+        Framebuffer(Framebuffer &&other) noexcept;
 
-        FrameBuffer &operator=(FrameBuffer &&other) noexcept;
+        Framebuffer &operator=(Framebuffer &&other) noexcept;
 
         [[nodiscard]]
         const vk::Framebuffer &getFrameBuffer() const;

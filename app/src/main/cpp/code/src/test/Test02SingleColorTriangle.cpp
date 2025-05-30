@@ -163,9 +163,9 @@ namespace test02 {
 //                .renderAreaExtend(mSwapchain->getDisplaySize())
 //                .buildUnique(*mDevice);
 //
-//        mFrameBuffers.reserve(mDisplayImageViews.size());
+//        mFramebuffers.reserve(mDisplayImageViews.size());
 //        for (const vklite::ImageView &imageView: mDisplayImageViews) {
-//            mFrameBuffers.push_back(vklite::FrameBufferBuilder()
+//            mFramebuffers.push_back(vklite::FramebufferBuilder()
 //                                            .width(mSwapchain->getDisplaySize().width)
 //                                            .height(mSwapchain->getDisplaySize().height)
 //                                                    // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
@@ -320,7 +320,7 @@ namespace test02 {
 //
 //        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
 //        commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-//            mRenderPass->execute(vkCommandBuffer, mFrameBuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+//            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
 //                mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
 //            });
 //        });

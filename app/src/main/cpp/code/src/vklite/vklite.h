@@ -48,8 +48,8 @@
 #include "vklite/render_pass/RenderPassBuilder.h"
 
 // frame buffer
-#include "vklite/frame_buffer/FrameBufferBuilder.h"
-#include "vklite/frame_buffer/FrameBuffersBuilder.h"
+#include "vklite/frame_buffer/FramebufferBuilder.h"
+#include "vklite/frame_buffer/FramebuffersBuilder.h"
 
 
 // pipeline layout

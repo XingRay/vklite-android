@@ -24,7 +24,7 @@
 #include "vklite/index_buffer/HostVisibleIndexBuffer.h"
 #include "vklite/uniform_buffer/UniformBuffer.h"
 #include "vklite/sync/SyncObject.h"
-#include "vklite/frame_buffer/FrameBuffer.h"
+#include "vklite/frame_buffer/Framebuffer.h"
 #include "vklite/sampler/Sampler.h"
 #include "vklite/util/selector/string/StringListSelector.h"
 #include "vklite/physical_device/PhysicalDeviceSelector.h"
@@ -55,7 +55,7 @@ namespace vklite {
         std::vector<PipelineResource> mPipelineResources;
 
         std::unique_ptr<CommandPool> mCommandPool;
-        std::unique_ptr<FrameBuffer> mFrameBuffer;
+        std::unique_ptr<Framebuffer> mFrameBuffer;
 
         std::unique_ptr<SyncObject> mSyncObject;
 
@@ -70,7 +70,7 @@ namespace vklite {
                      std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                      std::unique_ptr<ComputePipeline> computePipeline,
                      std::vector<PipelineResource> &&pipelineResources,
-                     std::unique_ptr<FrameBuffer> frameBuffer,
+                     std::unique_ptr<Framebuffer> frameBuffer,
                      std::unique_ptr<SyncObject> syncObject,
                      uint32_t frameCount);
 

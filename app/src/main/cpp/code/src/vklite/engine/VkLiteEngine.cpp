@@ -24,7 +24,7 @@ namespace vklite {
                                std::unique_ptr<GraphicsPipeline> graphicsPipeline,
                                std::unique_ptr<ComputePipeline> computePipeline,
                                std::vector<PipelineResource> &&pipelineResources,
-                               std::unique_ptr<FrameBuffer> frameBuffer,
+                               std::unique_ptr<Framebuffer> frameBuffer,
                                std::unique_ptr<SyncObject> syncObject,
                                uint32_t frameCount) {
 
@@ -229,7 +229,7 @@ namespace vklite {
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
-//                .setFramebuffer(mFrameBuffer->getFrameBuffers()[imageIndex])
+//                .setFramebuffer(mFrameBuffer->getFramebuffers()[imageIndex])
                 .setRenderArea(renderArea)
                 .setClearValues(clearValues);
         /**

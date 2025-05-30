@@ -319,7 +319,7 @@ namespace vklite {
         LOG_D("  Max Framebuffer Layers: %u", limits.maxFramebufferLayers);
         LOG_D("  Framebuffer Color Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.framebufferColorSampleCounts).c_str());
         LOG_D("  Framebuffer Depth Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.framebufferDepthSampleCounts).c_str());
-        LOG_D("  Framebuffer Stencil Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.framebufferStencilSampleCounts).c_str());
+        LOG_D("  Framebuffer Stencil Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.FramebufferstencilSampleCounts).c_str());
         LOG_D("  Framebuffer No Attachments Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.framebufferNoAttachmentsSampleCounts).c_str());
         LOG_D("  Max Color Attachments: %u", limits.maxColorAttachments);
         LOG_D("  Sampled Image Color Sample Counts: %s", VulkanUtil::sampleCountFlagsToString(limits.sampledImageColorSampleCounts).c_str());
