@@ -36,8 +36,6 @@
 #include "vklite/sync/FenceBuilder.h"
 #include "vklite/sync/Semaphore.h"
 #include "vklite/sync/SemaphoreBuilder.h"
-#include "vklite/sync/SyncObject.h"
-#include "vklite/sync/SyncObjectBuilder.h"
 
 // swapchain
 #include "vklite/swapchain/Swapchain.h"
