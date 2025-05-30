@@ -20,6 +20,13 @@ namespace vklite {
     class GraphicsPipelineBuilder {
 
     private:
+
+        vk::Device mDevice;
+        vk::RenderPass mRenderPass;
+        vk::PipelineLayout mPipelineLayout;
+        std::vector<vk::Viewport> mViewports;
+        std::vector<vk::Rect2D> mScissors;
+
         /**
          * shader code
          */
@@ -42,6 +49,20 @@ namespace vklite {
         explicit GraphicsPipelineBuilder();
 
         ~GraphicsPipelineBuilder();
+
+        GraphicsPipelineBuilder &device(const vk::Device &device);
+
+        GraphicsPipelineBuilder &renderPass(const vk::RenderPass &renderPass);
+
+        GraphicsPipelineBuilder &pipelineLayout(const vk::PipelineLayout &pipelineLayout);
+
+        GraphicsPipelineBuilder &viewports(const std::vector<vk::Viewport> &viewports);
+
+        GraphicsPipelineBuilder &viewports(std::vector<vk::Viewport> &&viewports);
+
+        GraphicsPipelineBuilder &scissors(const std::vector<vk::Rect2D> &scissors);
+
+        GraphicsPipelineBuilder &scissors(std::vector<vk::Rect2D> &&scissors);
 
         /**
          *
@@ -67,18 +88,10 @@ namespace vklite {
         GraphicsPipelineBuilder &depthTestEnable(bool depthTestEnable);
 
         [[nodiscard]]
-        GraphicsPipeline build(const Device &device,
-                               const RenderPass &renderPass,
-                               const PipelineLayout &pipelineLayout,
-                               const std::vector<vk::Viewport> &viewports,
-                               const std::vector<vk::Rect2D> &scissors);
+        GraphicsPipeline build();
 
         [[nodiscard]]
-        std::unique_ptr<GraphicsPipeline> buildUnique(const Device &device,
-                                                      const RenderPass &renderPass,
-                                                      const PipelineLayout &pipelineLayout,
-                                                      const std::vector<vk::Viewport> &viewports,
-                                                      const std::vector<vk::Rect2D> &scissors);
+        std::unique_ptr<GraphicsPipeline> buildUnique();
     };
 
 } // vklite

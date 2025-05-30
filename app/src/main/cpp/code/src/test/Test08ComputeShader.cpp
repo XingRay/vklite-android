@@ -231,6 +231,11 @@ namespace test08 {
         mScissors.push_back(scissor);
 
         mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
+                .device(mDevice->getDevice())
+                .renderPass(mRenderPass->getRenderPass())
+                .pipelineLayout(mGraphicsPipelineLayout->getPipelineLayout())
+                .viewports(mViewports)
+                .scissors(mScissors)
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -243,7 +248,7 @@ namespace test08 {
                 })
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
-                .buildUnique(*mDevice, *mRenderPass, *mGraphicsPipelineLayout, mViewports, mScissors);
+                .buildUnique();
 
         // compute pipeline
         mComputeCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
@@ -376,7 +381,8 @@ namespace test08 {
             const std::vector<vk::DescriptorSet> &descriptorSets = mComputePipelineResources[mCurrentFrameIndex].getDescriptorSets();
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipelineLayout->getPipelineLayout(), 0, descriptorSets, nullptr);
 
-            vkCmdDispatch(commandBuffer, mParticleCount / 256, 1, 1);
+            commandBuffer.dispatch(mParticleCount / 256, 1, 1);
+//            vkCmdDispatch(commandBuffer, mParticleCount / 256, 1, 1);
         });
 
         mComputeQueue->submit(computeCommandBuffer.getCommandBuffer(),
