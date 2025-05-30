@@ -11,7 +11,6 @@
 
 #include "vklite/buffer/BufferInterface.h"
 #include "vklite/sampler/SamplerInterface.h"
-#include "vklite/image_view/ImageViewInterface.h"
 
 namespace vklite {
 
@@ -80,7 +79,7 @@ namespace vklite {
 
         DescriptorMapping &addImageInfo(vk::Sampler sampler, vk::ImageView imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
 
-        DescriptorMapping &addImageInfo(const SamplerInterface &sampler, const ImageViewInterface &imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
+//        DescriptorMapping &addImageInfo(const SamplerInterface &sampler, const ImageView &imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
     };
 
 } // vklite

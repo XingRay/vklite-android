@@ -6,11 +6,10 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/image_view/ImageViewInterface.h"
 
 namespace vklite {
 
-    class ImageView : public ImageViewInterface {
+    class ImageView  {
     private:
         vk::Device mDevice;
         vk::ImageView mImageView;
@@ -18,7 +17,7 @@ namespace vklite {
     public:
         ImageView(vk::Device device, vk::ImageView imageView);
 
-        ~ImageView() override;
+        ~ImageView() ;
 
         ImageView(const ImageView &other) = delete;
 
@@ -29,7 +28,7 @@ namespace vklite {
         ImageView &operator=(ImageView &&other) noexcept;
 
         [[nodiscard]]
-        const vk::ImageView &getImageView() const override;
+        const vk::ImageView &getImageView() const ;
     };
 
 } // vklite

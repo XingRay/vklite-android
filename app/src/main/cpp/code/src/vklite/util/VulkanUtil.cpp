@@ -492,4 +492,29 @@ namespace vklite {
         return vk::PresentModeKHR::eFifo;
     }
 
+    uint32_t VulkanUtil::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties, vk::PhysicalDeviceMemoryProperties memoryProperties) {
+        for (int index = 0; index < memoryProperties.memoryTypeCount; index++) {
+            const vk::MemoryType &type = memoryProperties.memoryTypes[index];
+            if (((typeFilter & (1 << index)) != 0) && ((type.propertyFlags & properties) == properties)) {
+                return index;
+            }
+        }
+
+        throw std::runtime_error("failed to find suitable memory type for typeFilter and MemoryPropertyFlags");
+    }
+
+    vk::MemoryAllocateInfo VulkanUtil::createMemoryAllocateInfo(vk::PhysicalDevice physicalDevice, vk::Device device, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags) {
+        vk::MemoryRequirements memoryRequirements = device.getImageMemoryRequirements(image);
+        vk::PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.getMemoryProperties();
+        uint32_t memoryTypeIndex = VulkanUtil::findMemoryType(memoryRequirements.memoryTypeBits, memoryPropertyFlags, memoryProperties);
+
+        return {memoryRequirements.size, memoryTypeIndex};
+    }
+
+    vk::MemoryAllocateInfo VulkanUtil::createMemoryAllocateInfo(vk::PhysicalDeviceMemoryProperties memoryProperties, vk::MemoryRequirements memoryRequirements, vk::MemoryPropertyFlags memoryPropertyFlags) {
+        uint32_t memoryTypeIndex = VulkanUtil::findMemoryType(memoryRequirements.memoryTypeBits, memoryPropertyFlags, memoryProperties);
+
+        return {memoryRequirements.size, memoryTypeIndex};
+    }
+
 } // vklite

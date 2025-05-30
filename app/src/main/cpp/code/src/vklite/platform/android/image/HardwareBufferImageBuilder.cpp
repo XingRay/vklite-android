@@ -14,8 +14,9 @@ namespace vklite {
 
     HardwareBufferImageBuilder::~HardwareBufferImageBuilder() = default;
 
-    std::unique_ptr<ImageInterface> HardwareBufferImageBuilder::build(const PhysicalDevice &physicalDevice, const Device &device, uint32_t width, uint32_t height, vk::Format format) {
-        return std::make_unique<HardwareBufferImage>(physicalDevice, device, mAndroidHardwareBuffer, mAndroidSamplerYcbcrConversion);
+    std::unique_ptr<Image> HardwareBufferImageBuilder::build(const PhysicalDevice &physicalDevice, const Device &device, uint32_t width, uint32_t height, vk::Format format) {
+//        return std::make_unique<HardwareBufferImage>(physicalDevice, device, mAndroidHardwareBuffer, mAndroidSamplerYcbcrConversion);
+        return nullptr;
     }
 
 } // vklite

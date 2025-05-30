@@ -109,9 +109,9 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorMapping &DescriptorMapping::addImageInfo(const SamplerInterface &sampler, const ImageViewInterface &imageView, vk::ImageLayout imageLayout) {
-        addImageInfo(sampler.getSampler(), imageView.getImageView(), imageLayout);
-        return *this;
-    }
+//    DescriptorMapping &DescriptorMapping::addImageInfo(const SamplerInterface &sampler, const ImageViewInterface &imageView, vk::ImageLayout imageLayout) {
+//        addImageInfo(sampler.getSampler(), imageView.getImageView(), imageLayout);
+//        return *this;
+//    }
 
 } // vklite

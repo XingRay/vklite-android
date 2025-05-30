@@ -36,15 +36,11 @@ namespace vklite {
         return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).build();
     }
 
+    ImageView HardwareBufferImageViewBuilder::build(const Device &device, const Image &image) {
+        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image.getImage()).build();
+    }
+
     std::unique_ptr<ImageView> HardwareBufferImageViewBuilder::buildUnique(const Device &device, const vk::Image &image) {
-        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).buildUnique();
-    }
-
-    ImageView HardwareBufferImageViewBuilder::build(const Device &device, const ImageInterface &image) {
-        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).build();
-    }
-
-    std::unique_ptr<ImageView> HardwareBufferImageViewBuilder::buildUnique(const Device &device, const ImageInterface &image) {
         return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).buildUnique();
     }
 

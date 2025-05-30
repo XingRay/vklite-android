@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "vklite/device/Device.h"
+#include <vulkan/vulkan.hpp>
+
 #include "vklite/image/Image.h"
 
 
@@ -12,14 +13,15 @@ namespace vklite {
 
     class ImageBuilder {
     private:
+        vk::Device mDevice;
         vk::ImageCreateInfo mImageCreateInfo;
-
-        std::function<void(Image &)> mPostCreatedHandler;
 
     public:
         ImageBuilder();
 
         ~ImageBuilder();
+
+        ImageBuilder &device(vk::Device device);
 
         ImageBuilder &width(uint32_t width);
 
@@ -58,13 +60,19 @@ namespace vklite {
         //用于稀疏纹理相关的标志位
         ImageBuilder &flags(vk::ImageCreateFlags flags);
 
-        ImageBuilder &postCreated(std::function<void(Image &)> &&postCreatedHandler);
+        [[nodiscard]]
+        Image build();
 
         [[nodiscard]]
-        Image build(const PhysicalDevice& physicalDevice,const Device &device);
+        std::unique_ptr<Image> buildUnique();
 
-        [[nodiscard]]
-        std::unique_ptr<Image> buildUnique(const PhysicalDevice& physicalDevice,const Device &device);
+        ImageBuilder &asDefault();
+
+        ImageBuilder &asColorImageBuilder();
+
+        ImageBuilder &asDepthImageBuilder();
+
+        ImageBuilder &asTextureImageBuilder();
 
     public:// static
 

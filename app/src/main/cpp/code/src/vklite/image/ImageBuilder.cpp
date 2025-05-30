@@ -5,6 +5,7 @@
 #include "ImageBuilder.h"
 #include "Image.h"
 #include "vklite/util/VulkanUtil.h"
+#include "vklite/image/ImageMeta.h"
 
 namespace vklite {
 
@@ -12,6 +13,11 @@ namespace vklite {
             : mImageCreateInfo{} {}
 
     ImageBuilder::~ImageBuilder() = default;
+
+    ImageBuilder &ImageBuilder::device(vk::Device device) {
+        mDevice = device;
+        return *this;
+    }
 
     ImageBuilder &ImageBuilder::width(uint32_t width) {
         mImageCreateInfo.extent.width = width;
@@ -97,46 +103,20 @@ namespace vklite {
         return *this;
     }
 
-    ImageBuilder &ImageBuilder::postCreated(std::function<void(Image &)> &&postCreatedHandler) {
-        mPostCreatedHandler = std::move(postCreatedHandler);
-        return *this;
-    }
-
-//    Image ImageBuilder::build(const Device &device) {
-//        Image depthImage = Image(mImageBuilder.build(device));
-//        if (mPostCreatedHandler != nullptr) {
-//            mPostCreatedHandler(depthImage);
-//        }
-//        return std::move(depthImage);
-//    }
-//
-//    std::unique_ptr<Image> ImageBuilder::buildUnique(const Device &device) {
-//        std::unique_ptr<DepthImage> depthImage = std::make_unique<DepthImage>(mImageBuilder.build(device));
-//        if (mPostCreatedHandler != nullptr) {
-//            mPostCreatedHandler(*depthImage);
-//        }
-//        return depthImage;
-//    }
-
-    Image ImageBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
-        Image image = Image(physicalDevice, device, mImageCreateInfo);
-        if (mPostCreatedHandler != nullptr) {
-            mPostCreatedHandler(image);
-        }
-        return std::move(image);
+    Image ImageBuilder::build() {
+        vk::Image image = mDevice.createImage(mImageCreateInfo);
+        ImageMeta meta{mImageCreateInfo.format, mImageCreateInfo.extent, mImageCreateInfo.mipLevels};
+//        return Image(mDevice, image, meta);
+        return {mDevice, image, meta};
     }
 
     [[nodiscard]]
-    std::unique_ptr<Image> ImageBuilder::buildUnique(const PhysicalDevice &physicalDevice, const Device &device) {
-        std::unique_ptr<Image> image = std::make_unique<Image>(physicalDevice, device, mImageCreateInfo);
-        if (mPostCreatedHandler != nullptr) {
-            mPostCreatedHandler(*image);
-        }
-        return image;
+    std::unique_ptr<Image> ImageBuilder::buildUnique() {
+        return std::make_unique<Image>(build());
     }
 
-    ImageBuilder ImageBuilder::defaultImageBuilder() {
-        return ImageBuilder()
+    ImageBuilder &ImageBuilder::asDefault() {
+        return (*this)
                 .depth(1)
                 .mipLevels(1)
                 .imageType(vk::ImageType::e2D)
@@ -148,20 +128,39 @@ namespace vklite {
                 .flags(vk::ImageCreateFlags{});
     }
 
-    ImageBuilder ImageBuilder::colorImageBuilder() {
-        return defaultImageBuilder()
+    ImageBuilder &ImageBuilder::asColorImageBuilder() {
+        return (*this)
+                .asDefault()
                 .usage(vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment);
     }
 
-    ImageBuilder ImageBuilder::depthImageBuilder() {
-        return defaultImageBuilder()
+    ImageBuilder &ImageBuilder::asDepthImageBuilder() {
+        return (*this)
+                .asDefault()
                 .usage(vk::ImageUsageFlagBits::eDepthStencilAttachment);
     }
 
-    ImageBuilder ImageBuilder::textureImageBuilder() {
-        return defaultImageBuilder()
+    ImageBuilder &ImageBuilder::asTextureImageBuilder() {
+        return (*this)
+                .asDefault()
                 .usage(vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
                 .sampleCount(vk::SampleCountFlagBits::e1);
+    }
+
+    ImageBuilder ImageBuilder::defaultImageBuilder() {
+        return ImageBuilder().asDefault();
+    }
+
+    ImageBuilder ImageBuilder::colorImageBuilder() {
+        return defaultImageBuilder().asColorImageBuilder();
+    }
+
+    ImageBuilder ImageBuilder::depthImageBuilder() {
+        return defaultImageBuilder().asDepthImageBuilder();
+    }
+
+    ImageBuilder ImageBuilder::textureImageBuilder() {
+        return defaultImageBuilder().asTextureImageBuilder();
     }
 
 } // vklite

@@ -10,7 +10,6 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/image_view/ImageView.h"
-#include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
@@ -27,8 +26,6 @@ namespace vklite {
         ImageViewBuilder &device(vk::Device device);
 
         ImageViewBuilder &image(vk::Image image);
-
-        ImageViewBuilder &image(const ImageInterface& image);
 
         ImageViewBuilder &aspectMask(vk::ImageAspectFlags aspectMask);
 
@@ -59,8 +56,6 @@ namespace vklite {
         std::unique_ptr<ImageView> buildUnique();
 
         std::vector<ImageView> build(const std::vector<vk::Image> &images);
-
-        std::vector<ImageView> build(const std::vector<ImageInterface> &images);
 
     public://static
 

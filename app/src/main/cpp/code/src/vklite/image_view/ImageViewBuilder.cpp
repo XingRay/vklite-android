@@ -21,11 +21,6 @@ namespace vklite {
         return *this;
     }
 
-    ImageViewBuilder &ImageViewBuilder::image(const ImageInterface &image) {
-        mImageViewCreateInfo.image = image.getImage();
-        return *this;
-    }
-
     ImageViewBuilder &ImageViewBuilder::aspectMask(vk::ImageAspectFlags aspectMask) {
         mImageViewCreateInfo.subresourceRange.aspectMask = aspectMask;
         return *this;
@@ -100,18 +95,6 @@ namespace vklite {
         imageViews.reserve(images.size());
 
         for (const vk::Image &image: images) {
-            this->image(image);
-            imageViews.emplace_back(build());
-        }
-
-        return imageViews;
-    }
-
-    std::vector<ImageView> ImageViewBuilder::build(const std::vector<ImageInterface> &images) {
-        std::vector<ImageView> imageViews;
-        imageViews.reserve(images.size());
-
-        for (const ImageInterface &image: images) {
             this->image(image);
             imageViews.emplace_back(build());
         }

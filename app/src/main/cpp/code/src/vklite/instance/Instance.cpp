@@ -19,7 +19,7 @@ namespace vklite {
 //            const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
 //            void *pUserData);
 
-    Instance::Instance(vk::Instance instance)
+    Instance::Instance(const vk::Instance& instance)
             : mInstance(instance) {}
 
     Instance::~Instance() {

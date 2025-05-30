@@ -4,99 +4,59 @@
 
 #include "Image.h"
 #include "vklite/util/VulkanUtil.h"
+#include <utility>
 
 namespace vklite {
 
-    Image::Image(const PhysicalDevice& physicalDevice,const Device &device, const vk::ImageCreateInfo &imageCreateInfo)
-            : mDevice(device),
-              mFormat(imageCreateInfo.format),
-              mMipLevels(imageCreateInfo.mipLevels),
-              mWidth(imageCreateInfo.extent.width),
-              mHeight(imageCreateInfo.extent.height) {
-
-        const vk::Device &vkDevice = mDevice.getDevice();
-        mImage = vkDevice.createImage(imageCreateInfo);
-
-        vk::MemoryRequirements memoryRequirements = vkDevice.getImageMemoryRequirements(mImage);
-        uint32_t memoryTypeIndex = physicalDevice.findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
-
-        vk::MemoryAllocateInfo memoryAllocateInfo;
-        memoryAllocateInfo
-                .setAllocationSize(memoryRequirements.size)
-                .setMemoryTypeIndex(memoryTypeIndex);
-
-        mDeviceMemory = vkDevice.allocateMemory(memoryAllocateInfo);
-
-        vkDevice.bindImageMemory(mImage, mDeviceMemory, 0);
-    }
+    Image::Image(const vk::Device &device, const vk::Image &image, const ImageMeta &meta)
+            : mDevice(device), mImage(image), mMeta(meta) {}
 
     Image::~Image() {
-        const vk::Device &vkDevice = mDevice.getDevice();
-        if (mImage != nullptr) {
-            vkDevice.destroy(mImage);
-        }
-        if (mDeviceMemory != nullptr) {
-            vkDevice.unmapMemory(mDeviceMemory);
+        if (mDevice != nullptr && mImage != nullptr) {
+            mDevice.destroy(mImage);
+            mDevice = nullptr;
+            mImage = nullptr;
         }
     }
 
-//    vk::Format mFormat;
-//    uint32_t mMipLevels;
-//    uint32_t mWidth;
-//    uint32_t mHeight;
-//
-//    vk::Image mImage;
-//    vk::DeviceMemory mDeviceMemory;
-
     Image::Image(Image &&other) noexcept
-            : mDevice(other.mDevice),
-              mFormat(other.mFormat),
-              mMipLevels(other.mMipLevels),
-              mWidth(other.mWidth),
-              mHeight(other.mHeight),
+            : mDevice(std::exchange(other.mDevice, nullptr)),
               mImage(std::exchange(other.mImage, nullptr)),
-              mDeviceMemory(std::exchange(other.mDeviceMemory, nullptr)) {}
+              mMeta(other.mMeta) {}
 
-//    Image &Image::operator=(Image &&other) noexcept {
-//        if (this != &other) {
-//            mDevice(other.mDevice),
-//                    mMipLevels(other.mMipLevels),
-//                    mWidth(other.mWidth),
-//                    mHeight(other.mHeight),
-//                    mFormat(other.mFormat),
-//                    mImage(std::exchange(other.mImage, nullptr)),
-//                    mDeviceMemory(std::exchange(other.mDeviceMemory, nullptr)
-//        }
-//        return *this;
-//    }
+    Image &Image::operator=(Image &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mImage = std::exchange(other.mImage, nullptr);
+            mMeta = other.mMeta;
+        }
+        return *this;
+    }
 
     const vk::Image &Image::getImage() const {
         return mImage;
     }
 
-//    const vk::ImageView &Image::getImageView() const {
-//        return mImageView;
-//    }
-
     uint32_t Image::getMipLevels() const {
-        return mMipLevels;
-    }
-
-    const vk::DeviceMemory &Image::getDeviceMemory() const {
-        return mDeviceMemory;
+        return mMeta.mipLevels;
     }
 
     vk::Format Image::getFormat() const {
-        return mFormat;
+        return mMeta.format;
     }
 
 
     uint32_t Image::getWidth() const {
-        return mWidth;
+        return mMeta.extent.width;
     }
 
     uint32_t Image::getHeight() const {
-        return mHeight;
+        return mMeta.extent.height;
+    }
+
+    Image &Image::bindMemory(vk::DeviceMemory deviceMemory, vk::DeviceSize memoryOffset) {
+        mDevice.bindImageMemory(mImage, deviceMemory, memoryOffset);
+        return *this;
     }
 
     Image &Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
@@ -115,7 +75,7 @@ namespace vklite {
                 .setLayerCount(1);
 
         vk::Offset3D offset{0, 0, 0};
-        vk::Extent3D extent{mWidth, mHeight, 1};
+        vk::Extent3D extent{getWidth(), getHeight(), 1};
 
         vk::BufferImageCopy bufferImageCopy;
         bufferImageCopy
@@ -163,7 +123,7 @@ namespace vklite {
                                               uint32_t levelCount,
                                               uint32_t srcQueueFamilyIndex,
                                               uint32_t dstQueueFamilyIndex,
-                                              vk::ImageAspectFlags aspectMask) {
+                                              vk::ImageAspectFlags aspectMask)  {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -209,7 +169,7 @@ namespace vklite {
         return *this;
     }
 
-    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition) {
+    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition)  {
         recordTransitionImageLayout(commandBuffer,
                                     imageTransition.getOldImageLayout(),
                                     imageTransition.getNewImageLayout(),
@@ -248,10 +208,11 @@ namespace vklite {
                 .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
                 .setDstQueueFamilyIndex(vk::QueueFamilyIgnored);
 
-        int32_t mipWidth = static_cast<int32_t>(mWidth);
-        int32_t mipHeight = static_cast<int32_t>(mHeight);
+        int32_t mipWidth = static_cast<int32_t>(getWidth());
+        int32_t mipHeight = static_cast<int32_t>(getHeight());
+        uint32_t mipLevels = getMipLevels();
 
-        for (int i = 1; i < mMipLevels; i++) {
+        for (int i = 1; i < mipLevels; i++) {
             subresourceRange.setBaseMipLevel(i - 1);
 
             imageMemoryBarrier
@@ -339,7 +300,7 @@ namespace vklite {
             }
         }
 
-        subresourceRange.setBaseMipLevel(mMipLevels - 1);
+        subresourceRange.setBaseMipLevel(getMipLevels() - 1);
         imageMemoryBarrier
                 .setOldLayout(vk::ImageLayout::eTransferDstOptimal)
                 .setNewLayout(vk::ImageLayout::eShaderReadOnlyOptimal)

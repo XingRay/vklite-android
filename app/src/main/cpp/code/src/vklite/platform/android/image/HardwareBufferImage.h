@@ -16,32 +16,31 @@
 
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
 #include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
-#include "vklite/image/ImageInterface.h"
 
 namespace vklite {
 
-    class HardwareBufferImage : public ImageInterface {
-    private:
-        const Device &mDevice;
-
-        vk::Image mImage;
-        vk::DeviceMemory mDeviceMemory;
-        vk::ImageView mImageView;
-
-    public:
-        HardwareBufferImage(const PhysicalDevice &physicalDevice,
-                            const Device &device,
-                            const HardwareBuffer &androidHardwareBuffer,
-                            const HardwareBufferYcbcrConversion &conversion);
-
-        ~HardwareBufferImage() override;
-
-        [[nodiscard]]
-        const vk::Image &getImage() const override;
-
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
-
-    };
+//    class HardwareBufferImage {
+//    private:
+//        const Device &mDevice;
+//
+//        vk::Image mImage;
+//        vk::DeviceMemory mDeviceMemory;
+//        vk::ImageView mImageView;
+//
+//    public:
+//        HardwareBufferImage(const PhysicalDevice &physicalDevice,
+//                            const Device &device,
+//                            const HardwareBuffer &androidHardwareBuffer,
+//                            const HardwareBufferYcbcrConversion &conversion);
+//
+//        ~HardwareBufferImage();
+//
+//        [[nodiscard]]
+//        const vk::Image &getImage() const;
+//
+//        [[nodiscard]]
+//        const vk::DeviceMemory &getDeviceMemory() const;
+//
+//    };
 
 } // vklite

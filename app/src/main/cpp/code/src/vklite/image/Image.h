@@ -8,27 +8,21 @@
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/buffer/host_visible/StagingBuffer.h"
-#include "vklite/image/ImageInterface.h"
 #include "vklite/image/ImageTransition.h"
+#include "vklite/image/ImageMeta.h"
 
 namespace vklite {
 
-    class Image : public ImageInterface {
+    class Image {
     private:
-        const Device &mDevice;
-
-        vk::Format mFormat;
-        uint32_t mMipLevels;
-        uint32_t mWidth;
-        uint32_t mHeight;
-
+        vk::Device mDevice;
         vk::Image mImage;
-        vk::DeviceMemory mDeviceMemory;
+        ImageMeta mMeta;
 
     public:
-        Image(const PhysicalDevice& physicalDevice,const Device &device, const vk::ImageCreateInfo &imageCreateInfo);
+        Image(const vk::Device &device, const vk::Image &image, const ImageMeta &meta);
 
-        ~Image() override;
+        ~Image();
 
         Image(const Image &other) = delete;
 
@@ -36,16 +30,13 @@ namespace vklite {
 
         Image(Image &&other) noexcept;
 
-        Image &operator=(Image &&other) noexcept = delete;
+        Image &operator=(Image &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Image &getImage() const override;
+        const vk::Image &getImage() const;
 
         [[nodiscard]]
         uint32_t getMipLevels() const;
-
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
 
         [[nodiscard]]
         vk::Format getFormat() const;
@@ -56,6 +47,7 @@ namespace vklite {
         [[nodiscard]]
         uint32_t getHeight() const;
 
+        Image &bindMemory(vk::DeviceMemory deviceMemory, vk::DeviceSize memoryOffset = 0);
 
         // copy data from buffer
         Image &copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer);

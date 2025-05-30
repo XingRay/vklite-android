@@ -6,9 +6,9 @@
 
 #include <memory>
 
-#include "vklite/image/ImageInterface.h"
 #include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
+#include "vklite/image/Image.h"
 
 namespace vklite {
 
@@ -23,7 +23,7 @@ namespace vklite {
 
         ~HardwareBufferImageBuilder();
 
-        std::unique_ptr<ImageInterface> build(const PhysicalDevice& physicalDevice,const Device &device, uint32_t width, uint32_t height, vk::Format format);
+        std::unique_ptr<Image> build(const PhysicalDevice &physicalDevice, const Device &device, uint32_t width, uint32_t height, vk::Format format);
     };
 
 } // vklite
