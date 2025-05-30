@@ -13,16 +13,19 @@ namespace vklite {
 
     class FrameBufferBuilder {
     private:
+        vk::Device mDevice;
+        vk::FramebufferCreateInfo mFramebufferCreateInfo;
 
-        uint32_t mWidth;
-        uint32_t mHeight;
-        uint32_t mLayers;
         std::vector<vk::ImageView> mAttachments;
 
     public:
         FrameBufferBuilder();
 
         ~FrameBufferBuilder();
+
+        FrameBufferBuilder &device(vk::Device device);
+
+        FrameBufferBuilder &renderPass(vk::RenderPass renderPass);
 
         FrameBufferBuilder &width(uint32_t width);
 
@@ -37,10 +40,10 @@ namespace vklite {
         FrameBufferBuilder &addAttachmentIf(bool condition, const std::function<vk::ImageView()> &attachment);
 
         [[nodiscard]]
-        FrameBuffer build(const Device &device, const RenderPass &renderPass);
+        FrameBuffer build();
 
         [[nodiscard]]
-        std::unique_ptr<FrameBuffer> buildUnique(const Device &device, const RenderPass &renderPass);
+        std::unique_ptr<FrameBuffer> buildUnique();
     };
 
 } // vklite

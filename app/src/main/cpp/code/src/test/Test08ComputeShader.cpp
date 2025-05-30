@@ -178,13 +178,15 @@ namespace test08 {
                 .count(mDisplayImageViews.size())
                 .frameBufferBuilder([&](uint32_t index) {
                     return vklite::FrameBufferBuilder()
+                            .device(mDevice->getDevice())
+                            .renderPass(mRenderPass->getRenderPass())
                             .width(mSwapchain->getDisplaySize().width)
                             .height(mSwapchain->getDisplaySize().height)
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                             .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView().getImageView(); })
                             .addAttachment(mDisplayImageViews[index].getImageView())
                             .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView().getImageView(); })
-                            .build(*mDevice, *mRenderPass);
+                            .build();
                 })
                 .build();
 
