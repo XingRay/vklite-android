@@ -6,10 +6,19 @@
 
 namespace vklite {
 
-    RenderPassBuilder::RenderPassBuilder()
-            : mRenderArea(vk::Rect2D{}), mSubpassContents(vk::SubpassContents::eInline) {};
+    RenderPassBuilder::RenderPassBuilder() = default;
 
     RenderPassBuilder::~RenderPassBuilder() = default;
+
+    RenderPassBuilder &RenderPassBuilder::device(vk::Device device) {
+        mDevice = device;
+        return *this;
+    }
+
+    RenderPassBuilder &RenderPassBuilder::flags(vk::RenderPassCreateFlags flags) {
+        mRenderPassCreateInfo.setFlags(flags);
+        return *this;
+    }
 
     RenderPassBuilder &RenderPassBuilder::addSubpass(const std::function<void(Subpass &subpass, const std::vector<Subpass> &subpasses)> &configure) {
         if (mAddAttachmentInvoked) {
@@ -43,7 +52,7 @@ namespace vklite {
     }
 
     RenderPassBuilder &RenderPassBuilder::renderArea(vk::Rect2D renderArea) {
-        mRenderArea = renderArea;
+        mRenderPassBeginInfo.getBeginInfo().renderArea = renderArea;
         return *this;
     }
 
@@ -53,7 +62,7 @@ namespace vklite {
     }
 
     RenderPassBuilder &RenderPassBuilder::renderAreaOffset(vk::Offset2D offset) {
-        mRenderArea.setOffset(offset);
+        mRenderPassBeginInfo.getBeginInfo().renderArea.setOffset(offset);
         return *this;
     }
 
@@ -63,7 +72,7 @@ namespace vklite {
     }
 
     RenderPassBuilder &RenderPassBuilder::renderAreaExtend(vk::Extent2D extent) {
-        mRenderArea.setExtent(extent);
+        mRenderPassBeginInfo.getBeginInfo().renderArea.setExtent(extent);
         return *this;
     }
 
@@ -73,16 +82,22 @@ namespace vklite {
     }
 
     RenderPassBuilder &RenderPassBuilder::subpassContents(vk::SubpassContents subpassContents) {
-        mSubpassContents = subpassContents;
+        mRenderPassBeginInfo.subpassContents(subpassContents);
         return *this;
     }
 
-    std::unique_ptr<RenderPass> RenderPassBuilder::buildUnique(const Device &device) {
+    RenderPass RenderPassBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("mDevice== nullptr , must invoke RenderPassBuilder::device(vk::Device device) ");
+        }
+
         std::vector<vk::AttachmentDescription> attachmentDescriptions;
         attachmentDescriptions.reserve(mAttachments.size());
         for (const Attachment &attachment: mAttachments) {
             attachmentDescriptions.push_back(attachment.createAttachmentDescription());
         }
+        mRenderPassCreateInfo.setAttachments(attachmentDescriptions);
+
 
         std::vector<SubpassDescription> subpassDescriptions;
         subpassDescriptions.reserve(mSubpasses.size());
@@ -95,6 +110,8 @@ namespace vklite {
         for (const SubpassDescription &subpassDescription: subpassDescriptions) {
             vkSubpassDescriptions.push_back(subpassDescription.createSubpassDescription());
         }
+        mRenderPassCreateInfo.setSubpasses(vkSubpassDescriptions);
+
 
         std::vector<vk::SubpassDependency> subpassDependencies;
         for (const Subpass &subpass: mSubpasses) {
@@ -104,48 +121,25 @@ namespace vklite {
                                        std::make_move_iterator(dependencies.end())
             );
         }
+        mRenderPassCreateInfo.setDependencies(subpassDependencies);
+
 
         std::vector<vk::ClearValue> clearValues;
+        clearValues.reserve(mAttachments.size());
         for (const Attachment &attachment: mAttachments) {
             clearValues.push_back(attachment.getClearValue());
         }
-        return std::make_unique<RenderPass>(device, attachmentDescriptions, vkSubpassDescriptions, subpassDependencies, std::move(clearValues), mRenderArea, mSubpassContents);
+        mRenderPassBeginInfo.clearValues(std::move(clearValues));
+
+
+        vk::RenderPass renderPass = mDevice.createRenderPass(mRenderPassCreateInfo);
+
+//        return RenderPass(mDevice, renderPass, std::move(mRenderPassBeginInfo));
+        return {mDevice, renderPass, std::move(mRenderPassBeginInfo)};
     }
 
-    RenderPass RenderPassBuilder::build(const Device &device) {
-        std::vector<vk::AttachmentDescription> attachmentDescriptions;
-        attachmentDescriptions.reserve(mAttachments.size());
-        for (const Attachment &attachment: mAttachments) {
-            attachmentDescriptions.push_back(attachment.createAttachmentDescription());
-        }
-
-        std::vector<SubpassDescription> subpassDescriptions;
-        subpassDescriptions.reserve(mSubpasses.size());
-        for (const Subpass &subpass: mSubpasses) {
-            subpassDescriptions.push_back(subpass.createSubpassDescription());
-        }
-
-        std::vector<vk::SubpassDescription> vkSubpassDescriptions;
-        vkSubpassDescriptions.reserve(subpassDescriptions.size());
-        for (const SubpassDescription &subpassDescription: subpassDescriptions) {
-            vkSubpassDescriptions.push_back(subpassDescription.createSubpassDescription());
-        }
-
-        std::vector<vk::SubpassDependency> subpassDependencies;
-        for (const Subpass &subpass: mSubpasses) {
-            std::vector<vk::SubpassDependency> dependencies = subpass.createSubpassDependencies();
-            subpassDependencies.insert(subpassDependencies.end(),
-                                       std::make_move_iterator(dependencies.begin()),
-                                       std::make_move_iterator(dependencies.end())
-            );
-        }
-
-        std::vector<vk::ClearValue> clearValues;
-        for (const Attachment &attachment: mAttachments) {
-            clearValues.push_back(attachment.getClearValue());
-        }
-//        return RenderPass(device, attachmentDescriptions, vkSubpassDescriptions, subpassDependencies, std::move(clearValues), mRenderArea, mSubpassContents);
-        return {device, attachmentDescriptions, vkSubpassDescriptions, subpassDependencies, std::move(clearValues), mRenderArea, mSubpassContents};
+    std::unique_ptr<RenderPass> RenderPassBuilder::buildUnique() {
+        return std::make_unique<RenderPass>(build());
     }
 
 } // vklite

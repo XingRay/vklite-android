@@ -5,38 +5,40 @@
 #include "RenderPass.h"
 #include "vklite/util/VulkanUtil.h"
 
+#include <utility>
+
 namespace vklite {
 
-    RenderPass::RenderPass(const Device &device,
-                           const std::vector<vk::AttachmentDescription> &attachmentDescriptions,
-                           const std::vector<vk::SubpassDescription> &subpassDescriptions,
-                           const std::vector<vk::SubpassDependency> &subpassDependencies,
-                           std::vector<vk::ClearValue> &&clearValues,
-                           vk::Rect2D renderArea,
-                           vk::SubpassContents subpassContents)
-            : mDevice(device), mClearValues(std::move(clearValues)), mSubpassContents(subpassContents) {
-        LOG_D("RenderPass::RenderPass");
-
-        vk::RenderPassCreateInfo renderPassCreateInfo{};
-        renderPassCreateInfo
-                .setFlags(vk::RenderPassCreateFlags{})
-                .setAttachments(attachmentDescriptions)
-                .setSubpasses(subpassDescriptions)
-                .setDependencies(subpassDependencies);
-
-        mRenderPass = device.getDevice().createRenderPass(renderPassCreateInfo);
-
-        mBeginInfo
-                .setRenderPass(mRenderPass)
-                        // 引用
-                .setClearValues(mClearValues)
-                        // 复制
-                .setRenderArea(renderArea);
+    RenderPass::RenderPass(const vk::Device &device, const vk::RenderPass &renderPass, RenderPassBeginInfo &&beginInfo)
+            : mDevice(device), mRenderPass(renderPass), mBeginInfo(std::move(beginInfo)) {
+        mBeginInfo.getBeginInfo().renderPass = mRenderPass;
     }
 
     RenderPass::~RenderPass() {
-        LOG_D("RenderPass::~RenderPass");
-        mDevice.getDevice().destroy(mRenderPass);
+        if (mDevice != nullptr && mRenderPass != nullptr) {
+            mDevice.destroy(mRenderPass);
+            mDevice = nullptr;
+            mRenderPass = nullptr;
+        }
+    }
+
+    RenderPass::RenderPass(RenderPass &&other) noexcept
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mRenderPass(std::exchange(other.mRenderPass, nullptr)),
+              mBeginInfo(std::move(other.mBeginInfo)) {
+
+        mBeginInfo.getBeginInfo().renderPass = mRenderPass;
+    }
+
+    RenderPass &RenderPass::operator=(RenderPass &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mRenderPass = std::exchange(other.mRenderPass, nullptr);
+            mBeginInfo = std::move(other.mBeginInfo);
+
+            mBeginInfo.getBeginInfo().renderPass = mRenderPass;
+        }
+        return *this;
     }
 
     const vk::RenderPass &RenderPass::getRenderPass() const {
@@ -44,7 +46,7 @@ namespace vklite {
     }
 
     RenderPass &RenderPass::renderArea(vk::Rect2D renderArea) {
-        mBeginInfo.setRenderArea(renderArea);
+        mBeginInfo.getBeginInfo().setRenderArea(renderArea);
         return *this;
     }
 
@@ -54,7 +56,7 @@ namespace vklite {
     }
 
     RenderPass &RenderPass::renderAreaOffset(vk::Offset2D offset) {
-        mBeginInfo.renderArea.setOffset(offset);
+        mBeginInfo.getBeginInfo().renderArea.setOffset(offset);
         return *this;
     }
 
@@ -64,7 +66,7 @@ namespace vklite {
     }
 
     RenderPass &RenderPass::renderAreaExtend(vk::Extent2D extent) {
-        mBeginInfo.renderArea.setExtent(extent);
+        mBeginInfo.getBeginInfo().renderArea.setExtent(extent);
         return *this;
     }
 
@@ -74,24 +76,23 @@ namespace vklite {
     }
 
     RenderPass &RenderPass::subpassContents(vk::SubpassContents subpassContents) {
-        mSubpassContents = subpassContents;
+        mBeginInfo.subpassContents(subpassContents);
         return *this;
     }
 
-    RenderPass &RenderPass::clearValues(std::vector<vk::ClearValue> clearValues) {
-        mClearValues = std::move(clearValues);
-        mBeginInfo.setClearValues(mClearValues);
+    RenderPass &RenderPass::clearValues(std::vector<vk::ClearValue> &&clearValues) {
+        mBeginInfo.clearValues(std::move(clearValues));
         return *this;
     }
 
-    RenderPass &RenderPass::clearValue(size_t index, vk::ClearValue clearValue) {
-        mClearValues[index] = clearValue;
+    RenderPass &RenderPass::updateClearValue(size_t index, vk::ClearValue clearValue) {
+        mBeginInfo.updateClearValue(index, clearValue);
         return *this;
     }
 
     void RenderPass::execute(const vk::CommandBuffer &commandBuffer, const vk::Framebuffer &framebuffer, std::function<void(const vk::CommandBuffer &commandBuffer)> handler) {
-        mBeginInfo.setFramebuffer(framebuffer);
-        commandBuffer.beginRenderPass(&mBeginInfo, mSubpassContents);
+        mBeginInfo.getBeginInfo().setFramebuffer(framebuffer);
+        commandBuffer.beginRenderPass(&(mBeginInfo.getBeginInfo()), mBeginInfo.getSubpassContents());
         handler(commandBuffer);
         commandBuffer.endRenderPass();
     }

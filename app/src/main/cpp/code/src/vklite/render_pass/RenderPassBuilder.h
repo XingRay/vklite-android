@@ -10,24 +10,30 @@
 #include "vklite/render_pass/RenderPass.h"
 #include "vklite/render_pass/subpass/Subpass.h"
 #include "vklite/render_pass/attachment/Attachment.h"
+#include "vklite/render_pass/RenderPassBeginInfo.h"
 
 namespace vklite {
 
     class RenderPassBuilder {
     private:
+        vk::Device mDevice;
+        vk::RenderPassCreateInfo mRenderPassCreateInfo;
+
         std::vector<Subpass> mSubpasses;
         std::vector<Attachment> mAttachments;
 
         bool mAddAttachmentInvoked = false;
 
-        std::vector<vk::ClearValue> mClearValues;
-        vk::Rect2D mRenderArea;
-        vk::SubpassContents mSubpassContents;
+        RenderPassBeginInfo mRenderPassBeginInfo;
 
     public:
         RenderPassBuilder();
 
         ~RenderPassBuilder();
+
+        RenderPassBuilder &device(vk::Device device);
+
+        RenderPassBuilder &flags(vk::RenderPassCreateFlags flags);
 
         RenderPassBuilder &addSubpass(const std::function<void(Subpass &subpass, const std::vector<Subpass> &subpasses)> &configure);
 
@@ -49,9 +55,9 @@ namespace vklite {
 
         RenderPassBuilder &subpassContents(vk::SubpassContents subpassContents);
 
-        std::unique_ptr<RenderPass> buildUnique(const Device &device);
+        RenderPass build();
 
-        RenderPass build(const Device &device);
+        std::unique_ptr<RenderPass> buildUnique();
     };
 
 } // vklite

@@ -134,6 +134,8 @@ namespace test08 {
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
         mRenderPass = vklite::RenderPassBuilder()
+                .device(mDevice->getDevice())
+                .renderAreaExtend(mSwapchain->getDisplaySize())
                 .addSubpass([&](vklite::Subpass &Subpass, const std::vector<vklite::Subpass> &subpasses) {
                     Subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
@@ -170,8 +172,7 @@ namespace test08 {
                             .format(mPhysicalDevice->findDepthFormat())
                             .asDepthStencilAttachmentUsedIn(subpasses[0], vk::ImageLayout::eDepthStencilAttachmentOptimal);
                 })
-                .renderAreaExtend(mSwapchain->getDisplaySize())
-                .buildUnique(*mDevice);
+                .buildUnique();
 
         mFrameBuffers = vklite::FrameBuffersBuilder()
                 .count(mDisplayImageViews.size())

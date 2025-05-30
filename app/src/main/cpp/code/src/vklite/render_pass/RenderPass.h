@@ -6,8 +6,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/Device.h"
-#include "vklite/swapchain/Swapchain.h"
+#include "vklite/render_pass/RenderPassBeginInfo.h"
 #include "vklite/Log.h"
 
 namespace vklite {
@@ -15,23 +14,22 @@ namespace vklite {
     class RenderPass {
 
     private://fields
-        const Device &mDevice;
+        vk::Device mDevice;
         vk::RenderPass mRenderPass;
-
-        std::vector<vk::ClearValue> mClearValues;
-        vk::RenderPassBeginInfo mBeginInfo;
-        vk::SubpassContents mSubpassContents;
+        RenderPassBeginInfo mBeginInfo;
 
     public://methods
-        RenderPass(const Device &device,
-                   const std::vector<vk::AttachmentDescription> &attachmentDescriptions,
-                   const std::vector<vk::SubpassDescription> &subpassDescriptions,
-                   const std::vector<vk::SubpassDependency> &subpassDependencies,
-                   std::vector<vk::ClearValue> &&clearValues,
-                   vk::Rect2D renderArea,
-                   vk::SubpassContents subpassContents);
+        RenderPass(const vk::Device &device, const vk::RenderPass &renderPass, RenderPassBeginInfo &&beginInfo);
 
         ~RenderPass();
+
+        RenderPass(const RenderPass &other) = delete;
+
+        RenderPass &operator=(const RenderPass &other) = delete;
+
+        RenderPass(RenderPass &&other) noexcept;
+
+        RenderPass &operator=(RenderPass &&other) noexcept;
 
         [[nodiscard]]
         const vk::RenderPass &getRenderPass() const;
@@ -50,9 +48,9 @@ namespace vklite {
 
         RenderPass &subpassContents(vk::SubpassContents subpassContents);
 
-        RenderPass &clearValues(std::vector<vk::ClearValue> clearValues);
+        RenderPass &clearValues(std::vector<vk::ClearValue> &&clearValues);
 
-        RenderPass &clearValue(size_t index, vk::ClearValue clearValue);
+        RenderPass &updateClearValue(size_t index, vk::ClearValue clearValue);
 
         void execute(const vk::CommandBuffer &, const vk::Framebuffer &framebuffer,
                      std::function<void(const vk::CommandBuffer &commandBuffer)> handler);
