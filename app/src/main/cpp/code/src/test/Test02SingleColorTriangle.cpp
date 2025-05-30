@@ -363,9 +363,9 @@ namespace test02 {
 //        }
 //
 //        if (result != vk::Result::eSuccess) {
-//            if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFrameBufferResized) {
-//                mFrameBufferResized = false;
-//                LOG_E("presentKHR: eErrorOutOfDateKHR or eSuboptimalKHR or mFrameBufferResized, recreateSwapChain");
+//            if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFramebufferResized) {
+//                mFramebufferResized = false;
+//                LOG_E("presentKHR: eErrorOutOfDateKHR or eSuboptimalKHR or mFramebufferResized, recreateSwapChain");
 //                // todo: recreateSwapChain
 ////                recreateSwapChain();
 //                return;

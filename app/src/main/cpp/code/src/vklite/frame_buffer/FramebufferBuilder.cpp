@@ -67,10 +67,10 @@ namespace vklite {
 
         // create vk::Framebuffer
         mFramebufferCreateInfo.setAttachments(mAttachments);
-        vk::Framebuffer mFrameBuffer = mDevice.createFramebuffer(mFramebufferCreateInfo);
+        vk::Framebuffer mFramebuffer = mDevice.createFramebuffer(mFramebufferCreateInfo);
 
-//        return FrameBuffer(mDevice, mFrameBuffer);
-        return {mDevice, mFrameBuffer};
+//        return FrameBuffer(mDevice, mFramebuffer);
+        return {mDevice, mFramebuffer};
     }
 
     std::unique_ptr<Framebuffer> FramebufferBuilder::buildUnique() {

@@ -45,7 +45,7 @@ namespace test08 {
 
         //status
         uint32_t mCurrentFrameIndex = 0;
-        bool mFrameBufferResized = false;
+        bool mFramebufferResized = false;
         util::Timer mTimer;
 
         // vk instance

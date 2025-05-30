@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Framebuffer &Framebuffer::getFrameBuffer() const {
+    const vk::Framebuffer &Framebuffer::getFramebuffer() const {
         return mFramebuffer;
     }
 

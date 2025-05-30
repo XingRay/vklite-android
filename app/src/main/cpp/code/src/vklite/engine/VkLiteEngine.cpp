@@ -38,7 +38,7 @@ namespace vklite {
         mGraphicsPipeline = std::move(graphicsPipeline);
         mComputePipeline = std::move(computePipeline);
         mPipelineResources = std::move(pipelineResources);
-        mFrameBuffer = std::move(frameBuffer);
+        mFramebuffer = std::move(frameBuffer);
         mSyncObject = std::move(syncObject);
         mFrameCount = frameCount;
 
@@ -73,8 +73,8 @@ namespace vklite {
         if (mComputePipeline == nullptr) {
             LOG_W("mComputePipeline is null");
         }
-        if (mFrameBuffer == nullptr) {
-            throw std::runtime_error("mFrameBuffer == nullptr");
+        if (mFramebuffer == nullptr) {
+            throw std::runtime_error("mFramebuffer == nullptr");
         }
         if (mSyncObject == nullptr) {
             throw std::runtime_error("mSyncObject == nullptr");
@@ -88,7 +88,7 @@ namespace vklite {
 
         mSyncObject.reset();
 
-        mFrameBuffer.reset();
+        mFramebuffer.reset();
 
         mGraphicsPipeline.reset();
         mComputePipeline.reset();
@@ -229,7 +229,7 @@ namespace vklite {
         vk::RenderPassBeginInfo renderPassBeginInfo{};
         renderPassBeginInfo
                 .setRenderPass(mRenderPass->getRenderPass())
-//                .setFramebuffer(mFrameBuffer->getFramebuffers()[imageIndex])
+//                .setFramebuffer(mFramebuffer->getFramebuffers()[imageIndex])
                 .setRenderArea(renderArea)
                 .setClearValues(clearValues);
         /**
@@ -275,7 +275,7 @@ namespace vklite {
                 .setSwapchains(swapChains)
                 .setImageIndices(imageIndices);
 
-//    std::cout << "presentKHR, mFrameBufferResized:" << mFrameBufferResized << std::endl;
+//    std::cout << "presentKHR, mFramebufferResized:" << mFramebufferResized << std::endl;
 
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
         // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
@@ -287,9 +287,9 @@ namespace vklite {
         }
 
         if (result != vk::Result::eSuccess) {
-            if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFrameBufferResized) {
-                mFrameBufferResized = false;
-                LOG_E("presentKHR: eErrorOutOfDateKHR or eSuboptimalKHR or mFrameBufferResized, recreateSwapChain");
+            if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFramebufferResized) {
+                mFramebufferResized = false;
+                LOG_E("presentKHR: eErrorOutOfDateKHR or eSuboptimalKHR or mFramebufferResized, recreateSwapChain");
                 recreateSwapChain();
                 return;
             } else {

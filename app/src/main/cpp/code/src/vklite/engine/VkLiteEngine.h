@@ -34,7 +34,7 @@ namespace vklite {
 
     class VkLiteEngine {
     private:
-        bool mFrameBufferResized = false;
+        bool mFramebufferResized = false;
         uint32_t mFrameCount = 2;
         uint32_t mCurrentFrameIndex = 0;
 //        const std::array<float, 4> mClearColor = {0.05f, 0.05f, 0.05f, 1.0f};
@@ -55,7 +55,7 @@ namespace vklite {
         std::vector<PipelineResource> mPipelineResources;
 
         std::unique_ptr<CommandPool> mCommandPool;
-        std::unique_ptr<Framebuffer> mFrameBuffer;
+        std::unique_ptr<Framebuffer> mFramebuffer;
 
         std::unique_ptr<SyncObject> mSyncObject;
 

@@ -40,7 +40,7 @@ namespace test02 {
 //
 //        //status
 //        uint32_t mCurrentFrameIndex = 0;
-//        bool mFrameBufferResized = false;
+//        bool mFramebufferResized = false;
 //
 //        std::unique_ptr<vklite::Instance> mInstance;
 //        std::unique_ptr<vklite::Surface> mSurface;
