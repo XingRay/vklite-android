@@ -57,6 +57,12 @@ namespace vklite {
 
         std::vector<ImageView> build(const std::vector<vk::Image> &images);
 
+        ImageViewBuilder &asDefault();
+
+        ImageViewBuilder &asColorImageViewBuilder();
+
+        ImageViewBuilder &asDepthImageViewBuilder();
+        
     public://static
 
         static ImageViewBuilder defaultImageViewBuilder();

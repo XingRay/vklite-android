@@ -69,8 +69,7 @@ namespace test08 {
 
         std::vector<vklite::ImageView> mDisplayImageViews;
 
-        std::unique_ptr<vklite::CombinedMemoryImage> mColorImage;
-        std::unique_ptr<vklite::ImageView> mColorImageView;
+        std::unique_ptr<vklite::CombinedImageView> mColorImageView;
 
         std::unique_ptr<vklite::CombinedMemoryImage> mDepthImage;
         std::unique_ptr<vklite::ImageView> mDepthImageView;

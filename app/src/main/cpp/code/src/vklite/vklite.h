@@ -87,10 +87,6 @@
 #include "vklite/device_memory/DeviceMemory.h"
 #include "vklite/device_memory/DeviceMemoryBuilder.h"
 
-// combined memory image
-#include "vklite/combined/combined_memory_image/CombinedMemoryImage.h"
-#include "vklite/combined/combined_memory_image/CombinedMemoryImageBuilder.h"
-
 // image view
 #include "vklite/image_view/ImageView.h"
 #include "vklite/image_view/ImageViewBuilder.h"
@@ -106,3 +102,10 @@
 
 // util
 #include "vklite/util/VulkanUtil.h"
+
+// combined
+#include "vklite/combined/combined_memory_image/CombinedMemoryImage.h"
+#include "vklite/combined/combined_memory_image/CombinedMemoryImageBuilder.h"
+
+#include "vklite/combined/combined_image_view/CombinedImageView.h"
+#include "vklite/combined/combined_image_view/CombinedImageViewBuilder.h"

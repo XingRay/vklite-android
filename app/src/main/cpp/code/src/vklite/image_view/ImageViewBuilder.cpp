@@ -102,8 +102,8 @@ namespace vklite {
         return imageViews;
     }
 
-    ImageViewBuilder ImageViewBuilder::defaultImageViewBuilder() {
-        return ImageViewBuilder()
+    ImageViewBuilder &ImageViewBuilder::asDefault() {
+        return (*this)
                 .baseMipLevel(0)
                 .levelCount(1)
                 .baseArrayLayer(0)
@@ -116,14 +116,28 @@ namespace vklite {
                 .format(vk::Format::eUndefined);
     }
 
-    ImageViewBuilder ImageViewBuilder::colorImageViewBuilder() {
-        return defaultImageViewBuilder()
+    ImageViewBuilder &ImageViewBuilder::asColorImageViewBuilder() {
+        return (*this)
+                .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eColor);
     }
 
-    ImageViewBuilder ImageViewBuilder::depthImageViewBuilder() {
-        return defaultImageViewBuilder()
+    ImageViewBuilder &ImageViewBuilder::asDepthImageViewBuilder() {
+        return (*this)
+                .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eDepth);
+    }
+
+    ImageViewBuilder ImageViewBuilder::defaultImageViewBuilder() {
+        return ImageViewBuilder().asDefault();
+    }
+
+    ImageViewBuilder ImageViewBuilder::colorImageViewBuilder() {
+        return ImageViewBuilder().asColorImageViewBuilder();
+    }
+
+    ImageViewBuilder ImageViewBuilder::depthImageViewBuilder() {
+        return ImageViewBuilder().asDepthImageViewBuilder();
     }
 
 } // vklite

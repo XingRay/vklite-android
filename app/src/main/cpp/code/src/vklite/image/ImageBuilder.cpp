@@ -152,15 +152,15 @@ namespace vklite {
     }
 
     ImageBuilder ImageBuilder::colorImageBuilder() {
-        return defaultImageBuilder().asColorImageBuilder();
+        return ImageBuilder().asColorImageBuilder();
     }
 
     ImageBuilder ImageBuilder::depthImageBuilder() {
-        return defaultImageBuilder().asDepthImageBuilder();
+        return ImageBuilder().asDepthImageBuilder();
     }
 
     ImageBuilder ImageBuilder::textureImageBuilder() {
-        return defaultImageBuilder().asTextureImageBuilder();
+        return ImageBuilder().asTextureImageBuilder();
     }
 
 } // vklite
