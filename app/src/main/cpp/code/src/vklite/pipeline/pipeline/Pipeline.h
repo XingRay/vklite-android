@@ -8,24 +8,24 @@
 
 namespace vklite {
 
-    class GraphicsPipeline {
+    class Pipeline {
     private:
         vk::Device mDevice;
         vk::Pipeline mPipeline;
 
     public:
 
-        GraphicsPipeline(vk::Device device, vk::Pipeline pipeline);
+        Pipeline(vk::Device device, vk::Pipeline pipeline);
 
-        ~GraphicsPipeline();
+        ~Pipeline();
 
-        GraphicsPipeline(const GraphicsPipeline &other) = delete;
+        Pipeline(const Pipeline &other) = delete;
 
-        GraphicsPipeline &operator=(const GraphicsPipeline &other) = delete;
+        Pipeline &operator=(const Pipeline &other) = delete;
 
-        GraphicsPipeline(GraphicsPipeline &&other) noexcept;
+        Pipeline(Pipeline &&other) noexcept;
 
-        GraphicsPipeline &operator=(GraphicsPipeline &&other) noexcept;
+        Pipeline &operator=(Pipeline &&other) noexcept;
 
         [[nodiscard]]
         const vk::Pipeline &getPipeline() const;

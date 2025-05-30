@@ -9,7 +9,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/pipeline/compute_pipeline/ComputePipeline.h"
+#include "ComputePipeline.h"
 
 namespace vklite {
 

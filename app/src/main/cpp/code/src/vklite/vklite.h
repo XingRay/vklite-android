@@ -61,13 +61,11 @@
 #include "vklite/pipeline/pipeline_resource/PipelineResourceBuilder.h"
 #include "vklite/pipeline/pipeline_resource/PipelineResourcesBuilder.h"
 
-// graphic pipeline
-#include "vklite/pipeline/graphics_pipeline/GraphicsPipeline.h"
-#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
-
-//compute pipeline
-#include "vklite/pipeline/compute_pipeline/ComputePipeline.h"
-#include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
+// pipeline
+#include "vklite/pipeline/pipeline/Pipeline.h"
+#include "vklite/pipeline/pipeline/GraphicsPipelineBuilder.h"
+#include "vklite/pipeline/pipeline/ComputePipeline.h"
+#include "vklite/pipeline/pipeline/ComputePipelineBuilder.h"
 
 // vertex buffer
 #include "vklite/vertex_buffer/VertexBuffer.h"

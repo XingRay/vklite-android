@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "GraphicsPipeline.h"
+#include "Pipeline.h"
 #include "vklite/pipeline/vertex/VertexConfigure.h"
 #include "vklite/index_buffer/IndexBufferBuilder.h"
 #include "vklite/pipeline/push_constants/PushConstantConfigures.h"
@@ -88,10 +88,10 @@ namespace vklite {
         GraphicsPipelineBuilder &depthTestEnable(bool depthTestEnable);
 
         [[nodiscard]]
-        GraphicsPipeline build();
+        Pipeline build();
 
         [[nodiscard]]
-        std::unique_ptr<GraphicsPipeline> buildUnique();
+        std::unique_ptr<Pipeline> buildUnique();
     };
 
 } // vklite

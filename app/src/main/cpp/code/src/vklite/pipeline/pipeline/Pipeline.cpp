@@ -2,16 +2,16 @@
 // Created by leixing on 2024/12/28.
 //
 
-#include "GraphicsPipeline.h"
+#include "Pipeline.h"
 
 #include <utility>
 
 namespace vklite {
 
-    GraphicsPipeline::GraphicsPipeline(vk::Device device, vk::Pipeline pipeline)
+    Pipeline::Pipeline(vk::Device device, vk::Pipeline pipeline)
             : mDevice(device), mPipeline(pipeline) {}
 
-    GraphicsPipeline::~GraphicsPipeline() {
+    Pipeline::~Pipeline() {
         if (mDevice != nullptr && mPipeline != nullptr) {
             mDevice.destroy(mPipeline);
             mDevice = nullptr;
@@ -19,11 +19,11 @@ namespace vklite {
         }
     }
 
-    GraphicsPipeline::GraphicsPipeline(GraphicsPipeline &&other) noexcept
+    Pipeline::Pipeline(Pipeline &&other) noexcept
             : mDevice(std::exchange(other.mDevice, nullptr)),
               mPipeline(std::exchange(other.mPipeline, nullptr)) {}
 
-    GraphicsPipeline &GraphicsPipeline::operator=(GraphicsPipeline &&other) noexcept {
+    Pipeline &Pipeline::operator=(Pipeline &&other) noexcept {
         if (this != &other) {
             mDevice = std::exchange(other.mDevice, nullptr);
             mPipeline = std::exchange(other.mPipeline, nullptr);
@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Pipeline &GraphicsPipeline::getPipeline() const {
+    const vk::Pipeline &Pipeline::getPipeline() const {
         return mPipeline;
     }
 

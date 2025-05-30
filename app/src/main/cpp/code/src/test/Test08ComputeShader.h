@@ -82,7 +82,7 @@ namespace test08 {
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
 
-        std::unique_ptr<vklite::GraphicsPipeline> mGraphicsPipeline;
+        std::unique_ptr<vklite::Pipeline> mGraphicsPipeline;
         std::unique_ptr<vklite::DescriptorPool> mGraphicsDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mGraphicsPipelineLayout;
         std::vector<vklite::PipelineResource> mGraphicsPipelineResources;

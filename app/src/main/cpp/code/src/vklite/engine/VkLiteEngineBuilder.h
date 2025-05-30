@@ -19,15 +19,15 @@
 #endif
 
 #include <vulkan/vulkan.hpp>
-
-#include "vklite/instance/Instance.h"
-#include "vklite/physical_device/PhysicalDeviceSelector.h"
-
-#include "vklite/engine/VkLiteEngine.h"
-#include "vklite/surface/SurfaceBuilder.h"
-#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
-#include "vklite/pipeline/compute_pipeline/ComputePipelineBuilder.h"
-#include "vklite/util/selector/ValueSelector.h"
+//
+//#include "vklite/instance/Instance.h"
+//#include "vklite/physical_device/PhysicalDeviceSelector.h"
+//
+//#include "vklite/engine/VkLiteEngine.h"
+//#include "vklite/surface/SurfaceBuilder.h"
+//#include "vklite/pipeline/graphics_pipeline/GraphicsPipelineBuilder.h"
+//#include "vklite/pipeline/pipeline/ComputePipelineBuilder.h"
+//#include "vklite/util/selector/ValueSelector.h"
 
 namespace vklite {
 

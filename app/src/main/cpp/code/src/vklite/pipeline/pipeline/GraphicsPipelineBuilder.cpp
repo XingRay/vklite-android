@@ -84,7 +84,7 @@ namespace vklite {
         return *this;
     }
 
-    GraphicsPipeline GraphicsPipelineBuilder::build() {
+    Pipeline GraphicsPipelineBuilder::build() {
         // shader code
         ShaderModule vertexShaderModule = ShaderModule(mDevice, mVertexShaderCode);
         ShaderModule fragmentShaderModule = ShaderModule(mDevice, mFragmentShaderCode);
@@ -251,11 +251,11 @@ namespace vklite {
             throw std::runtime_error("createGraphicsPipelines failed");
         }
 
-        return GraphicsPipeline(mDevice, pipeline);
+        return Pipeline(mDevice, pipeline);
     }
 
-    std::unique_ptr<GraphicsPipeline> GraphicsPipelineBuilder::buildUnique() {
-        return std::make_unique<GraphicsPipeline>(build());
+    std::unique_ptr<Pipeline> GraphicsPipelineBuilder::buildUnique() {
+        return std::make_unique<Pipeline>(build());
     }
 
 } // vklite
