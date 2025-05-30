@@ -16,6 +16,8 @@ namespace vklite {
     class DescriptorPoolBuilder {
         // member
     private:
+        vk::Device mDevice;
+
         uint32_t mDescriptorSetCount;
         std::vector<vk::DescriptorPoolSize> mDescriptorPoolSizes;
         uint32_t mFrameCount;
@@ -25,15 +27,17 @@ namespace vklite {
 
         ~DescriptorPoolBuilder();
 
+        DescriptorPoolBuilder &device(vk::Device device);
+
         DescriptorPoolBuilder &descriptorSetCount(uint32_t descriptorSetCount);
 
         DescriptorPoolBuilder &descriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes);
 
         DescriptorPoolBuilder &frameCount(uint32_t frameCount);
 
-        DescriptorPool build(const Device &device);
+        DescriptorPool build();
 
-        std::unique_ptr<DescriptorPool> buildUnique(const Device &device);
+        std::unique_ptr<DescriptorPool> buildUnique();
 
         //static
     private:

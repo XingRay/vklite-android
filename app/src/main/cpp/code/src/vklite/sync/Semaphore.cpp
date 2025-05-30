@@ -12,6 +12,8 @@ namespace vklite {
     Semaphore::~Semaphore() {
         if (mDevice != nullptr && mSemaphore != nullptr) {
             mDevice.destroy(mSemaphore);
+            mDevice = nullptr;
+            mSemaphore = nullptr;
         }
     }
 

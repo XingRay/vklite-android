@@ -199,10 +199,11 @@ namespace test08 {
                 .build(mFrameCount);
 
         mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
+                .device(mDevice->getDevice())
 //                .descriptorPoolSizes(graphicsDescriptorConfigure.calcDescriptorPoolSizes())
 //                .descriptorSetCount(graphicsDescriptorConfigure.getDescriptorSetCount())
                 .frameCount(mFrameCount)
-                .buildUnique(*mDevice);
+                .buildUnique();
 
         std::vector<vk::DescriptorSetLayout> graphicsDescriptorSetLayouts;// = graphicsDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
 
@@ -255,10 +256,11 @@ namespace test08 {
                 });
 
         mComputeDescriptorPool = vklite::DescriptorPoolBuilder()
+                .device(mDevice->getDevice())
                 .descriptorPoolSizes(computeDescriptorConfigure.calcDescriptorPoolSizes())
                 .descriptorSetCount(computeDescriptorConfigure.getDescriptorSetCount())
                 .frameCount(mFrameCount)
-                .buildUnique(*mDevice);
+                .buildUnique();
 
         std::vector<vk::DescriptorSetLayout> computeDescriptorSetLayouts = computeDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
 

@@ -11,6 +11,11 @@ namespace vklite {
 
     DescriptorPoolBuilder::~DescriptorPoolBuilder() = default;
 
+    DescriptorPoolBuilder &DescriptorPoolBuilder::device(vk::Device device) {
+        mDevice = device;
+        return *this;
+    }
+
     DescriptorPoolBuilder &DescriptorPoolBuilder::descriptorSetCount(uint32_t descriptorSetCount) {
         mDescriptorSetCount = descriptorSetCount;
         return *this;
@@ -26,13 +31,26 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorPool DescriptorPoolBuilder::build(const Device &device) {
+    DescriptorPool DescriptorPoolBuilder::build() {
 //        return DescriptorPool(device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount);
-        return {device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount};
+//        return {device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount};
+
+        std::vector<vk::DescriptorPoolSize> descriptorPoolSizes = calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount);
+        uint32_t maxSets = mDescriptorSetCount * mFrameCount;
+
+        vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;
+        descriptorPoolCreateInfo
+                .setPoolSizes(descriptorPoolSizes)
+                .setMaxSets(maxSets)
+                .setFlags(vk::DescriptorPoolCreateFlags{});
+
+        vk::DescriptorPool descriptorPool = mDevice.createDescriptorPool(descriptorPoolCreateInfo);
+
+        return DescriptorPool(mDevice, descriptorPool);
     }
 
-    std::unique_ptr<DescriptorPool> DescriptorPoolBuilder::buildUnique(const Device &device) {
-        return std::make_unique<DescriptorPool>(device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount);
+    std::unique_ptr<DescriptorPool> DescriptorPoolBuilder::buildUnique() {
+        return std::make_unique<DescriptorPool>(build());
     }
 
     std::vector<vk::DescriptorPoolSize> DescriptorPoolBuilder::calcDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes, uint32_t framerCount) {

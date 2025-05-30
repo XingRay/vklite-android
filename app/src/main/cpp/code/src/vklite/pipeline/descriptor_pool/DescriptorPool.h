@@ -6,19 +6,27 @@
 
 #include <memory>
 
-#include "vklite/device/Device.h"
+#include <vulkan/vulkan.hpp>
 
 namespace vklite {
 
     class DescriptorPool {
     private:
-        const Device &mDevice;
-
+        vk::Device mDevice;
         vk::DescriptorPool mDescriptorPool;
+
     public:
-        DescriptorPool(const Device &device, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets);
+        DescriptorPool(vk::Device device, vk::DescriptorPool descriptorPool);
 
         ~DescriptorPool();
+
+        DescriptorPool(const DescriptorPool &other) = delete;
+
+        DescriptorPool &operator=(const DescriptorPool &other) = delete;
+
+        DescriptorPool(DescriptorPool &&other) noexcept;
+
+        DescriptorPool &operator=(DescriptorPool &&other) noexcept;
 
         [[nodiscard]]
         const vk::DescriptorPool &getDescriptorPool() const;

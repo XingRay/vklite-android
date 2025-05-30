@@ -4,22 +4,31 @@
 
 #include "DescriptorPool.h"
 
+#include <utility>
+
 namespace vklite {
 
-    DescriptorPool::DescriptorPool(const Device &device, std::vector<vk::DescriptorPoolSize> descriptorPoolSizes, uint32_t maxSets)
-            : mDevice(device) {
-
-        vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;
-        descriptorPoolCreateInfo
-                .setPoolSizes(descriptorPoolSizes)
-                .setMaxSets(maxSets)
-                .setFlags(vk::DescriptorPoolCreateFlags{});
-
-        mDescriptorPool = mDevice.getDevice().createDescriptorPool(descriptorPoolCreateInfo);
-    }
+    DescriptorPool::DescriptorPool(vk::Device device, vk::DescriptorPool descriptorPool)
+            : mDevice(device), mDescriptorPool(descriptorPool) {}
 
     DescriptorPool::~DescriptorPool() {
-        mDevice.getDevice().destroy(mDescriptorPool);
+        if (mDevice != nullptr && mDescriptorPool != nullptr) {
+            mDevice.destroy(mDescriptorPool);
+            mDevice = nullptr;
+            mDescriptorPool = nullptr;
+        }
+    }
+
+    DescriptorPool::DescriptorPool(DescriptorPool &&other) noexcept
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mDescriptorPool(std::exchange(other.mDescriptorPool, nullptr)) {}
+
+    DescriptorPool &DescriptorPool::operator=(DescriptorPool &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mDescriptorPool = std::exchange(other.mDescriptorPool, nullptr);
+        }
+        return *this;
     }
 
     const vk::DescriptorPool &DescriptorPool::getDescriptorPool() const {
@@ -32,7 +41,7 @@ namespace vklite {
                 .setDescriptorPool(mDescriptorPool)
                 .setSetLayouts(descriptorSetLayouts);
 
-        return mDevice.getDevice().allocateDescriptorSets(allocateInfo);
+        return mDevice.allocateDescriptorSets(allocateInfo);
     }
 
 } // vklite

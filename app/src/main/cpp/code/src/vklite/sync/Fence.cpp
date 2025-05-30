@@ -15,6 +15,8 @@ namespace vklite {
     Fence::~Fence() {
         if (mDevice != nullptr && mFence != nullptr) {
             mDevice.destroy(mFence);
+            mDevice = nullptr;
+            mFence = nullptr;
         }
     }
 
