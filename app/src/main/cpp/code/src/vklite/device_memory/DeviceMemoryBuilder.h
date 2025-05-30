@@ -29,6 +29,10 @@ namespace vklite {
                                     vk::MemoryRequirements memoryRequirements,
                                     vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
 
+        DeviceMemoryBuilder &config(vk::PhysicalDeviceMemoryProperties memoryProperties,
+                                    vk::Image image,
+                                    vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
+
         DeviceMemoryBuilder &config(vk::PhysicalDevice physicalDevice, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         DeviceMemory build();

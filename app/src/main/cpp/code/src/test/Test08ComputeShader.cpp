@@ -113,67 +113,22 @@ namespace test08 {
         mDisplayImageViews = mSwapchain->createDisplayImageViews();
 
         if (mMsaaEnable) {
-//            mColorImage = vklite::CombinedMemoryImageBuilder()
-//                    .device(mDevice->getDevice())
-//                    .imageBuilder([&](vklite::ImageBuilder &builder) {
-//                        builder.asColorImageBuilder()
-//                                .width(mSwapchain->getDisplaySize().width)
-//                                .height(mSwapchain->getDisplaySize().height)
-//                                .format(mSwapchain->getDisplayFormat())
-//                                .sampleCount(sampleCount);
-//                    })
-//                    .deviceMemoryBuilder([&](vklite::Image &image, vklite::DeviceMemoryBuilder &builder) {
-//                        builder.config(mPhysicalDevice->getPhysicalDevice(), image.getImage());
-//                    })
-//                    .buildUnique();
-//
-//            mColorImageView = vklite::ImageViewBuilder::colorImageViewBuilder()
-//                    .device(mDevice->getDevice())
-//                    .image(mColorImage->getImage().getImage())
-//                    .format(mSwapchain->getDisplayFormat())
-//                    .buildUnique();
-            mColorImageView = vklite::CombinedImageViewBuilder()//::colorImageViewBuilder()
+            mColorImageView = vklite::CombinedImageViewBuilder().asColor()
                     .device(mDevice->getDevice())
-                    .imageBuilder([&](vklite::ImageBuilder &builder) {
-                        builder.asColorImageBuilder()
-                                .width(mSwapchain->getDisplaySize().width)
-                                .height(mSwapchain->getDisplaySize().height)
-                                .format(mSwapchain->getDisplayFormat())
-                                .sampleCount(sampleCount);
-                    })
-                    .deviceMemoryBuilder([&](vklite::Image &image, vklite::DeviceMemoryBuilder &builder) {
-                        builder.config(mPhysicalDevice->getPhysicalDevice(), image.getImage());
-                    })
-                    .imageViewBuilder([&](vklite::Image &image, vklite::ImageViewBuilder &builder) {
-                        builder.asColorImageViewBuilder()
-                                .image(image.getImage())
-                                .format(mSwapchain->getDisplayFormat());
-                    })
+                    .format(mSwapchain->getDisplayFormat())
+                    .size(mSwapchain->getDisplaySize())
+                    .sampleCount(sampleCount)
+                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
         if (mDepthTestEnable) {
-            vk::Format depthFormat = mPhysicalDevice->findDepthFormat();
-            mDepthImage = vklite::CombinedMemoryImageBuilder()
+            mDepthImageView = vklite::CombinedImageViewBuilder().asDepth()
                     .device(mDevice->getDevice())
-                    .imageBuilder([&](vklite::ImageBuilder &builder) {
-                        builder.asDepthImageBuilder()
-                                .size(mSwapchain->getDisplaySize())
-                                .format(depthFormat)
-                                .sampleCount(sampleCount);
-                    })
-                    .deviceMemoryBuilder([&](vklite::Image &image, vklite::DeviceMemoryBuilder &builder) {
-                        builder.config(mPhysicalDevice->getPhysicalDevice(), image.getImage());
-                    })
-                    .buildUnique();
-
-            mDepthImage->getImage().transitionImageLayout(*mCommandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1,
-                                                          vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
-
-            mDepthImageView = vklite::ImageViewBuilder::depthImageViewBuilder()
-                    .device(mDevice->getDevice())
-                    .image(mDepthImage->getImage().getImage())
-                    .format(depthFormat)
+                    .format(mPhysicalDevice->findDepthFormat())
+                    .size(mSwapchain->getDisplaySize())
+                    .sampleCount(sampleCount)
+                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
@@ -227,7 +182,7 @@ namespace test08 {
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                             .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView().getImageView(); })
                             .addAttachment(mDisplayImageViews[index].getImageView())
-                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView(); })
+                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView().getImageView(); })
                             .build(*mDevice, *mRenderPass);
                 })
                 .build();

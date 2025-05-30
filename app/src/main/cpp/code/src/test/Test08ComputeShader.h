@@ -70,9 +70,7 @@ namespace test08 {
         std::vector<vklite::ImageView> mDisplayImageViews;
 
         std::unique_ptr<vklite::CombinedImageView> mColorImageView;
-
-        std::unique_ptr<vklite::CombinedMemoryImage> mDepthImage;
-        std::unique_ptr<vklite::ImageView> mDepthImageView;
+        std::unique_ptr<vklite::CombinedImageView> mDepthImageView;
 
 //        std::vector<vklite::FrameBuffer> mFrameBuffers;
         vklite::FrameBuffers mFrameBuffers;

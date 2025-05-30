@@ -18,8 +18,31 @@ namespace vklite {
         return *this;
     }
 
+    CombinedImageViewBuilder &CombinedImageViewBuilder::format(vk::Format format) {
+        mImageBuilder.format(format);
+        mImageViewBuilder.format(format);
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::size(vk::Extent2D size) {
+        mImageBuilder.size(size);
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::sampleCount(vk::SampleCountFlagBits sampleCount) {
+        mImageBuilder.sampleCount(sampleCount);
+        return *this;
+    }
+
     CombinedImageViewBuilder &CombinedImageViewBuilder::memoryOffset(vk::DeviceSize memoryOffset) {
         mMemoryOffset = memoryOffset;
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
+                                                                           vk::MemoryPropertyFlags memoryPropertyFlags) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        mMemoryPropertyFlags = memoryPropertyFlags;
         return *this;
     }
 
@@ -39,23 +62,61 @@ namespace vklite {
     }
 
     CombinedImageView CombinedImageViewBuilder::build() {
-        mImageBuilderConfigure(mImageBuilder);
+        // create Image
+        if (mImageBuilderConfigure != nullptr) {
+            mImageBuilderConfigure(mImageBuilder);
+        }
         Image image = mImageBuilder.build();
 
-        mDeviceMemoryBuilderConfigure(image, mDeviceMemoryBuilder);
+        // create DeviceMemory
+        if (mPhysicalDeviceMemoryProperties.has_value()) {
+            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), image.getImage(), mMemoryPropertyFlags);
+        }
+        if (mDeviceMemoryBuilderConfigure != nullptr) {
+            mDeviceMemoryBuilderConfigure(image, mDeviceMemoryBuilder);
+        }
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
+        // bind memory
         image.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
 
-        mImageViewBuilderConfigure(image, mImageViewBuilder);
+        // create ImageView
+        if (mImageViewBuilderConfigure != nullptr) {
+            mImageViewBuilderConfigure(image, mImageViewBuilder);
+        }
         ImageView imageView = mImageViewBuilder.build();
 
+        // combine Image / DeviceMemory / ImageView as CombinedMemoryImage
 //        return CombinedMemoryImage(std::move(image), std::move(deviceMemory), std::move(imageView));
         return {std::move(image), std::move(deviceMemory), std::move(imageView)};
     }
 
     std::unique_ptr<CombinedImageView> CombinedImageViewBuilder::buildUnique() {
         return std::make_unique<CombinedImageView>(build());
+    }
+
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asDefault() {
+        mImageViewBuilderConfigure = ([&](vklite::Image &image, vklite::ImageViewBuilder &builder) {
+            builder.image(image.getImage());
+        });
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asColor() {
+        asDefault();
+        mImageBuilder.asColorImageBuilder();
+        mImageViewBuilder.asColorImageViewBuilder();
+
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asDepth() {
+        asDefault();
+        mImageBuilder.asDepthImageBuilder();
+        mImageViewBuilder.asDepthImageViewBuilder();
+
+        return *this;
     }
 
 } // vklite

@@ -112,8 +112,7 @@ namespace vklite {
                 .componentMappingGreen(vk::ComponentSwizzle::eIdentity)
                 .componentMappingBlue(vk::ComponentSwizzle::eIdentity)
                 .componentMappingAlpha(vk::ComponentSwizzle::eIdentity)
-                .viewType(vk::ImageViewType::e2D)
-                .format(vk::Format::eUndefined);
+                .viewType(vk::ImageViewType::e2D);
     }
 
     ImageViewBuilder &ImageViewBuilder::asColorImageViewBuilder() {

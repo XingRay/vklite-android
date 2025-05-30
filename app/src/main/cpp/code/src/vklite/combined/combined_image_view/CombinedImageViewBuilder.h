@@ -20,6 +20,8 @@ namespace vklite {
 
         DeviceMemoryBuilder mDeviceMemoryBuilder;
         vk::DeviceSize mMemoryOffset;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+        vk::MemoryPropertyFlags mMemoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
         ImageViewBuilder mImageViewBuilder;
 
@@ -35,7 +37,16 @@ namespace vklite {
 
         CombinedImageViewBuilder &device(vk::Device device);
 
+        CombinedImageViewBuilder &format(vk::Format format);
+
+        CombinedImageViewBuilder &size(vk::Extent2D size);
+
+        CombinedImageViewBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
+
         CombinedImageViewBuilder &memoryOffset(vk::DeviceSize memoryOffset);
+
+        CombinedImageViewBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
+                                                     vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
 
         CombinedImageViewBuilder &imageBuilder(std::function<void(ImageBuilder &builder)> &&configure);
 
@@ -46,6 +57,13 @@ namespace vklite {
         CombinedImageView build();
 
         std::unique_ptr<CombinedImageView> buildUnique();
+
+
+        CombinedImageViewBuilder &asDefault();
+
+        CombinedImageViewBuilder &asColor();
+
+        CombinedImageViewBuilder &asDepth();
     };
 
 } // vklite
