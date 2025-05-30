@@ -208,8 +208,10 @@ namespace test08 {
         std::vector<vk::DescriptorSetLayout> graphicsDescriptorSetLayouts;// = graphicsDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
 
         mGraphicsPipelineLayout = vklite::PipelineLayoutBuilder()
+                .device(mDevice->getDevice())
+                .descriptorSetLayouts(graphicsDescriptorSetLayouts)
                 .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
-                .buildUnique(*mDevice, graphicsDescriptorSetLayouts);
+                .buildUnique();
 
         LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
         vk::Viewport viewport;
@@ -265,7 +267,9 @@ namespace test08 {
         std::vector<vk::DescriptorSetLayout> computeDescriptorSetLayouts = computeDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
 
         mComputePipelineLayout = vklite::PipelineLayoutBuilder()
-                .buildUnique(*mDevice, computeDescriptorSetLayouts);
+                .device(mDevice->getDevice())
+                .descriptorSetLayouts(computeDescriptorSetLayouts)
+                .buildUnique();
 
         mComputePipeline = vklite::ComputePipelineBuilder()
                 .device(mDevice->getDevice())

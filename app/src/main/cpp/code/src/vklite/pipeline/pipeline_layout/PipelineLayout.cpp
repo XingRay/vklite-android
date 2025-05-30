@@ -4,27 +4,31 @@
 
 #include "PipelineLayout.h"
 
+#include <vulkan/vulkan.hpp>
+
 namespace vklite {
 
-    PipelineLayout::PipelineLayout(const Device &device,
-                                   const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
-                                   const std::vector<vk::PushConstantRange> &pushConstantRanges)
-            : mDevice(device) {
-
-        const vk::Device &vkDevice = mDevice.getDevice();
-
-        vk::PipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
-        pipelineLayoutCreateInfo
-                .setSetLayouts(descriptorSetLayouts)
-                .setPushConstantRanges(pushConstantRanges);
-
-        mPipelineLayout = device.getDevice().createPipelineLayout(pipelineLayoutCreateInfo);
-    }
+    PipelineLayout::PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout)
+            : mDevice(device), mPipelineLayout(pipelineLayout) {}
 
     PipelineLayout::~PipelineLayout() {
-        const vk::Device &vkDevice = mDevice.getDevice();
+        if (mDevice != nullptr && mPipelineLayout != nullptr) {
+            mDevice.destroy(mPipelineLayout);
+            mDevice = nullptr;
+            mPipelineLayout = nullptr;
+        }
+    }
 
-        vkDevice.destroy(mPipelineLayout);
+    PipelineLayout::PipelineLayout(PipelineLayout &&other) noexcept
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mPipelineLayout(std::exchange(other.mPipelineLayout, nullptr)) {}
+
+    PipelineLayout &PipelineLayout::operator=(PipelineLayout &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mPipelineLayout = std::exchange(other.mPipelineLayout, nullptr);
+        }
+        return *this;
     }
 
     const vk::PipelineLayout &PipelineLayout::getPipelineLayout() const {

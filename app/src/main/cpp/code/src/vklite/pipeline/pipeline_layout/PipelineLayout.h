@@ -8,22 +8,26 @@
 #include <unordered_map>
 
 #include <vulkan/vulkan.hpp>
-#include "vklite/device/Device.h"
 
 namespace vklite {
 
     class PipelineLayout {
     private:
-        const Device &mDevice;
-
+        vk::Device mDevice;
         vk::PipelineLayout mPipelineLayout;
 
     public:
-        PipelineLayout(const Device &device,
-                       const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts,
-                       const std::vector<vk::PushConstantRange> &pushConstantRanges);
+        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout);
 
         ~PipelineLayout();
+
+        PipelineLayout(const PipelineLayout &other) = delete;
+
+        PipelineLayout &operator=(const PipelineLayout &other) = delete;
+
+        PipelineLayout(PipelineLayout &&other) noexcept;
+
+        PipelineLayout &operator=(PipelineLayout &&other) noexcept;
 
         [[nodiscard]]
         const vk::PipelineLayout &getPipelineLayout() const;
