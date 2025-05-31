@@ -49,11 +49,11 @@ namespace vklite {
 
         static vk::PresentModeKHR choosePresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes);
 
-        static uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties, vk::PhysicalDeviceMemoryProperties memoryProperties);
+        static uint32_t findMemoryTypeIndex(uint32_t typeFilter, vk::MemoryPropertyFlags properties, vk::PhysicalDeviceMemoryProperties memoryProperties);
 
-        static vk::MemoryAllocateInfo createMemoryAllocateInfo(vk::PhysicalDevice physicalDevice, vk::Device device, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags);
+        static uint32_t findMemoryTypeIndex(vk::PhysicalDevice physicalDevice, vk::Device device, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags);
 
-        static vk::MemoryAllocateInfo createMemoryAllocateInfo(vk::PhysicalDeviceMemoryProperties memoryProperties,
+        static uint32_t findMemoryTypeIndex(vk::PhysicalDeviceMemoryProperties memoryProperties,
                                                                vk::MemoryRequirements memoryRequirements,
                                                                vk::MemoryPropertyFlags memoryPropertyFlags);
     };

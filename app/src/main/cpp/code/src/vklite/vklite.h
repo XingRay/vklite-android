@@ -68,13 +68,17 @@
 #include "vklite/pipeline/pipeline/GraphicsPipelineBuilder.h"
 #include "vklite/pipeline/pipeline/ComputePipelineBuilder.h"
 
+// buffer
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBufferBuilder.h"
+
 // vertex buffer
-#include "vklite/vertex_buffer/VertexBuffer.h"
-#include "vklite/vertex_buffer/VertexBufferBuilder.h"
+#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
+#include "vklite/buffer/vertex_buffer/VertexBufferBuilder.h"
 
 // index buffer
-#include "vklite/index_buffer/IndexBuffer.h"
-#include "vklite/index_buffer/IndexBufferBuilder.h"
+#include "vklite/buffer/index_buffer/IndexBuffer.h"
+#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
 
 // image
 #include "vklite/image/Image.h"
@@ -94,15 +98,15 @@
 #include "vklite/image/ImageTransition.h"
 
 // uniform buffer
-#include "vklite/uniform_buffer/UniformBuffer.h"
-#include "vklite/uniform_buffer/UniformBufferBuilder.h"
+#include "vklite/buffer/uniform_buffer/UniformBuffer.h"
+#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
 
 // util
 #include "vklite/util/VulkanUtil.h"
 
 // combined
-#include "vklite/combined/combined_memory_image/CombinedMemoryImage.h"
-#include "vklite/combined/combined_memory_image/CombinedMemoryImageBuilder.h"
+#include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
+#include "vklite/image/combined_memory_image/CombinedMemoryImageBuilder.h"
 
-#include "vklite/combined/combined_image_view/CombinedImageView.h"
-#include "vklite/combined/combined_image_view/CombinedImageViewBuilder.h"
+#include "vklite/image_view/combined_image_view/CombinedImageView.h"
+#include "vklite/image_view/combined_image_view/CombinedImageViewBuilder.h"

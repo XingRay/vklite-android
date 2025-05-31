@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "vklite/pipeline/pipeline_resource/PipelineResource.h"
-#include "vklite/vertex_buffer/VertexBuffer.h"
-#include "vklite/index_buffer/IndexBuffer.h"
+#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
+#include "vklite/buffer/index_buffer/IndexBuffer.h"
 #include "vklite/pipeline/pipeline_resource/VertexBufferInfo.h"
 #include "vklite/pipeline/pipeline_resource/IndexBufferInfo.h"
 #include "vklite/pipeline/shader/ShaderConfigure.h"

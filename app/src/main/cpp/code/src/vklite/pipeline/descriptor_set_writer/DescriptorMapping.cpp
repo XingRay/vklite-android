@@ -89,8 +89,8 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorMapping &DescriptorMapping::addBufferInfo(const vklite::BufferInterface &bufferInterface) {
-        addBufferInfo({bufferInterface.getBuffer(), 0, bufferInterface.getSize()});
+    DescriptorMapping &DescriptorMapping::addBufferInfo(const Buffer &buffer) {
+        addBufferInfo({buffer.getBuffer(), 0, buffer.getSize()});
         return *this;
     }
 

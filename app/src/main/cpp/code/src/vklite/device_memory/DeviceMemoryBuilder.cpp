@@ -5,6 +5,7 @@
 #include "DeviceMemoryBuilder.h"
 
 #include "vklite/util/VulkanUtil.h"
+#include "vklite/device_memory/DeviceMemoryMeta.h"
 
 namespace vklite {
 
@@ -26,10 +27,8 @@ namespace vklite {
     DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDeviceMemoryProperties memoryProperties,
                                                      vk::MemoryRequirements memoryRequirements,
                                                      vk::MemoryPropertyFlags memoryPropertyFlags) {
-        vk::MemoryAllocateInfo memoryAllocateInfo = VulkanUtil::createMemoryAllocateInfo(memoryProperties, memoryRequirements, memoryPropertyFlags);
-
-        allocationSize(memoryAllocateInfo.allocationSize);
-        memoryTypeIndex(memoryAllocateInfo.memoryTypeIndex);
+        allocationSize(memoryRequirements.size);
+        memoryTypeIndex(VulkanUtil::findMemoryTypeIndex(memoryProperties, memoryRequirements, memoryPropertyFlags));
         return *this;
     }
 
@@ -40,15 +39,28 @@ namespace vklite {
         return *this;
     }
 
+    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDeviceMemoryProperties memoryProperties,
+                                                     vk::Buffer buffer,
+                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
+        config(memoryProperties, mDevice.getBufferMemoryRequirements(buffer), memoryPropertyFlags);
+        return *this;
+    }
+
     DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags) {
         config(physicalDevice.getMemoryProperties(), mDevice.getImageMemoryRequirements(image), memoryPropertyFlags);
         return *this;
     }
 
+    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice, vk::Buffer buffer, vk::MemoryPropertyFlags memoryPropertyFlags) {
+        config(physicalDevice.getMemoryProperties(), mDevice.getBufferMemoryRequirements(buffer), memoryPropertyFlags);
+        return *this;
+    }
+
     DeviceMemory DeviceMemoryBuilder::build() {
         vk::DeviceMemory deviceMemory = mDevice.allocateMemory(mMemoryAllocateInfo);
-//        return DeviceMemory(mDevice, deviceMemory);
-        return {mDevice, deviceMemory};
+        DeviceMemoryMeta meta(mMemoryAllocateInfo.allocationSize, mMemoryAllocateInfo.memoryTypeIndex);
+//        return DeviceMemory(mDevice, deviceMemory, std::move(meta));
+        return {mDevice, deviceMemory, std::move(meta)};
     }
 
     std::unique_ptr<DeviceMemory> DeviceMemoryBuilder::buildUnique() {

@@ -1,32 +1,23 @@
 //
-// Created by leixing on 2025/1/15.
+// Created by leixing on 2025/5/31.
 //
 
 #pragma once
 
-#include <cstdint>
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/Device.h"
-#include "vklite/command_pool/CommandPool.h"
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
 
 namespace vklite {
 
-    /**
-     * buffer on gpu, and invisible on cpu.
-     */
     class DeviceLocalBuffer {
     private:
-        const Device &mDevice;
-
-        vk::Buffer mBuffer;
-        vk::DeviceSize mBufferSize;
-        vk::DeviceMemory mDeviceMemory;
+        CombinedMemoryBuffer mCombinedMemoryBuffer;
 
     public:
-        DeviceLocalBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits);
+        DeviceLocalBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
 
-        virtual  ~DeviceLocalBuffer();
+        ~DeviceLocalBuffer();
 
         DeviceLocalBuffer(const DeviceLocalBuffer &other) = delete;
 
@@ -34,24 +25,21 @@ namespace vklite {
 
         DeviceLocalBuffer(DeviceLocalBuffer &&other) noexcept;
 
-        DeviceLocalBuffer &operator=(DeviceLocalBuffer &&other) noexcept = delete;
+        DeviceLocalBuffer &operator=(DeviceLocalBuffer &&other) noexcept;
+
+        [[nodiscard]]
+        const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
-        [[nodiscard]]
-        vk::DeviceSize getBufferSize() const;
+        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) const;
 
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
+        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer) const;
 
-        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset) const;
 
-        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer);
-
-        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset);
-
-        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer);
+        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer) const;
     };
 
 } // vklite

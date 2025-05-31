@@ -7,7 +7,7 @@
 #include <vulkan/vulkan.hpp>
 #include "vklite/device/Device.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/buffer/host_visible/StagingBuffer.h"
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
 #include "vklite/image/ImageTransition.h"
 #include "vklite/image/ImageMeta.h"
 

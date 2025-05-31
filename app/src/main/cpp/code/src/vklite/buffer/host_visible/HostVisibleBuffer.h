@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/Device.h"
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
 
 namespace vklite {
 
@@ -16,26 +16,26 @@ namespace vklite {
      */
     class HostVisibleBuffer {
     private:
-        const Device &mDevice;
-
-        vk::Buffer mBuffer;
-        vk::DeviceSize mBufferSize;
-        vk::DeviceMemory mDeviceMemory;
-        void *mMappedMemoryPointer;
+        CombinedMemoryBuffer mCombinedMemoryBuffer;
 
     public:
-        HostVisibleBuffer(const PhysicalDevice& physicalDevice,const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlagBits bufferUsageFlagBits);
+        HostVisibleBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
 
-        virtual  ~HostVisibleBuffer();
+        ~HostVisibleBuffer();
+
+        HostVisibleBuffer(const HostVisibleBuffer &other) = delete;
+
+        HostVisibleBuffer &operator=(const HostVisibleBuffer &other) = delete;
+
+        HostVisibleBuffer(HostVisibleBuffer &&other) noexcept;
+
+        HostVisibleBuffer &operator=(HostVisibleBuffer &&other) noexcept;
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
         [[nodiscard]]
         const vk::DeviceSize &getBufferSize() const;
-
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
 
         void updateBuffer(const void *data, uint32_t size);
     };

@@ -9,7 +9,7 @@
 
 #include "Pipeline.h"
 #include "vklite/pipeline/vertex/VertexConfigure.h"
-#include "vklite/index_buffer/IndexBufferBuilder.h"
+#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
 #include "vklite/pipeline/push_constants/PushConstantConfigures.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
 #include "vklite/pipeline/vertex/VertexBindingConfigure.h"

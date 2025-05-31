@@ -293,7 +293,13 @@ namespace test08 {
         vklite::StagingBuffer stagingBuffer(*mPhysicalDevice, *mDevice, shaderStorageBufferSize);
         stagingBuffer.updateBuffer(particles.data(), shaderStorageBufferSize);
         for (int i = 0; i < mFrameCount; i++) {
-            vklite::DeviceLocalBuffer deviceLocalBuffer(*mPhysicalDevice, *mDevice, shaderStorageBufferSize, vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer);
+            vklite::DeviceLocalBuffer deviceLocalBuffer = vklite::DeviceLocalBufferBuilder()
+                    .device(mDevice->getDevice())
+                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
+                    .size(shaderStorageBufferSize)
+                    .addUsage(vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer)
+                    .build();
+
             mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer commandBuffer) {
                 deviceLocalBuffer.recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
             });
@@ -308,7 +314,9 @@ namespace test08 {
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
-        mComputeFinishSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mComputeFinishSemaphores = vklite::SemaphoreBuilder()
+                .device(mDevice->getDevice())
+                .build(mFrameCount);
 
         vklite::DescriptorSetWriter computePipelineDescriptorSetWriter = vklite::DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)

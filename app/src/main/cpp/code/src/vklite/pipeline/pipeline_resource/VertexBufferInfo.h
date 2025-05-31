@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vklite/vertex_buffer/VertexBuffer.h"
+#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
 
 namespace vklite {
 

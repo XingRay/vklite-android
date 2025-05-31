@@ -3,7 +3,7 @@
 //
 
 #include "DescriptorSetConfigure.h"
-#include "vklite/uniform_buffer/UniformBufferBuilder.h"
+#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
 
 namespace vklite {
 

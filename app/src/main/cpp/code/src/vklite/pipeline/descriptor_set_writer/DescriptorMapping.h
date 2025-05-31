@@ -9,7 +9,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/buffer/BufferInterface.h"
+#include "vklite/buffer/Buffer.h"
 #include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
@@ -71,7 +71,7 @@ namespace vklite {
 
         DescriptorMapping &addBufferInfo(vk::Buffer buffer, vk::DeviceSize offset, vk::DeviceSize range);
 
-        DescriptorMapping &addBufferInfo(const BufferInterface &bufferInterface);
+        DescriptorMapping &addBufferInfo(const Buffer &buffer);
 
 
         // add image info

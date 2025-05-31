@@ -6,7 +6,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/index_buffer/IndexBuffer.h"
+#include "vklite/buffer/index_buffer/IndexBuffer.h"
 
 namespace vklite {
 
