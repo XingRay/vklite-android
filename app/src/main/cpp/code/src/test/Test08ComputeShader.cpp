@@ -103,6 +103,24 @@ namespace test08 {
                 .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
                 .buildUnique();
 
+        LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
+        vk::Viewport viewport;
+        viewport
+                .setX(0.0f)
+                .setY(0.0f)
+                .setWidth((float) mSwapchain->getDisplaySize().width)
+                .setHeight((float) mSwapchain->getDisplaySize().height)
+                .setMinDepth(0.0f)
+                .setMaxDepth(1.0f);
+        mViewports.push_back(viewport);
+
+        vk::Rect2D scissor{};
+        scissor
+                .setOffset(vk::Offset2D{0, 0})
+                .setExtent(mSwapchain->getDisplaySize());
+        mScissors.push_back(scissor);
+
+
         mCommandPool = vklite::CommandPoolBuilder()
                 .device(mDevice->getDevice())
                 .queueFamilyIndex(graphicAndComputeQueueFamilyIndices[0])
@@ -212,23 +230,6 @@ namespace test08 {
                 .descriptorSetLayouts(graphicsDescriptorSetLayouts)
                 .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
                 .buildUnique();
-
-        LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
-        vk::Viewport viewport;
-        viewport
-                .setX(0.0f)
-                .setY(0.0f)
-                .setWidth((float) mSwapchain->getDisplaySize().width)
-                .setHeight((float) mSwapchain->getDisplaySize().height)
-                .setMinDepth(0.0f)
-                .setMaxDepth(1.0f);
-        mViewports.push_back(viewport);
-
-        vk::Rect2D scissor{};
-        scissor
-                .setOffset(vk::Offset2D{0, 0})
-                .setExtent(mSwapchain->getDisplaySize());
-        mScissors.push_back(scissor);
 
         mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
                 .device(mDevice->getDevice())
@@ -382,7 +383,6 @@ namespace test08 {
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipelineLayout->getPipelineLayout(), 0, descriptorSets, nullptr);
 
             commandBuffer.dispatch(mParticleCount / 256, 1, 1);
-//            vkCmdDispatch(commandBuffer, mParticleCount / 256, 1, 1);
         });
 
         mComputeQueue->submit(computeCommandBuffer.getCommandBuffer(),
