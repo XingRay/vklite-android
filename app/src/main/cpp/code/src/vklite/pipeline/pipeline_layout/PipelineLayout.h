@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include <cstdint>
-#include <unordered_map>
-
 #include <vulkan/vulkan.hpp>
+
+#include "vklite/pipeline/pipeline_layout/PipelineLayoutMeta.h"
 
 namespace vklite {
 
@@ -15,9 +14,10 @@ namespace vklite {
     private:
         vk::Device mDevice;
         vk::PipelineLayout mPipelineLayout;
+        PipelineLayoutMeta mMeta;
 
     public:
-        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout);
+        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout, PipelineLayoutMeta &&meta);
 
         ~PipelineLayout();
 
@@ -31,6 +31,12 @@ namespace vklite {
 
         [[nodiscard]]
         const vk::PipelineLayout &getPipelineLayout() const;
+
+        [[nodiscard]]
+        const std::vector<vk::DescriptorSetLayout> &getDescriptorSetLayouts() const;
+
+        [[nodiscard]]
+        const std::vector<vk::PushConstantRange> &getPushConstantRanges() const;
     };
 
 } // vklite

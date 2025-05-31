@@ -6,18 +6,17 @@
 
 #include <string>
 
-#include "vklite/device/Device.h"
+#include <vulkan/vulkan.hpp>
 
 namespace vklite {
 
     class ShaderModule {
+    private:
         vk::Device mDevice;
         vk::ShaderModule mShaderModule;
 
     public:
-        ShaderModule(vk::Device device, const std::vector<uint32_t> &code);
-
-        ShaderModule(const Device &device, const std::vector<uint32_t> &code);
+        ShaderModule(vk::Device device, vk::ShaderModule shaderModule);
 
         ~ShaderModule();
 

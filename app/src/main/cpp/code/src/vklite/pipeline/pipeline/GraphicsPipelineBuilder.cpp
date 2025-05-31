@@ -3,7 +3,8 @@
 //
 
 #include "GraphicsPipelineBuilder.h"
-#include "vklite/pipeline/shader/ShaderModule.h"
+#include "vklite/pipeline/shader_module/ShaderModule.h"
+#include "vklite/pipeline/shader_module/ShaderModuleBuilder.h"
 
 namespace vklite {
 
@@ -86,8 +87,8 @@ namespace vklite {
 
     Pipeline GraphicsPipelineBuilder::build() {
         // shader code
-        ShaderModule vertexShaderModule = ShaderModule(mDevice, mVertexShaderCode);
-        ShaderModule fragmentShaderModule = ShaderModule(mDevice, mFragmentShaderCode);
+        ShaderModule vertexShaderModule = ShaderModuleBuilder().device(mDevice).code(std::move(mVertexShaderCode)).build();
+        ShaderModule fragmentShaderModule = ShaderModuleBuilder().device(mDevice).code(std::move(mFragmentShaderCode)).build();
 
         // vertex buffer description
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions = mVertexConfigure.createVertexInputBindingDescriptions();

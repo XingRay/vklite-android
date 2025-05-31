@@ -62,7 +62,7 @@
 #include "vklite/pipeline/pipeline_resource/PipelineResourcesBuilder.h"
 
 // pipeline
-#include "vklite/pipeline/shader/ShaderModule.h"
+#include "vklite/pipeline/shader_module/ShaderModule.h"
 #include "vklite/pipeline/shader/ShaderConfigure.h"
 #include "vklite/pipeline/pipeline/Pipeline.h"
 #include "vklite/pipeline/pipeline/GraphicsPipelineBuilder.h"

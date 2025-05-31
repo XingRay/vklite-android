@@ -93,11 +93,26 @@ namespace vklite {
         return *this;
     }
 
-    ShaderConfigure &ShaderConfigure::addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &descriptorSet)> &configure) {
+    ShaderConfigure &ShaderConfigure::addDescriptorSetConfigure(const std::function<void(DescriptorSetConfigure &descriptorSet)> &configure) {
         DescriptorSetConfigure descriptorSetConfigure;
         configure(descriptorSetConfigure);
         addDescriptorSetConfigure(std::move(descriptorSetConfigure));
         return *this;
+    }
+
+    [[nodiscard]]
+    std::vector<uint32_t> &ShaderConfigure::getVertexShaderCode() {
+        return mVertexShaderCode;
+    }
+
+    [[nodiscard]]
+    std::vector<uint32_t> &ShaderConfigure::getFragmentShaderCode() {
+        return mFragmentShaderCode;
+    }
+
+    [[nodiscard]]
+    std::vector<uint32_t> &ShaderConfigure::getComputeShaderCode() {
+        return mComputeShaderCode;
     }
 
     uint32_t ShaderConfigure::getDescriptorSetCount() const {
@@ -131,8 +146,7 @@ namespace vklite {
         return descriptorPoolSizes;
     }
 
-    std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const Device &device) const {
-
+    std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const vk::Device &device) const {
         std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
 
         for (const auto &setEntry: mDescriptorSetConfigures) {
@@ -145,11 +159,15 @@ namespace vklite {
             descriptorSetLayoutCreateInfo
                     .setBindings(descriptorSetLayoutBindings);
 
-            vk::DescriptorSetLayout descriptorSetLayout = device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+            vk::DescriptorSetLayout descriptorSetLayout = device.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
             descriptorSetLayouts.push_back(descriptorSetLayout);
         }
 
         return descriptorSetLayouts;
+    }
+
+    std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const Device &device) const {
+        return createDescriptorSetLayouts(device.getDevice());
     }
 
 } // vklite

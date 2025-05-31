@@ -69,7 +69,17 @@ namespace vklite {
          */
         ShaderConfigure &addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure);
 
-        ShaderConfigure &addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &descriptorSet)>& configure);
+        ShaderConfigure &addDescriptorSetConfigure(const std::function<void(DescriptorSetConfigure &descriptorSet)> &configure);
+
+
+        [[nodiscard]]
+        std::vector<uint32_t> &getVertexShaderCode();
+
+        [[nodiscard]]
+        std::vector<uint32_t> &getFragmentShaderCode();
+
+        [[nodiscard]]
+        std::vector<uint32_t> &getComputeShaderCode();
 
         [[nodiscard]]
         uint32_t getDescriptorSetCount() const;
@@ -79,6 +89,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const Device &device) const;
+
+        [[nodiscard]]
+        std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const vk::Device &device) const;
     };
 
 } // vklite

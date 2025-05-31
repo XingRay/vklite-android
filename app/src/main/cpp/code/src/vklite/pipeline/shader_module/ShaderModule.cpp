@@ -8,20 +8,15 @@
 
 namespace vklite {
 
-    ShaderModule::ShaderModule(vk::Device device, const std::vector<uint32_t> &code)
-            : mDevice(device) {
-        vk::ShaderModuleCreateInfo createInfo;
-        createInfo
-                .setCode(code);
-
-        mShaderModule = device.createShaderModule(createInfo);
-    }
-
-    ShaderModule::ShaderModule(const Device &device, const std::vector<uint32_t> &code)
-            : ShaderModule(device.getDevice(), code) {}
+    ShaderModule::ShaderModule(vk::Device device, vk::ShaderModule shaderModule)
+            : mDevice(device), mShaderModule(shaderModule) {}
 
     ShaderModule::~ShaderModule() {
-        mDevice.destroy(mShaderModule);
+        if (mDevice != nullptr && mShaderModule != nullptr) {
+            mDevice.destroy(mShaderModule);
+            mDevice = nullptr;
+            mShaderModule = nullptr;
+        }
     }
 
     ShaderModule::ShaderModule(ShaderModule &&other) noexcept

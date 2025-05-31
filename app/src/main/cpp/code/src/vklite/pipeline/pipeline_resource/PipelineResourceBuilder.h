@@ -13,6 +13,7 @@
 #include "vklite/index_buffer/IndexBuffer.h"
 #include "vklite/pipeline/pipeline_resource/VertexBufferInfo.h"
 #include "vklite/pipeline/pipeline_resource/IndexBufferInfo.h"
+#include "vklite/pipeline/shader/ShaderConfigure.h"
 
 namespace vklite {
 

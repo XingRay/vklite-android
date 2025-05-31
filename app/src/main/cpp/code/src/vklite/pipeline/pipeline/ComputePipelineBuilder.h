@@ -10,13 +10,14 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/pipeline/pipeline/Pipeline.h"
+#include "vklite/pipeline/shader_module/ShaderModule.h"
 
 namespace vklite {
 
     class ComputePipelineBuilder {
     private:
         vk::Device mDevice;
-        std::vector<uint32_t> mComputeShaderCode;
+        std::unique_ptr<ShaderModule> mComputeShaderModule;
         vk::PipelineLayout mPipelineLayout;
 
     public:
@@ -26,7 +27,9 @@ namespace vklite {
 
         ComputePipelineBuilder &device(vk::Device device);
 
-        ComputePipelineBuilder &computeShaderCode(std::vector<uint32_t> &&computeShaderCode);
+        ComputePipelineBuilder &computeShader(std::unique_ptr<ShaderModule> computeShader);
+
+        ComputePipelineBuilder &computeShader(std::vector<uint32_t> &&computeShaderCode);
 
         ComputePipelineBuilder &pipelineLayout(vk::PipelineLayout pipelineLayout);
 

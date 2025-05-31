@@ -10,6 +10,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
+#include "vklite/pipeline/shader/ShaderConfigure.h"
 
 namespace vklite {
 
@@ -34,6 +35,8 @@ namespace vklite {
         DescriptorPoolBuilder &descriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes);
 
         DescriptorPoolBuilder &frameCount(uint32_t frameCount);
+
+        DescriptorPoolBuilder &config(const ShaderConfigure &shaderConfigure);
 
         DescriptorPool build();
 

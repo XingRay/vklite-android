@@ -254,7 +254,8 @@ namespace test08 {
         // compute pipeline
         mComputeCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
-        vklite::DescriptorConfigure computeDescriptorConfigure = vklite::DescriptorConfigure()
+        vklite::ShaderConfigure computeShaderConfigure = vklite::ShaderConfigure()
+                .computeShaderCode(std::move(computeShaderCode))
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
@@ -265,29 +266,26 @@ namespace test08 {
 
         mComputeDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
-                .descriptorPoolSizes(computeDescriptorConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(computeDescriptorConfigure.getDescriptorSetCount())
+                .config(computeShaderConfigure)
                 .frameCount(mFrameCount)
                 .buildUnique();
 
-        std::vector<vk::DescriptorSetLayout> computeDescriptorSetLayouts = computeDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
-
         mComputePipelineLayout = vklite::PipelineLayoutBuilder()
                 .device(mDevice->getDevice())
-                .descriptorSetLayouts(computeDescriptorSetLayouts)
+                .config(computeShaderConfigure)
                 .buildUnique();
 
         mComputePipeline = vklite::ComputePipelineBuilder()
                 .device(mDevice->getDevice())
                 .pipelineLayout(mComputePipelineLayout->getPipelineLayout())
-                .computeShaderCode(std::move(computeShaderCode))
+                .computeShader(std::move(computeShaderConfigure.getComputeShaderCode()))
                 .buildUnique();
 
         mComputePipelineResources = vklite::PipelineResourcesBuilder()
                 .frameCount(mFrameCount)
                 .pipelineResourceBuilder([&](uint32_t frameIndex) {
                     return vklite::PipelineResourceBuilder()
-                            .descriptorSets(mComputeDescriptorPool->allocateDescriptorSets(computeDescriptorSetLayouts))
+                            .descriptorSets(mComputeDescriptorPool->allocateDescriptorSets(mComputePipelineLayout->getDescriptorSetLayouts()))
                             .build();
                 })
                 .build();

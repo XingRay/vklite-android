@@ -31,6 +31,13 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorPoolBuilder &DescriptorPoolBuilder::config(const ShaderConfigure &shaderConfigure) {
+        (*this)
+                .descriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
+                .descriptorSetCount(shaderConfigure.getDescriptorSetCount());
+        return *this;
+    }
+
     DescriptorPool DescriptorPoolBuilder::build() {
 //        return DescriptorPool(device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount);
 //        return {device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount};

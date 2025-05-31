@@ -6,6 +6,7 @@
 #include "PipelineLayoutBuilder.h"
 
 #include "vklite/device/Device.h"
+#include "vklite/pipeline/pipeline_layout/PipelineLayoutMeta.h"
 
 namespace vklite {
 
@@ -39,7 +40,13 @@ namespace vklite {
         return *this;
     }
 
-    PipelineLayout PipelineLayoutBuilder::build() const {
+    PipelineLayoutBuilder &PipelineLayoutBuilder::config(const ShaderConfigure &shaderConfigure) {
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = shaderConfigure.createDescriptorSetLayouts(mDevice);
+        (*this).descriptorSetLayouts(std::move(descriptorSetLayouts));
+        return *this;
+    }
+
+    PipelineLayout PipelineLayoutBuilder::build() {
         if (mDevice == nullptr) {
             throw std::runtime_error("mDevice == nullptr, must invoke PipelineLayoutBuilder::device(vk::Device device)");
         }
@@ -52,10 +59,11 @@ namespace vklite {
         vk::PipelineLayout pipelineLayout = mDevice.createPipelineLayout(pipelineLayoutCreateInfo);
 
 //        return PipelineLayout(mDevice, pipelineLayout);
-        return {mDevice, pipelineLayout};
+        PipelineLayoutMeta meta(std::move(mDescriptorSetLayouts), std::move(mPushConstantRanges));
+        return {mDevice, pipelineLayout, std::move(meta)};
     }
 
-    std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUnique() const {
+    std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUnique() {
         return std::make_unique<PipelineLayout>(build());
     }
 
