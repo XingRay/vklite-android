@@ -7,11 +7,32 @@
 
 namespace vklite {
 
-    DescriptorSetConfigure::DescriptorSetConfigure() : mSet(0) {
-
-    }
+    DescriptorSetConfigure::DescriptorSetConfigure() : mSet(0) {}
 
     DescriptorSetConfigure::~DescriptorSetConfigure() = default;
+
+
+    DescriptorSetConfigure::DescriptorSetConfigure(const DescriptorSetConfigure &other) = default;
+
+    DescriptorSetConfigure &DescriptorSetConfigure::operator=(const DescriptorSetConfigure &other) {
+        if (this != &other) {
+            mSet = other.mSet;
+            mDescriptorBindingConfigures = other.mDescriptorBindingConfigures;
+        }
+        return *this;
+    }
+
+    DescriptorSetConfigure::DescriptorSetConfigure(DescriptorSetConfigure &&other) noexcept
+            : mSet(other.mSet),
+              mDescriptorBindingConfigures(std::move(other.mDescriptorBindingConfigures)) {}
+
+    DescriptorSetConfigure &DescriptorSetConfigure::operator=(DescriptorSetConfigure &&other) noexcept {
+        if (this != &other) {
+            mSet = other.mSet;
+            mDescriptorBindingConfigures = std::move(other.mDescriptorBindingConfigures);
+        }
+        return *this;
+    }
 
     uint32_t DescriptorSetConfigure::getSet() const {
         return mSet;

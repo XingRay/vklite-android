@@ -3,7 +3,7 @@
 //
 
 #include "GraphicsPipelineBuilder.h"
-#include "vklite/shader/ShaderModule.h"
+#include "vklite/pipeline/shader/ShaderModule.h"
 
 namespace vklite {
 

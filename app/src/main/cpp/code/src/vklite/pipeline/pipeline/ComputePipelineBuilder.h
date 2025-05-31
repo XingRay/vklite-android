@@ -9,7 +9,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "ComputePipeline.h"
+#include "vklite/pipeline/pipeline/Pipeline.h"
 
 namespace vklite {
 
@@ -24,15 +24,15 @@ namespace vklite {
 
         ~ComputePipelineBuilder();
 
-        ComputePipelineBuilder& device(vk::Device device);
+        ComputePipelineBuilder &device(vk::Device device);
 
-        ComputePipelineBuilder& computeShaderCode(std::vector<uint32_t>&& computeShaderCode);
+        ComputePipelineBuilder &computeShaderCode(std::vector<uint32_t> &&computeShaderCode);
 
-        ComputePipelineBuilder& pipelineLayout(vk::PipelineLayout pipelineLayout);
+        ComputePipelineBuilder &pipelineLayout(vk::PipelineLayout pipelineLayout);
 
-        std::optional<ComputePipeline> build();
+        std::optional<Pipeline> build();
 
-        std::unique_ptr<ComputePipeline> buildUnique();
+        std::unique_ptr<Pipeline> buildUnique();
 
     };
 

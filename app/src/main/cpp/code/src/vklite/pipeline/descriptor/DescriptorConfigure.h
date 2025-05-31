@@ -23,6 +23,14 @@ namespace vklite {
 
         ~DescriptorConfigure();
 
+        DescriptorConfigure(const DescriptorConfigure &other);
+
+        DescriptorConfigure &operator=(const DescriptorConfigure &other);
+
+        DescriptorConfigure(DescriptorConfigure &&other) noexcept;
+
+        DescriptorConfigure &operator=(DescriptorConfigure &&other) noexcept;
+
         DescriptorConfigure &addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure);
 
         DescriptorConfigure &addDescriptorSetConfigure(std::function<void(DescriptorSetConfigure &)> configure);

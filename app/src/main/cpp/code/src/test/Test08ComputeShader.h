@@ -91,7 +91,7 @@ namespace test08 {
 
 
         std::unique_ptr<vklite::CommandBuffers> mComputeCommandBuffers;
-        std::unique_ptr<vklite::ComputePipeline> mComputePipeline;
+        std::unique_ptr<vklite::Pipeline> mComputePipeline;
         std::unique_ptr<vklite::DescriptorPool> mComputeDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mComputePipelineLayout;
         std::vector<vklite::PipelineResource> mComputePipelineResources;

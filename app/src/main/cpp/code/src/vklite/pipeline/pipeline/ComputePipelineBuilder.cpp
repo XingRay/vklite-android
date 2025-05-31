@@ -9,7 +9,7 @@
 
 #include "vklite/Log.h"
 #include "vklite/device/Device.h"
-#include "vklite/shader/ShaderModule.h"
+#include "vklite/pipeline/shader/ShaderModule.h"
 
 namespace vklite {
 
@@ -32,7 +32,7 @@ namespace vklite {
         return *this;
     }
 
-    std::optional<ComputePipeline> ComputePipelineBuilder::build() {
+    std::optional<Pipeline> ComputePipelineBuilder::build() {
         if (mDevice == nullptr || mComputeShaderCode.empty() || mPipelineLayout == nullptr) {
             LOG_EF("ComputePipelineBuilder::build(), mDevice:{}, mComputeShaderCode.size():{}, mPipelineLayout:{}",
                    static_cast<void *>(mDevice),
@@ -67,15 +67,15 @@ namespace vklite {
             return std::nullopt;
         }
 
-        return ComputePipeline(mDevice, pipeline);
+        return Pipeline(mDevice, pipeline);
     }
 
-    std::unique_ptr<ComputePipeline> ComputePipelineBuilder::buildUnique() {
-        std::optional<ComputePipeline> computePipeline = build();
+    std::unique_ptr<Pipeline> ComputePipelineBuilder::buildUnique() {
+        std::optional<Pipeline> computePipeline = build();
         if (!computePipeline.has_value()) {
             return nullptr;
         }
-        return std::make_unique<ComputePipeline>(std::move(computePipeline.value()));
+        return std::make_unique<Pipeline>(std::move(computePipeline.value()));
     }
 
 } // vklite

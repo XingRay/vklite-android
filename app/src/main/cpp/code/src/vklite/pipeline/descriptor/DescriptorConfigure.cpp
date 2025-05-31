@@ -13,6 +13,25 @@ namespace vklite {
 
     DescriptorConfigure::~DescriptorConfigure() = default;
 
+    DescriptorConfigure::DescriptorConfigure(const DescriptorConfigure &other) = default;
+
+    DescriptorConfigure &DescriptorConfigure::operator=(const DescriptorConfigure &other) {
+        if (this != &other) {
+            mDescriptorSetConfigures = other.mDescriptorSetConfigures;
+        }
+        return *this;
+    }
+
+    DescriptorConfigure::DescriptorConfigure(DescriptorConfigure &&other) noexcept
+            : mDescriptorSetConfigures(std::move(other.mDescriptorSetConfigures)) {}
+
+    DescriptorConfigure &DescriptorConfigure::operator=(DescriptorConfigure &&other) noexcept {
+        if (this != &other) {
+            mDescriptorSetConfigures = std::move(other.mDescriptorSetConfigures);
+        }
+        return *this;
+    }
+
     DescriptorConfigure &DescriptorConfigure::addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure) {
         mDescriptorSetConfigures.emplace(descriptorSetConfigure.getSet(), std::move(descriptorSetConfigure));
         return *this;

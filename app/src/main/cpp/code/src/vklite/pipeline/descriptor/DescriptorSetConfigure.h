@@ -31,6 +31,14 @@ namespace vklite {
 
         ~DescriptorSetConfigure();
 
+        DescriptorSetConfigure(const DescriptorSetConfigure &other);
+
+        DescriptorSetConfigure &operator=(const DescriptorSetConfigure &other);
+
+        DescriptorSetConfigure(DescriptorSetConfigure &&other) noexcept;
+
+        DescriptorSetConfigure &operator=(DescriptorSetConfigure &&other) noexcept;
+
         [[nodiscard]]
         uint32_t getSet() const;
 
