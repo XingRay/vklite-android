@@ -72,8 +72,14 @@ namespace test01 {
         std::unique_ptr<vklite::PipelineLayout> mGraphicsPipelineLayout;
         std::unique_ptr<vklite::Pipeline> mGraphicsPipeline;
 
-        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
-        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+//        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
+//        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+
+        std::unique_ptr<vklite::CombinedMemoryBuffer> mIndexBuffer;
+        std::unique_ptr<vklite::CombinedMemoryBuffer> mIndexStagingBuffer;
+
+        std::unique_ptr<vklite::CombinedMemoryBuffer> mVertexBuffer;
+        std::unique_ptr<vklite::CombinedMemoryBuffer> mVertexStagingBuffer;
 
     public:
         // 构造函数初始化基类 TestBase，并传递 name

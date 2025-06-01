@@ -242,19 +242,33 @@ namespace test01 {
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
 
-        mIndexBuffer = vklite::IndexBufferBuilder()
+        uint32_t indicesSize = indices.size() * sizeof(uint32_t);
+        mIndexBuffer = vklite::CombinedMemoryBufferBuilder().asDeviceLocal()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
-                .size(indices.size() * sizeof(uint32_t))
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(indicesSize)
                 .buildUnique();
-        mIndexBuffer->update(*mCommandPool, indices);
+        mIndexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(indicesSize)
+                .buildUnique();
+        mIndexStagingBuffer->getDeviceMemory().updateBuffer(indices.data(), indicesSize);
+        mIndexBuffer->getBuffer().copyFrom(*mCommandPool, mIndexStagingBuffer->getBuffer().getBuffer());
 
-        mVertexBuffer = vklite::VertexBufferBuilder()
+        uint32_t verticesSize = vertices.size() * sizeof(Vertex);
+        mVertexBuffer = vklite::CombinedMemoryBufferBuilder().asDeviceLocal()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
-                .size(vertices.size() * sizeof(Vertex))
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(verticesSize)
                 .buildUnique();
-        mVertexBuffer->update(*mCommandPool, vertices.data(), vertices.size() * sizeof(Vertex));
+        mVertexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(verticesSize)
+                .buildUnique();
+        mVertexStagingBuffer->getDeviceMemory().updateBuffer(vertices.data(), verticesSize);
+        mVertexBuffer->getBuffer().copyFrom(*mCommandPool, mVertexStagingBuffer->getBuffer().getBuffer());
 
         LOG_D("test created ");
     }
@@ -306,12 +320,13 @@ namespace test01 {
                 vkCommandBuffer.setScissor(0, mScissors);
                 std::array<vk::DeviceSize, 1> offsets = {0};
 
-                std::array<vk::Buffer, 1> vertexBuffers = {mVertexBuffer->getBuffer()};
+                std::array<vk::Buffer, 1> vertexBuffers = {mVertexBuffer->getBuffer().getBuffer()};
                 vkCommandBuffer.bindVertexBuffers(0, vertexBuffers, offsets);
 
-                vkCommandBuffer.bindIndexBuffer(mIndexBuffer->getBuffer(), 0, mIndexBuffer->getIndexType());
+                vkCommandBuffer.bindIndexBuffer(mIndexBuffer->getBuffer().getBuffer(), 0, vk::IndexType::eUint32);
 
-                vkCommandBuffer.drawIndexed(mIndexBuffer->getIndicesCount(), 1, 0, 0, 0);
+//                vkCommandBuffer.drawIndexed(mIndexBuffer->getIndicesCount(), 1, 0, 0, 0);
+                vkCommandBuffer.drawIndexed(3, 1, 0, 0, 0);
             });
         });
 
