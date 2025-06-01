@@ -72,7 +72,6 @@ namespace test08 {
         std::unique_ptr<vklite::CombinedImageView> mColorImageView;
         std::unique_ptr<vklite::CombinedImageView> mDepthImageView;
 
-//        std::vector<vklite::FrameBuffer> mFramebuffers;
         vklite::Framebuffers mFramebuffers;
 
         std::vector<vklite::Semaphore> mImageAvailableSemaphores;
@@ -95,8 +94,8 @@ namespace test08 {
         std::unique_ptr<vklite::DescriptorPool> mComputeDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mComputePipelineLayout;
         std::vector<vklite::PipelineResource> mComputePipelineResources;
-        std::vector<vklite::DeviceLocalBuffer> mShaderStorageBuffers;
-        std::vector<std::unique_ptr<vklite::BufferInterface>> mUniformBuffers;
+        std::vector<vklite::StorageBuffer> mShaderStorageBuffers;
+        std::vector<vklite::UniformBuffer> mUniformBuffers;
         std::vector<vklite::Fence> mComputeFences;
         std::vector<vklite::Semaphore> mComputeFinishSemaphores;
 

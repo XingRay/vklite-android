@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <vulkan/vulkan.hpp>
 
@@ -20,6 +20,14 @@ namespace vklite {
         VertexAttributeConfigure(vk::Format format, uint32_t offset);
 
         ~VertexAttributeConfigure();
+
+        VertexAttributeConfigure(const VertexAttributeConfigure &other);
+
+        VertexAttributeConfigure &operator=(const VertexAttributeConfigure &other);
+
+        VertexAttributeConfigure(VertexAttributeConfigure &&other) noexcept;
+
+        VertexAttributeConfigure &operator=(VertexAttributeConfigure &&other) noexcept;
 
         [[nodiscard]]
         vk::Format getFormat() const;

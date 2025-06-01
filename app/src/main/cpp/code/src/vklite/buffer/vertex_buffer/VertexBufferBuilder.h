@@ -6,22 +6,37 @@
 
 #include <memory>
 
-#include "VertexBuffer.h"
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBufferBuilder.h"
+#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
 
 namespace vklite {
 
     class VertexBufferBuilder {
     private:
-        vk::DeviceSize mBufferSize;
+        vk::Device mDevice;
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
         VertexBufferBuilder();
 
         ~VertexBufferBuilder();
 
-        VertexBufferBuilder &bufferSize(vk::DeviceSize bufferSize);
+        VertexBufferBuilder &device(vk::Device device);
 
-        std::unique_ptr<VertexBuffer> build(const PhysicalDevice &physicalDevice, const Device &device);
+        VertexBufferBuilder &size(vk::DeviceSize size);
+
+        VertexBufferBuilder &addUsage(vk::BufferUsageFlags usage);
+
+        VertexBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
+
+        VertexBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+
+        [[nodiscard]]
+        VertexBuffer build();
+
+        [[nodiscard]]
+        std::unique_ptr<VertexBuffer> buildUnique();
     };
 
 } // vklite

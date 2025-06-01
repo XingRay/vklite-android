@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include <vulkan/vulkan.hpp>
 #include "VertexBindingConfigure.h"
 
 namespace vklite {
@@ -23,6 +24,14 @@ namespace vklite {
         VertexConfigure();
 
         ~VertexConfigure();
+
+        VertexConfigure(const VertexConfigure &other);
+
+        VertexConfigure &operator=(const VertexConfigure &other);
+
+        VertexConfigure(VertexConfigure &&other) noexcept;
+
+        VertexConfigure &operator=(VertexConfigure &&other) noexcept;
 
         VertexConfigure &add(VertexBindingConfigure &&vertexConfigure);
 

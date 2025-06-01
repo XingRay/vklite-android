@@ -8,12 +8,48 @@
 namespace vklite {
 
     VertexBindingConfigure::VertexBindingConfigure()
-            : mStride(0), mAttributes({}), mVertexInputRate(vk::VertexInputRate::eVertex) {}
-
-    VertexBindingConfigure::VertexBindingConfigure(VertexBindingConfigure &&other) noexcept
-            : mStride(other.mStride), mAttributes(std::move(other.mAttributes)), mVertexInputRate(other.mVertexInputRate) {}
+            : mBinding(0),
+              mStride(0),
+              mVertexInputRate(vk::VertexInputRate::eVertex),
+              mAttributes({}),
+              mCurrentAttributeLocation(-1),
+              mCurrentAttributeOffset(0) {}
 
     VertexBindingConfigure::~VertexBindingConfigure() = default;
+
+    VertexBindingConfigure::VertexBindingConfigure(const VertexBindingConfigure &other) = default;
+
+    VertexBindingConfigure &VertexBindingConfigure::operator=(const VertexBindingConfigure &other) {
+        if (this != &other) {
+            mBinding = other.mBinding;
+            mStride = other.mStride;
+            mVertexInputRate = other.mVertexInputRate;
+            mAttributes = other.mAttributes;
+            mCurrentAttributeLocation = other.mCurrentAttributeLocation;
+            mCurrentAttributeOffset = other.mCurrentAttributeOffset;
+        }
+        return *this;
+    }
+
+    VertexBindingConfigure::VertexBindingConfigure(VertexBindingConfigure &&other) noexcept
+            : mBinding(other.mBinding),
+              mStride(other.mStride),
+              mVertexInputRate(other.mVertexInputRate),
+              mAttributes(std::move(other.mAttributes)),
+              mCurrentAttributeLocation(other.mCurrentAttributeLocation),
+              mCurrentAttributeOffset(other.mCurrentAttributeOffset) {}
+
+    VertexBindingConfigure &VertexBindingConfigure::operator=(VertexBindingConfigure &&other) noexcept {
+        if (this != &other) {
+            mBinding = other.mBinding;
+            mStride = other.mStride;
+            mVertexInputRate = other.mVertexInputRate;
+            mAttributes = std::move(other.mAttributes);
+            mCurrentAttributeLocation = other.mCurrentAttributeLocation;
+            mCurrentAttributeOffset = other.mCurrentAttributeOffset;
+        }
+        return *this;
+    }
 
     uint32_t VertexBindingConfigure::getBinding() const {
         return mBinding;

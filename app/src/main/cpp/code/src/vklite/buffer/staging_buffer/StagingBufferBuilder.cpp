@@ -17,12 +17,12 @@ namespace vklite {
         return *this;
     }
 
-    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties){
+    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
         return *this;
     }
 
-    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice){
+    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDevice.getMemoryProperties());
         return *this;
     }
@@ -34,7 +34,7 @@ namespace vklite {
 
     StagingBuffer StagingBufferBuilder::build() {
 //        return StagingBuffer(mCombinedMemoryBufferBuilder.build());
-        return mCombinedMemoryBufferBuilder.build();
+        return StagingBuffer(mCombinedMemoryBufferBuilder.build());
     }
 
     std::unique_ptr<StagingBuffer> StagingBufferBuilder::buildUnique() {

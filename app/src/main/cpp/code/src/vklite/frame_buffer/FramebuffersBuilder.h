@@ -23,7 +23,7 @@ namespace vklite {
 
         FramebuffersBuilder &count(uint32_t count);
 
-        FramebuffersBuilder &FramebufferBuilder(std::function<Framebuffer(uint32_t index)> &&FramebufferBuilder);
+        FramebuffersBuilder &framebufferBuilder(std::function<Framebuffer(uint32_t index)> &&framebufferBuilder);
 
         Framebuffers build();
 

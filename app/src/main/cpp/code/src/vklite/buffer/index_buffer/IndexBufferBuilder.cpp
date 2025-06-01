@@ -15,7 +15,7 @@ namespace vklite {
     IndexBufferBuilder::~IndexBufferBuilder() = default;
 
     IndexBufferBuilder &IndexBufferBuilder::device(vk::Device device) {
-        mDevice  = device;
+        mDevice = device;
         mCombinedMemoryBufferBuilder.device(device);
         return *this;
     }
@@ -25,15 +25,24 @@ namespace vklite {
         return *this;
     }
 
+    IndexBufferBuilder &IndexBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
+        return *this;
+    }
+
+    IndexBufferBuilder &IndexBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
+        configDeviceMemory(physicalDevice.getMemoryProperties());
+        return *this;
+    }
+
     IndexBufferBuilder &IndexBufferBuilder::indexType(vk::IndexType indexType) {
         mIndexType = indexType;
         return *this;
     }
 
     IndexBuffer IndexBufferBuilder::build() {
-        CombinedMemoryBuffer buffer = mCombinedMemoryBufferBuilder.build();
-        IndexBufferMeta meta(mIndexType, 0);
-        return {mDevice, std::move(buffer), std::move(meta)};
+        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, {mIndexType, 0}};
     }
 
     std::unique_ptr<IndexBuffer> IndexBufferBuilder::buildUnique() {

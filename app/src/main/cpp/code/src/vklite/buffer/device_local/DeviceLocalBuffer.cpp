@@ -4,19 +4,31 @@
 
 #include "DeviceLocalBuffer.h"
 
+#include <utility>
+
+#include "vklite/buffer/staging_buffer/StagingBufferBuilder.h"
+
 namespace vklite {
 
-    DeviceLocalBuffer::DeviceLocalBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer)
-            : mCombinedMemoryBuffer(std::move(combinedMemoryBuffer)) {}
+    DeviceLocalBuffer::DeviceLocalBuffer(const vk::Device &device,
+                                         CombinedMemoryBuffer &&combinedMemoryBuffer,
+                                         std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties)
+            : mDevice(device),
+              mCombinedMemoryBuffer(std::move(combinedMemoryBuffer)),
+              mPhysicalDeviceMemoryProperties(physicalDeviceMemoryProperties) {}
 
     DeviceLocalBuffer::~DeviceLocalBuffer() = default;
 
     DeviceLocalBuffer::DeviceLocalBuffer(DeviceLocalBuffer &&other) noexcept
-            : mCombinedMemoryBuffer(std::move(other.mCombinedMemoryBuffer)) {}
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mCombinedMemoryBuffer(std::move(other.mCombinedMemoryBuffer)),
+              mPhysicalDeviceMemoryProperties(other.mPhysicalDeviceMemoryProperties) {}
 
     DeviceLocalBuffer &DeviceLocalBuffer::operator=(DeviceLocalBuffer &&other) noexcept {
         if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
             mCombinedMemoryBuffer = std::move(other.mCombinedMemoryBuffer);
+            mPhysicalDeviceMemoryProperties = other.mPhysicalDeviceMemoryProperties;
         }
         return *this;
     }
@@ -29,20 +41,72 @@ namespace vklite {
         return mCombinedMemoryBuffer.getBuffer().getBuffer();
     }
 
-    void DeviceLocalBuffer::recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) const {
-        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, srcBuffer, srcOffset, dstOffset, copyDataSize);
+    DeviceLocalBuffer &DeviceLocalBuffer::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        return *this;
     }
 
-    void DeviceLocalBuffer::recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer) const {
-        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, srcBuffer);
+    DeviceLocalBuffer &DeviceLocalBuffer::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
+        mPhysicalDeviceMemoryProperties = physicalDevice.getMemoryProperties();
+        return *this;
     }
 
-    void DeviceLocalBuffer::copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset) const {
-        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, srcBuffer, srcOffset, copyDataSize, dstOffset);
+
+    DeviceLocalBuffer &
+    DeviceLocalBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
+        return *this;
     }
 
-    void DeviceLocalBuffer::copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer) const {
-        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, srcBuffer);
+    DeviceLocalBuffer &DeviceLocalBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize) {
+        recordUpdate(commandBuffer, stagingBuffer, 0, 0, copyDataSize);
+        return *this;
+    }
+
+    DeviceLocalBuffer &DeviceLocalBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer) {
+        recordUpdate(commandBuffer, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        return *this;
+    }
+
+    DeviceLocalBuffer &DeviceLocalBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke DeviceLocalBuffer::physicalDeviceMemoryProperties()");
+        }
+        StagingBuffer stagingBuffer = StagingBufferBuilder()
+                .device(mDevice)
+                .size(size)
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .build();
+        stagingBuffer.updateBuffer(data, size);
+
+        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
+
+        return *this;
+    }
+
+
+    DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
+        });
+        return *this;
+    }
+
+    DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize) {
+        update(commandPool, stagingBuffer, 0, 0, copyDataSize);
+        return *this;
+    }
+
+    DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer) {
+        update(commandPool, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        return *this;
+    }
+
+    DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            recordUpdate(commandBuffer, data, size);
+        });
+        return *this;
     }
 
 } // vklite

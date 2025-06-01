@@ -27,11 +27,15 @@ namespace vklite {
         return mCombinedMemoryBuffer.getBuffer().getBuffer();
     }
 
-    void StagingBuffer::updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags) const {
+    vk::DeviceSize StagingBuffer::getSize() const {
+        return mCombinedMemoryBuffer.getBuffer().getSize();
+    }
+
+    void StagingBuffer::updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags) {
         mCombinedMemoryBuffer.getDeviceMemory().updateBuffer(data, size, offset, flags);
     }
 
-    void StagingBuffer::updateBuffer(const void *data, uint32_t size) const {
+    void StagingBuffer::updateBuffer(const void *data, uint32_t size) {
         updateBuffer(data, size, 0);
     }
 

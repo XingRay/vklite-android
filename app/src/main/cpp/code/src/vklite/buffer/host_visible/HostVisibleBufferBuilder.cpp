@@ -38,7 +38,7 @@ namespace vklite {
     }
 
     HostVisibleBuffer HostVisibleBufferBuilder::build() {
-        return mCombinedMemoryBufferBuilder.build();
+        return HostVisibleBuffer(mCombinedMemoryBufferBuilder.build());
     }
 
     std::unique_ptr<HostVisibleBuffer> HostVisibleBufferBuilder::buildUnique() {

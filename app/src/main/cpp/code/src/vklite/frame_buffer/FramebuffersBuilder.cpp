@@ -15,7 +15,7 @@ namespace vklite {
         return *this;
     }
 
-    FramebuffersBuilder &FramebuffersBuilder::FramebufferBuilder(std::function<Framebuffer(uint32_t index)> &&FramebufferBuilder) {
+    FramebuffersBuilder &FramebuffersBuilder::framebufferBuilder(std::function<Framebuffer(uint32_t index)> &&FramebufferBuilder) {
         mFramebufferBuilder = std::move(FramebufferBuilder);
         return *this;
     }

@@ -12,7 +12,16 @@
 
 namespace vklite {
 
-    ComputePipelineBuilder::ComputePipelineBuilder() = default;
+    ComputePipelineBuilder::ComputePipelineBuilder() {
+        mComputeShaderStageInfo
+                .setStage(vk::ShaderStageFlagBits::eCompute)
+                .setPName("main");
+
+        mComputePipelineCreateInfo
+                .setStage(mComputeShaderStageInfo);
+
+        mPipelineCache = nullptr;
+    };
 
     ComputePipelineBuilder::~ComputePipelineBuilder() = default;
 
@@ -21,13 +30,19 @@ namespace vklite {
         return *this;
     }
 
-    ComputePipelineBuilder &ComputePipelineBuilder::computeShader(std::vector<uint32_t> &&computeShaderCode) {
-        mComputeShaderCode = std::move(computeShaderCode);
+    ComputePipelineBuilder &ComputePipelineBuilder::computeShader(std::unique_ptr<ShaderModule> &&computeShaderModule) {
+        mComputeShaderModule = std::move(computeShaderModule);
+        mComputeShaderStageInfo.setModule(mComputeShaderModule->getShaderModule());
         return *this;
     }
 
     ComputePipelineBuilder &ComputePipelineBuilder::pipelineLayout(vk::PipelineLayout pipelineLayout) {
-        mPipelineLayout = pipelineLayout;
+        mComputePipelineCreateInfo.setLayout(pipelineLayout);
+        return *this;
+    }
+
+    ComputePipelineBuilder &ComputePipelineBuilder::pipelineCache(vk::PipelineCache pipelineCache) {
+        mPipelineCache = pipelineCache;
         return *this;
     }
 
@@ -35,27 +50,14 @@ namespace vklite {
         if (mDevice == nullptr) {
             throw std::runtime_error("ComputePipelineBuilder::build() mDevice == nullptr");
         }
-        if (mComputeShaderCode.empty()) {
-            throw std::runtime_error("ComputePipelineBuilder::build() mComputeShaderCode.empty()");
+        if (mComputeShaderStageInfo.module == nullptr) {
+            throw std::runtime_error("ComputePipelineBuilder::build() mComputeShaderStageInfo.module== nullptr");
         }
-        if (mPipelineLayout == nullptr) {
-            throw std::runtime_error("ComputePipelineBuilder::build() mPipelineLayout == nullptr");
+        if (mComputePipelineCreateInfo.layout == nullptr) {
+            throw std::runtime_error("ComputePipelineBuilder::build() mComputePipelineCreateInfo.layout == nullptr");
         }
 
-        ShaderModule computeShaderModule = ShaderModuleBuilder().device(mDevice).code(std::move(mComputeShaderCode)).build();
-
-        vk::PipelineShaderStageCreateInfo computeShaderStageInfo{};
-        computeShaderStageInfo
-                .setStage(vk::ShaderStageFlagBits::eCompute)
-                .setModule(computeShaderModule.getShaderModule())
-                .setPName("main");
-
-        vk::ComputePipelineCreateInfo computePipelineCreateInfo{};
-        computePipelineCreateInfo
-                .setLayout(mPipelineLayout)
-                .setStage(computeShaderStageInfo);
-
-        auto [result, pipeline] = mDevice.createComputePipeline(nullptr, computePipelineCreateInfo);
+        auto [result, pipeline] = mDevice.createComputePipeline(mPipelineCache, mComputePipelineCreateInfo);
         if (result != vk::Result::eSuccess) {
             LOG_E("createComputePipeline() failed");
             return std::nullopt;

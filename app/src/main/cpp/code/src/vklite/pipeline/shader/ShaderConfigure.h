@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <vulkan/vulkan.hpp>
-
+#include "vklite/pipeline/vertex/VertexConfigure.h"
 #include "vklite/pipeline/descriptor/DescriptorConfigure.h"
 
 namespace vklite {
@@ -17,6 +17,11 @@ namespace vklite {
         std::vector<uint32_t> mVertexShaderCode;
         std::vector<uint32_t> mFragmentShaderCode;
         std::vector<uint32_t> mComputeShaderCode;
+
+        /**
+         * vertex
+         */
+        VertexConfigure mVertexConfigure;
 
         // push constants
         std::vector<vk::PushConstantRange> mPushConstantRanges;
@@ -47,6 +52,13 @@ namespace vklite {
         ShaderConfigure &fragmentShaderCode(std::vector<uint32_t> &&code);
 
         ShaderConfigure &computeShaderCode(std::vector<uint32_t> &&code);
+
+        /**
+         * vertex
+         */
+        ShaderConfigure &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
+
+        ShaderConfigure &addVertexBinding(VertexBindingConfigure &&configure);
 
         /**
          *
@@ -92,6 +104,13 @@ namespace vklite {
 
         [[nodiscard]]
         std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const vk::Device &device) const;
+
+        [[nodiscard]]
+        std::vector<vk::VertexInputBindingDescription> createVertexBindingDescriptions();
+
+        [[nodiscard]]
+        std::vector<vk::VertexInputAttributeDescription> createVertexAttributeDescriptions();
+
     };
 
 } // vklite

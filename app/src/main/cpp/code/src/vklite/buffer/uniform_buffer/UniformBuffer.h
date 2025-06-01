@@ -4,46 +4,63 @@
 
 #pragma once
 
-#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include <vulkan/vulkan.hpp>
+
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
 #include "vklite/buffer/staging_buffer/StagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/buffer/Buffer.h"
 
 namespace vklite {
 
     class UniformBuffer {
     private:
-        DeviceLocalBuffer mUniformBuffer;
+        vk::Device mDevice;
+        CombinedMemoryBuffer mCombinedMemoryBuffer;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        UniformBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize);
+        UniformBuffer(const vk::Device &device,
+                      CombinedMemoryBuffer &&combinedMemoryBuffer,
+                      std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~UniformBuffer();
 
+        UniformBuffer(const UniformBuffer &other) = delete;
+
+        UniformBuffer &operator=(const UniformBuffer &other) = delete;
+
+        UniformBuffer(UniformBuffer &&other) noexcept;
+
+        UniformBuffer &operator=(UniformBuffer &&other) noexcept;
+
         [[nodiscard]]
-        vk::DeviceSize getSize() const;
+        const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
+        UniformBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        void recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
+        UniformBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
 
-        template<class T>
-        void recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<T> &data) {
-            recordCommandUpdate(commandBuffer, data.data(), data.size() * sizeof(T));
-        }
+        // recordUpdate
+        UniformBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        void update(const CommandPool &commandPool, const void *data, uint32_t size);
+        UniformBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
 
-        template<class T>
-        void update(const CommandPool &commandPool, const std::vector<T> &data) {
-            update(commandPool, data.data(), data.size() * sizeof(T));
-        }
+        UniformBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
 
-        std::vector<vk::DescriptorBufferInfo> createDescriptorBufferInfos();
+        UniformBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
+
+
+        // update
+        UniformBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+
+        UniformBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        UniformBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
+
+        UniformBuffer &update(const CommandPool &commandPool, const void *data, uint32_t size);
     };
 
 } // vklite

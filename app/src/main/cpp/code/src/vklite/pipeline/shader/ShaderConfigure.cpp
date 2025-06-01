@@ -17,6 +17,7 @@ namespace vklite {
             mVertexShaderCode = other.mVertexShaderCode;
             mFragmentShaderCode = other.mFragmentShaderCode;
             mComputeShaderCode = other.mComputeShaderCode;
+            mVertexConfigure = other.mVertexConfigure;
             mPushConstantRanges = other.mPushConstantRanges;
             mDescriptorSetConfigures = other.mDescriptorSetConfigures;
         }
@@ -27,6 +28,7 @@ namespace vklite {
             : mVertexShaderCode(std::move(other.mVertexShaderCode)),
               mFragmentShaderCode(std::move(other.mFragmentShaderCode)),
               mComputeShaderCode(std::move(other.mComputeShaderCode)),
+              mVertexConfigure(other.mVertexConfigure),
               mPushConstantRanges(std::move(other.mPushConstantRanges)),
               mDescriptorSetConfigures(std::move(other.mDescriptorSetConfigures)) {}
 
@@ -35,6 +37,7 @@ namespace vklite {
             mVertexShaderCode = std::move(other.mVertexShaderCode);
             mFragmentShaderCode = std::move(other.mFragmentShaderCode);
             mComputeShaderCode = std::move(other.mComputeShaderCode);
+            mVertexConfigure = other.mVertexConfigure;
             mPushConstantRanges = std::move(other.mPushConstantRanges);
             mDescriptorSetConfigures = std::move(other.mDescriptorSetConfigures);
         }
@@ -58,6 +61,24 @@ namespace vklite {
 
     ShaderConfigure &ShaderConfigure::computeShaderCode(std::vector<uint32_t> &&code) {
         mComputeShaderCode = std::move(code);
+        return *this;
+    }
+
+
+    /**
+     *
+     * vertex
+     *
+     */
+    ShaderConfigure &ShaderConfigure::addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure) {
+        VertexBindingConfigure config{};
+        configure(config);
+        addVertexBinding(std::move(config));
+        return *this;
+    }
+
+    ShaderConfigure &ShaderConfigure::addVertexBinding(VertexBindingConfigure &&configure) {
+        mVertexConfigure.add(std::move(configure));
         return *this;
     }
 
@@ -168,6 +189,15 @@ namespace vklite {
 
     std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const Device &device) const {
         return createDescriptorSetLayouts(device.getDevice());
+    }
+
+
+    std::vector<vk::VertexInputBindingDescription> ShaderConfigure::createVertexBindingDescriptions() {
+        return mVertexConfigure.createVertexInputBindingDescriptions();
+    }
+
+    std::vector<vk::VertexInputAttributeDescription> ShaderConfigure::createVertexAttributeDescriptions() {
+        return mVertexConfigure.createVertexInputAttributeDescriptions();
     }
 
 } // vklite

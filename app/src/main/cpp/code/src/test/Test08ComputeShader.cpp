@@ -80,6 +80,7 @@ namespace test08 {
             sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
         LOG_D("sampleCount:%d", sampleCount);
+
         std::vector<uint32_t> presentQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface());
         std::vector<uint32_t> graphicAndComputeQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute);
 
@@ -180,8 +181,6 @@ namespace test08 {
                             .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz.asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                             });
-//                            .asResolveAttachmentUsedInIf(mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal)
-//                            .asColorAttachmentUsedInIf(!mMsaaEnable, subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::depthStencilAttachment(attachment)
@@ -194,7 +193,7 @@ namespace test08 {
 
         mFramebuffers = vklite::FramebuffersBuilder()
                 .count(mDisplayImageViews.size())
-                .FramebufferBuilder([&](uint32_t index) {
+                .framebufferBuilder([&](uint32_t index) {
                     return vklite::FramebufferBuilder()
                             .device(mDevice->getDevice())
                             .renderPass(mRenderPass->getRenderPass())
@@ -216,27 +215,8 @@ namespace test08 {
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
-        mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
-                .device(mDevice->getDevice())
-//                .descriptorPoolSizes(graphicsDescriptorConfigure.calcDescriptorPoolSizes())
-//                .descriptorSetCount(graphicsDescriptorConfigure.getDescriptorSetCount())
-                .frameCount(mFrameCount)
-                .buildUnique();
 
-        std::vector<vk::DescriptorSetLayout> graphicsDescriptorSetLayouts;// = graphicsDescriptorConfigure.createDescriptorSetLayouts(*mDevice);
-
-        mGraphicsPipelineLayout = vklite::PipelineLayoutBuilder()
-                .device(mDevice->getDevice())
-                .descriptorSetLayouts(graphicsDescriptorSetLayouts)
-                .addPushConstant(sizeof(glm::mat4), 0, vk::ShaderStageFlagBits::eVertex)
-                .buildUnique();
-
-        mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
-                .device(mDevice->getDevice())
-                .renderPass(mRenderPass->getRenderPass())
-                .pipelineLayout(mGraphicsPipelineLayout->getPipelineLayout())
-                .viewports(mViewports)
-                .scissors(mScissors)
+        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -246,7 +226,23 @@ namespace test08 {
 //                            .inputRate(vk::VertexInputRate::eVertex)
                             .addAttribute(0, ShaderFormat::Vec2, offsetof(Particle, position))
                             .addAttribute(1, ShaderFormat::Vec4, offsetof(Particle, color));
-                })
+                });
+
+        mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
+                .device(mDevice->getDevice())
+                .frameCount(mFrameCount)
+                .buildUnique();
+
+        mGraphicsPipelineLayout = vklite::PipelineLayoutBuilder()
+                .device(mDevice->getDevice())
+                .buildUnique();
+
+        mGraphicsPipeline = vklite::GraphicsPipelineBuilder()
+                .device(mDevice->getDevice())
+                .renderPass(mRenderPass->getRenderPass())
+                .pipelineLayout(mGraphicsPipelineLayout->getPipelineLayout())
+                .viewports(mViewports)
+                .scissors(mScissors)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
@@ -278,7 +274,6 @@ namespace test08 {
         mComputePipeline = vklite::ComputePipelineBuilder()
                 .device(mDevice->getDevice())
                 .pipelineLayout(mComputePipelineLayout->getPipelineLayout())
-                .computeShader(std::move(computeShaderConfigure.getComputeShaderCode()))
                 .buildUnique();
 
         mComputePipelineResources = vklite::PipelineResourcesBuilder()
@@ -290,22 +285,22 @@ namespace test08 {
                 })
                 .build();
 
-        vklite::StagingBuffer stagingBuffer(*mPhysicalDevice, *mDevice, shaderStorageBufferSize);
-        stagingBuffer.updateBuffer(particles.data(), shaderStorageBufferSize);
         for (int i = 0; i < mFrameCount; i++) {
-            vklite::DeviceLocalBuffer deviceLocalBuffer = vklite::DeviceLocalBufferBuilder()
+            vklite::StorageBuffer storageBuffer = vklite::StorageBufferBuilder()
                     .device(mDevice->getDevice())
                     .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
                     .size(shaderStorageBufferSize)
-                    .addUsage(vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer)
+                    .addUsage(vk::BufferUsageFlagBits::eVertexBuffer)
+                    .build();
+            storageBuffer.update(*mCommandPool, particles.data(), shaderStorageBufferSize);
+            mShaderStorageBuffers.push_back(std::move(storageBuffer));
+
+            vklite::UniformBuffer uniformBuffer = vklite::UniformBufferBuilder()
+                    .device(mDevice->getDevice())
+                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
+                    .size(sizeof(UniformBufferObject))
                     .build();
 
-            mCommandPool->submitOneTimeCommand([&](const vk::CommandBuffer commandBuffer) {
-                deviceLocalBuffer.recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
-            });
-            mShaderStorageBuffers.push_back(std::move(deviceLocalBuffer));
-
-            std::unique_ptr<vklite::UniformBuffer> uniformBuffer = std::make_unique<vklite::UniformBuffer>(*mPhysicalDevice, *mDevice, sizeof(UniformBufferObject));
             mUniformBuffers.push_back(std::move(uniformBuffer));
         }
 
@@ -327,7 +322,7 @@ namespace test08 {
                                         .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
                                         .binding(0)
                                         .descriptorType(vk::DescriptorType::eUniformBuffer)
-                                        .addBufferInfo(*mUniformBuffers[frameIndex]);
+                                        .addBufferInfo(mUniformBuffers[frameIndex].getCombinedMemoryBuffer().getBuffer());
                             })
                             .addMapping([&](vklite::DescriptorMapping &mapping) {
                                 mapping
@@ -365,8 +360,7 @@ namespace test08 {
         // update data by frame
         UniformBufferObject ubo{};
         ubo.deltaTime = static_cast<float >(mTimer.getDeltaTimeMs()) * 2.0f;
-        mUniformBuffers[mCurrentFrameIndex]->update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
-
+        mUniformBuffers[mCurrentFrameIndex].update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
 
         const vk::Device vkDevice = mDevice->getDevice();
 

@@ -4,41 +4,64 @@
 
 #pragma once
 
-#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include <vulkan/vulkan.hpp>
+
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
 #include "vklite/buffer/staging_buffer/StagingBuffer.h"
 #include "vklite/command_pool/CommandPool.h"
+
 
 namespace vklite {
 
     class VertexBuffer {
     private:
-        DeviceLocalBuffer mVertexBuffer;
-        StagingBuffer mStagingBuffer;
+        vk::Device mDevice;
+        CombinedMemoryBuffer mCombinedMemoryBuffer;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        VertexBuffer(const PhysicalDevice &physicalDevice,const Device &device, vk::DeviceSize bufferSize);
+        VertexBuffer(const vk::Device &device,
+                     CombinedMemoryBuffer &&combinedMemoryBuffer,
+                     std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~VertexBuffer();
+
+        VertexBuffer(const VertexBuffer &other) = delete;
+
+        VertexBuffer &operator=(const VertexBuffer &other) = delete;
+
+        VertexBuffer(VertexBuffer &&other) noexcept;
+
+        VertexBuffer &operator=(VertexBuffer &&other) noexcept;
+
+        [[nodiscard]]
+        const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
-        [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
+        VertexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        void recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
+        VertexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
 
-        template<class T>
-        void recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<T> &data) {
-            recordCommandUpdate(commandBuffer, data.data(), data.size() * sizeof(T));
-        }
+        // recordUpdate
+        VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        void update(const CommandPool &commandPool, const void *data, uint32_t size);
+        VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
 
-        template<class T>
-        void update(const CommandPool &commandPool, const std::vector<T> &data) {
-            update(commandPool, data.data(), data.size() * sizeof(T));
-        }
+        VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
+
+        VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
+
+
+        // update
+        VertexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+
+        VertexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        VertexBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
+
+        VertexBuffer &update(const CommandPool &commandPool, const void *data, uint32_t size);
 
     };
 

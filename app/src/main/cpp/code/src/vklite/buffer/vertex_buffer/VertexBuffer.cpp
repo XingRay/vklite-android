@@ -4,28 +4,109 @@
 
 #include "VertexBuffer.h"
 
+#include <utility>
+
+#include "vklite/buffer/staging_buffer/StagingBufferBuilder.h"
+
 namespace vklite {
-    VertexBuffer::VertexBuffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize)
-            : mVertexBuffer(physicalDevice, device, bufferSize, vk::BufferUsageFlagBits::eVertexBuffer),
-              mStagingBuffer(physicalDevice, device, bufferSize) {}
+
+    VertexBuffer::VertexBuffer(const vk::Device &device,
+                                         CombinedMemoryBuffer &&combinedMemoryBuffer,
+                                         std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties)
+            : mDevice(device),
+              mCombinedMemoryBuffer(std::move(combinedMemoryBuffer)),
+              mPhysicalDeviceMemoryProperties(physicalDeviceMemoryProperties) {}
 
     VertexBuffer::~VertexBuffer() = default;
 
+    VertexBuffer::VertexBuffer(VertexBuffer &&other) noexcept
+            : mDevice(std::exchange(other.mDevice, nullptr)),
+              mCombinedMemoryBuffer(std::move(other.mCombinedMemoryBuffer)),
+              mPhysicalDeviceMemoryProperties(other.mPhysicalDeviceMemoryProperties) {}
+
+    VertexBuffer &VertexBuffer::operator=(VertexBuffer &&other) noexcept {
+        if (this != &other) {
+            mDevice = std::exchange(other.mDevice, nullptr);
+            mCombinedMemoryBuffer = std::move(other.mCombinedMemoryBuffer);
+            mPhysicalDeviceMemoryProperties = other.mPhysicalDeviceMemoryProperties;
+        }
+        return *this;
+    }
+
+    const CombinedMemoryBuffer &VertexBuffer::getCombinedMemoryBuffer() const {
+        return mCombinedMemoryBuffer;
+    }
+
     const vk::Buffer &VertexBuffer::getBuffer() const {
-        return mVertexBuffer.getBuffer();
+        return mCombinedMemoryBuffer.getBuffer().getBuffer();
     }
 
-    const vk::DeviceMemory &VertexBuffer::getDeviceMemory() const {
-        return mVertexBuffer.getDeviceMemory();
+    VertexBuffer &VertexBuffer::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        return *this;
     }
 
-    void VertexBuffer::recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
-        mStagingBuffer.updateBuffer(data, size);
-        mVertexBuffer.recordCommandCopyFrom(commandBuffer, mStagingBuffer.getBuffer());
+    VertexBuffer &VertexBuffer::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
+        mPhysicalDeviceMemoryProperties = physicalDevice.getMemoryProperties();
+        return *this;
     }
 
-    void VertexBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
-        mStagingBuffer.updateBuffer(data, size);
-        mVertexBuffer.copyFrom(commandPool, mStagingBuffer.getBuffer());
+
+    VertexBuffer &
+    VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
+        return *this;
     }
+
+    VertexBuffer &VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize) {
+        recordUpdate(commandBuffer, stagingBuffer, 0, 0, copyDataSize);
+        return *this;
+    }
+
+    VertexBuffer &VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer) {
+        recordUpdate(commandBuffer, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        return *this;
+    }
+
+    VertexBuffer &VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke VertexBuffer::physicalDeviceMemoryProperties()");
+        }
+        StagingBuffer stagingBuffer = StagingBufferBuilder()
+                .device(mDevice)
+                .size(size)
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .build();
+        stagingBuffer.updateBuffer(data, size);
+
+        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
+
+        return *this;
+    }
+
+
+    VertexBuffer &VertexBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
+        });
+        return *this;
+    }
+
+    VertexBuffer &VertexBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize) {
+        update(commandPool, stagingBuffer, 0, 0, copyDataSize);
+        return *this;
+    }
+
+    VertexBuffer &VertexBuffer::update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer) {
+        update(commandPool, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        return *this;
+    }
+
+    VertexBuffer &VertexBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
+        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+            recordUpdate(commandBuffer, data, size);
+        });
+        return *this;
+    }
+
 } // vklite

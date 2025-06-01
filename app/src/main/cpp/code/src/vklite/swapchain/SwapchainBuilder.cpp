@@ -173,12 +173,16 @@ namespace vklite {
         if (mQueueFamilyIndices.empty()) {
             LOG_E("mQueueFamilyIndices not set , mQueueFamilyIndices.size()==0");
             return std::nullopt;
-        } else if (mQueueFamilyIndices.size() == 1 && mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eExclusive) {
-            LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eExclusive when mQueueFamilyIndices.size() == 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
-                  mSwapchainCreateInfo.imageSharingMode);
+        } else if (mQueueFamilyIndices.size() == 1){
+            if(mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eExclusive) {
+                LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eExclusive when mQueueFamilyIndices.size() == 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
+                      mSwapchainCreateInfo.imageSharingMode);
+            }
         } else {
-            LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eConcurrent when mQueueFamilyIndices.size() > 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
-                  mSwapchainCreateInfo.imageSharingMode);
+            if(mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eConcurrent) {
+                LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eConcurrent when mQueueFamilyIndices.size() > 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
+                      mSwapchainCreateInfo.imageSharingMode);
+            }
         }
 
         vk::SwapchainKHR swapChain = mDevice.createSwapchainKHR(mSwapchainCreateInfo);

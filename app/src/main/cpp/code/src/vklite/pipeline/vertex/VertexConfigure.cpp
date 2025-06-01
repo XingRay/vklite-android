@@ -6,12 +6,27 @@
 
 namespace vklite {
 
-    VertexConfigure::VertexConfigure() {
+    VertexConfigure::VertexConfigure() = default;
 
+    VertexConfigure::~VertexConfigure() = default;
+
+    VertexConfigure::VertexConfigure(const VertexConfigure &other) = default;
+
+    VertexConfigure &VertexConfigure::operator=(const VertexConfigure &other) {
+        if (this != &other) {
+            mVertexBindingConfigures = other.mVertexBindingConfigures;
+        }
+        return *this;
     }
 
-    VertexConfigure::~VertexConfigure() {
+    VertexConfigure::VertexConfigure(VertexConfigure &&other) noexcept
+            : mVertexBindingConfigures(std::move(other.mVertexBindingConfigures)) {}
 
+    VertexConfigure &VertexConfigure::operator=(VertexConfigure &&other) noexcept {
+        if (this != &other) {
+            mVertexBindingConfigures = std::move(other.mVertexBindingConfigures);
+        }
+        return *this;
     }
 
     VertexConfigure &VertexConfigure::add(VertexBindingConfigure &&vertexConfigure) {
@@ -22,17 +37,6 @@ namespace vklite {
     std::vector<vk::VertexInputBindingDescription> VertexConfigure::createVertexInputBindingDescriptions() const {
         std::vector<vk::VertexInputBindingDescription> vertexInputBindingDescriptions;
 
-//        for (const auto &entry: mVertexBindingConfigures) {
-//            uint32_t binding = entry.first;
-//            const VertexBindingConfigure &vertexConfigure = entry.second;
-//
-//            vk::VertexInputBindingDescription bindingDescription{};
-//            bindingDescription
-//                    .setBinding(binding)
-//                    .setStride(vertexConfigure.getStride())
-//                    .setInputRate(vertexConfigure.getVertexInputRate());
-//            vertexInputBindingDescriptions.push_back(bindingDescription);
-//        }
         vertexInputBindingDescriptions.reserve(mVertexBindingConfigures.size());
         for (const auto &[binding, vertexConfigure]: mVertexBindingConfigures) {
             vertexInputBindingDescriptions.emplace_back(

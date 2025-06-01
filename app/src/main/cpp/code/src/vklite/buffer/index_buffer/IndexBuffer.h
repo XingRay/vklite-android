@@ -16,10 +16,13 @@ namespace vklite {
         vk::Device mDevice;
         CombinedMemoryBuffer mCombinedMemoryBuffer;
         IndexBufferMeta mMeta;
-        vk::PhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        IndexBuffer(const vk::Device &device, CombinedMemoryBuffer &&combinedMemoryBuffer, IndexBufferMeta &&meta);
+        IndexBuffer(const vk::Device &device,
+                    CombinedMemoryBuffer &&combinedMemoryBuffer,
+                    std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
+                    IndexBufferMeta &&meta);
 
         ~IndexBuffer();
 
@@ -44,7 +47,23 @@ namespace vklite {
 
         IndexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
 
-        IndexBuffer &recordCommandUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices);
+
+        // recordUpdate
+        IndexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+
+        IndexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        IndexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
+
+        IndexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices);
+
+
+        // update
+        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+
+        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        IndexBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
 
         IndexBuffer &update(const CommandPool &commandPool, const std::vector<uint32_t> &indices);
     };

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "vklite/buffer/index_buffer/IndexBuffer.h"
 #include "vklite/buffer/combined_memory_buffer/CombinedMemoryBufferBuilder.h"
@@ -15,6 +16,8 @@ namespace vklite {
     private:
         vk::Device mDevice;
         CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
         vk::IndexType mIndexType;
 
     public:
@@ -25,6 +28,10 @@ namespace vklite {
         IndexBufferBuilder &device(vk::Device device);
 
         IndexBufferBuilder &size(vk::DeviceSize size);
+
+        IndexBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
+
+        IndexBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         IndexBufferBuilder &indexType(vk::IndexType indexType);
 

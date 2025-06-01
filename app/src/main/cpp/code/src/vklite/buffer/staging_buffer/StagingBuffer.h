@@ -13,7 +13,8 @@ namespace vklite {
         CombinedMemoryBuffer mCombinedMemoryBuffer;
 
     public:
-        StagingBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
+
+        explicit StagingBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
 
         ~StagingBuffer();
 
@@ -28,9 +29,12 @@ namespace vklite {
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
-        void updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags = vk::MemoryMapFlags{}) const;
+        [[nodiscard]]
+        vk::DeviceSize getSize() const;
 
-        void updateBuffer(const void *data, uint32_t size) const;
+        void updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags = vk::MemoryMapFlags{});
+
+        void updateBuffer(const void *data, uint32_t size);
     };
 
 } // vklite

@@ -71,8 +71,10 @@ namespace vklite {
         return *this;
     }
 
-    CombinedMemoryBuffer CombinedMemoryBufferBuilder::build(){
-        mBufferBuilderConfigure(mBufferBuilder);
+    CombinedMemoryBuffer CombinedMemoryBufferBuilder::build() {
+        if (mBufferBuilderConfigure != nullptr) {
+            mBufferBuilderConfigure(mBufferBuilder);
+        }
         Buffer buffer = mBufferBuilder.build();
 
         if (mUseConfigDeviceMemory) {
@@ -85,7 +87,9 @@ namespace vklite {
             mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), buffer.getBuffer(), mMemoryPropertyFlags.value());
         }
 
-        mDeviceMemoryBuilderConfigure(buffer, mDeviceMemoryBuilder);
+        if (mDeviceMemoryBuilderConfigure != nullptr) {
+            mDeviceMemoryBuilderConfigure(buffer, mDeviceMemoryBuilder);
+        }
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
         buffer.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
@@ -115,6 +119,7 @@ namespace vklite {
 
     CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::asHostVisible() {
         (*this).asDefault()
+                .usage(vk::BufferUsageFlagBits::eTransferSrc)
                 .memoryPropertyFlags(vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 
         return *this;

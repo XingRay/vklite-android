@@ -17,8 +17,11 @@ namespace vklite {
     class ComputePipelineBuilder {
     private:
         vk::Device mDevice;
-        std::vector<uint32_t> mComputeShaderCode;
-        vk::PipelineLayout mPipelineLayout;
+
+        std::unique_ptr<ShaderModule> mComputeShaderModule;
+        vk::PipelineShaderStageCreateInfo mComputeShaderStageInfo;
+        vk::ComputePipelineCreateInfo mComputePipelineCreateInfo;
+        vk::PipelineCache mPipelineCache;
 
     public:
         ComputePipelineBuilder();
@@ -27,9 +30,11 @@ namespace vklite {
 
         ComputePipelineBuilder &device(vk::Device device);
 
-        ComputePipelineBuilder &computeShader(std::vector<uint32_t> &&computeShaderCode);
+        ComputePipelineBuilder &computeShader(std::unique_ptr<ShaderModule>&& computeShaderModule);
 
         ComputePipelineBuilder &pipelineLayout(vk::PipelineLayout pipelineLayout);
+
+        ComputePipelineBuilder &pipelineCache(vk::PipelineCache pipelineCache);
 
         std::optional<Pipeline> build();
 

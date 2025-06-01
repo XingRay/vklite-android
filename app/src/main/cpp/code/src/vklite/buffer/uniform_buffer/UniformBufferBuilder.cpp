@@ -6,12 +6,46 @@
 
 namespace vklite {
 
-    UniformBufferBuilder::UniformBufferBuilder() = default;
+    UniformBufferBuilder::UniformBufferBuilder() {
+        mCombinedMemoryBufferBuilder.asDeviceLocal().addUsage(vk::BufferUsageFlagBits::eUniformBuffer);
+    };
 
     UniformBufferBuilder::~UniformBufferBuilder() = default;
 
-    std::unique_ptr<BufferInterface> UniformBufferBuilder::build(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize) {
-        return std::make_unique<UniformBuffer>(physicalDevice, device, bufferSize);
+    UniformBufferBuilder &UniformBufferBuilder::device(vk::Device device) {
+        mDevice = device;
+        mCombinedMemoryBufferBuilder.device(device);
+        return *this;
+    }
+
+    UniformBufferBuilder &UniformBufferBuilder::size(vk::DeviceSize size) {
+        mCombinedMemoryBufferBuilder.size(size);
+        return *this;
+    }
+
+    UniformBufferBuilder &UniformBufferBuilder::addUsage(vk::BufferUsageFlags usage) {
+        mCombinedMemoryBufferBuilder.addUsage(usage);
+        return *this;
+    }
+
+    UniformBufferBuilder &UniformBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
+        return *this;
+    }
+
+    UniformBufferBuilder &UniformBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
+        configDeviceMemory(physicalDevice.getMemoryProperties());
+        return *this;
+    }
+
+    UniformBuffer UniformBufferBuilder::build() {
+//        return UniformBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
+        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
+    }
+
+    std::unique_ptr<UniformBuffer> UniformBufferBuilder::buildUnique() {
+        return std::make_unique<UniformBuffer>(build());
     }
 
 } // vklite

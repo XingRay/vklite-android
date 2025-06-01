@@ -19,7 +19,7 @@ namespace vklite {
         CombinedMemoryBuffer mCombinedMemoryBuffer;
 
     public:
-        HostVisibleBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
+        explicit HostVisibleBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
 
         ~HostVisibleBuffer();
 
@@ -35,9 +35,11 @@ namespace vklite {
         const vk::Buffer &getBuffer() const;
 
         [[nodiscard]]
-        const vk::DeviceSize &getBufferSize() const;
+        vk::DeviceSize getBufferSize() const;
 
-        void updateBuffer(const void *data, uint32_t size);
+        void updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags = vk::MemoryMapFlags{}) const;
+
+        void updateBuffer(const void *data, uint32_t size) const;
     };
 
 } // vklite

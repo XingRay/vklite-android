@@ -13,6 +13,7 @@ namespace vklite {
     DeviceLocalBufferBuilder::~DeviceLocalBufferBuilder() = default;
 
     DeviceLocalBufferBuilder &DeviceLocalBufferBuilder::device(vk::Device device) {
+        mDevice = device;
         mCombinedMemoryBufferBuilder.device(device);
         return *this;
     }
@@ -28,6 +29,7 @@ namespace vklite {
     }
 
     DeviceLocalBufferBuilder &DeviceLocalBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
         return *this;
     }
@@ -38,7 +40,8 @@ namespace vklite {
     }
 
     DeviceLocalBuffer DeviceLocalBufferBuilder::build() {
-        return mCombinedMemoryBufferBuilder.build();
+//        return DeviceLocalBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
+        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }
 
     std::unique_ptr<DeviceLocalBuffer> DeviceLocalBufferBuilder::buildUnique() {

@@ -46,15 +46,24 @@
 #include "vklite/render_pass/RenderPassBuilder.h"
 
 // frame buffer
+#include "vklite/frame_buffer/Framebuffer.h"
 #include "vklite/frame_buffer/FramebufferBuilder.h"
+#include "vklite/frame_buffer/Framebuffers.h"
 #include "vklite/frame_buffer/FramebuffersBuilder.h"
 
+// shader module
+#include "vklite/pipeline/shader_module/ShaderModule.h"
+#include "vklite/pipeline/shader_module/ShaderModuleBuilder.h"
 
 // pipeline layout
+#include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
+#include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
+
+// descriptor
+#include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
 #include "vklite/pipeline/descriptor/DescriptorConfigure.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
-#include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 
 // pipeline resource
 #include "vklite/pipeline/pipeline_resource/PipelineResource.h"
@@ -62,51 +71,65 @@
 #include "vklite/pipeline/pipeline_resource/PipelineResourcesBuilder.h"
 
 // pipeline
-#include "vklite/pipeline/shader_module/ShaderModule.h"
 #include "vklite/pipeline/shader/ShaderConfigure.h"
 #include "vklite/pipeline/pipeline/Pipeline.h"
 #include "vklite/pipeline/pipeline/GraphicsPipelineBuilder.h"
 #include "vklite/pipeline/pipeline/ComputePipelineBuilder.h"
 
-// buffer
-#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
-#include "vklite/buffer/device_local/DeviceLocalBufferBuilder.h"
-
-// vertex buffer
-#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
-#include "vklite/buffer/vertex_buffer/VertexBufferBuilder.h"
-
-// index buffer
-#include "vklite/buffer/index_buffer/IndexBuffer.h"
-#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
-
-// image
-#include "vklite/image/Image.h"
-#include "vklite/image/ImageBuilder.h"
-
 // device memory
 #include "vklite/device_memory/DeviceMemory.h"
 #include "vklite/device_memory/DeviceMemoryBuilder.h"
 
+
+// buffer
+#include "vklite/buffer/Buffer.h"
+#include "vklite/buffer/BufferBuilder.h"
+#include "vklite/buffer/BufferMeta.h"
+
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
+#include "vklite/buffer/combined_memory_buffer/CombinedMemoryBufferBuilder.h"
+
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBufferBuilder.h"
+
+#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleBufferBuilder.h"
+
+#include "vklite/buffer/index_buffer/IndexBuffer.h"
+#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
+#include "vklite/buffer/index_buffer/IndexBufferMeta.h"
+
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
+#include "vklite/buffer/staging_buffer/StagingBufferBuilder.h"
+
+#include "vklite/buffer/storage_buffer/StorageBuffer.h"
+#include "vklite/buffer/storage_buffer/StorageBufferBuilder.h"
+
+#include "vklite/buffer/uniform_buffer/UniformBuffer.h"
+#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
+
+#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
+#include "vklite/buffer/vertex_buffer/VertexBufferBuilder.h"
+
+
+// image
+#include "vklite/image/Image.h"
+#include "vklite/image/ImageBuilder.h"
+#include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
+#include "vklite/image/combined_memory_image/CombinedMemoryImageBuilder.h"
+
 // image view
 #include "vklite/image_view/ImageView.h"
 #include "vklite/image_view/ImageViewBuilder.h"
+#include "vklite/image_view/combined_image_view/CombinedImageView.h"
+#include "vklite/image_view/combined_image_view/CombinedImageViewBuilder.h"
+
 
 // sampler
 #include "vklite/sampler/Sampler.h"
 #include "vklite/sampler/SamplerBuilder.h"
 #include "vklite/image/ImageTransition.h"
 
-// uniform buffer
-#include "vklite/buffer/uniform_buffer/UniformBuffer.h"
-#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
 
 // util
 #include "vklite/util/VulkanUtil.h"
-
-// combined
-#include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
-#include "vklite/image/combined_memory_image/CombinedMemoryImageBuilder.h"
-
-#include "vklite/image_view/combined_image_view/CombinedImageView.h"
-#include "vklite/image_view/combined_image_view/CombinedImageViewBuilder.h"

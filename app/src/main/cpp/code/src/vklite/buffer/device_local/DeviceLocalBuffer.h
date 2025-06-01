@@ -7,15 +7,21 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/buffer/combined_memory_buffer/CombinedMemoryBuffer.h"
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
+#include "vklite/command_pool/CommandPool.h"
 
 namespace vklite {
 
     class DeviceLocalBuffer {
     private:
+        vk::Device mDevice;
         CombinedMemoryBuffer mCombinedMemoryBuffer;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        DeviceLocalBuffer(CombinedMemoryBuffer &&combinedMemoryBuffer);
+        DeviceLocalBuffer(const vk::Device &device,
+                          CombinedMemoryBuffer &&combinedMemoryBuffer,
+                          std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~DeviceLocalBuffer();
 
@@ -33,13 +39,29 @@ namespace vklite {
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
-        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) const;
+        DeviceLocalBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        void recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer) const;
+        DeviceLocalBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
 
-        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize copyDataSize, vk::DeviceSize dstOffset) const;
+        // recordUpdate
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        void copyFrom(const CommandPool &commandPool, vk::Buffer srcBuffer) const;
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
+
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
+
+
+        // update
+        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+
+        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+
+        DeviceLocalBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
+
+        DeviceLocalBuffer &update(const CommandPool &commandPool, const void *data, uint32_t size);
+
     };
 
 } // vklite

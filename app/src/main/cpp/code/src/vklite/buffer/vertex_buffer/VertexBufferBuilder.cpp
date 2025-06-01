@@ -6,18 +6,46 @@
 
 namespace vklite {
 
-    VertexBufferBuilder::VertexBufferBuilder()
-            : mBufferSize(0) {}
+    VertexBufferBuilder::VertexBufferBuilder() {
+        mCombinedMemoryBufferBuilder.asDeviceLocal().addUsage(vk::BufferUsageFlagBits::eVertexBuffer);
+    };
 
     VertexBufferBuilder::~VertexBufferBuilder() = default;
 
-    VertexBufferBuilder &VertexBufferBuilder::bufferSize(vk::DeviceSize bufferSize) {
-        mBufferSize = bufferSize;
+    VertexBufferBuilder &VertexBufferBuilder::device(vk::Device device) {
+        mDevice = device;
+        mCombinedMemoryBufferBuilder.device(device);
         return *this;
     }
 
-    std::unique_ptr<VertexBuffer> VertexBufferBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
-        return std::make_unique<VertexBuffer>(physicalDevice, device, mBufferSize);
+    VertexBufferBuilder &VertexBufferBuilder::size(vk::DeviceSize size) {
+        mCombinedMemoryBufferBuilder.size(size);
+        return *this;
+    }
+
+    VertexBufferBuilder &VertexBufferBuilder::addUsage(vk::BufferUsageFlags usage) {
+        mCombinedMemoryBufferBuilder.addUsage(usage);
+        return *this;
+    }
+
+    VertexBufferBuilder &VertexBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
+        mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
+        return *this;
+    }
+
+    VertexBufferBuilder &VertexBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
+        configDeviceMemory(physicalDevice.getMemoryProperties());
+        return *this;
+    }
+
+    VertexBuffer VertexBufferBuilder::build() {
+//        return VertexBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
+        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
+    }
+
+    std::unique_ptr<VertexBuffer> VertexBufferBuilder::buildUnique() {
+        return std::make_unique<VertexBuffer>(build());
     }
 
 } // vklite
