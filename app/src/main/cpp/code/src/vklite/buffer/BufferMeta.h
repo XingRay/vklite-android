@@ -13,7 +13,7 @@ namespace vklite {
         vk::DeviceSize mSize;
 
     public:
-        BufferMeta(vk::DeviceSize size);
+        explicit BufferMeta(vk::DeviceSize size);
 
         ~BufferMeta();
 
@@ -25,6 +25,7 @@ namespace vklite {
 
         BufferMeta &operator=(BufferMeta &&other) noexcept;
 
+        [[nodiscard]]
         vk::DeviceSize getSize() const;
     };
 
