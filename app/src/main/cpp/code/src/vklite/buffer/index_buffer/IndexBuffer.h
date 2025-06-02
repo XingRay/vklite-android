@@ -34,16 +34,13 @@ namespace vklite {
 
         IndexBuffer &operator=(IndexBuffer &&other) noexcept;
 
-        CombinedMemoryBuffer& getCombinedMemoryBuffer();
+        CombinedMemoryBuffer &getCombinedMemoryBuffer();
 
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
         [[nodiscard]]
         vk::IndexType getIndexType() const;
-
-        [[nodiscard]]
-        uint32_t getIndicesCount() const;
 
         IndexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 

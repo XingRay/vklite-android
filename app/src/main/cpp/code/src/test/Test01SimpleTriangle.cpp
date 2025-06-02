@@ -312,8 +312,7 @@ namespace test01 {
                 vkCommandBuffer.bindVertexBuffers(0, vertexBuffers, offsets);
 
                 vkCommandBuffer.bindIndexBuffer(mIndexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
-
-//                vkCommandBuffer.drawIndexed(mIndexBuffer->getIndicesCount(), 1, 0, 0, 0);
+                
                 vkCommandBuffer.drawIndexed(3, 1, 0, 0, 0);
             });
         });

@@ -6,8 +6,8 @@
 
 namespace vklite {
 
-    IndexBufferMeta::IndexBufferMeta(vk::IndexType indexType, uint32_t indicesCount)
-            : mIndexType(indexType), mIndicesCount(indicesCount) {}
+    IndexBufferMeta::IndexBufferMeta(vk::IndexType indexType)
+            : mIndexType(indexType) {}
 
     IndexBufferMeta::~IndexBufferMeta() = default;
 
@@ -16,34 +16,22 @@ namespace vklite {
     IndexBufferMeta &IndexBufferMeta::operator=(const IndexBufferMeta &other) {
         if (this != &other) {
             mIndexType = other.mIndexType;
-            mIndicesCount = other.mIndicesCount;
         }
         return *this;
     }
 
     IndexBufferMeta::IndexBufferMeta(IndexBufferMeta &&other) noexcept
-            : mIndexType(other.mIndexType),
-              mIndicesCount(other.mIndicesCount) {}
+            : mIndexType(other.mIndexType) {}
 
     IndexBufferMeta &IndexBufferMeta::operator=(IndexBufferMeta &&other) noexcept {
         if (this != &other) {
             mIndexType = other.mIndexType;
-            mIndicesCount = other.mIndicesCount;
         }
-        return *this;
-    }
-
-    IndexBufferMeta &IndexBufferMeta::indicesCount(uint32_t indicesCount) {
-        mIndicesCount = indicesCount;
         return *this;
     }
 
     vk::IndexType IndexBufferMeta::getIndexType() const {
         return mIndexType;
-    }
-
-    uint32_t IndexBufferMeta::getIndicesCount() const {
-        return mIndicesCount;
     }
 
 } // vklite

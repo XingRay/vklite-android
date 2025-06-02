@@ -47,11 +47,6 @@ namespace vklite {
         return mMeta.getIndexType();
     }
 
-    [[nodiscard]]
-    uint32_t IndexBuffer::getIndicesCount() const {
-        return mMeta.getIndicesCount();
-    }
-
     IndexBuffer &IndexBuffer::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         return *this;

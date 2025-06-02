@@ -42,7 +42,7 @@ namespace vklite {
     }
 
     IndexBuffer IndexBufferBuilder::build() {
-        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, {mIndexType, 0}};
+        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, IndexBufferMeta{mIndexType}};
     }
 
     std::unique_ptr<IndexBuffer> IndexBufferBuilder::buildUnique() {

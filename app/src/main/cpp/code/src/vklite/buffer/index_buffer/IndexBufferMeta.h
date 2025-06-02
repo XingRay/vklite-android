@@ -13,10 +13,9 @@ namespace vklite {
     class IndexBufferMeta {
     private:
         vk::IndexType mIndexType;
-        uint32_t mIndicesCount;
 
     public:
-        IndexBufferMeta(vk::IndexType indexType, uint32_t indicesCount);
+        explicit IndexBufferMeta(vk::IndexType indexType);
 
         ~IndexBufferMeta();
 
