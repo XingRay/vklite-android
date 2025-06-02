@@ -4,6 +4,12 @@
 
 #pragma once
 
+// plugin
+#include "vklite/plugin/PluginInterface.h"
+#include "vklite/plugin/combined/CombinedPlugin.h"
+#include "vklite/plugin/debug/DebugPlugin.h"
+#include "vklite/plugin/surface/SurfacePlugin.h"
+
 // instance
 #include "vklite/instance/Instance.h"
 #include "vklite/instance/InstanceBuilder.h"

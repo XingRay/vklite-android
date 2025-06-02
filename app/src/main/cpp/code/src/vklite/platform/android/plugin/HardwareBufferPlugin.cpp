@@ -47,4 +47,15 @@ namespace vklite {
 
     }
 
+    /*
+     *
+     * static methods
+     *
+     */
+    std::unique_ptr<HardwareBufferPlugin> HardwareBufferPlugin::buildUnique() {
+        std::unique_ptr<HardwareBufferPlugin> plugin = std::make_unique<HardwareBufferPlugin>();
+
+        return std::move(plugin);
+    }
+
 } // vklite

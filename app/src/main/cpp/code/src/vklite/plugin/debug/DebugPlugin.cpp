@@ -11,15 +11,34 @@ namespace vklite {
     DebugPlugin::~DebugPlugin() = default;
 
     std::vector<const char *> DebugPlugin::getInstanceExtensions() {
-        return {};
+        return {
+                // old version
+                VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+                // new version
+                VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+        };
     }
 
     std::vector<const char *> DebugPlugin::getInstanceLayers() {
-        return {};
+        return {
+                "VK_LAYER_KHRONOS_validation"
+        };
     }
 
     void DebugPlugin::onPreCreateInstance(vk::InstanceCreateInfo &instanceCreateInfo) {
+//        vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+//        if (mEnableValidationLayer) {
+//            if (!checkValidationLayerSupported()) {
+//                throw std::runtime_error("validation layers required, but not available !");
+//            }
+//            createInfo.setPEnabledLayerNames(mValidationLayers);
 
+//        populateDebugMessengerCreateInfo(debugCreateInfo);
+//        instanceCreateInfo.pNext = &debugCreateInfo;
+//        } else {
+//            createInfo.enabledLayerCount = 0;
+//            createInfo.pNext = nullptr;
+//        }
     }
 
     void DebugPlugin::onInstanceCreated(Instance &instance) {
@@ -32,7 +51,9 @@ namespace vklite {
     }
 
     std::vector<const char *> DebugPlugin::getDeviceLayers() {
-        return {};
+        return {
+                "VK_LAYER_KHRONOS_validation"
+        };
     }
 
     void DebugPlugin::physicalDeviceFeaturesConfigure(vk::PhysicalDeviceFeatures &physicalDeviceFeatures) {
@@ -42,5 +63,16 @@ namespace vklite {
     void DebugPlugin::onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) {
 
     }
-    
+
+    /*
+     *
+     * static methods
+     *
+     */
+    std::unique_ptr<DebugPlugin> DebugPlugin::buildUnique() {
+        std::unique_ptr<DebugPlugin> plugin = std::make_unique<DebugPlugin>();
+
+        return std::move(plugin);
+    }
+
 } // vklite

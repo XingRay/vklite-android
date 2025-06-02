@@ -13,13 +13,14 @@
 
 namespace vklite {
 
-    class AndroidPlugin : public PluginInterface{
+    class CombinedPlugin :public PluginInterface{
     private:
+        std::vector<std::unique_ptr<PluginInterface>> mDependencies;
 
     public:
-        AndroidPlugin();
+        CombinedPlugin();
 
-        ~AndroidPlugin() override;
+        ~CombinedPlugin() override;
 
         std::vector<const char *> getInstanceExtensions() override;
 
@@ -38,8 +39,12 @@ namespace vklite {
 
         void onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) override;
 
-    public:
-        static std::unique_ptr<AndroidPlugin> buildUnique();
+
+        CombinedPlugin& addDependency(std::unique_ptr<PluginInterface> plugin);
+
+    public: // static
+        static std::unique_ptr<CombinedPlugin> buildUnique();
+        
     };
 
 } // vklite

@@ -15,28 +15,6 @@ namespace test01 {
 
         LOG_D("Test01SimpleTriangle::Test01SimpleTriangle");
 
-        std::vector<const char *> instanceExtensions = {
-                VK_KHR_SURFACE_EXTENSION_NAME,
-                VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
-
-                // old version
-                VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
-                // new version
-                VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-        };
-
-        std::vector<const char *> instanceLayers = {
-                "VK_LAYER_KHRONOS_validation"
-        };
-
-        std::vector<const char *> deviceExtensions = {
-                VK_KHR_SWAPCHAIN_EXTENSION_NAME
-        };
-
-        std::vector<const char *> deviceLayers = {
-                "VK_LAYER_KHRONOS_validation"
-        };
-
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
@@ -49,8 +27,7 @@ namespace test01 {
         std::vector<uint32_t> indices = {0, 1, 2};
 
         mInstance = vklite::InstanceBuilder()
-                .extensions({}, std::move(instanceExtensions))
-                .layers({}, std::move(instanceLayers))
+                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .buildUnique();
         mSurface = vklite::AndroidSurfaceBuilder()
                 .instance(mInstance->getInstance())
@@ -69,11 +46,9 @@ namespace test01 {
 
         mDevice = vklite::DeviceBuilder()
                 .physicalDevice(mPhysicalDevice->getPhysicalDevice())
-                .extensions(std::move(deviceExtensions))
-                .layers(std::move(deviceLayers))
                 .addQueueFamily(graphicQueueFamilyIndices[0])
                 .addQueueFamily(presentQueueFamilyIndices[0])
-//                .addDevicePlugin(std::make_unique<vklite::AndroidPlugin>())
+                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .buildUnique();
 
         mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicQueueFamilyIndices[0], 0));

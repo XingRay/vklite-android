@@ -4,7 +4,12 @@
 
 #pragma once
 
+#include <vector>
+
+#include <vulkan/vulkan.hpp>
+
 #include "vklite/plugin/PluginInterface.h"
+#include "vklite/instance/Instance.h"
 
 namespace vklite {
 
@@ -33,6 +38,8 @@ namespace vklite {
 
         void onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) override;
 
+    public:
+        static std::unique_ptr<SurfacePlugin> buildUnique();
     };
 
 } // vklite

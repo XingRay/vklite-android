@@ -4,6 +4,9 @@
 
 #include "AndroidSurfacePlugin.h"
 
+#include "vklite/platform/android/plugin/AndroidPlugin.h"
+#include "vklite/plugin/surface/SurfacePlugin.h"
+
 namespace vklite {
 
     AndroidSurfacePlugin::AndroidSurfacePlugin() = default;
@@ -11,7 +14,9 @@ namespace vklite {
     AndroidSurfacePlugin::~AndroidSurfacePlugin() = default;
 
     std::vector<const char *> AndroidSurfacePlugin::getInstanceExtensions() {
-        return {};
+        return {
+                VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
+        };
     }
 
     std::vector<const char *> AndroidSurfacePlugin::getInstanceLayers() {
@@ -41,6 +46,26 @@ namespace vklite {
 
     void AndroidSurfacePlugin::onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) {
 
+    }
+
+    /*
+     *
+     * static methods
+     *
+     */
+    std::unique_ptr<AndroidSurfacePlugin> AndroidSurfacePlugin::buildUnique() {
+        std::unique_ptr<AndroidSurfacePlugin> plugin = std::make_unique<AndroidSurfacePlugin>();
+
+        return std::move(plugin);
+    }
+
+    std::unique_ptr<CombinedPlugin> AndroidSurfacePlugin::buildUniqueCombined() {
+        std::unique_ptr<CombinedPlugin> combinedPlugin = CombinedPlugin::buildUnique();
+        combinedPlugin->addDependency(SurfacePlugin::buildUnique());
+        combinedPlugin->addDependency(AndroidPlugin::buildUnique());
+        combinedPlugin->addDependency(buildUnique());
+
+        return std::move(combinedPlugin);
     }
 
 } // vklite

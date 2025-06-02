@@ -65,8 +65,8 @@ namespace test08 {
 
 
         mInstance = vklite::InstanceBuilder()
-                .extensions({}, std::move(instanceExtensions))
-                .layers({}, std::move(instanceLayers))
+                .extensions(std::move(instanceExtensions))
+                .layers(std::move(instanceLayers))
                 .buildUnique();
         mSurface = vklite::AndroidSurfaceBuilder()
                 .instance(mInstance->getInstance())

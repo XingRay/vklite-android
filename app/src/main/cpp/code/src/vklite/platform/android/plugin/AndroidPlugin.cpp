@@ -44,4 +44,15 @@ namespace vklite {
 
     }
 
+    /*
+     *
+     * static methods
+     *
+     */
+    std::unique_ptr<AndroidPlugin> AndroidPlugin::buildUnique() {
+        std::unique_ptr<AndroidPlugin> plugin = std::make_unique<AndroidPlugin>();
+
+        return std::move(plugin);
+    }
+
 } // vklite

@@ -34,15 +34,13 @@ namespace vklite {
 
     class InstanceBuilder {
     private:
-        const char *mApplicationName;
-        uint32_t mApplicationVersion;
-        const char *mEngineName;
-        uint32_t mEngineVersion;
-
-        std::unique_ptr<ListSelector<const char *>> mExtensionsSelector;
-        std::unique_ptr<ListSelector<const char *>> mLayersSelector;
+        std::vector<const char *> mExtensions;
+        std::vector<const char *> mLayers;
 
         std::vector<std::unique_ptr<PluginInterface>> mPlugins;
+
+        vk::ApplicationInfo mApplicationInfo;
+        vk::InstanceCreateInfo mInstanceCreateInfo;
 
     public:
 
@@ -58,13 +56,9 @@ namespace vklite {
 
         InstanceBuilder &engineVersion(uint32_t engineVersion);
 
-        InstanceBuilder &extensionsSelector(std::unique_ptr<ListSelector<const char *>> extensionsSelector);
+        InstanceBuilder &extensions(std::vector<const char *> &&extensions);
 
-        InstanceBuilder &extensions(std::vector<const char *> &&required, std::vector<const char *> &&optional = {});
-
-        InstanceBuilder &layersSelector(std::unique_ptr<ListSelector<const char *>> layersSelector);
-
-        InstanceBuilder &layers(std::vector<const char *> &&required, std::vector<const char *> &&optional = {});
+        InstanceBuilder &layers(std::vector<const char *> &&layers);
 
         InstanceBuilder &addPlugin(std::unique_ptr<PluginInterface> plugin);
 

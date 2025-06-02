@@ -16,6 +16,16 @@ namespace vklite {
     class InstanceApi {
     public:
         static void initInstanceApi(const vk::DynamicLoader &dynamicLoader);
+
+        static std::vector<vk::ExtensionProperties> enumerateInstanceExtensionProperties();
+
+        static std::vector<const char *> enumerateInstanceExtensionNames();
+
+        static std::vector<vk::LayerProperties> enumerateInstanceLayerProperties();
+
+        static std::vector<const char *> enumerateInstanceLayerNames();
+
+        static vk::Instance createInstance(const vk::InstanceCreateInfo instanceCreateInfo);
     };
 
 
