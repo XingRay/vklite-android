@@ -248,13 +248,16 @@ namespace test01 {
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                 .size(indicesSize)
                 .buildUnique();
-        mIndexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .size(indicesSize)
-                .buildUnique();
-        mIndexStagingBuffer->getDeviceMemory().updateBuffer(indices.data(), indicesSize);
-        mIndexBuffer->getBuffer().copyFrom(*mCommandPool, mIndexStagingBuffer->getBuffer().getBuffer());
+        {
+            vklite::CombinedMemoryBuffer indexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
+                    .device(mDevice->getDevice())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .size(indicesSize)
+                    .build();
+            indexStagingBuffer.getDeviceMemory().updateBuffer(indices.data(), indicesSize);
+            mIndexBuffer->getBuffer().copyFrom(*mCommandPool, indexStagingBuffer.getBuffer().getBuffer());
+        }
+
 
         uint32_t verticesSize = vertices.size() * sizeof(Vertex);
         mVertexBuffer = vklite::CombinedMemoryBufferBuilder().asDeviceLocal()
@@ -262,13 +265,16 @@ namespace test01 {
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                 .size(verticesSize)
                 .buildUnique();
-        mVertexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .size(verticesSize)
-                .buildUnique();
-        mVertexStagingBuffer->getDeviceMemory().updateBuffer(vertices.data(), verticesSize);
-        mVertexBuffer->getBuffer().copyFrom(*mCommandPool, mVertexStagingBuffer->getBuffer().getBuffer());
+        {
+            vklite::CombinedMemoryBuffer mVertexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
+                    .device(mDevice->getDevice())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .size(verticesSize)
+                    .build();
+            mVertexStagingBuffer.getDeviceMemory().updateBuffer(vertices.data(), verticesSize);
+            mVertexBuffer->getBuffer().copyFrom(*mCommandPool, mVertexStagingBuffer.getBuffer().getBuffer());
+        }
+
 
         LOG_D("test created ");
     }
