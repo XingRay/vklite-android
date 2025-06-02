@@ -27,8 +27,8 @@ namespace vklite {
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::addDevicePlugin(std::unique_ptr<DevicePluginInterface> devicePlugin) {
-        mDevicePlugins.push_back(std::move(devicePlugin));
+    DeviceBuilder &DeviceBuilder::addPlugin(std::unique_ptr<PluginInterface> plugin) {
+        mPlugins.push_back(std::move(plugin));
         return *this;
     }
 
@@ -125,8 +125,8 @@ namespace vklite {
 
 
         // features
-        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
-            devicePlugin->physicalDeviceFeaturesConfigure(mRequiredPhysicalDeviceFeatures);
+        for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
+            plugin->physicalDeviceFeaturesConfigure(mRequiredPhysicalDeviceFeatures);
         }
 
         // checking
@@ -134,11 +134,11 @@ namespace vklite {
             checkPhysicalDeviceFeatures();
         }
 
-        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
-            std::vector<const char *> deviceExtensions = devicePlugin->getDeviceExtensions();
+        for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
+            std::vector<const char *> deviceExtensions = plugin->getDeviceExtensions();
             mExtensions.insert(mExtensions.end(), deviceExtensions.begin(), deviceExtensions.end());
 
-            std::vector<const char *> layers = devicePlugin->getLayers();
+            std::vector<const char *> layers = plugin->getDeviceLayers();
             mLayers.insert(mLayers.end(), layers.begin(), layers.end());
         }
 
@@ -153,7 +153,7 @@ namespace vklite {
                 .setPEnabledExtensionNames(mExtensions)
                 .setPEnabledLayerNames(mLayers);
 
-        for (const std::unique_ptr<DevicePluginInterface> &devicePlugin: mDevicePlugins) {
+        for (const std::unique_ptr<PluginInterface> &devicePlugin: mPlugins) {
             devicePlugin->onPreCreateDevice(deviceCreateInfo);
         }
 

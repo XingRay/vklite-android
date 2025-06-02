@@ -5,6 +5,7 @@
 #pragma once
 
 #include "SamplerBuilderInterface.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 

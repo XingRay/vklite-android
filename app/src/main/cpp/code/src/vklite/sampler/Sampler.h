@@ -10,6 +10,7 @@
 
 #include "vklite/image/Image.h"
 #include "SamplerInterface.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 

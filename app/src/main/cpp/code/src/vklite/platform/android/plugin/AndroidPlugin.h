@@ -1,24 +1,21 @@
 //
-// Created by leixing on 2025/5/29.
+// Created by leixing on 2025/6/3.
 //
 
 #pragma once
-
-#include <vulkan/vulkan.hpp>
 
 #include "vklite/plugin/PluginInterface.h"
 
 namespace vklite {
 
-    class HardwareBufferPlugin : public PluginInterface {
+    class AndroidPlugin : public PluginInterface{
     private:
-        vk::PhysicalDeviceFeatures2 mPhysicalDeviceFeatures2;
-        vk::PhysicalDeviceSamplerYcbcrConversionFeatures mPhysicalDeviceSamplerYcbcrConversionFeatures;
-
+        
     public:
-        HardwareBufferPlugin();
+    public:
+        AndroidPlugin();
 
-        ~HardwareBufferPlugin() override;
+        ~AndroidPlugin() override;
 
         std::vector<const char *> getInstanceExtensions() override;
 

@@ -8,6 +8,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/sampler/SamplerInterface.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 

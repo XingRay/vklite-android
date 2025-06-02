@@ -278,16 +278,36 @@ namespace vklite {
             throw std::runtime_error("");
         }
 
+        std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
+                .device(mDevice)
+                .code(std::move(graphicShaderConfigure.getVertexShaderCode()))
+                .buildUnique();
+
+        std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
+                .device(mDevice)
+                .code(std::move(graphicShaderConfigure.getFragmentShaderCode()))
+                .buildUnique();
+
         (*this)
-                .vertexShader(vklite::ShaderModuleBuilder().device(mDevice).code(std::move(graphicShaderConfigure.getVertexShaderCode())).buildUnique())
+                .vertexShader(std::move(vertexShader))
                 .vertexBindingDescriptions(graphicShaderConfigure.createVertexBindingDescriptions())
                 .vertexAttributeDescriptions(graphicShaderConfigure.createVertexAttributeDescriptions())
-                .fragmentShader(vklite::ShaderModuleBuilder().device(mDevice).code(std::move(graphicShaderConfigure.getFragmentShaderCode())).buildUnique());
+                .fragmentShader(std::move(fragmentShader));
 
         return *this;
     }
 
     Pipeline GraphicsPipelineBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("GraphicsPipelineBuilder::build() mDevice == nullptr");
+        }
+        if (mGraphicsPipelineCreateInfo.renderPass == nullptr) {
+            throw std::runtime_error("GraphicsPipelineBuilder::build() mGraphicsPipelineCreateInfo.renderPass == nullptr");
+        }
+        if (mGraphicsPipelineCreateInfo.layout == nullptr) {
+            throw std::runtime_error("GraphicsPipelineBuilder::build() mGraphicsPipelineCreateInfo.layout == nullptr");
+        }
+
         auto [result, pipeline] = mDevice.createGraphicsPipeline(mPipelineCache, mGraphicsPipelineCreateInfo);
         if (result != vk::Result::eSuccess) {
             throw std::runtime_error("createGraphicsPipelines failed");

@@ -6,14 +6,12 @@
 
 #include <cstdint>
 #include <memory>
-#include <optional>
 #include <unordered_map>
 #include <functional>
 #include <optional>
 
-#include "vklite/physical_device/PhysicalDevice.h"
 #include "vklite/device/Device.h"
-#include "vklite/device/DevicePluginInterface.h"
+#include "vklite/plugin/PluginInterface.h"
 #include "vklite/device/QueueFamilyConfigure.h"
 
 namespace vklite {
@@ -40,7 +38,7 @@ namespace vklite {
         std::vector<const char *> mLayers;
 
         // plugins
-        std::vector<std::unique_ptr<DevicePluginInterface>> mDevicePlugins;
+        std::vector<std::unique_ptr<PluginInterface>> mPlugins;
 
 
     public:
@@ -54,8 +52,8 @@ namespace vklite {
         // physicalDevice
         DeviceBuilder &physicalDevice(vk::PhysicalDevice physicalDevice);
 
-        // addDevicePlugin
-        DeviceBuilder &addDevicePlugin(std::unique_ptr<DevicePluginInterface> devicePlugin);
+        // addPlugin
+        DeviceBuilder &addPlugin(std::unique_ptr<PluginInterface> plugin);
 
 
         // addQueueFamily

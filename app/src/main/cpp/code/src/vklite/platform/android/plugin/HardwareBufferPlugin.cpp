@@ -3,21 +3,48 @@
 //
 
 #include "HardwareBufferPlugin.h"
-#include "vklite/platform/android/device/HardwareBufferDevicePlugin.h"
-#include "vklite/platform/android/instance/HardwareBufferInstancePlugin.h"
 
 namespace vklite {
 
-    HardwareBufferPlugin::HardwareBufferPlugin() = default;
+    HardwareBufferPlugin::HardwareBufferPlugin() {
+        mPhysicalDeviceFeatures2.pNext = &mPhysicalDeviceSamplerYcbcrConversionFeatures;
+        mPhysicalDeviceSamplerYcbcrConversionFeatures.samplerYcbcrConversion = true;
+        mPhysicalDeviceFeatures2.features.samplerAnisotropy = true;
+    }
 
     HardwareBufferPlugin::~HardwareBufferPlugin() = default;
 
-    std::unique_ptr<DevicePluginInterface> HardwareBufferPlugin::createDevicePlugin() {
-        return std::make_unique<HardwareBufferDevicePlugin>();
+    std::vector<const char *> HardwareBufferPlugin::getInstanceExtensions() {
+        return {};
     }
 
-    std::unique_ptr<InstancePluginInterface> HardwareBufferPlugin::createInstancePlugin() {
-        return std::make_unique<HardwareBufferInstancePlugin>();
+    std::vector<const char *> HardwareBufferPlugin::getInstanceLayers() {
+        return {};
+    }
+
+    void HardwareBufferPlugin::onPreCreateInstance(vk::InstanceCreateInfo &instanceCreateInfo) {
+
+    }
+
+    void HardwareBufferPlugin::onInstanceCreated(Instance &instance) {
+
+    }
+
+
+    std::vector<const char *> HardwareBufferPlugin::getDeviceExtensions() {
+        return {};
+    }
+
+    std::vector<const char *> HardwareBufferPlugin::getDeviceLayers() {
+        return {};
+    }
+
+    void HardwareBufferPlugin::physicalDeviceFeaturesConfigure(vk::PhysicalDeviceFeatures &physicalDeviceFeatures) {
+
+    }
+
+    void HardwareBufferPlugin::onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) {
+
     }
 
 } // vklite

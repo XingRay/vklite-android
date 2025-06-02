@@ -4,13 +4,9 @@
 
 #pragma once
 
-#include <optional>
+#include <cstdint>
 
 #include <vulkan/vulkan.hpp>
-
-#include "vklite/util/selector/string/StringListSelector.h"
-#include "vklite/physical_device/PhysicalDevice.h"
-#include "vklite/device/DevicePluginInterface.h"
 
 namespace vklite {
 

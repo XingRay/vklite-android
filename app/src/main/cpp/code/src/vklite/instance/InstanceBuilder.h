@@ -12,7 +12,7 @@
 
 #include "vklite/util/selector/ListSelector.h"
 #include "vklite/instance/Instance.h"
-#include "vklite/instance/InstancePluginInterface.h"
+#include "vklite/plugin/PluginInterface.h"
 
 #ifndef VKLITE_APPLICATION_NAME
 #define VKLITE_APPLICATION_NAME "vklite_application"
@@ -42,7 +42,7 @@ namespace vklite {
         std::unique_ptr<ListSelector<const char *>> mExtensionsSelector;
         std::unique_ptr<ListSelector<const char *>> mLayersSelector;
 
-        std::vector<std::unique_ptr<InstancePluginInterface>> mInstancePlugins;
+        std::vector<std::unique_ptr<PluginInterface>> mPlugins;
 
     public:
 
@@ -66,7 +66,7 @@ namespace vklite {
 
         InstanceBuilder &layers(std::vector<const char *> &&required, std::vector<const char *> &&optional = {});
 
-        InstanceBuilder &addInstancePlugin(std::unique_ptr<InstancePluginInterface> instancePlugin);
+        InstanceBuilder &addPlugin(std::unique_ptr<PluginInterface> plugin);
 
         // build
         Instance build();

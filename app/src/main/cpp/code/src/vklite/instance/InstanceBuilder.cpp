@@ -71,8 +71,8 @@ namespace vklite {
         return *this;
     }
 
-    InstanceBuilder &InstanceBuilder::addInstancePlugin(std::unique_ptr<InstancePluginInterface> instancePlugin) {
-        mInstancePlugins.push_back(std::move(instancePlugin));
+    InstanceBuilder &InstanceBuilder::addPlugin(std::unique_ptr<PluginInterface> plugin) {
+        mPlugins.push_back(std::move(plugin));
         return *this;
     }
 
@@ -157,8 +157,8 @@ namespace vklite {
 //            createInfo.pNext = nullptr;
 //        }
 
-        for (const std::unique_ptr<InstancePluginInterface> &instancePlugin: mInstancePlugins) {
-            instancePlugin->onPreCreateInstance((vk::InstanceCreateInfo &) instanceCreateInfo);
+        for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
+            plugin->onPreCreateInstance((vk::InstanceCreateInfo &) instanceCreateInfo);
         }
 
         vk::Instance vkInstance;
@@ -168,11 +168,10 @@ namespace vklite {
         dispatchLoaderDynamic.init(dynamicLoader);
         vk::defaultDispatchLoaderDynamic = dispatchLoaderDynamic;
 
-//        setupDebugCallback();
         Instance instance(vkInstance);
 
-        for (const std::unique_ptr<InstancePluginInterface> &instancePlugin: mInstancePlugins) {
-            instancePlugin->onInstanceCreated(instance);
+        for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
+            plugin->onInstanceCreated(instance);
         }
 
         return instance;
