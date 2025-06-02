@@ -11,8 +11,8 @@
 namespace vklite {
 
     UniformBuffer::UniformBuffer(const vk::Device &device,
-                                         CombinedMemoryBuffer &&combinedMemoryBuffer,
-                                         std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties)
+                                 CombinedMemoryBuffer &&combinedMemoryBuffer,
+                                 std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties)
             : mDevice(device),
               mCombinedMemoryBuffer(std::move(combinedMemoryBuffer)),
               mPhysicalDeviceMemoryProperties(physicalDeviceMemoryProperties) {}
@@ -68,22 +68,6 @@ namespace vklite {
         return *this;
     }
 
-    UniformBuffer &UniformBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size) {
-        if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke UniformBuffer::physicalDeviceMemoryProperties()");
-        }
-        StagingBuffer stagingBuffer = StagingBufferBuilder()
-                .device(mDevice)
-                .size(size)
-                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
-                .build();
-        stagingBuffer.updateBuffer(data, size);
-
-        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
-
-        return *this;
-    }
-
 
     UniformBuffer &UniformBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
@@ -103,9 +87,17 @@ namespace vklite {
     }
 
     UniformBuffer &UniformBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordUpdate(commandBuffer, data, size);
-        });
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke UniformBuffer::physicalDeviceMemoryProperties()");
+        }
+        StagingBuffer stagingBuffer = StagingBufferBuilder()
+                .device(mDevice)
+                .size(size)
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .build();
+        stagingBuffer.updateBuffer(data, size);
+
+        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getBuffer());
         return *this;
     }
 

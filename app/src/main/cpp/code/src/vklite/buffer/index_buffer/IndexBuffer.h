@@ -34,6 +34,8 @@ namespace vklite {
 
         IndexBuffer &operator=(IndexBuffer &&other) noexcept;
 
+        CombinedMemoryBuffer& getCombinedMemoryBuffer();
+
         [[nodiscard]]
         const vk::Buffer &getBuffer() const;
 
@@ -59,9 +61,9 @@ namespace vklite {
 
 
         // update
-        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+        IndexBuffer &update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize copyDataSize);
 
         IndexBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
 

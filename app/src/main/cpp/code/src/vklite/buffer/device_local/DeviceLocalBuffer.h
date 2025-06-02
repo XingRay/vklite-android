@@ -44,19 +44,17 @@ namespace vklite {
         DeviceLocalBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
 
         // recordUpdate
-        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize copyDataSize);
 
         DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
 
-        DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
-
 
         // update
-        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
+        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 
-        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize);
+        DeviceLocalBuffer &update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize copyDataSize);
 
         DeviceLocalBuffer &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
 

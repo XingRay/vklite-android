@@ -35,6 +35,10 @@ namespace vklite {
         return *this;
     }
 
+    CombinedMemoryBuffer &IndexBuffer::getCombinedMemoryBuffer() {
+        return mCombinedMemoryBuffer;
+    }
+
     const vk::Buffer &IndexBuffer::getBuffer() const {
         return mCombinedMemoryBuffer.getBuffer().getBuffer();
     }
@@ -74,33 +78,45 @@ namespace vklite {
         return *this;
     }
 
-    IndexBuffer &IndexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
-        if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::physicalDeviceMemoryProperties()");
-        }
-        vk::DeviceSize size = indices.size() * sizeof(uint32_t);
-        StagingBuffer stagingBuffer = StagingBufferBuilder()
-                .device(mDevice)
-                .size(size)
-                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
-                .build();
-        stagingBuffer.updateBuffer(indices.data(), size);
+    /**
+     * 这个方法不能生效, 在函数内生成的 StagingBuffer 会在函数退出时清除, 此时 CommandBuffer 录制的指令还没有真正的执行,
+     * 等到 CommandBuffer 提交执行时, StagingBuffer 已经被释放,会导致数据复制了空数据
+     */
+//    IndexBuffer &IndexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const std::vector<uint32_t> &indices) {
+//        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+//            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::physicalDeviceMemoryProperties()");
+//        }
+//        vk::DeviceSize size = indices.size() * sizeof(uint32_t);
+//        StagingBuffer stagingBuffer = StagingBufferBuilder()
+//                .device(mDevice)
+//                .size(size)
+//                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+//                .build();
+//        stagingBuffer.updateBuffer(indices.data(), size);
+//
+//        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
+//
+//        CombinedMemoryBuffer indexStagingBuffer = vklite::CombinedMemoryBufferBuilder().asHostVisible()
+//                .device(mDevice)
+//                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+//                .size(size)
+//                .build();
+//        indexStagingBuffer.getDeviceMemory().updateBuffer(indices.data(), size);
+//        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, indexStagingBuffer.getBuffer().getBuffer());
+//
+//        return *this;
+//    }
 
-        mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer.getBuffer());
 
-        return *this;
-    }
-
-
-    IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+    IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
         commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
+            mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, srcBuffer, srcOffset, dstOffset, copyDataSize);
         });
         return *this;
     }
 
-    IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize copyDataSize) {
-        update(commandPool, stagingBuffer, 0, 0, copyDataSize);
+    IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize copyDataSize) {
+        update(commandPool, srcBuffer, 0, 0, copyDataSize);
         return *this;
     }
 
@@ -110,9 +126,19 @@ namespace vklite {
     }
 
     IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, const std::vector<uint32_t> &indices) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordUpdate(commandBuffer, indices);
-        });
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::physicalDeviceMemoryProperties()");
+        }
+
+        vk::DeviceSize size = indices.size() * sizeof(uint32_t);
+        StagingBuffer stagingBuffer = StagingBufferBuilder()
+                .device(mDevice)
+                .size(size)
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .build();
+        stagingBuffer.updateBuffer(indices.data(), size);
+        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getBuffer());
+
         return *this;
     }
 

@@ -51,8 +51,6 @@ namespace vklite {
 
         VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
 
-        VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
-
 
         // update
         VertexBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);

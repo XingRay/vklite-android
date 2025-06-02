@@ -50,8 +50,6 @@ namespace vklite {
 
         StorageBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
 
-        StorageBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, const void *data, uint32_t size);
-
 
         // update
         StorageBuffer &update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
