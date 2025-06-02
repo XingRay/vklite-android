@@ -9,41 +9,64 @@
 
 #include "Pipeline.h"
 #include "vklite/pipeline/vertex/VertexConfigure.h"
-#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
-#include "vklite/pipeline/push_constants/PushConstantConfigures.h"
-#include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
 #include "vklite/pipeline/vertex/VertexBindingConfigure.h"
-#include "vklite/pipeline/descriptor/DescriptorSetConfigure.h"
+#include "vklite/pipeline/shader_module/ShaderModule.h"
+#include "vklite/pipeline/shader/ShaderConfigure.h"
 
 namespace vklite {
 
     class GraphicsPipelineBuilder {
-
     private:
-
         vk::Device mDevice;
-        vk::RenderPass mRenderPass;
-        vk::PipelineLayout mPipelineLayout;
+
+        /*
+         * InputAssembly
+         */
+        vk::PipelineInputAssemblyStateCreateInfo mInputAssemblyStateCreateInfo;
+
+
+        std::vector<vk::PipelineShaderStageCreateInfo> mShaderStageCreateInfos;
+        std::unordered_map<vk::ShaderStageFlagBits, std::reference_wrapper<vk::PipelineShaderStageCreateInfo>> mShaderStageCreateInfoMap;
+
+        /**
+         * VertexShader
+         */
+        std::unique_ptr<ShaderModule> mVertexShaderModule;
+        vk::PipelineVertexInputStateCreateInfo mVertexInputStateCreateInfo;
+        std::vector<vk::VertexInputBindingDescription> mVertexBindingDescriptions;
+        std::vector<vk::VertexInputAttributeDescription> mVertexAttributeDescriptions;
+
+        /*
+         * FragmentShader
+         */
+        std::unique_ptr<ShaderModule> mFragmentShaderModule;
+
+        // Multisampling
+        vk::PipelineMultisampleStateCreateInfo mMultiSampleStateCreateInfo;
+
+        // PipelineDynamicState
+        std::vector<vk::DynamicState> mDynamicStages;
+        vk::PipelineDynamicStateCreateInfo mDynamicStateCreateInfo;
+
+        // PipelineViewportState
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
+        vk::PipelineViewportStateCreateInfo mViewportStateCreateInfo;
 
-        /**
-         * shader code
-         */
-        std::vector<uint32_t> mVertexShaderCode;
-        std::vector<uint32_t> mFragmentShaderCode;
-
-        /**
-         * vertex
-         */
-        VertexConfigure mVertexConfigure;
-
-        // msaa
-        bool mSampleShadingEnable;
-        vk::SampleCountFlagBits mSampleCount;
+        // RasterizationState
+        vk::PipelineRasterizationStateCreateInfo mRasterizationStateCreateInfo;
 
         // depth & stencil
-        bool mDepthTestEnable;
+        vk::PipelineDepthStencilStateCreateInfo mDepthStencilStateCreateInfo;
+
+        // colorBlend
+        std::vector<vk::PipelineColorBlendAttachmentState> mColorBlendAttachmentStates;
+        vk::PipelineColorBlendStateCreateInfo mColorBlendStateCreateInfo;
+        std::array<float, 4> mBlendConstants;
+
+        vk::GraphicsPipelineCreateInfo mGraphicsPipelineCreateInfo;
+
+        vk::PipelineCache mPipelineCache;
 
     public:
         explicit GraphicsPipelineBuilder();
@@ -66,26 +89,65 @@ namespace vklite {
 
         /**
          *
-         * shader code
+         * InputAssembly
          *
          */
-        GraphicsPipelineBuilder &vertexShaderCode(std::vector<uint32_t> &&code);
+        GraphicsPipelineBuilder &topology(vk::PrimitiveTopology topology);
 
-        GraphicsPipelineBuilder &fragmentShaderCode(std::vector<uint32_t> &&code);
+        /**
+         *
+         * VertexShader
+         *
+         */
+        GraphicsPipelineBuilder &vertexShader(std::unique_ptr<ShaderModule> vertexShaderModule);
+
+        GraphicsPipelineBuilder &vertexBindingDescriptions(std::vector<vk::VertexInputBindingDescription> &&vertexBindingDescriptions);
+
+        GraphicsPipelineBuilder &vertexAttributeDescriptions(std::vector<vk::VertexInputAttributeDescription> &&vertexAttributeDescriptions);
 
 
         /**
-         * vertex
+         *
+         * FragmentShader
+         *
          */
-        GraphicsPipelineBuilder &addVertexBinding(const std::function<void(VertexBindingConfigure &)> &configure);
+        GraphicsPipelineBuilder &fragmentShader(std::unique_ptr<ShaderModule> fragmentShaderModule);
 
-        GraphicsPipelineBuilder &addVertexBinding(VertexBindingConfigure &&configure);
 
+        /**
+         * pipeline
+         */
         GraphicsPipelineBuilder &sampleShadingEnable(bool sampleShadingEnable);
 
         GraphicsPipelineBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
+
+        // rasterization
+        GraphicsPipelineBuilder &polygonMode(vk::PolygonMode polygonMode);
+
+        // 使用填充以外的任何模式都需要设置 lineWidth :
+        GraphicsPipelineBuilder &lineWidth(float lineWidth);
+
+        // 设置面剔除策略, 这里设置为反面被剔除
+        GraphicsPipelineBuilder &cullMode(vk::CullModeFlags cullMode);
+
+        // 设置正面的方向
+        GraphicsPipelineBuilder &frontFace(vk::FrontFace frontFace);
+
+
+        // depth & stencil
         GraphicsPipelineBuilder &depthTestEnable(bool depthTestEnable);
+
+
+        GraphicsPipelineBuilder &subpass(uint32_t subpass);
+
+        GraphicsPipelineBuilder &basePipelineHandle(vk::Pipeline basePipelineHandle);
+
+        GraphicsPipelineBuilder &basePipelineIndex(int32_t basePipelineIndex);
+
+        GraphicsPipelineBuilder &pipelineCache(vk::PipelineCache pipelineCache);
+
+        GraphicsPipelineBuilder & configShader(vklite::ShaderConfigure& graphicShaderConfigure);
 
         [[nodiscard]]
         Pipeline build();

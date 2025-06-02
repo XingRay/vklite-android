@@ -230,14 +230,7 @@ namespace test01 {
                 .pipelineLayout(mGraphicsPipelineLayout->getPipelineLayout())
                 .viewports(mViewports)
                 .scissors(mScissors)
-                .vertexShaderCode(std::move(graphicShaderConfigure.getVertexShaderCode()))
-                .fragmentShaderCode(std::move(graphicShaderConfigure.getFragmentShaderCode()))
-                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-                    vertexBindingConfigure
-                            .binding(0)
-                            .stride(sizeof(Vertex))
-                            .addAttribute(0, ShaderFormat::Vec3);
-                })
+                .configShader(graphicShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
@@ -312,7 +305,7 @@ namespace test01 {
                 vkCommandBuffer.bindVertexBuffers(0, vertexBuffers, offsets);
 
                 vkCommandBuffer.bindIndexBuffer(mIndexBuffer->getBuffer(), 0, vk::IndexType::eUint32);
-                
+
                 vkCommandBuffer.drawIndexed(3, 1, 0, 0, 0);
             });
         });
