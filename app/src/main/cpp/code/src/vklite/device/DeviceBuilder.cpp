@@ -24,6 +24,40 @@ namespace vklite {
 
     DeviceBuilder::~DeviceBuilder() = default;
 
+    DeviceBuilder::DeviceBuilder(DeviceBuilder &&other) noexcept
+            : mPhysicalDevice(std::move(other.mPhysicalDevice)),
+              mDeviceCreateInfo(std::move(other.mDeviceCreateInfo)),
+              mDeviceQueueCreateInfos(std::move(other.mDeviceQueueCreateInfos)),
+              mQueuePriorities(std::move(other.mQueuePriorities)),
+              mCheckPhysicalDeviceFeatures(std::exchange(other.mCheckPhysicalDeviceFeatures, false)),
+              mRequiredPhysicalDeviceFeatures(std::move(other.mRequiredPhysicalDeviceFeatures)),
+              mExtensions(std::move(other.mExtensions)),
+              mLayers(std::move(other.mLayers)),
+              mPlugins(std::move(other.mPlugins)) {
+        other.mDeviceCreateInfo = vk::DeviceCreateInfo{}; // 重置为默认状态
+        other.mRequiredPhysicalDeviceFeatures = vk::PhysicalDeviceFeatures{};
+    }
+
+    DeviceBuilder &DeviceBuilder::operator=(DeviceBuilder &&other) noexcept {
+        if (this != &other) {
+            mPhysicalDevice = std::move(other.mPhysicalDevice);
+            mDeviceCreateInfo = std::move(other.mDeviceCreateInfo);
+            mDeviceQueueCreateInfos = std::move(other.mDeviceQueueCreateInfos);
+            mQueuePriorities = std::move(other.mQueuePriorities);
+            mCheckPhysicalDeviceFeatures = std::exchange(other.mCheckPhysicalDeviceFeatures, false);
+            mRequiredPhysicalDeviceFeatures = std::move(other.mRequiredPhysicalDeviceFeatures);
+            mExtensions = std::move(other.mExtensions);
+            mLayers = std::move(other.mLayers);
+            mPlugins = std::move(other.mPlugins);
+
+            // 清理源对象状态
+            other.mDeviceCreateInfo = vk::DeviceCreateInfo{};
+            other.mRequiredPhysicalDeviceFeatures = vk::PhysicalDeviceFeatures{};
+        }
+        return *this;
+    }
+
+
     DeviceBuilder &DeviceBuilder::physicalDevice(vk::PhysicalDevice physicalDevice) {
         mPhysicalDevice = physicalDevice;
         return *this;

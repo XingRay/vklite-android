@@ -1,8 +1,13 @@
 //
-// Created by leixing on 2025/5/1.
+// Created by leixing on 2025/6/4.
 //
 
 #pragma once
+
+#include <memory>
+#include <functional>
+
+#include "vklite/engine/SimpleGraphicEngine.h"
 
 // plugin
 #include "vklite/plugin/PluginInterface.h"
@@ -145,6 +150,62 @@
 // util
 #include "vklite/util/VulkanUtil.h"
 
-// engines
-#include "vklite/engine/SimpleGraphicEngine.h"
-#include "vklite/engine/SimpleGraphicEngineBuilder.h"
+namespace vklite {
+
+    class SimpleGraphicEngineBuilder {
+    private:
+        uint32_t mFrameCount = 2;
+        std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
+        float mClearDepth = 1.0f;
+        bool mMsaaEnable = false;
+        bool mDepthTestEnable = false;
+        ShaderConfigure mGraphicShaderConfigure;
+
+        InstanceBuilder mInstanceBuilder;
+        std::function<std::unique_ptr<Surface>(const Instance &Instance)> mSurfaceBuilder;
+        std::function<std::unique_ptr<PhysicalDevice>(const Instance &Instance, const Surface &surface)> mPhysicalDeviceSelector;
+        std::function<vk::SampleCountFlagBits(const std::vector<vk::SampleCountFlagBits> &sampleCountFlagBits)> mSampleCountSelector;
+        DeviceBuilder mDeviceBuilder;
+
+    public:
+        SimpleGraphicEngineBuilder();
+
+        ~SimpleGraphicEngineBuilder();
+
+        SimpleGraphicEngineBuilder(const SimpleGraphicEngineBuilder &other) = delete;
+
+        SimpleGraphicEngineBuilder &operator=(SimpleGraphicEngineBuilder &other) = delete;
+
+        SimpleGraphicEngineBuilder(SimpleGraphicEngineBuilder &&other) noexcept;
+
+        SimpleGraphicEngineBuilder &operator=(SimpleGraphicEngineBuilder &&other) noexcept;
+
+
+        SimpleGraphicEngineBuilder &addInstancePlugin(std::unique_ptr<PluginInterface> plugin);
+
+        SimpleGraphicEngineBuilder &addDevicePlugin(std::unique_ptr<PluginInterface> plugin);
+
+        SimpleGraphicEngineBuilder &surfaceBuilder(std::function<std::unique_ptr<Surface>(const Instance &Instance)> &&surfaceBuilder);
+
+        SimpleGraphicEngineBuilder &physicalDeviceSelector(std::function<std::unique_ptr<PhysicalDevice>(const Instance &Instance, const Surface &surface)> &&physicalDeviceSelector);
+
+        SimpleGraphicEngineBuilder &sampleCountSelector(std::function<vk::SampleCountFlagBits(const std::vector<vk::SampleCountFlagBits> &sampleCountFlagBits)> &&sampleCountSelector);
+
+        SimpleGraphicEngineBuilder &enableDepthTest();
+
+        SimpleGraphicEngineBuilder &shaderConfigure(ShaderConfigure &&shaderConfigure);
+
+        [[nodiscard]]
+        SimpleGraphicEngine build();
+
+        [[nodiscard]]
+        std::unique_ptr<SimpleGraphicEngine> buildUnique();
+
+
+        /**
+         * preset
+         */
+        SimpleGraphicEngineBuilder &asDefault();
+    };
+
+} // vklite

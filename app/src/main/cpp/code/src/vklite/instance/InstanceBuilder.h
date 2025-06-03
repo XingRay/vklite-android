@@ -48,6 +48,14 @@ namespace vklite {
 
         ~InstanceBuilder();
 
+        InstanceBuilder(const InstanceBuilder &other) = delete;
+
+        InstanceBuilder &operator=(const InstanceBuilder &other) = delete;
+
+        InstanceBuilder(InstanceBuilder &&other) noexcept;
+
+        InstanceBuilder &operator=(InstanceBuilder &&other) noexcept;
+
         InstanceBuilder &applicationName(const char *applicationName);
 
         InstanceBuilder &applicationVersion(uint32_t applicationVersion);

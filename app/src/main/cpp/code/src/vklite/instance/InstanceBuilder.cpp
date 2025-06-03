@@ -43,6 +43,24 @@ namespace vklite {
 
     InstanceBuilder::~InstanceBuilder() = default;
 
+    InstanceBuilder::InstanceBuilder(InstanceBuilder &&other) noexcept
+            : mInstanceCreateInfo(std::move(other.mInstanceCreateInfo)),
+              mApplicationInfo(std::move(other.mApplicationInfo)),
+              mExtensions(std::move(other.mExtensions)),
+              mLayers(std::move(other.mLayers)),
+              mPlugins(std::move(other.mPlugins)) {}
+
+    InstanceBuilder &InstanceBuilder::operator=(InstanceBuilder &&other) noexcept {
+        if (this != &other) {
+            mInstanceCreateInfo = std::move(other.mInstanceCreateInfo);
+            mApplicationInfo = std::move(other.mApplicationInfo);
+            mExtensions = std::move(other.mExtensions);
+            mLayers = std::move(other.mLayers);
+            mPlugins = std::move(other.mPlugins);
+        }
+        return *this;
+    }
+
     InstanceBuilder &InstanceBuilder::applicationName(const char *applicationName) {
         mApplicationInfo.setPApplicationName(applicationName);
         return *this;

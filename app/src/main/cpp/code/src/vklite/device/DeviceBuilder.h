@@ -39,6 +39,14 @@ namespace vklite {
 
         ~DeviceBuilder();
 
+        DeviceBuilder(const DeviceBuilder &other) = delete;
+
+        DeviceBuilder &operator=(const DeviceBuilder &other) = delete;
+
+        DeviceBuilder(DeviceBuilder &&other) noexcept;
+
+        DeviceBuilder &operator=(DeviceBuilder &&other) noexcept;
+
         DeviceBuilder &physicalDevice(vk::PhysicalDevice physicalDevice);
 
         DeviceBuilder &flags(vk::DeviceCreateFlags flags);

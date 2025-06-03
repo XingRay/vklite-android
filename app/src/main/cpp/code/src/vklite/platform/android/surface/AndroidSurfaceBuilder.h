@@ -15,18 +15,24 @@ namespace vklite {
     class AndroidSurfaceBuilder : public SurfaceBuilder {
     private:
         vk::Instance mInstance;
-
-        vk::AndroidSurfaceCreateFlagsKHR mFlags;
-        ANativeWindow *mNativeWindow;
+        vk::AndroidSurfaceCreateInfoKHR mSurfaceCreateInfo;
 
     public:
         AndroidSurfaceBuilder();
 
         ~AndroidSurfaceBuilder() override;
 
+        AndroidSurfaceBuilder(const AndroidSurfaceBuilder &other) = delete;
+
+        AndroidSurfaceBuilder &operator=(const AndroidSurfaceBuilder &other) = delete;
+
+        AndroidSurfaceBuilder(AndroidSurfaceBuilder &&other) noexcept;
+
+        AndroidSurfaceBuilder &operator=(AndroidSurfaceBuilder &&other) noexcept;
+
         AndroidSurfaceBuilder &instance(vk::Instance instance);
 
-        AndroidSurfaceBuilder & flags(vk::AndroidSurfaceCreateFlagsKHR flags);
+        AndroidSurfaceBuilder &flags(vk::AndroidSurfaceCreateFlagsKHR flags);
 
         AndroidSurfaceBuilder &nativeWindow(ANativeWindow *nativeWindow);
 

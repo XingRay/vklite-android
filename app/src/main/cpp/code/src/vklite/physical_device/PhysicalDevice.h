@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <vulkan/vulkan.hpp>
-#include <optional>
+#include <vector>
+#include <string>
 
-#include "vklite/surface/Surface.h"
+#include <vulkan/vulkan.hpp>
 
 namespace vklite {
 
@@ -88,13 +88,13 @@ namespace vklite {
         vk::SampleCountFlagBits selectMaxMsaaSampleCountFlagBits(uint32_t maxLimit = std::numeric_limits<uint32_t>::max()) const;
 
         [[nodiscard]]
-        vk::SurfaceCapabilitiesKHR getCapabilities(const Surface &surface) const;
+        vk::SurfaceCapabilitiesKHR getCapabilities(const vk::SurfaceKHR &surface) const;
 
         [[nodiscard]]
-        std::vector<vk::SurfaceFormatKHR> getFormats(const Surface &surface) const;
+        std::vector<vk::SurfaceFormatKHR> getFormats(const vk::SurfaceKHR &surface) const;
 
         [[nodiscard]]
-        std::vector<vk::PresentModeKHR> getPresentModes(const Surface &surface) const;
+        std::vector<vk::PresentModeKHR> getPresentModes(const vk::SurfaceKHR &surface) const;
     };
 
 } // vklite

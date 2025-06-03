@@ -20,3 +20,7 @@
 #include "vklite/platform/android/plugin/AndroidPlugin.h"
 #include "vklite/platform/android/plugin/AndroidSurfacePlugin.h"
 #include "vklite/platform/android/plugin/HardwareBufferPlugin.h"
+
+
+// engine
+#include "vklite/platform/android/engine/AndroidSimpleGraphicEngineBuilder.h"

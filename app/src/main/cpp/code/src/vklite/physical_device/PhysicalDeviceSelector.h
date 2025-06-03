@@ -17,7 +17,6 @@
 namespace vklite {
 
     class PhysicalDeviceSelector {
-
     private:
         std::unique_ptr<PhysicalDeviceScoreCalculator> mScoreCalculator;
         std::vector<std::unique_ptr<PhysicalDeviceFilter>> mPhysicalDeviceFilters;

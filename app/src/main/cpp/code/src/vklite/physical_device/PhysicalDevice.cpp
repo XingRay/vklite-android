@@ -509,16 +509,16 @@ namespace vklite {
         return MaxMsaaSampleCountSelector(maxLimit).select(querySampleCountFlagBits());
     }
 
-    vk::SurfaceCapabilitiesKHR PhysicalDevice::getCapabilities(const Surface &surface) const {
-        return mPhysicalDevice.getSurfaceCapabilitiesKHR(surface.getSurface());
+    vk::SurfaceCapabilitiesKHR PhysicalDevice::getCapabilities(const vk::SurfaceKHR &surface) const {
+        return mPhysicalDevice.getSurfaceCapabilitiesKHR(surface);
     }
 
-    std::vector<vk::SurfaceFormatKHR> PhysicalDevice::getFormats(const Surface &surface) const {
-        return mPhysicalDevice.getSurfaceFormatsKHR(surface.getSurface());
+    std::vector<vk::SurfaceFormatKHR> PhysicalDevice::getFormats(const vk::SurfaceKHR &surface) const {
+        return mPhysicalDevice.getSurfaceFormatsKHR(surface);
     }
 
-    std::vector<vk::PresentModeKHR> PhysicalDevice::getPresentModes(const Surface &surface) const {
-        return mPhysicalDevice.getSurfacePresentModesKHR(surface.getSurface());
+    std::vector<vk::PresentModeKHR> PhysicalDevice::getPresentModes(const vk::SurfaceKHR &surface) const {
+        return mPhysicalDevice.getSurfacePresentModesKHR(surface);
     }
 
 } // vklite

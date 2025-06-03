@@ -4,14 +4,35 @@
 
 #include "AndroidSurfaceBuilder.h"
 #include "vklite/Log.h"
+#include <utility>
 
 namespace vklite {
 
-    AndroidSurfaceBuilder::AndroidSurfaceBuilder()
-            : mFlags(vk::AndroidSurfaceCreateFlagBitsKHR{}),
-              mNativeWindow(nullptr) {}
+    AndroidSurfaceBuilder::AndroidSurfaceBuilder() {
+        mSurfaceCreateInfo = vk::AndroidSurfaceCreateInfoKHR{};
+        mSurfaceCreateInfo
+                .setFlags(vk::AndroidSurfaceCreateFlagBitsKHR{})
+                .setWindow(nullptr);
+    }
 
     AndroidSurfaceBuilder::~AndroidSurfaceBuilder() = default;
+
+    AndroidSurfaceBuilder::AndroidSurfaceBuilder(AndroidSurfaceBuilder &&other) noexcept
+            : mInstance(std::exchange(other.mInstance, nullptr)),
+              mSurfaceCreateInfo(other.mSurfaceCreateInfo) {
+        other.mSurfaceCreateInfo = vk::AndroidSurfaceCreateInfoKHR{};
+    }
+
+    AndroidSurfaceBuilder &AndroidSurfaceBuilder::operator=(AndroidSurfaceBuilder &&other) noexcept {
+        if (this != &other) {
+            mInstance = std::exchange(other.mInstance, nullptr);
+            mSurfaceCreateInfo = other.mSurfaceCreateInfo;
+
+            other.mSurfaceCreateInfo = vk::AndroidSurfaceCreateInfoKHR{};
+        }
+        return *this;
+    }
+
 
     AndroidSurfaceBuilder &AndroidSurfaceBuilder::instance(vk::Instance instance) {
         mInstance = instance;
@@ -19,25 +40,19 @@ namespace vklite {
     }
 
     AndroidSurfaceBuilder &AndroidSurfaceBuilder::flags(vk::AndroidSurfaceCreateFlagsKHR flags) {
-        mFlags = flags;
+        mSurfaceCreateInfo.setFlags(flags);
         return *this;
     }
 
     AndroidSurfaceBuilder &AndroidSurfaceBuilder::nativeWindow(ANativeWindow *nativeWindow) {
-        mNativeWindow = nativeWindow;
+        mSurfaceCreateInfo.setWindow(nativeWindow);
         return *this;
     }
 
     [[nodiscard]]
     std::optional<Surface> AndroidSurfaceBuilder::build() const {
-
-        vk::AndroidSurfaceCreateInfoKHR createInfo{};
-        createInfo
-                .setFlags(mFlags)
-                .setWindow(mNativeWindow);
-
         try {
-            vk::SurfaceKHR surface = mInstance.createAndroidSurfaceKHR(createInfo);
+            vk::SurfaceKHR surface = mInstance.createAndroidSurfaceKHR(mSurfaceCreateInfo);
 //            return std::optional<Surface>(Surface(mInstance, surface));
             return Surface(mInstance, surface);
         } catch (vk::SystemError &err) {
