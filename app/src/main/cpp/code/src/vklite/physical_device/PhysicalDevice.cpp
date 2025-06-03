@@ -23,59 +23,11 @@ namespace vklite {
             : mPhysicalDevice(std::exchange(other.mPhysicalDevice, nullptr)) {}
 
     PhysicalDevice &PhysicalDevice::operator=(PhysicalDevice &&other) noexcept {
-        if(this!=&other){
+        if (this != &other) {
             mPhysicalDevice = std::exchange(other.mPhysicalDevice, nullptr);
         }
         return *this;
     }
-
-//    std::optional<PhysicalDeviceSurfaceSupport> PhysicalDevice::querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const {
-//        const vk::SurfaceKHR &vkSurface = surface.getSurface();
-//
-//        QueueFamilyIndices indices = queryQueueFamilies(vkSurface, requiredQueueFlags);
-//        if (!indices.isComplete()) {
-//            LOG_W("device QueueFamilyIndices is not complete !");
-//            return std::nullopt;
-//        }
-//
-//        std::optional<PhysicalDeviceSurfaceSupport> surfaceSupport = PhysicalDeviceSurfaceSupport();
-//
-//        surfaceSupport->graphicQueueFamilyIndex = indices.graphicQueueFamilyIndex.value();
-//        surfaceSupport->presentQueueFamilyIndex = indices.presentQueueFamilyIndex.value();
-//
-//        if (surfaceSupport->formats.empty() || surfaceSupport->presentModes.empty()) {
-//            LOG_D("VulkanPhysicalDeviceSurfaceSupport: formats or presentModes is empty");
-//            return std::nullopt;
-//        }
-//
-//        return surfaceSupport;
-//    }
-
-    // todo: 根据条件筛选 queue
-//    QueueFamilyIndices PhysicalDevice::queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const {
-//        QueueFamilyIndices indices;
-//        std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
-//
-//        for (int queueFamilyIndex = 0; queueFamilyIndex < queueFamilyProperties.size(); queueFamilyIndex++) {
-//            const vk::QueueFamilyProperties &queueFamilyProperty = queueFamilyProperties[queueFamilyIndex];
-//
-//            if ((queueFamilyProperty.queueFlags & requiredFlags) == requiredFlags) {
-//                LOG_D("graphicQueueFamily found, index:%d", queueFamilyIndex);
-//                indices.graphicQueueFamilyIndex = queueFamilyIndex;
-//            }
-//
-//            if (mPhysicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface)) {
-//                LOG_D("presentQueueFamily found, index:%d", queueFamilyIndex);
-//                indices.presentQueueFamilyIndex = queueFamilyIndex;
-//            }
-//
-//            if (indices.isComplete()) {
-//                break;
-//            }
-//        }
-//
-//        return indices;
-//    }
 
     std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
         std::vector<uint32_t> queueFamilyIndices;

@@ -18,13 +18,24 @@ namespace test01 {
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
-        std::vector<Vertex> vertices = {
-                {{1.0f,  -1.0f, 0.0f}},
-                {{-1.0f, -1.0f, 0.0f}},
-                {{0.0f,  1.0f,  0.0f}},
-        };
-
-        std::vector<uint32_t> indices = {0, 1, 2};
+        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
+                                uniformConfigure
+                                        .binding(0)
+                                        .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
+                            });
+                });
 
         mInstance = vklite::InstanceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
@@ -41,45 +52,32 @@ namespace test01 {
         }
         LOG_D("sampleCount:%d", sampleCount);
 
-        std::vector<uint32_t> presentQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface());
-        std::vector<uint32_t> graphicQueueFamilyIndices = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics);
+        uint32_t presentQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface())[0];
+        uint32_t graphicQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics)[0];
 
         mDevice = vklite::DeviceBuilder()
                 .physicalDevice(mPhysicalDevice->getPhysicalDevice())
-                .addQueueFamily(graphicQueueFamilyIndices[0])
-                .addQueueFamily(presentQueueFamilyIndices[0])
+                .addQueueFamily(graphicQueueFamilyIndex)
+                .addQueueFamily(presentQueueFamilyIndex)
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .buildUnique();
 
-        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicQueueFamilyIndices[0], 0));
-        mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(presentQueueFamilyIndices[0], 0));
+        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicQueueFamilyIndex));
+        mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(presentQueueFamilyIndex));
 
         mSwapchain = vklite::SwapchainBuilder()
                 .device(mDevice->getDevice())
                 .surface(mSurface->getSurface())
-                .queueFamilyIndices({presentQueueFamilyIndices[0]})
+                .queueFamilyIndices({presentQueueFamilyIndex})
                 .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
                 .buildUnique();
         LOG_D("mSwapchain->getDisplaySize(): [%d x %d]", mSwapchain->getDisplaySize().width, mSwapchain->getDisplaySize().height);
-        vk::Viewport viewport;
-        viewport
-                .setX(0.0f)
-                .setY(0.0f)
-                .setWidth((float) mSwapchain->getDisplaySize().width)
-                .setHeight((float) mSwapchain->getDisplaySize().height)
-                .setMinDepth(0.0f)
-                .setMaxDepth(1.0f);
-        mViewports.push_back(viewport);
-
-        vk::Rect2D scissor{};
-        scissor
-                .setOffset(vk::Offset2D{0, 0})
-                .setExtent(mSwapchain->getDisplaySize());
-        mScissors.push_back(scissor);
+        mViewports = mSwapchain->fullScreenViewports();
+        mScissors = mSwapchain->fullScreenScissors();
 
         mCommandPool = vklite::CommandPoolBuilder()
                 .device(mDevice->getDevice())
-                .queueFamilyIndex(graphicQueueFamilyIndices[0])
+                .queueFamilyIndex(graphicQueueFamilyIndex)
                 .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
@@ -170,26 +168,6 @@ namespace test01 {
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
-
-        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(vertexShaderCode))
-                .fragmentShaderCode(std::move(fragmentShaderCode))
-                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-                    vertexBindingConfigure
-                            .binding(0)
-                            .stride(sizeof(Vertex))
-                            .addAttribute(0, ShaderFormat::Vec3);
-                })
-                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-                    descriptorSetConfigure
-                            .set(0)
-                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
-                                uniformConfigure
-                                        .binding(0)
-                                        .shaderStageFlags(vk::ShaderStageFlagBits::eVertex);
-                            });
-                });
-
         mGraphicsDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
                 .frameCount(mFrameCount)
@@ -210,6 +188,19 @@ namespace test01 {
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
 
+        LOG_D("test created ");
+    }
+
+    void Test01SimpleTriangle::init() {
+        std::vector<Vertex> vertices = {
+                {{1.0f,  -1.0f, 0.0f}},
+                {{-1.0f, -1.0f, 0.0f}},
+                {{0.0f,  1.0f,  0.0f}},
+        };
+
+        std::vector<uint32_t> indices = {0, 1, 2};
+
+
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = vklite::IndexBufferBuilder()
                 .device(mDevice->getDevice())
@@ -225,12 +216,6 @@ namespace test01 {
                 .size(verticesSize)
                 .buildUnique();
         mVertexBuffer->update(*mCommandPool, vertices.data(), verticesSize);
-
-        LOG_D("test created ");
-    }
-
-    void Test01SimpleTriangle::init() {
-
     }
 
     // 检查是否准备好
@@ -240,7 +225,6 @@ namespace test01 {
 
     // 绘制三角形帧
     void Test01SimpleTriangle::drawFrame() {
-        const vk::Device vkDevice = mDevice->getDevice();
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
         vklite::Semaphore &renderFinishedSemaphore = mRenderFinishedSemaphores[mCurrentFrameIndex];
         vklite::Fence &fence = mFences[mCurrentFrameIndex];

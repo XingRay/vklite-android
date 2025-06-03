@@ -63,8 +63,8 @@ namespace vklite {
         mQueue.submit(submitInfos, fence);
     }
 
-    void
-    Queue::submit(const vk::CommandBuffer &commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore &waitSemaphore, const vk::Semaphore &signalSemaphore, const vk::Fence &fence) const {
+    void Queue::submit(const vk::CommandBuffer &commandBuffer, vk::PipelineStageFlags waitStage, const vk::Semaphore &waitSemaphore,
+                       const vk::Semaphore &signalSemaphore, const vk::Fence &fence) const {
         std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
         std::array<vk::PipelineStageFlags, 1> waitStages = {waitStage};
         std::array<vk::Semaphore, 1> waitSemaphores = {waitSemaphore};

@@ -29,12 +29,6 @@ namespace vklite {
 
         PhysicalDevice &operator=(PhysicalDevice &&other) noexcept;
 
-//        [[nodiscard]]
-//        std::optional<PhysicalDeviceSurfaceSupport> querySurfaceSupport(const Surface &surface, vk::QueueFlags requiredQueueFlags) const;
-
-//        [[nodiscard]]
-//        QueueFamilyIndices queryQueueFamilies(const vk::SurfaceKHR &surface, vk::QueueFlags requiredFlags) const;
-
         [[nodiscard]]
         std::vector<uint32_t> queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const;
 

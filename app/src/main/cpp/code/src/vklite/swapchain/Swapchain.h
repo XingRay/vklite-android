@@ -56,5 +56,13 @@ namespace vklite {
         vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore, uint64_t timeout);
 
         vk::ResultValue<uint32_t> acquireNextImage(const vk::Semaphore &semaphore);
+
+        std::vector<vk::Viewport> fullScreenViewports();
+
+        std::vector<vk::Rect2D> fullScreenScissors();
+
+        std::vector<vk::Viewport> centerSquareViewports();
+
+        std::vector<vk::Rect2D> centerSquareScissors();
     };
 }
