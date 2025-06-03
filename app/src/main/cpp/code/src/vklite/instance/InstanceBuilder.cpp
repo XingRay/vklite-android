@@ -20,6 +20,7 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #include "vklite/Log.h"
 #include "vklite/util/StringUtil.h"
 #include "vklite/instance/InstanceApi.h"
+#include "vklite/util/CStringUtil.h"
 
 namespace vklite {
 
@@ -93,6 +94,7 @@ namespace vklite {
             std::vector<const char *> pluginExtensions = plugin->getInstanceExtensions();
             mExtensions.insert(mExtensions.begin(), std::move_iterator(pluginExtensions.begin()), std::move_iterator(pluginExtensions.end()));
         }
+        mExtensions = CStringUtil::removeDuplicates(mExtensions);
         LOG_D("enabled instance extensions:[%ld]", mExtensions.size());
         for (const auto &extensionName: mExtensions) {
             LOG_D("  %s", extensionName);
@@ -111,6 +113,7 @@ namespace vklite {
             std::vector<const char *> pluginLayers = plugin->getInstanceLayers();
             mLayers.insert(mLayers.begin(), std::move_iterator(pluginLayers.begin()), std::move_iterator(pluginLayers.end()));
         }
+        mLayers = CStringUtil::removeDuplicates(mLayers);
         LOG_D("enabled layer names:[%ld]", mLayers.size());
         for (const auto &layerName: mLayers) {
             LOG_D("  %s", layerName);

@@ -34,13 +34,13 @@ namespace vklite {
 
     class InstanceBuilder {
     private:
+        vk::InstanceCreateInfo mInstanceCreateInfo;
+        vk::ApplicationInfo mApplicationInfo;
+
         std::vector<const char *> mExtensions;
         std::vector<const char *> mLayers;
 
         std::vector<std::unique_ptr<PluginInterface>> mPlugins;
-
-        vk::ApplicationInfo mApplicationInfo;
-        vk::InstanceCreateInfo mInstanceCreateInfo;
 
     public:
 

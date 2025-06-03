@@ -90,7 +90,7 @@ namespace vklite {
         return names;
     }
 
-    vk::Instance InstanceApi::createInstance(const vk::InstanceCreateInfo instanceCreateInfo) {
+    vk::Instance InstanceApi::createInstance(const vk::InstanceCreateInfo& instanceCreateInfo) {
         vk::Instance instance;
         CALL_VK(vkCreateInstance((VkInstanceCreateInfo *) &instanceCreateInfo, nullptr, (VkInstance *) &instance));
         return instance;

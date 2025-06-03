@@ -7,12 +7,14 @@
 #include <stdexcept>
 #include <vulkan/vulkan.hpp>
 #include "vklite/Log.h"
+#include "vklite/result/Result.h"
 
 // C++ 风格的 Vulkan 调用包装函数
-inline void CallVulkan(const vk::Result& result, const char* file, int line) {
+inline void CallVulkan(const vk::Result &result, const char *file, int line) {
     if (result != vk::Result::eSuccess) {
-        LOG_E("Vulkan error. File[ %s ], line[ %d ]", file, line);
-        throw std::runtime_error("Vulkan API call failed");
+        std::string error = std::format("Vulkan error. {}, {}, File[ {} ], line[ {} ]", vklite::VkResultToString((VkResult) result), vklite::VkResultDescription((VkResult) result), file, line);
+        LOG_E("%s", error.c_str());
+        throw std::runtime_error(error);
     }
 }
 

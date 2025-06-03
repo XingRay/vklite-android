@@ -25,7 +25,7 @@ namespace vklite {
 
         static std::vector<const char *> enumerateInstanceLayerNames();
 
-        static vk::Instance createInstance(const vk::InstanceCreateInfo instanceCreateInfo);
+        static vk::Instance createInstance(const vk::InstanceCreateInfo &instanceCreateInfo);
     };
 
 

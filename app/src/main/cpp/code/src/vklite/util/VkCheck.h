@@ -5,10 +5,16 @@
 #pragma once
 
 #include "vklite/Log.h"
+#include "vklite/result/Result.h"
 
-// Vulkan call wrapper
 #define CALL_VK(func)                                                 \
-  if (VK_SUCCESS != (func)) {                                         \
-    LOG_E("Vulkan error. File[%s], line[%d]", __FILE__, __LINE__);     \
-    assert(false);                                                    \
-  }
+  do {                                                                \
+    VkResult __result = (func);                                       \
+    if (__result != VK_SUCCESS) {                                     \
+      const char* errorName = VkResultToString(__result);             \
+      LOG_E("Vulkan error [%s]: %s. File[%s], line[%d]",              \
+            errorName, VkResultDescription(__result),                 \
+            __FILE__, __LINE__);                                      \
+      assert(false);                                                  \
+    }                                                                 \
+  } while (0)

@@ -12,54 +12,42 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/plugin/PluginInterface.h"
-#include "vklite/device/QueueFamilyConfigure.h"
 
 namespace vklite {
 
     class DeviceBuilder {
     private:
-        // flags
-        vk::DeviceCreateFlags mFlags;
-
-
-        // physcial device
         vk::PhysicalDevice mPhysicalDevice;
 
+        vk::DeviceCreateInfo mDeviceCreateInfo;
 
-        // queue create info
-        std::unordered_map<uint32_t, QueueFamilyConfigure> mQueueFamilyConfigures;
+        std::vector<vk::DeviceQueueCreateInfo> mDeviceQueueCreateInfos;
+        std::vector<std::vector<float>> mQueuePriorities;
 
         // physical device properties
-        vk::PhysicalDeviceFeatures mRequiredPhysicalDeviceFeatures;
         bool mCheckPhysicalDeviceFeatures;
+        vk::PhysicalDeviceFeatures mRequiredPhysicalDeviceFeatures;
 
-        // extentions and layers
         std::vector<const char *> mExtensions;
         std::vector<const char *> mLayers;
 
         // plugins
         std::vector<std::unique_ptr<PluginInterface>> mPlugins;
 
-
     public:
         DeviceBuilder();
 
         ~DeviceBuilder();
 
-        // flags
-        DeviceBuilder &flags(vk::DeviceCreateFlags flags);
-
-        // physicalDevice
         DeviceBuilder &physicalDevice(vk::PhysicalDevice physicalDevice);
 
-        // addPlugin
+        DeviceBuilder &flags(vk::DeviceCreateFlags flags);
+
         DeviceBuilder &addPlugin(std::unique_ptr<PluginInterface> plugin);
 
 
         // addQueueFamily
-        DeviceBuilder &addQueueFamily(QueueFamilyConfigure &&queueFamilyConfigure);
-
-        DeviceBuilder &addQueueFamily(const std::function<void(QueueFamilyConfigure &)> &configure);
+        DeviceBuilder &addQueueFamily(uint32_t queueFamilyIndex, std::vector<float> &&priorities);
 
         DeviceBuilder &addQueueFamily(uint32_t queueFamilyIndex);
 

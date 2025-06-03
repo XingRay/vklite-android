@@ -12,18 +12,25 @@
 namespace vklite {
 
     DeviceBuilder::DeviceBuilder()
-            : mFlags(vk::DeviceCreateFlags{}),
-              mCheckPhysicalDeviceFeatures(false) {}
+            : mCheckPhysicalDeviceFeatures(false) {
+        mDeviceCreateInfo = vk::DeviceCreateInfo{};
+        mDeviceCreateInfo
+                .setFlags(vk::DeviceCreateFlags{})
+                .setQueueCreateInfos(mDeviceQueueCreateInfos)
+                .setPEnabledFeatures(&mRequiredPhysicalDeviceFeatures)
+                .setPEnabledExtensionNames(mExtensions)
+                .setPEnabledLayerNames(mLayers);
+    }
 
     DeviceBuilder::~DeviceBuilder() = default;
 
-    DeviceBuilder &DeviceBuilder::flags(vk::DeviceCreateFlags flags) {
-        mFlags = flags;
+    DeviceBuilder &DeviceBuilder::physicalDevice(vk::PhysicalDevice physicalDevice) {
+        mPhysicalDevice = physicalDevice;
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::physicalDevice(vk::PhysicalDevice physicalDevice) {
-        mPhysicalDevice = physicalDevice;
+    DeviceBuilder &DeviceBuilder::flags(vk::DeviceCreateFlags flags) {
+        mDeviceCreateInfo.setFlags(flags);
         return *this;
     }
 
@@ -32,33 +39,42 @@ namespace vklite {
         return *this;
     }
 
-    DeviceBuilder &DeviceBuilder::addQueueFamily(QueueFamilyConfigure &&queueFamilyConfigure) {
-        auto it = mQueueFamilyConfigures.find(queueFamilyConfigure.getQueueFamilyIndex());
-        if (it != mQueueFamilyConfigures.end()) {
-            // exist
-            LOG_DF("Queue family index {} already exists, overwriting.", queueFamilyConfigure.getQueueFamilyIndex());
-            it->second = std::move(queueFamilyConfigure);
-        } else {
-            mQueueFamilyConfigures.emplace(queueFamilyConfigure.getQueueFamilyIndex(), std::move(queueFamilyConfigure));
-        }
-        return *this;
-    }
+    // addQueueFamily
+    DeviceBuilder &DeviceBuilder::addQueueFamily(uint32_t queueFamilyIndex, std::vector<float> &&priorities) {
+        auto it = std::find_if(mDeviceQueueCreateInfos.begin(), mDeviceQueueCreateInfos.end(), [&](vk::DeviceQueueCreateInfo &info) {
+            return info.queueFamilyIndex == queueFamilyIndex;
+        });
 
-    DeviceBuilder &DeviceBuilder::addQueueFamily(const std::function<void(QueueFamilyConfigure &)> &configure) {
-        QueueFamilyConfigure queueFamilyConfigure;
-        configure(queueFamilyConfigure);
-        addQueueFamily(std::move(queueFamilyConfigure));
+        if (it == mDeviceQueueCreateInfos.end()) {
+            // not found, then insert
+            mQueuePriorities.push_back(std::move(priorities));
+            vk::DeviceQueueCreateInfo deviceQueueCreateInfo = {};
+            deviceQueueCreateInfo
+                    .setQueueFamilyIndex(queueFamilyIndex)
+                    .setQueuePriorities(mQueuePriorities.back());
+            mDeviceQueueCreateInfos.push_back(deviceQueueCreateInfo);
+        } else {
+            // found, then update
+            // 计算索引
+            LOG_WF("DeviceBuilder::addQueueFamily, queueFamilyIndex:{} exists, overwrite it", queueFamilyIndex);
+            size_t index = std::distance(mDeviceQueueCreateInfos.begin(), it);
+            mQueuePriorities[index] = std::move(priorities);
+
+            vk::DeviceQueueCreateInfo deviceQueueCreateInfo = {};
+            deviceQueueCreateInfo
+                    .setQueueFamilyIndex(queueFamilyIndex)
+                    .setQueuePriorities(mQueuePriorities[index]);
+
+            mDeviceQueueCreateInfos[index] = deviceQueueCreateInfo;
+        }
+
+        mDeviceCreateInfo.setQueueCreateInfos(mDeviceQueueCreateInfos);
+
         return *this;
     }
 
     DeviceBuilder &DeviceBuilder::addQueueFamily(uint32_t queueFamilyIndex) {
-        QueueFamilyConfigure queueFamilyConfigure{};
-        queueFamilyConfigure
-                .familyIndex(queueFamilyIndex)
-                .addQueue(1.0);
-
-        addQueueFamily(std::move(queueFamilyConfigure));
-
+        addQueueFamily(queueFamilyIndex, std::vector<float>{1.0f});
         return *this;
     }
 
@@ -93,12 +109,11 @@ namespace vklite {
     }
 
     std::optional<Device> DeviceBuilder::build() {
-        std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
-        queueCreateInfos.reserve(mQueueFamilyConfigures.size());
 
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
         uint32_t queueFamilyPropertiesSize = queueFamilyProperties.size();
-        for (const auto &[familyIndex, queueFamilyConfigure]: mQueueFamilyConfigures) {
+        for (const auto &queueCreateInfo: mDeviceQueueCreateInfos) {
+            uint32_t familyIndex = queueCreateInfo.queueFamilyIndex;
             if (familyIndex >= queueFamilyPropertiesSize) {
                 LOG_EF("Invalid queue family index:{}", familyIndex);
                 throw std::runtime_error("Invalid queue family index: " + std::to_string(familyIndex));
@@ -108,19 +123,6 @@ namespace vklite {
             if (maxQueues < 1) {
                 throw std::runtime_error("Queue family " + std::to_string(familyIndex) + " does not support any queues.");
             }
-        }
-
-
-        for (const auto &[familyIndex, queueFamilyConfigure]: mQueueFamilyConfigures) {
-            vk::DeviceQueueCreateInfo queueCreateInfo{};
-            queueCreateInfo
-                    .setQueueFamilyIndex(queueFamilyConfigure.getQueueFamilyIndex())
-                            // queuePriorities 数组的长度必须等于 queueCount,
-                            // 例如，若 queueCount = 2，则 queuePriorities 必须是一个包含 2 个浮点数的数组，每个元素对应一个队列的优先级
-                    .setQueueCount(queueFamilyConfigure.getPriorities().size())
-                            // 优先级范围：值必须在 [0.0, 1.0] 之间，数值越高表示队列在 GPU 调度中的权重越大。
-                    .setQueuePriorities(queueFamilyConfigure.getPriorities());
-            queueCreateInfos.push_back(queueCreateInfo);
         }
 
 
@@ -136,28 +138,39 @@ namespace vklite {
 
         for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
             std::vector<const char *> deviceExtensions = plugin->getDeviceExtensions();
-            mExtensions.insert(mExtensions.end(), deviceExtensions.begin(), deviceExtensions.end());
+            mExtensions.insert(mExtensions.end(), std::move_iterator(deviceExtensions.begin()), std::move_iterator(deviceExtensions.end()));
 
             std::vector<const char *> layers = plugin->getDeviceLayers();
-            mLayers.insert(mLayers.end(), layers.begin(), layers.end());
+            mLayers.insert(mLayers.end(), std::move_iterator(layers.begin()), std::move_iterator(layers.end()));
         }
 
         mExtensions = CStringUtil::removeDuplicates(mExtensions);
-        mLayers = CStringUtil::removeDuplicates(mExtensions);
+        LOG_E("DeviceBuilder::build: extensions:");
+        for (const char *name: mExtensions) {
+            LOG_E("\t%s", name);
+        }
+        mDeviceCreateInfo.setPEnabledExtensionNames(mExtensions);
 
-        vk::DeviceCreateInfo deviceCreateInfo;
-        deviceCreateInfo
-                .setFlags(mFlags)
-                .setQueueCreateInfos(queueCreateInfos)
-                .setPEnabledFeatures(&mRequiredPhysicalDeviceFeatures)
-                .setPEnabledExtensionNames(mExtensions)
-                .setPEnabledLayerNames(mLayers);
+        mLayers = CStringUtil::removeDuplicates(mLayers);
+        LOG_E("DeviceBuilder::build: layers:");
+        for (const char *name: mLayers) {
+            LOG_E("\t%s", name);
+        }
+        mDeviceCreateInfo.setPEnabledLayerNames(mLayers);
+
+//        vk::DeviceCreateInfo deviceCreateInfo;
+//        deviceCreateInfo
+//                .setFlags(mFlags)
+//                .setQueueCreateInfos(queueCreateInfos)
+//                .setPEnabledFeatures(&mRequiredPhysicalDeviceFeatures)
+//                .setPEnabledExtensionNames(mExtensions)
+//                .setPEnabledLayerNames(mLayers);
 
         for (const std::unique_ptr<PluginInterface> &devicePlugin: mPlugins) {
-            devicePlugin->onPreCreateDevice(deviceCreateInfo);
+            devicePlugin->onPreCreateDevice(mDeviceCreateInfo);
         }
 
-        vk::Device device = mPhysicalDevice.createDevice(deviceCreateInfo);
+        vk::Device device = mPhysicalDevice.createDevice(mDeviceCreateInfo);
         return Device(device);
     }
 
