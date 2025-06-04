@@ -49,4 +49,15 @@ namespace vklite {
         return std::make_unique<IndexBuffer>(build());
     }
 
+    std::vector<IndexBuffer> IndexBufferBuilder::build(uint32_t count) {
+        std::vector<IndexBuffer> buffers;
+        buffers.reserve(count);
+
+        for (int i = 0; i < count; i++) {
+            buffers.emplace_back(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, IndexBufferMeta{mIndexType});
+        }
+
+        return buffers;
+    }
+
 } // vklite

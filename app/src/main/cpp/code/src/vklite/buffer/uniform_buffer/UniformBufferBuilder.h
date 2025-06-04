@@ -37,6 +37,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::unique_ptr<UniformBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<UniformBuffer> build(uint32_t count);
     };
 
 } // vklite

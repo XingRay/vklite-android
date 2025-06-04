@@ -45,4 +45,15 @@ namespace vklite {
         return std::make_unique<HostVisibleBuffer>(build());
     }
 
+    std::vector<HostVisibleBuffer> HostVisibleBufferBuilder::build(uint32_t count) {
+        std::vector<HostVisibleBuffer> buffers;
+        buffers.reserve(count);
+
+        for (int i = 0; i < count; i++) {
+            buffers.emplace_back(mCombinedMemoryBufferBuilder.build());
+        }
+
+        return buffers;
+    }
+
 } // vklite

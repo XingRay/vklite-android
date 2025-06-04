@@ -37,6 +37,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::unique_ptr<DeviceLocalBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<DeviceLocalBuffer> build(uint32_t count);
     };
 
 } // vklite

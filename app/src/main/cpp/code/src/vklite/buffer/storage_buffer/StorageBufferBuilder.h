@@ -37,6 +37,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::unique_ptr<StorageBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<StorageBuffer> build(uint32_t count);
     };
 
 } // vklite

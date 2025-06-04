@@ -40,6 +40,9 @@ namespace vklite {
 
         [[nodiscard]]
         std::unique_ptr<IndexBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<IndexBuffer> build(uint32_t count);
     };
 
 } // vklite

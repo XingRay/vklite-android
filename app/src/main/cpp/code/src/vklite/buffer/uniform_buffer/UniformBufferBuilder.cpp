@@ -48,4 +48,15 @@ namespace vklite {
         return std::make_unique<UniformBuffer>(build());
     }
 
+    std::vector<UniformBuffer> UniformBufferBuilder::build(uint32_t count) {
+        std::vector<UniformBuffer> buffers;
+        buffers.reserve(count);
+
+        for (int i = 0; i < count; i++) {
+            buffers.emplace_back(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
+        }
+
+        return buffers;
+    }
+
 } // vklite

@@ -30,9 +30,14 @@ namespace vklite {
 
         HostVisibleBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
+        [[nodiscard]]
         HostVisibleBuffer build();
 
+        [[nodiscard]]
         std::unique_ptr<HostVisibleBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<HostVisibleBuffer> build(uint32_t count);
     };
 
 } // vklite

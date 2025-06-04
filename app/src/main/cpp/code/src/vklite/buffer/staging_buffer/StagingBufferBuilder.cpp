@@ -41,4 +41,15 @@ namespace vklite {
         return std::make_unique<StagingBuffer>(build());
     }
 
+    std::vector<StagingBuffer> StagingBufferBuilder::build(uint32_t count) {
+        std::vector<StagingBuffer> buffers;
+        buffers.reserve(count);
+
+        for (int i = 0; i < count; i++) {
+            buffers.emplace_back(mCombinedMemoryBufferBuilder.build());
+        }
+
+        return buffers;
+    }
+
 } // vklite

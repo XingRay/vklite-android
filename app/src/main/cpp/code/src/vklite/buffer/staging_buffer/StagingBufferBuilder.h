@@ -28,9 +28,14 @@ namespace vklite {
 
         StagingBufferBuilder &size(vk::DeviceSize size);
 
+        [[nodiscard]]
         StagingBuffer build();
 
+        [[nodiscard]]
         std::unique_ptr<StagingBuffer> buildUnique();
+
+        [[nodiscard]]
+        std::vector<StagingBuffer> build(uint32_t count);
     };
 
 } // vklite
