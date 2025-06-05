@@ -6,12 +6,13 @@
 #include "PipelineLayoutBuilder.h"
 
 #include "vklite/device/Device.h"
-#include "vklite/pipeline/pipeline_layout/PipelineLayoutMeta.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
-    PipelineLayoutBuilder::PipelineLayoutBuilder() = default;
+    PipelineLayoutBuilder::PipelineLayoutBuilder(){
+        mPipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo{};
+    };
 
     PipelineLayoutBuilder::~PipelineLayoutBuilder() = default;
 
@@ -22,24 +23,26 @@ namespace vklite {
 
     PipelineLayoutBuilder &PipelineLayoutBuilder::pushConstantRanges(std::vector<vk::PushConstantRange> pushConstantRanges) {
         mPushConstantRanges = std::move(pushConstantRanges);
+        mPipelineLayoutCreateInfo.setPushConstantRanges(mPushConstantRanges);
         return *this;
     }
 
     PipelineLayoutBuilder &PipelineLayoutBuilder::addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags) {
         vk::PushConstantRange pushConstantRange(stageFlags, offset, size);
         mPushConstantRanges.push_back(pushConstantRange);
+        mPipelineLayoutCreateInfo.setPushConstantRanges(mPushConstantRanges);
         return *this;
     }
 
     PipelineLayoutBuilder &PipelineLayoutBuilder::descriptorSetLayouts(const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts) {
-        mDescriptorSetLayouts = descriptorSetLayouts;
+        mPipelineLayoutCreateInfo.setSetLayouts(descriptorSetLayouts);
         return *this;
     }
 
-    PipelineLayoutBuilder &PipelineLayoutBuilder::descriptorSetLayouts(std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts) {
-        mDescriptorSetLayouts = std::move(descriptorSetLayouts);
-        return *this;
-    }
+//    PipelineLayoutBuilder &PipelineLayoutBuilder::descriptorSetLayouts(std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts) {
+//        mDescriptorSetLayouts = std::move(descriptorSetLayouts);
+//        return *this;
+//    }
 
 //    PipelineLayoutBuilder &PipelineLayoutBuilder::config(const ShaderConfigure &shaderConfigure) {
 //        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = shaderConfigure.createDescriptorSetLayouts(mDevice);
@@ -52,17 +55,11 @@ namespace vklite {
             throw std::runtime_error("mDevice == nullptr, must invoke PipelineLayoutBuilder::device(vk::Device device)");
         }
 
-        vk::PipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
-        pipelineLayoutCreateInfo
-                .setSetLayouts(mDescriptorSetLayouts)
-                .setPushConstantRanges(mPushConstantRanges);
-
-        vk::PipelineLayout pipelineLayout = mDevice.createPipelineLayout(pipelineLayoutCreateInfo);
+        vk::PipelineLayout pipelineLayout = mDevice.createPipelineLayout(mPipelineLayoutCreateInfo);
         LOG_D("mDevice.createPipelineLayout => %p", (void *) pipelineLayout);
 
 //        return PipelineLayout(mDevice, pipelineLayout);
-        PipelineLayoutMeta meta(std::move(mDescriptorSetLayouts), std::move(mPushConstantRanges));
-        return {mDevice, pipelineLayout, std::move(meta)};
+        return {mDevice, pipelineLayout};
     }
 
     std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUnique() {

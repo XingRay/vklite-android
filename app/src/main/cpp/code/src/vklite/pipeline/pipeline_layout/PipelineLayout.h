@@ -6,18 +6,15 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/pipeline/pipeline_layout/PipelineLayoutMeta.h"
-
 namespace vklite {
 
     class PipelineLayout {
     private:
         vk::Device mDevice;
         vk::PipelineLayout mPipelineLayout;
-        PipelineLayoutMeta mMeta;
 
     public:
-        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout, PipelineLayoutMeta &&meta);
+        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout);
 
         ~PipelineLayout();
 

@@ -89,12 +89,12 @@ namespace vklite {
         std::vector<vklite::Semaphore> mRenderFinishedSemaphores;
         std::vector<vklite::Fence> mFences;
 
-        std::unique_ptr<vklite::PipelineLayout> mGraphicPipelineLayout;
+        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
         std::unique_ptr<DescriptorPool> mDescriptorPool;
         DescriptorSetLayouts mDescriptorSetLayouts;
         std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
         std::vector<PushConstant> mPushConstants;
-        std::unique_ptr<vklite::Pipeline> mGraphicPipeline;
+        std::unique_ptr<vklite::Pipeline> mPipeline;
 
         // config
         uint32_t mFrameCount;
@@ -133,12 +133,12 @@ namespace vklite {
                 std::vector<vklite::Semaphore> &&imageAvailableSemaphores,
                 std::vector<vklite::Semaphore> &&renderFinishedSemaphores,
                 std::vector<vklite::Fence> &&fences,
-                std::unique_ptr<vklite::PipelineLayout> graphicPipelineLayout,
+                std::unique_ptr<vklite::PipelineLayout> pipelineLayout,
                 std::unique_ptr<DescriptorPool> descriptorPool,
                 DescriptorSetLayouts&& descriptorSetLayouts,
                 std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
                 std::vector<PushConstant> &&pushConstants,
-                std::unique_ptr<vklite::Pipeline> graphicPipeline);
+                std::unique_ptr<vklite::Pipeline> pipeline);
 
         ~SimpleGraphicEngine();
 

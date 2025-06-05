@@ -20,11 +20,13 @@ namespace vklite {
     private:
         vk::Device mDevice;
 
+        vk::PipelineLayoutCreateInfo mPipelineLayoutCreateInfo;
+
         // push constants
         std::vector<vk::PushConstantRange> mPushConstantRanges;
 
         // DescriptorSetLayout
-        std::vector<vk::DescriptorSetLayout> mDescriptorSetLayouts;
+//        std::vector<vk::DescriptorSetLayout> mDescriptorSetLayouts;
 
     public:
         PipelineLayoutBuilder();
@@ -39,7 +41,7 @@ namespace vklite {
 
         PipelineLayoutBuilder &descriptorSetLayouts(const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts);
 
-        PipelineLayoutBuilder &descriptorSetLayouts(std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts);
+//        PipelineLayoutBuilder &descriptorSetLayouts(std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts);
 
 //        PipelineLayoutBuilder &config(const ShaderConfigure &shaderConfigure);
 

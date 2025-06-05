@@ -10,8 +10,8 @@
 
 namespace vklite {
 
-    PipelineLayout::PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout, PipelineLayoutMeta &&meta)
-            : mDevice(device), mPipelineLayout(pipelineLayout), mMeta(std::move(meta)) {}
+    PipelineLayout::PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout)
+            : mDevice(device), mPipelineLayout(pipelineLayout) {}
 
     PipelineLayout::~PipelineLayout() {
         if (mDevice != nullptr && mPipelineLayout != nullptr) {
@@ -24,14 +24,12 @@ namespace vklite {
 
     PipelineLayout::PipelineLayout(PipelineLayout &&other) noexcept
             : mDevice(std::exchange(other.mDevice, nullptr)),
-              mPipelineLayout(std::exchange(other.mPipelineLayout, nullptr)),
-              mMeta(std::move(other.mMeta)) {}
+              mPipelineLayout(std::exchange(other.mPipelineLayout, nullptr)) {}
 
     PipelineLayout &PipelineLayout::operator=(PipelineLayout &&other) noexcept {
         if (this != &other) {
             mDevice = std::exchange(other.mDevice, nullptr);
             mPipelineLayout = std::exchange(other.mPipelineLayout, nullptr);
-            mMeta = std::move(other.mMeta);
         }
         return *this;
     }
@@ -39,13 +37,4 @@ namespace vklite {
     const vk::PipelineLayout &PipelineLayout::getPipelineLayout() const {
         return mPipelineLayout;
     }
-
-//    const std::vector<vk::DescriptorSetLayout> &PipelineLayout::getDescriptorSetLayouts() const {
-//        return mMeta.getDescriptorSetLayouts();
-//    }
-//
-//    const std::vector<vk::PushConstantRange> &PipelineLayout::getPushConstantRanges() const {
-//        return mMeta.getPushConstantRanges();
-//    }
-
 } // vklite
