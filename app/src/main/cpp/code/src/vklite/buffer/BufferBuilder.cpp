@@ -3,6 +3,7 @@
 //
 
 #include "BufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -36,7 +37,8 @@ namespace vklite {
         return *this;
     }
 
-    Buffer BufferBuilder::build() const{
+    Buffer BufferBuilder::build() const {
+        LOG_D("BufferBuilder::build()");
         if (mDevice == nullptr) {
             throw std::runtime_error("DeviceLocalBufferBuilder::build() mDevice == nullptr");
         }
@@ -45,13 +47,15 @@ namespace vklite {
         }
 
         vk::Buffer buffer = mDevice.createBuffer(mBufferCreateInfo);
+        LOG_D("mDevice.createBuffer => %p", (void *) buffer);
+
         BufferMeta meta{mBufferCreateInfo.size};
 
 //        return Buffer(mDevice, buffer, std::move(meta));
         return {mDevice, buffer, std::move(meta)};
     }
 
-    std::unique_ptr<Buffer> BufferBuilder::buildUnique() const{
+    std::unique_ptr<Buffer> BufferBuilder::buildUnique() const {
         return std::make_unique<Buffer>(build());
     }
 

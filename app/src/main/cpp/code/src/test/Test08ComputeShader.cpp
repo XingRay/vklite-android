@@ -268,7 +268,7 @@ namespace test08 {
 
         mComputePipelineLayout = vklite::PipelineLayoutBuilder()
                 .device(mDevice->getDevice())
-                .config(computeShaderConfigure)
+//                .config(computeShaderConfigure)
                 .buildUnique();
 
         mComputePipeline = vklite::ComputePipelineBuilder()

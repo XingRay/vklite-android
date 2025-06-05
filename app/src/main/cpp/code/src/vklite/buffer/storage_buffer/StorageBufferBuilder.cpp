@@ -3,6 +3,7 @@
 //
 
 #include "StorageBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -40,6 +41,7 @@ namespace vklite {
     }
 
     StorageBuffer StorageBufferBuilder::build() {
+        LOG_D("StorageBufferBuilder::build()");
 //        return StorageBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }

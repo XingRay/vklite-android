@@ -3,6 +3,7 @@
 //
 
 #include "UniformBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -40,6 +41,7 @@ namespace vklite {
     }
 
     UniformBuffer UniformBufferBuilder::build() {
+        LOG_D("UniformBufferBuilder::build()");
 //        return UniformBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }
@@ -53,7 +55,7 @@ namespace vklite {
         buffers.reserve(count);
 
         for (int i = 0; i < count; i++) {
-            buffers.emplace_back(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
+            buffers.emplace_back(build());
         }
 
         return buffers;

@@ -101,17 +101,13 @@ namespace vklite {
         std::vector<vk::DescriptorPoolSize> calcDescriptorPoolSizes() const;
 
         [[nodiscard]]
-        std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const Device &device) const;
-
-        [[nodiscard]]
-        std::vector<vk::DescriptorSetLayout> createDescriptorSetLayouts(const vk::Device &device) const;
-
-        [[nodiscard]]
         std::vector<vk::VertexInputBindingDescription> createVertexBindingDescriptions();
 
         [[nodiscard]]
         std::vector<vk::VertexInputAttributeDescription> createVertexAttributeDescriptions();
 
+        [[nodiscard]]
+        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> createDescriptorSetLayoutBindings();
     };
 
 } // vklite

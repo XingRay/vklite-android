@@ -34,8 +34,8 @@ namespace vklite {
     std::optional<std::reference_wrapper<const std::vector<vk::DescriptorBufferInfo>>>
     DescriptorMapping::getDescriptorBufferInfos() const {
         if (auto *ptr = std::get_if<std::vector<vk::DescriptorBufferInfo>>(&mTarget)) {
-//            return *ptr; // 隐式转换为 std::optional 包含引用包装
-            return std::optional(std::cref(*ptr));
+//            return std::optional(std::cref(*ptr));
+            return *ptr;
         }
         return std::nullopt;
     }
@@ -43,8 +43,8 @@ namespace vklite {
     std::optional<std::reference_wrapper<const std::vector<vk::DescriptorImageInfo>>>
     DescriptorMapping::getDescriptorImageInfos() const {
         if (auto *ptr = std::get_if<std::vector<vk::DescriptorImageInfo>>(&mTarget)) {
-//            return *ptr;
-            return std::optional(std::cref(*ptr));
+//            return std::optional(std::cref(*ptr));
+            return *ptr;
         }
         return std::nullopt;
     }

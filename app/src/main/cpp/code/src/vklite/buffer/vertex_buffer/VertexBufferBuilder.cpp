@@ -3,6 +3,7 @@
 //
 
 #include "VertexBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -40,6 +41,7 @@ namespace vklite {
     }
 
     VertexBuffer VertexBufferBuilder::build() {
+        LOG_D("VertexBufferBuilder::build()");
 //        return VertexBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }

@@ -74,20 +74,20 @@ namespace test02 {
                 .size(sizeof(ColorUniformBufferObject))
                 .build(mEngine->getFrameCount());
 
-        vklite::StagingBuffer stagingBuffer = mEngine->stagingBufferBuilder()
-                .size(sizeof(ColorUniformBufferObject))
-                .build();
-        stagingBuffer.updateBuffer(&colorUniformBufferObject, sizeof(ColorUniformBufferObject));
+//        vklite::StagingBuffer stagingBuffer = mEngine->stagingBufferBuilder()
+//                .size(sizeof(ColorUniformBufferObject))
+//                .build();
+//        stagingBuffer.updateBuffer(&colorUniformBufferObject, sizeof(ColorUniformBufferObject));
+//
+//        mEngine->getCommandPool().submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+//            for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
+//                mUniformBuffers[i].recordUpdate(commandBuffer, stagingBuffer);
+//            }
+//        });
 
-        mEngine->getCommandPool().submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-                mUniformBuffers[i].recordUpdate(commandBuffer, stagingBuffer);
-            }
-        });
-
-//        for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-//            mUniformBuffers[i].update(mEngine->getCommandPool(), &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
-//        }
+        for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
+            mUniformBuffers[i].update(mEngine->getCommandPool(), &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
+        }
 
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
@@ -98,7 +98,7 @@ namespace test02 {
                                 .descriptorType(vk::DescriptorType::eUniformBuffer)
 //                                        .descriptorIndex(0)
 //                                        .descriptorCount(1)
-                                .addBufferInfo(mUniformBuffers[frameIndex].getVkBuffer(), 0, sizeof(ColorUniformBufferObject));
+                                .addBufferInfo(mUniformBuffers[frameIndex].getBuffer());
                     });
         });
     }

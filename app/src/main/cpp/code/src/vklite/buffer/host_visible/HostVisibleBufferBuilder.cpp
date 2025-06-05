@@ -3,6 +3,7 @@
 //
 
 #include "HostVisibleBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -38,6 +39,7 @@ namespace vklite {
     }
 
     HostVisibleBuffer HostVisibleBufferBuilder::build() {
+        LOG_D("HostVisibleBufferBuilder::build()");
         return HostVisibleBuffer(mCombinedMemoryBufferBuilder.build());
     }
 

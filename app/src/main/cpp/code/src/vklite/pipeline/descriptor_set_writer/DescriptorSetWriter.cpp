@@ -21,7 +21,7 @@ namespace vklite {
                     .setDstSet(mapping.getDescriptorSet())
                     .setDstBinding(mapping.getBinding())
                     .setDstArrayElement(mapping.getDescriptorIndex())
-                    .setDescriptorCount(mapping.getDescriptorCount())
+//                    .setDescriptorCount(mapping.getDescriptorCount())
                     .setDescriptorType(mapping.getDescriptorType());
             if (mapping.getDescriptorBufferInfos().has_value()) {
                 writeDescriptorSet.setBufferInfo(mapping.getDescriptorBufferInfos().value().get());

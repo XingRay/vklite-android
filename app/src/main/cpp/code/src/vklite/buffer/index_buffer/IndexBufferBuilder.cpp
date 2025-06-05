@@ -4,6 +4,7 @@
 
 #include "IndexBufferBuilder.h"
 #include "vklite/buffer/index_buffer/IndexBufferMeta.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -42,6 +43,7 @@ namespace vklite {
     }
 
     IndexBuffer IndexBufferBuilder::build() {
+        LOG_D("IndexBufferBuilder::build()");
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, IndexBufferMeta{mIndexType}};
     }
 

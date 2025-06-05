@@ -3,6 +3,7 @@
 //
 
 #include "DeviceLocalBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -40,6 +41,7 @@ namespace vklite {
     }
 
     DeviceLocalBuffer DeviceLocalBufferBuilder::build() {
+        LOG_D("DeviceLocalBufferBuilder::build()");
 //        return DeviceLocalBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }

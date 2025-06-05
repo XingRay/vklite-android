@@ -3,6 +3,7 @@
 //
 
 #include "SimpleGraphicEngine.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -158,7 +159,35 @@ namespace vklite {
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure(std::move(configure))
                 .build();
-        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriter.createWriteDescriptorSets();
+        LOG_D("mDevice->getDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
+        for (const vk::WriteDescriptorSet &writeDescriptorSet: writeDescriptorSets) {
+            LOG_D("\twriteDescriptorSet:");
+            LOG_D("\t\tdstSet:%p", (void *) writeDescriptorSet.dstSet);
+            LOG_D("\t\tdstBinding:%d", writeDescriptorSet.dstBinding);
+            LOG_D("\t\tdstArrayElement:%d", writeDescriptorSet.dstArrayElement);
+            LOG_D("\t\tdescriptorType:%d", writeDescriptorSet.descriptorType);
+            LOG_D("\t\tdescriptorCount:%d", writeDescriptorSet.descriptorCount);
+            if (writeDescriptorSet.pBufferInfo != nullptr) {
+                for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
+                    const vk::DescriptorBufferInfo &bufferInfo = writeDescriptorSet.pBufferInfo[i];
+                    LOG_D("\t\tbufferInfo:");
+                    LOG_D("\t\t\tbuffer:%p", (void *) bufferInfo.buffer);
+                    LOG_D("\t\t\toffset:%ld", bufferInfo.offset);
+                    LOG_D("\t\t\trange:%ld", bufferInfo.range);
+                }
+            }
+            if (writeDescriptorSet.pImageInfo != nullptr) {
+                for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
+                    const vk::DescriptorImageInfo &imageInfo = writeDescriptorSet.pImageInfo[i];
+                    LOG_D("\t\timageInfo:");
+                    LOG_D("\t\t\timageView:%p", (void *) imageInfo.imageView);
+                    LOG_D("\t\t\tsampler:%p", (void *) imageInfo.sampler);
+                    LOG_D("\t\t\timageLayout:%p", (void *) imageInfo.imageLayout);
+                }
+            }
+        }
+        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
         return *this;
     }

@@ -170,37 +170,27 @@ namespace vklite {
         return descriptorPoolSizes;
     }
 
-    std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const vk::Device &device) const {
-        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts;
-
-        for (const auto &setEntry: mDescriptorSetConfigures) {
-            uint32_t set = setEntry.first;
-            const DescriptorSetConfigure &descriptorSetConfigure = setEntry.second;
-
-            std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings = descriptorSetConfigure.createDescriptorSetLayoutBindings();
-
-            vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo{};
-            descriptorSetLayoutCreateInfo
-                    .setBindings(descriptorSetLayoutBindings);
-
-            vk::DescriptorSetLayout descriptorSetLayout = device.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
-            descriptorSetLayouts.push_back(descriptorSetLayout);
-        }
-
-        return descriptorSetLayouts;
-    }
-
-    std::vector<vk::DescriptorSetLayout> ShaderConfigure::createDescriptorSetLayouts(const Device &device) const {
-        return createDescriptorSetLayouts(device.getDevice());
-    }
-
-
     std::vector<vk::VertexInputBindingDescription> ShaderConfigure::createVertexBindingDescriptions() {
         return mVertexConfigure.createVertexInputBindingDescriptions();
     }
 
     std::vector<vk::VertexInputAttributeDescription> ShaderConfigure::createVertexAttributeDescriptions() {
         return mVertexConfigure.createVertexInputAttributeDescriptions();
+    }
+
+    std::vector<std::vector<vk::DescriptorSetLayoutBinding>> ShaderConfigure::createDescriptorSetLayoutBindings() {
+        std::vector<std::vector<vk::DescriptorSetLayoutBinding>> descriptorSetLayoutBindings;
+        descriptorSetLayoutBindings.reserve(mDescriptorSetConfigures.size());
+
+        for (const auto &setEntry: mDescriptorSetConfigures) {
+            uint32_t set = setEntry.first;
+            const DescriptorSetConfigure &descriptorSetConfigure = setEntry.second;
+
+            std::vector<vk::DescriptorSetLayoutBinding> bindings = descriptorSetConfigure.createDescriptorSetLayoutBindings();
+            descriptorSetLayoutBindings.push_back(std::move(bindings));
+        }
+
+        return descriptorSetLayoutBindings;
     }
 
 } // vklite

@@ -40,11 +40,11 @@ namespace vklite {
         return *this;
     }
 
-    PipelineLayoutBuilder &PipelineLayoutBuilder::config(const ShaderConfigure &shaderConfigure) {
-        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = shaderConfigure.createDescriptorSetLayouts(mDevice);
-        (*this).descriptorSetLayouts(std::move(descriptorSetLayouts));
-        return *this;
-    }
+//    PipelineLayoutBuilder &PipelineLayoutBuilder::config(const ShaderConfigure &shaderConfigure) {
+//        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = shaderConfigure.createDescriptorSetLayouts(mDevice);
+//        (*this).descriptorSetLayouts(std::move(descriptorSetLayouts));
+//        return *this;
+//    }
 
     PipelineLayout PipelineLayoutBuilder::build() {
         if (mDevice == nullptr) {

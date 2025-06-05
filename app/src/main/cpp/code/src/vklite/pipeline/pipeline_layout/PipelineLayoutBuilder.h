@@ -41,7 +41,7 @@ namespace vklite {
 
         PipelineLayoutBuilder &descriptorSetLayouts(std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts);
 
-        PipelineLayoutBuilder &config(const ShaderConfigure &shaderConfigure);
+//        PipelineLayoutBuilder &config(const ShaderConfigure &shaderConfigure);
 
         [[nodiscard]]
         PipelineLayout build();

@@ -3,6 +3,7 @@
 //
 
 #include "StagingBufferBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -33,6 +34,7 @@ namespace vklite {
     }
 
     StagingBuffer StagingBufferBuilder::build() {
+        LOG_D("StagingBufferBuilder::build()");
 //        return StagingBuffer(mCombinedMemoryBufferBuilder.build());
         return StagingBuffer(mCombinedMemoryBufferBuilder.build());
     }

@@ -5,6 +5,8 @@
 #include "SimpleGraphicEngineBuilder.h"
 #include <utility>
 
+#include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayoutsBuilder.h"
+
 namespace vklite {
 
     SimpleGraphicEngineBuilder::SimpleGraphicEngineBuilder()
@@ -251,12 +253,6 @@ namespace vklite {
             pushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
         }
 
-        std::unique_ptr<PipelineLayout> graphicsPipelineLayout = PipelineLayoutBuilder()
-                .device(device->getDevice())
-                .descriptorSetLayouts(mGraphicShaderConfigure.createDescriptorSetLayouts(device->getDevice()))
-                .pushConstantRanges(std::move(pushConstantRanges))
-                .buildUnique();
-
         std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
@@ -264,12 +260,22 @@ namespace vklite {
                 .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
-        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mGraphicShaderConfigure.createDescriptorSetLayouts(device->getDevice());
+        DescriptorSetLayouts descriptorSetLayouts = DescriptorSetLayoutsBuilder()
+                .device(device->getDevice())
+                .bindings(mGraphicShaderConfigure.createDescriptorSetLayoutBindings())
+                .build();
+
         std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
         descriptorSets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {
-            descriptorSets.push_back(descriptorPool->allocateDescriptorSets(descriptorSetLayouts));
+            descriptorSets.push_back(descriptorPool->allocateDescriptorSets(descriptorSetLayouts.getDescriptorSetLayouts()));
         }
+
+        std::unique_ptr<PipelineLayout> graphicsPipelineLayout = PipelineLayoutBuilder()
+                .device(device->getDevice())
+                .descriptorSetLayouts(descriptorSetLayouts.getDescriptorSetLayouts())
+                .pushConstantRanges(std::move(pushConstantRanges))
+                .buildUnique();
 
         std::unique_ptr<Pipeline> graphicsPipeline = GraphicsPipelineBuilder()
                 .device(device->getDevice())
