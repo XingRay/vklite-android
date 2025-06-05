@@ -32,11 +32,11 @@ namespace vklite {
         [[nodiscard]]
         const vk::PipelineLayout &getPipelineLayout() const;
 
-        [[nodiscard]]
-        const std::vector<vk::DescriptorSetLayout> &getDescriptorSetLayouts() const;
-
-        [[nodiscard]]
-        const std::vector<vk::PushConstantRange> &getPushConstantRanges() const;
+//        [[nodiscard]]
+//        const std::vector<vk::DescriptorSetLayout> &getDescriptorSetLayouts() const;
+//
+//        [[nodiscard]]
+//        const std::vector<vk::PushConstantRange> &getPushConstantRanges() const;
     };
 
 } // vklite

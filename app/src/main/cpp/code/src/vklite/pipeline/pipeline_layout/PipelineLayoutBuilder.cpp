@@ -7,6 +7,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutMeta.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -57,6 +58,7 @@ namespace vklite {
                 .setPushConstantRanges(mPushConstantRanges);
 
         vk::PipelineLayout pipelineLayout = mDevice.createPipelineLayout(pipelineLayoutCreateInfo);
+        LOG_D("mDevice.createPipelineLayout => %p", (void *) pipelineLayout);
 
 //        return PipelineLayout(mDevice, pipelineLayout);
         PipelineLayoutMeta meta(std::move(mDescriptorSetLayouts), std::move(mPushConstantRanges));

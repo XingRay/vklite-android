@@ -28,9 +28,9 @@ namespace vklite {
             std::vector<Semaphore> &&imageAvailableSemaphores,
             std::vector<Semaphore> &&renderFinishedSemaphores,
             std::vector<Fence> &&fences,
-            std::unique_ptr<DescriptorPool> graphicDescriptorPool,
             std::unique_ptr<PipelineLayout> graphicPipelineLayout,
             std::unique_ptr<DescriptorPool> descriptorPool,
+            DescriptorSetLayouts &&descriptorSetLayouts,
             std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
             std::vector<PushConstant> &&pushConstants,
             std::unique_ptr<Pipeline> graphicPipeline)
@@ -54,9 +54,9 @@ namespace vklite {
               mImageAvailableSemaphores(std::move(imageAvailableSemaphores)),
               mRenderFinishedSemaphores(std::move(renderFinishedSemaphores)),
               mFences(std::move(fences)),
-              mGraphicDescriptorPool(std::move(graphicDescriptorPool)),
               mGraphicPipelineLayout(std::move(graphicPipelineLayout)),
               mDescriptorPool(std::move(descriptorPool)),
+              mDescriptorSetLayouts(std::move(descriptorSetLayouts)),
               mDescriptorSets(std::move(descriptorSets)),
               mPushConstants(std::move(pushConstants)),
               mGraphicPipeline(std::move(graphicPipeline)),
@@ -85,9 +85,9 @@ namespace vklite {
               mImageAvailableSemaphores(std::move(other.mImageAvailableSemaphores)),
               mRenderFinishedSemaphores(std::move(other.mRenderFinishedSemaphores)),
               mFences(std::move(other.mFences)),
-              mGraphicDescriptorPool(std::move(other.mGraphicDescriptorPool)),
               mGraphicPipelineLayout(std::move(other.mGraphicPipelineLayout)),
               mDescriptorPool(std::move(other.mDescriptorPool)),
+              mDescriptorSetLayouts(std::move(other.mDescriptorSetLayouts)),
               mDescriptorSets(std::move(other.mDescriptorSets)),
               mPushConstants(std::move(other.mPushConstants)),
               mGraphicPipeline(std::move(other.mGraphicPipeline)),
@@ -117,9 +117,9 @@ namespace vklite {
             mImageAvailableSemaphores = std::move(other.mImageAvailableSemaphores);
             mRenderFinishedSemaphores = std::move(other.mRenderFinishedSemaphores);
             mFences = std::move(other.mFences);
-            mGraphicDescriptorPool = std::move(other.mGraphicDescriptorPool);
             mGraphicPipelineLayout = std::move(other.mGraphicPipelineLayout);
             mDescriptorPool = std::move(other.mDescriptorPool);
+            mDescriptorSetLayouts = std::move(other.mDescriptorSetLayouts);
             mDescriptorSets = std::move(other.mDescriptorSets);
             mPushConstants = std::move(other.mPushConstants);
             mGraphicPipeline = std::move(other.mGraphicPipeline);
@@ -187,7 +187,11 @@ namespace vklite {
                 }
             }
         }
-        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
+        LOG_D("mDevice->getDevice().updateDescriptorSets");
+        const vk::Device &vkDevice = mDevice->getDevice();
+        LOG_D("vkDevice => %p", (void *) vkDevice);
+        vkDevice.updateDescriptorSets(writeDescriptorSets, nullptr);
+        LOG_D("mDevice->getDevice().updateDescriptorSets ok");
 
         return *this;
     }

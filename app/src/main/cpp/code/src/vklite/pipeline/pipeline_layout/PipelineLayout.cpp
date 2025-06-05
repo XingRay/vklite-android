@@ -6,6 +6,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "vklite/Log.h"
+
 namespace vklite {
 
     PipelineLayout::PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout, PipelineLayoutMeta &&meta)
@@ -13,6 +15,7 @@ namespace vklite {
 
     PipelineLayout::~PipelineLayout() {
         if (mDevice != nullptr && mPipelineLayout != nullptr) {
+            LOG_D("mDevice.destroy(mPipelineLayout), mPipelineLayout:%p", (void *) mPipelineLayout);
             mDevice.destroy(mPipelineLayout);
             mDevice = nullptr;
             mPipelineLayout = nullptr;
@@ -37,12 +40,12 @@ namespace vklite {
         return mPipelineLayout;
     }
 
-    const std::vector<vk::DescriptorSetLayout> &PipelineLayout::getDescriptorSetLayouts() const {
-        return mMeta.getDescriptorSetLayouts();
-    }
-
-    const std::vector<vk::PushConstantRange> &PipelineLayout::getPushConstantRanges() const {
-        return mMeta.getPushConstantRanges();
-    }
+//    const std::vector<vk::DescriptorSetLayout> &PipelineLayout::getDescriptorSetLayouts() const {
+//        return mMeta.getDescriptorSetLayouts();
+//    }
+//
+//    const std::vector<vk::PushConstantRange> &PipelineLayout::getPushConstantRanges() const {
+//        return mMeta.getPushConstantRanges();
+//    }
 
 } // vklite

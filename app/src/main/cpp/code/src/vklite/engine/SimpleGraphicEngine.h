@@ -56,6 +56,7 @@
 #include "vklite/buffer/storage_buffer/StorageBufferBuilder.h"
 
 #include "vklite/push_constant/PushConstant.h"
+#include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayouts.h"
 
 namespace vklite {
 
@@ -88,9 +89,9 @@ namespace vklite {
         std::vector<vklite::Semaphore> mRenderFinishedSemaphores;
         std::vector<vklite::Fence> mFences;
 
-        std::unique_ptr<vklite::DescriptorPool> mGraphicDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mGraphicPipelineLayout;
         std::unique_ptr<DescriptorPool> mDescriptorPool;
+        DescriptorSetLayouts mDescriptorSetLayouts;
         std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
         std::vector<PushConstant> mPushConstants;
         std::unique_ptr<vklite::Pipeline> mGraphicPipeline;
@@ -132,9 +133,9 @@ namespace vklite {
                 std::vector<vklite::Semaphore> &&imageAvailableSemaphores,
                 std::vector<vklite::Semaphore> &&renderFinishedSemaphores,
                 std::vector<vklite::Fence> &&fences,
-                std::unique_ptr<vklite::DescriptorPool> graphicDescriptorPool,
                 std::unique_ptr<vklite::PipelineLayout> graphicPipelineLayout,
                 std::unique_ptr<DescriptorPool> descriptorPool,
+                DescriptorSetLayouts&& descriptorSetLayouts,
                 std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
                 std::vector<PushConstant> &&pushConstants,
                 std::unique_ptr<vklite::Pipeline> graphicPipeline);

@@ -278,11 +278,11 @@ namespace test08 {
 
         mComputePipelineResources = vklite::PipelineResourcesBuilder()
                 .frameCount(mFrameCount)
-                .pipelineResourceBuilder([&](uint32_t frameIndex) {
-                    return vklite::PipelineResourceBuilder()
-                            .descriptorSets(mComputeDescriptorPool->allocateDescriptorSets(mComputePipelineLayout->getDescriptorSetLayouts()))
-                            .build();
-                })
+//                .pipelineResourceBuilder([&](uint32_t frameIndex) {
+//                    return vklite::PipelineResourceBuilder()
+//                            .descriptorSets(mComputeDescriptorPool->allocateDescriptorSets(mComputePipelineLayout->getDescriptorSetLayouts()))
+//                            .build();
+//                })
                 .build();
 
         for (int i = 0; i < mFrameCount; i++) {

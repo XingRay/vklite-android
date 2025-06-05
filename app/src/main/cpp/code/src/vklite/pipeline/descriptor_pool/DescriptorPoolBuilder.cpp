@@ -4,6 +4,8 @@
 
 #include "DescriptorPoolBuilder.h"
 
+#include "vklite/Log.h"
+
 namespace vklite {
 
     DescriptorPoolBuilder::DescriptorPoolBuilder()
@@ -40,7 +42,7 @@ namespace vklite {
 
     DescriptorPool DescriptorPoolBuilder::build() {
         if (mDevice == nullptr) {
-            throw std::runtime_error("DescriptorPoolBuilder::build() mDevice== nullptr");
+            throw std::runtime_error("DescriptorPoolBuilder::build() mDevice == nullptr");
         }
         std::vector<vk::DescriptorPoolSize> descriptorPoolSizes = calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount);
         uint32_t maxSets = mDescriptorSetCount * mFrameCount;
@@ -52,7 +54,7 @@ namespace vklite {
                 .setFlags(vk::DescriptorPoolCreateFlags{});
 
         vk::DescriptorPool descriptorPool = mDevice.createDescriptorPool(descriptorPoolCreateInfo);
-
+        LOG_D("mDevice.createDescriptorPool => %p", (void *) descriptorPool);
 //        return DescriptorPool(mDevice, descriptorPool);
         return {mDevice, descriptorPool};
     }

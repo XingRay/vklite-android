@@ -29,8 +29,10 @@ namespace vklite {
 
         PipelineLayoutMeta &operator=(PipelineLayoutMeta &&other) noexcept;
 
+        [[nodiscard]]
         const std::vector<vk::DescriptorSetLayout> &getDescriptorSetLayouts() const;
 
+        [[nodiscard]]
         const std::vector<vk::PushConstantRange> &getPushConstantRanges() const;
 
     };

@@ -6,6 +6,8 @@
 
 #include <utility>
 
+#include "vklite/Log.h"
+
 namespace vklite {
 
     DescriptorPool::DescriptorPool(vk::Device device, vk::DescriptorPool descriptorPool)
@@ -13,6 +15,7 @@ namespace vklite {
 
     DescriptorPool::~DescriptorPool() {
         if (mDevice != nullptr && mDescriptorPool != nullptr) {
+            LOG_D("mDevice.destroy(mDescriptorPool); mDescriptorPool:%p", (void *) mDescriptorPool);
             mDevice.destroy(mDescriptorPool);
             mDevice = nullptr;
             mDescriptorPool = nullptr;

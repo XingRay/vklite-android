@@ -4,6 +4,9 @@
 
 #include "DescriptorSetLayoutsBuilder.h"
 
+#include "vklite/Log.h"
+
+
 namespace vklite {
 
     DescriptorSetLayoutsBuilder::DescriptorSetLayoutsBuilder() = default;
@@ -34,6 +37,7 @@ namespace vklite {
                     .setBindings(bindings);
 
             vk::DescriptorSetLayout descriptorSetLayout = mDevice.createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+            LOG_D("mDevice.createDescriptorSetLayout => %p", (void *) descriptorSetLayout);
             descriptorSetLayouts.push_back(descriptorSetLayout);
         }
 
