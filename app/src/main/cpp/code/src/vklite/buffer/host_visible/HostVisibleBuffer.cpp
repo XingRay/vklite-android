@@ -25,8 +25,8 @@ namespace vklite {
     }
 
 
-    const vk::Buffer &HostVisibleBuffer::getBuffer() const {
-        return mCombinedMemoryBuffer.getBuffer().getBuffer();
+    const vk::Buffer &HostVisibleBuffer::getVkBuffer() const {
+        return mCombinedMemoryBuffer.getVkBuffer();
     }
 
     vk::DeviceSize HostVisibleBuffer::getBufferSize() const {

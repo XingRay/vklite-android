@@ -25,6 +25,8 @@
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/pipeline/pipeline/Pipeline.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
 #include "vklite/image/Image.h"
 #include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
 #include "vklite/image_view/ImageView.h"
@@ -32,11 +34,28 @@
 #include "vklite/sampler/Sampler.h"
 
 
+#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
+#include "vklite/buffer/device_local/DeviceLocalBufferBuilder.h"
+
+#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
+#include "vklite/buffer/host_visible/HostVisibleBufferBuilder.h"
+
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
+#include "vklite/buffer/staging_buffer/StagingBufferBuilder.h"
+
 #include "vklite/buffer/index_buffer/IndexBuffer.h"
 #include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
 
 #include "vklite/buffer/vertex_buffer/VertexBuffer.h"
 #include "vklite/buffer/vertex_buffer/VertexBufferBuilder.h"
+
+#include "vklite/buffer/uniform_buffer/UniformBuffer.h"
+#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
+
+#include "vklite/buffer/storage_buffer/StorageBuffer.h"
+#include "vklite/buffer/storage_buffer/StorageBufferBuilder.h"
+
+#include "vklite/push_constant/PushConstant.h"
 
 namespace vklite {
 
@@ -71,6 +90,9 @@ namespace vklite {
 
         std::unique_ptr<vklite::DescriptorPool> mGraphicDescriptorPool;
         std::unique_ptr<vklite::PipelineLayout> mGraphicPipelineLayout;
+        std::unique_ptr<DescriptorPool> mDescriptorPool;
+        std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
+        std::vector<PushConstant> mPushConstants;
         std::unique_ptr<vklite::Pipeline> mGraphicPipeline;
 
         // config
@@ -112,6 +134,9 @@ namespace vklite {
                 std::vector<vklite::Fence> &&fences,
                 std::unique_ptr<vklite::DescriptorPool> graphicDescriptorPool,
                 std::unique_ptr<vklite::PipelineLayout> graphicPipelineLayout,
+                std::unique_ptr<DescriptorPool> descriptorPool,
+                std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
+                std::vector<PushConstant> &&pushConstants,
                 std::unique_ptr<vklite::Pipeline> graphicPipeline);
 
         ~SimpleGraphicEngine();
@@ -131,8 +156,18 @@ namespace vklite {
         PhysicalDevice &getPhysicalDevice() const;
 
         [[nodiscard]]
+        uint32_t getFrameCount() const;
+
+        [[nodiscard]]
         CommandPool &getCommandPool() const;
 
+        [[nodiscard]]
+        const std::vector<std::vector<vk::DescriptorSet>> &getDescriptorSets() const;
+
+        [[nodiscard]]
+        const vk::DescriptorSet &getDescriptorSets(uint32_t frameIndex, uint32_t set) const;
+
+        SimpleGraphicEngine &updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
 
         VertexBufferBuilder vertexBufferBuilder();
 
@@ -146,6 +181,16 @@ namespace vklite {
         SimpleGraphicEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
 
         SimpleGraphicEngine &indexBuffer(const IndexBuffer &buffer, uint32_t indexCount);
+
+
+        UniformBufferBuilder uniformBufferBuilder();
+
+
+        StorageBufferBuilder storageBufferBuilder();
+
+        StagingBufferBuilder stagingBufferBuilder();
+
+        SimpleGraphicEngine &updatePushConstant(uint32_t index, const void *data, uint32_t size);
 
         void drawIndexed();
     };

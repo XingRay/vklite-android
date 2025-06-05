@@ -32,7 +32,7 @@ namespace vklite {
         HostVisibleBuffer &operator=(HostVisibleBuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]
         vk::DeviceSize getBufferSize() const;

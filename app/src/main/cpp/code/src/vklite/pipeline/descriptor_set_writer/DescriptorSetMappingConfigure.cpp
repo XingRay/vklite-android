@@ -15,7 +15,7 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addMapping(std::function<void(DescriptorMapping &descriptorMapping)> configure) {
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addMapping(const std::function<void(DescriptorMapping &descriptorMapping)> &configure) {
         DescriptorMapping descriptorMapping;
         configure(descriptorMapping);
         addMapping(std::move(descriptorMapping));

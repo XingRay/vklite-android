@@ -329,14 +329,14 @@ namespace test08 {
                                         .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
                                         .binding(1)
                                         .descriptorType(vk::DescriptorType::eStorageBuffer)
-                                        .addBufferInfo(mShaderStorageBuffers[(frameIndex - 1) % mFrameCount].getBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
+                                        .addBufferInfo(mShaderStorageBuffers[(frameIndex - 1) % mFrameCount].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
                             })
                             .addMapping([&](vklite::DescriptorMapping &mapping) {
                                 mapping
                                         .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
                                         .binding(2)
                                         .descriptorType(vk::DescriptorType::eStorageBuffer)
-                                        .addBufferInfo(mShaderStorageBuffers[frameIndex].getBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
+                                        .addBufferInfo(mShaderStorageBuffers[frameIndex].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
                             });
                 })
                 .build();
@@ -433,7 +433,7 @@ namespace test08 {
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
                 std::array<vk::DeviceSize, 1> offsets = {0};
-                std::array<vk::Buffer, 1> vertexBuffers = {mShaderStorageBuffers[mCurrentFrameIndex].getBuffer()};
+                std::array<vk::Buffer, 1> vertexBuffers = {mShaderStorageBuffers[mCurrentFrameIndex].getVkBuffer()};
                 vkCommandBuffer.bindVertexBuffers(0, vertexBuffers, offsets);
                 vkCommandBuffer.draw(mParticleCount, 1, 0, 0);
             });

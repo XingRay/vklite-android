@@ -13,8 +13,8 @@ namespace vklite {
     SimpleGraphicEngineBuilder::~SimpleGraphicEngineBuilder() = default;
 
     SimpleGraphicEngineBuilder::SimpleGraphicEngineBuilder(SimpleGraphicEngineBuilder &&other) noexcept
-            : mFrameCount(std::exchange(other.mFrameCount, 0)), // 基本类型使用 exchange 重置
-              mClearColor(std::move(other.mClearColor)),        // std::array 移动等同于拷贝
+            : mFrameCount(std::exchange(other.mFrameCount, 0)),
+              mClearColor(other.mClearColor),
               mClearDepth(std::exchange(other.mClearDepth, 0.0f)),
               mMsaaEnable(std::exchange(other.mMsaaEnable, false)),
               mDepthTestEnable(std::exchange(other.mDepthTestEnable, false)),
@@ -30,7 +30,7 @@ namespace vklite {
         if (this != &other) {
             // 基本类型：直接赋值（移动等同于拷贝）
             mFrameCount = other.mFrameCount;
-            mClearColor = other.mClearColor; // std::array 移动赋值等同于拷贝
+            mClearColor = other.mClearColor;
             mClearDepth = other.mClearDepth;
             mMsaaEnable = other.mMsaaEnable;
             mDepthTestEnable = other.mDepthTestEnable;
@@ -43,6 +43,31 @@ namespace vklite {
             mSampleCountSelector = std::move(other.mSampleCountSelector);
             mDeviceBuilder = std::move(other.mDeviceBuilder);
         }
+        return *this;
+    }
+
+    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::frameCount(uint32_t frameCount) {
+        mFrameCount = frameCount;
+        return *this;
+    }
+
+    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(const std::array<float, 4> &clearColor) {
+        mClearColor = clearColor;
+        return *this;
+    }
+
+    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(float r, float g, float b, float a) {
+        clearColor(std::array<float, 4>{r, g, b, a});
+        return *this;
+    }
+
+    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(float r, float g, float b) {
+        clearColor(r, g, b, 1.0f);
+        return *this;
+    }
+
+    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearDepth(float clearDepth) {
+        mClearDepth = clearDepth;
         return *this;
     }
 
@@ -219,9 +244,32 @@ namespace vklite {
                 .frameCount(mFrameCount)
                 .buildUnique();
 
+        std::vector<vk::PushConstantRange> pushConstantRanges = mGraphicShaderConfigure.getPushConstantRanges();
+        std::vector<PushConstant> pushConstants;
+        pushConstants.reserve(pushConstantRanges.size());
+        for (const vk::PushConstantRange &pushConstantRange: pushConstantRanges) {
+            pushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
+        }
+
         std::unique_ptr<PipelineLayout> graphicsPipelineLayout = PipelineLayoutBuilder()
                 .device(device->getDevice())
+                .descriptorSetLayouts(mGraphicShaderConfigure.createDescriptorSetLayouts(device->getDevice()))
+                .pushConstantRanges(std::move(pushConstantRanges))
                 .buildUnique();
+
+        std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
+                .device(device->getDevice())
+                .frameCount(mFrameCount)
+                .descriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
+                .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
+                .buildUnique();
+
+        std::vector<vk::DescriptorSetLayout> descriptorSetLayouts = mGraphicShaderConfigure.createDescriptorSetLayouts(device->getDevice());
+        std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
+        descriptorSets.reserve(mFrameCount);
+        for (uint32_t i = 0; i < mFrameCount; i++) {
+            descriptorSets.push_back(descriptorPool->allocateDescriptorSets(descriptorSetLayouts));
+        }
 
         std::unique_ptr<Pipeline> graphicsPipeline = GraphicsPipelineBuilder()
                 .device(device->getDevice())
@@ -257,6 +305,9 @@ namespace vklite {
                 std::move(fences),
                 std::move(graphicsDescriptorPool),
                 std::move(graphicsPipelineLayout),
+                std::move(descriptorPool),
+                std::move(descriptorSets),
+                std::move(pushConstants),
                 std::move(graphicsPipeline)
         };
     }

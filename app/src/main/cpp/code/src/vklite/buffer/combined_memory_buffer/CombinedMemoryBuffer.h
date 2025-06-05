@@ -31,6 +31,9 @@ namespace vklite {
         const Buffer &getBuffer() const;
 
         [[nodiscard]]
+        const vk::Buffer &getVkBuffer() const;
+
+        [[nodiscard]]
         const DeviceMemory &getDeviceMemory() const;
     };
 

@@ -28,7 +28,7 @@ namespace vklite {
             : mVertexShaderCode(std::move(other.mVertexShaderCode)),
               mFragmentShaderCode(std::move(other.mFragmentShaderCode)),
               mComputeShaderCode(std::move(other.mComputeShaderCode)),
-              mVertexConfigure(other.mVertexConfigure),
+              mVertexConfigure(std::move(other.mVertexConfigure)),
               mPushConstantRanges(std::move(other.mPushConstantRanges)),
               mDescriptorSetConfigures(std::move(other.mDescriptorSetConfigures)) {}
 
@@ -108,6 +108,9 @@ namespace vklite {
         return *this;
     }
 
+    std::vector<vk::PushConstantRange> &ShaderConfigure::getPushConstantRanges() {
+        return mPushConstantRanges;
+    }
 
     ShaderConfigure &ShaderConfigure::addDescriptorSetConfigure(DescriptorSetConfigure &&descriptorSetConfigure) {
         mDescriptorSetConfigures.emplace(descriptorSetConfigure.getSet(), std::move(descriptorSetConfigure));

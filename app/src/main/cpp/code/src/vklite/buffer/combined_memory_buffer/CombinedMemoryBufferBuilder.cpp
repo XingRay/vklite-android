@@ -84,7 +84,7 @@ namespace vklite {
             if (!mMemoryPropertyFlags.has_value()) {
                 throw std::runtime_error("mMemoryPropertyFlags not set, must invoke memoryPropertyFlags()");
             }
-            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), buffer.getBuffer(), mMemoryPropertyFlags.value());
+            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), buffer.getVkBuffer(), mMemoryPropertyFlags.value());
         }
 
         if (mDeviceMemoryBuilderConfigure != nullptr) {

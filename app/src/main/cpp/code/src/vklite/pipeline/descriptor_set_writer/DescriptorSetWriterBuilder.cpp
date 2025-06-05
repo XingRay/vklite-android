@@ -28,15 +28,15 @@ namespace vklite {
             mDescriptorSetMappingConfigure(frameIndex, configure);
             std::vector<DescriptorMapping> writeDescriptorSetsOfFrame = configure.getDescriptorMappings();
 
-                    descriptorMappings.insert(
-                            descriptorMappings.end(),
-                            std::make_move_iterator(writeDescriptorSetsOfFrame.begin()),
-                            std::make_move_iterator(writeDescriptorSetsOfFrame.end())
+            descriptorMappings.insert(
+                    descriptorMappings.end(),
+                    std::make_move_iterator(writeDescriptorSetsOfFrame.begin()),
+                    std::make_move_iterator(writeDescriptorSetsOfFrame.end())
             );
         }
 
 //        return DescriptorSetWriter(std::move(writeDescriptorSets));
-        return {std::move(descriptorMappings)};
+        return DescriptorSetWriter(std::move(descriptorMappings));
     }
 
 } // vklite

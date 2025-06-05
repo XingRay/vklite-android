@@ -11,59 +11,31 @@
 
 namespace vklite {
 
-//    Buffer::Buffer(const PhysicalDevice &physicalDevice, const Device &device, vk::DeviceSize bufferSize, vk::BufferUsageFlags bufferUsageFlagBits)
-//            : mDevice(device), mBufferSize(bufferSize) {
-//
-//        vk::Device vkDevice = mDevice.getDevice();
-//
-//        vk::BufferCreateInfo bufferCreateInfo{};
-//        bufferCreateInfo.setSize(bufferSize)
-//                .setUsage(vk::BufferUsageFlagBits::eTransferDst | bufferUsageFlagBits)
-//                .setSharingMode(vk::SharingMode::eExclusive);
-//
-//        mBuffer = vkDevice.createBuffer(bufferCreateInfo);
-//
-//
-//        vk::MemoryRequirements memoryRequirements = vkDevice.getBufferMemoryRequirements(mBuffer);
-//        vk::PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.getPhysicalDevice().getMemoryProperties();
-//
-//        uint32_t memoryType = physicalDevice.findMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
-//        vk::MemoryAllocateInfo memoryAllocateInfo{};
-//        memoryAllocateInfo
-//                .setAllocationSize(memoryRequirements.size)
-//                .setMemoryTypeIndex(memoryType);
-//
-//        vk::DeviceMemory bufferMemory = vkDevice.allocateMemory(memoryAllocateInfo);
-//
-//
-//        vkDevice.bindBufferMemory(mBuffer, bufferMemory, 0);
-//    }
-
     Buffer::Buffer(vk::Device device, vk::Buffer buffer, BufferMeta &&meta)
-            : mDevice(device), mBuffer(buffer), mMeta(std::move(meta)) {}
+            : mDevice(device), mVkBuffer(buffer), mMeta(std::move(meta)) {}
 
     vklite::Buffer::~Buffer() {
-        if (mDevice != nullptr && mBuffer != nullptr) {
-            mDevice.destroy(mBuffer);
+        if (mDevice != nullptr && mVkBuffer != nullptr) {
+            mDevice.destroy(mVkBuffer);
         }
     }
 
     Buffer::Buffer(Buffer &&other) noexcept
             : mDevice(std::exchange(other.mDevice, nullptr)),
-              mBuffer(std::exchange(other.mBuffer, nullptr)),
+              mVkBuffer(std::exchange(other.mVkBuffer, nullptr)),
               mMeta(std::move(other.mMeta)) {}
 
     Buffer &Buffer::operator=(Buffer &&other) noexcept {
         if (this != &other) {
             mDevice = std::exchange(other.mDevice, nullptr);
-            mBuffer = std::exchange(other.mBuffer, nullptr);
+            mVkBuffer = std::exchange(other.mVkBuffer, nullptr);
             mMeta = std::move(other.mMeta);
         }
         return *this;
     }
 
-    const vk::Buffer &Buffer::getBuffer() const {
-        return mBuffer;
+    const vk::Buffer &Buffer::getVkBuffer() const {
+        return mVkBuffer;
     }
 
     vk::DeviceSize Buffer::getSize() const {
@@ -71,7 +43,7 @@ namespace vklite {
     }
 
     Buffer &Buffer::bindMemory(vk::DeviceMemory deviceMemory, vk::DeviceSize memoryOffset) {
-        mDevice.bindBufferMemory(mBuffer, deviceMemory, memoryOffset);
+        mDevice.bindBufferMemory(mVkBuffer, deviceMemory, memoryOffset);
         return *this;
     }
 
@@ -81,7 +53,7 @@ namespace vklite {
                 .setSrcOffset(srcOffset)
                 .setDstOffset(dstOffset)
                 .setSize(copyDataSize);
-        commandBuffer.copyBuffer(srcBuffer, mBuffer, bufferCopy);
+        commandBuffer.copyBuffer(srcBuffer, mVkBuffer, bufferCopy);
     }
 
     void Buffer::recordCommandCopyFrom(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer) const {

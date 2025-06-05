@@ -39,8 +39,8 @@ namespace vklite {
         return mCombinedMemoryBuffer;
     }
 
-    const vk::Buffer &IndexBuffer::getBuffer() const {
-        return mCombinedMemoryBuffer.getBuffer().getBuffer();
+    const vk::Buffer &IndexBuffer::getVkBuffer() const {
+        return mCombinedMemoryBuffer.getVkBuffer();
     }
 
     vk::IndexType IndexBuffer::getIndexType() const {
@@ -69,7 +69,7 @@ namespace vklite {
     }
 
     IndexBuffer &IndexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer) {
-        recordUpdate(commandBuffer, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        recordUpdate(commandBuffer, stagingBuffer.getVkBuffer(), 0, 0, stagingBuffer.getSize());
         return *this;
     }
 
@@ -116,23 +116,23 @@ namespace vklite {
     }
 
     IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer) {
-        update(commandPool, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        update(commandPool, stagingBuffer.getVkBuffer(), 0, 0, stagingBuffer.getSize());
         return *this;
     }
 
     IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, const std::vector<uint32_t> &indices) {
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::physicalDeviceMemoryProperties()");
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::configDeviceMemory()");
         }
 
         vk::DeviceSize size = indices.size() * sizeof(uint32_t);
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(indices.data(), size);
-        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getBuffer());
+        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getVkBuffer());
 
         return *this;
     }

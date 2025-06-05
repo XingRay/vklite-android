@@ -39,9 +39,9 @@ namespace vklite {
     }
 
     DescriptorPool DescriptorPoolBuilder::build() {
-//        return DescriptorPool(device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount);
-//        return {device, calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount), mDescriptorSetCount * mFrameCount};
-
+        if (mDevice == nullptr) {
+            throw std::runtime_error("DescriptorPoolBuilder::build() mDevice== nullptr");
+        }
         std::vector<vk::DescriptorPoolSize> descriptorPoolSizes = calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount);
         uint32_t maxSets = mDescriptorSetCount * mFrameCount;
 
@@ -53,7 +53,8 @@ namespace vklite {
 
         vk::DescriptorPool descriptorPool = mDevice.createDescriptorPool(descriptorPoolCreateInfo);
 
-        return DescriptorPool(mDevice, descriptorPool);
+//        return DescriptorPool(mDevice, descriptorPool);
+        return {mDevice, descriptorPool};
     }
 
     std::unique_ptr<DescriptorPool> DescriptorPoolBuilder::buildUnique() {

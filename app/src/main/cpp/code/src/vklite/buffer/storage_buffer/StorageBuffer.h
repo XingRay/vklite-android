@@ -37,7 +37,7 @@ namespace vklite {
         const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
         StorageBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 

@@ -37,16 +37,16 @@ namespace vklite {
         return mCombinedMemoryBuffer;
     }
 
-    const vk::Buffer &UniformBuffer::getBuffer() const {
-        return mCombinedMemoryBuffer.getBuffer().getBuffer();
+    const vk::Buffer &UniformBuffer::getVkBuffer() const {
+        return mCombinedMemoryBuffer.getVkBuffer();
     }
 
-    UniformBuffer &UniformBuffer::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    UniformBuffer &UniformBuffer::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         return *this;
     }
 
-    UniformBuffer &UniformBuffer::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
+    UniformBuffer &UniformBuffer::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
         mPhysicalDeviceMemoryProperties = physicalDevice.getMemoryProperties();
         return *this;
     }
@@ -64,7 +64,7 @@ namespace vklite {
     }
 
     UniformBuffer &UniformBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer) {
-        recordUpdate(commandBuffer, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        recordUpdate(commandBuffer, stagingBuffer.getVkBuffer(), 0, 0, stagingBuffer.getSize());
         return *this;
     }
 
@@ -82,7 +82,7 @@ namespace vklite {
     }
 
     UniformBuffer &UniformBuffer::update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer) {
-        update(commandPool, stagingBuffer.getBuffer(), 0, 0, stagingBuffer.getSize());
+        update(commandPool, stagingBuffer.getVkBuffer(), 0, 0, stagingBuffer.getSize());
         return *this;
     }
 
@@ -93,11 +93,11 @@ namespace vklite {
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
+                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(data, size);
 
-        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getBuffer());
+        mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getVkBuffer());
         return *this;
     }
 

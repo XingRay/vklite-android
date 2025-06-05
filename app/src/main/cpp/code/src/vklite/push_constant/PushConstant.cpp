@@ -6,6 +6,11 @@
 
 namespace vklite {
 
+    PushConstant::PushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags)
+            : mOffset(offset), mStageFlags(stageFlags) {
+        mData.resize(size);
+    }
+
     PushConstant::PushConstant(const void *data, uint32_t size, uint32_t offset,
                                vk::ShaderStageFlags stageFlags)
             : mOffset(offset), mStageFlags(stageFlags) {
@@ -49,7 +54,9 @@ namespace vklite {
     }
 
     PushConstant::PushConstant(PushConstant &&other) noexcept
-            : mData(std::move(other.mData)), mOffset(other.mOffset), mStageFlags(other.mStageFlags) {}
+            : mData(std::move(other.mData)),
+              mOffset(other.mOffset),
+              mStageFlags(other.mStageFlags) {}
 
     PushConstant &PushConstant::operator=(PushConstant &&other) noexcept {
         if (this != &other) {
@@ -61,7 +68,6 @@ namespace vklite {
     }
 
     void PushConstant::update(const void *data, uint32_t size) {
-        mData.resize(size);
         std::memcpy(mData.data(), data, size);
     }
 

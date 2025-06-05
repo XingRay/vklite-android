@@ -37,11 +37,11 @@ namespace vklite {
         const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
-        UniformBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        UniformBuffer &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        UniformBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
+        UniformBuffer &configDeviceMemory(vk::PhysicalDevice physicalDevice);
 
         // recordUpdate
         UniformBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);

@@ -37,7 +37,7 @@ namespace vklite {
         CombinedMemoryBuffer &getCombinedMemoryBuffer();
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]
         vk::IndexType getIndexType() const;

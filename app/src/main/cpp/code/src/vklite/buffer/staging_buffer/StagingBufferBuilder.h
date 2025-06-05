@@ -22,9 +22,9 @@ namespace vklite {
 
         StagingBufferBuilder &device(vk::Device device);
 
-        StagingBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        StagingBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        StagingBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
+        StagingBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
 
         StagingBufferBuilder &size(vk::DeviceSize size);
 

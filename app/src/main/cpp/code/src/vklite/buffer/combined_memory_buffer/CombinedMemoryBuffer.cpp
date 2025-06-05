@@ -25,6 +25,10 @@ namespace vklite {
         return mBuffer;
     }
 
+    const vk::Buffer &CombinedMemoryBuffer::getVkBuffer() const {
+        return mBuffer.getVkBuffer();
+    }
+
     const DeviceMemory &CombinedMemoryBuffer::getDeviceMemory() const {
         return mDeviceMemory;
     }

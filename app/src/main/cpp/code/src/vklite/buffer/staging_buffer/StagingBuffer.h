@@ -27,7 +27,7 @@ namespace vklite {
         StagingBuffer &operator=(StagingBuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]
         vk::DeviceSize getSize() const;

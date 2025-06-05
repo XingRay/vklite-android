@@ -90,7 +90,7 @@ namespace vklite {
     }
 
     DescriptorMapping &DescriptorMapping::addBufferInfo(const Buffer &buffer) {
-        addBufferInfo({buffer.getBuffer(), 0, buffer.getSize()});
+        addBufferInfo({buffer.getVkBuffer(), 0, buffer.getSize()});
         return *this;
     }
 

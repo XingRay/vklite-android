@@ -17,10 +17,11 @@ namespace vklite {
         std::vector<DescriptorMapping> mDescriptorMappings;
 
     public:
-        DescriptorSetWriter(std::vector<DescriptorMapping> &&descriptorMappings);
+        explicit DescriptorSetWriter(std::vector<DescriptorMapping> &&descriptorMappings);
 
         ~DescriptorSetWriter();
 
+        [[nodiscard]]
         std::vector<vk::WriteDescriptorSet> createWriteDescriptorSets() const;
     };
 

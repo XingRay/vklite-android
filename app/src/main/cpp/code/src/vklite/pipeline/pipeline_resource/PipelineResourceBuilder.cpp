@@ -52,7 +52,7 @@ namespace vklite {
         vertexBuffers.reserve(mVertexBufferInfos.size());
         vertexBufferOffsets.reserve(mVertexBufferInfos.size());
         for (const VertexBufferInfo &vertexBufferInfo: mVertexBufferInfos) {
-            vertexBuffers.push_back(vertexBufferInfo.getVertexBuffer().getBuffer());
+            vertexBuffers.push_back(vertexBufferInfo.getVertexBuffer().getVkBuffer());
             vertexBufferOffsets.push_back(vertexBufferInfo.getOffset());
         }
 
@@ -64,7 +64,7 @@ namespace vklite {
             indexBufferOffset = 0;
             indexType = vk::IndexType::eUint32;
         } else {
-            indexBuffer = mIndexBufferInfo->getIndexBuffer().getBuffer();
+            indexBuffer = mIndexBufferInfo->getIndexBuffer().getVkBuffer();
             indexBufferOffset = mIndexBufferInfo->getOffset();
             indexType = mIndexBufferInfo->getIndexBuffer().getIndexType();
         }

@@ -23,7 +23,6 @@ namespace test01 {
 
     class Test01SimpleTriangle : public test::TestBase {
     private:
-
         const android_app &mApp;
         std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;

@@ -73,6 +73,7 @@ namespace vklite {
 
         ShaderConfigure &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
 
+        std::vector<vk::PushConstantRange>& getPushConstantRanges();
 
         /**
          *

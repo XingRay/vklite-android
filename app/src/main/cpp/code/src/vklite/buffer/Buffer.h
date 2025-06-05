@@ -19,7 +19,7 @@ namespace vklite {
     class Buffer {
     private:
         vk::Device mDevice;
-        vk::Buffer mBuffer;
+        vk::Buffer mVkBuffer;
         BufferMeta mMeta;
 
     public:
@@ -36,7 +36,7 @@ namespace vklite {
         Buffer &operator=(Buffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Buffer &getBuffer() const;
+        const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]
         vk::DeviceSize getSize() const;

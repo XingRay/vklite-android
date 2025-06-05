@@ -21,7 +21,7 @@ namespace vklite {
 
         DescriptorSetMappingConfigure &addMapping(DescriptorMapping &&descriptorMapping);
 
-        DescriptorSetMappingConfigure &addMapping(std::function<void(DescriptorMapping &descriptorMapping)> configure);
+        DescriptorSetMappingConfigure &addMapping(const std::function<void(DescriptorMapping &descriptorMapping)>& configure);
 
         [[nodiscard]]
         std::vector<DescriptorMapping> getDescriptorMappings();

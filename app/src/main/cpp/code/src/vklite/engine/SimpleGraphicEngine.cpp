@@ -29,6 +29,9 @@ namespace vklite {
             std::vector<Fence> &&fences,
             std::unique_ptr<DescriptorPool> graphicDescriptorPool,
             std::unique_ptr<PipelineLayout> graphicPipelineLayout,
+            std::unique_ptr<DescriptorPool> descriptorPool,
+            std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
+            std::vector<PushConstant> &&pushConstants,
             std::unique_ptr<Pipeline> graphicPipeline)
             : mFrameCount(frameCount),
               mInstance(std::move(instance)),
@@ -52,7 +55,11 @@ namespace vklite {
               mFences(std::move(fences)),
               mGraphicDescriptorPool(std::move(graphicDescriptorPool)),
               mGraphicPipelineLayout(std::move(graphicPipelineLayout)),
-              mGraphicPipeline(std::move(graphicPipeline)) {}
+              mDescriptorPool(std::move(descriptorPool)),
+              mDescriptorSets(std::move(descriptorSets)),
+              mPushConstants(std::move(pushConstants)),
+              mGraphicPipeline(std::move(graphicPipeline)),
+              mIndexCount(0) {}
 
     SimpleGraphicEngine::~SimpleGraphicEngine() = default;
 
@@ -79,7 +86,11 @@ namespace vklite {
               mFences(std::move(other.mFences)),
               mGraphicDescriptorPool(std::move(other.mGraphicDescriptorPool)),
               mGraphicPipelineLayout(std::move(other.mGraphicPipelineLayout)),
-              mGraphicPipeline(std::move(other.mGraphicPipeline)) {}
+              mDescriptorPool(std::move(other.mDescriptorPool)),
+              mDescriptorSets(std::move(other.mDescriptorSets)),
+              mPushConstants(std::move(other.mPushConstants)),
+              mGraphicPipeline(std::move(other.mGraphicPipeline)),
+              mIndexCount(other.mIndexCount) {}
 
     SimpleGraphicEngine &SimpleGraphicEngine::operator=(SimpleGraphicEngine &&other) noexcept {
         if (this != &other) {
@@ -107,7 +118,11 @@ namespace vklite {
             mFences = std::move(other.mFences);
             mGraphicDescriptorPool = std::move(other.mGraphicDescriptorPool);
             mGraphicPipelineLayout = std::move(other.mGraphicPipelineLayout);
+            mDescriptorPool = std::move(other.mDescriptorPool);
+            mDescriptorSets = std::move(other.mDescriptorSets);
+            mPushConstants = std::move(other.mPushConstants);
             mGraphicPipeline = std::move(other.mGraphicPipeline);
+            mIndexCount = other.mIndexCount;
         }
         return *this;
     }
@@ -124,6 +139,30 @@ namespace vklite {
         return *mCommandPool;
     }
 
+    [[nodiscard]]
+    const std::vector<std::vector<vk::DescriptorSet>> &SimpleGraphicEngine::getDescriptorSets() const {
+        return mDescriptorSets;
+    }
+
+    [[nodiscard]]
+    const vk::DescriptorSet &SimpleGraphicEngine::getDescriptorSets(uint32_t frameIndex, uint32_t set) const {
+        return mDescriptorSets[frameIndex][set];
+    }
+
+    uint32_t SimpleGraphicEngine::getFrameCount() const {
+        return mFrameCount;
+    }
+
+    SimpleGraphicEngine &SimpleGraphicEngine::updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
+        DescriptorSetWriter descriptorSetWriter = DescriptorSetWriterBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure(std::move(configure))
+                .build();
+        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
+
+        return *this;
+    }
+
     VertexBufferBuilder SimpleGraphicEngine::vertexBufferBuilder() {
         return VertexBufferBuilder()
                 .device(mDevice->getDevice())
@@ -137,7 +176,7 @@ namespace vklite {
     }
 
     SimpleGraphicEngine &SimpleGraphicEngine::addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset) {
-        addVertexBuffer(buffer.getBuffer(), offset);
+        addVertexBuffer(buffer.getVkBuffer(), offset);
         return *this;
     }
 
@@ -155,8 +194,31 @@ namespace vklite {
     }
 
     SimpleGraphicEngine &SimpleGraphicEngine::indexBuffer(const IndexBuffer &buffer, uint32_t indexCount) {
-        mIndexBuffer = buffer.getBuffer();
+        mIndexBuffer = buffer.getVkBuffer();
         mIndexCount = indexCount;
+        return *this;
+    }
+
+    UniformBufferBuilder SimpleGraphicEngine::uniformBufferBuilder() {
+        return UniformBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    StorageBufferBuilder SimpleGraphicEngine::storageBufferBuilder() {
+        return StorageBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    StagingBufferBuilder SimpleGraphicEngine::stagingBufferBuilder() {
+        return StagingBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    SimpleGraphicEngine &SimpleGraphicEngine::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
+        mPushConstants[index].update(data, size);
         return *this;
     }
 
@@ -194,10 +256,17 @@ namespace vklite {
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicPipeline->getPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
+
+                for (const PushConstant &pushConstant: mPushConstants) {
+                    vkCommandBuffer.pushConstants(mGraphicPipelineLayout->getPipelineLayout(),
+                                                  pushConstant.getStageFlags(),
+                                                  pushConstant.getOffset(),
+                                                  pushConstant.getSize(),
+                                                  pushConstant.getData());
+                }
+
                 vkCommandBuffer.bindVertexBuffers(0, mVertexBuffers, mVertexBufferOffsets);
-
                 vkCommandBuffer.bindIndexBuffer(mIndexBuffer, 0, vk::IndexType::eUint32);
-
                 vkCommandBuffer.drawIndexed(mIndexCount, 1, 0, 0, 0);
             });
         });

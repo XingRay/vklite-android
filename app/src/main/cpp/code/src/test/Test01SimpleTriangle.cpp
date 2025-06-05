@@ -28,6 +28,7 @@ namespace test01 {
 
         mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
                 .shaderConfigure(std::move(graphicShaderConfigure))
+                .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
 
         LOG_D("test created ");
@@ -42,22 +43,20 @@ namespace test01 {
 
         std::vector<uint32_t> indices = {0, 1, 2};
 
-
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = mEngine->indexBufferBuilder()
                 .size(indicesSize)
                 .buildUnique();
         mIndexBuffer->update(mEngine->getCommandPool(), indices);
+        mEngine->indexBuffer(*mIndexBuffer, indices.size());
+
 
         uint32_t verticesSize = vertices.size() * sizeof(Vertex);
         mVertexBuffer = mEngine->vertexBufferBuilder()
                 .size(verticesSize)
                 .buildUnique();
         mVertexBuffer->update(mEngine->getCommandPool(), vertices.data(), verticesSize);
-
-        mEngine->addVertexBuffer(*mVertexBuffer)
-                .indexBuffer(*mIndexBuffer, indices.size());
-
+        mEngine->addVertexBuffer(*mVertexBuffer);
     }
 
     // 检查是否准备好

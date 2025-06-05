@@ -23,8 +23,8 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Buffer &StagingBuffer::getBuffer() const {
-        return mCombinedMemoryBuffer.getBuffer().getBuffer();
+    const vk::Buffer &StagingBuffer::getVkBuffer() const {
+        return mCombinedMemoryBuffer.getVkBuffer();
     }
 
     vk::DeviceSize StagingBuffer::getSize() const {

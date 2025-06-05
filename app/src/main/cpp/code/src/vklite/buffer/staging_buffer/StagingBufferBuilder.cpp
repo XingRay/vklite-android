@@ -17,12 +17,12 @@ namespace vklite {
         return *this;
     }
 
-    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    StagingBufferBuilder &StagingBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
         return *this;
     }
 
-    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
+    StagingBufferBuilder &StagingBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDevice.getMemoryProperties());
         return *this;
     }

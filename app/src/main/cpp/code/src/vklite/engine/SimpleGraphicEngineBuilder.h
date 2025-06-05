@@ -155,7 +155,7 @@ namespace vklite {
     class SimpleGraphicEngineBuilder {
     private:
         uint32_t mFrameCount = 2;
-        std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.6f, 1.0f};
+        std::array<float, 4> mClearColor = {0.0f, 0.0f, 0.0f, 1.0f};
         float mClearDepth = 1.0f;
         bool mMsaaEnable = false;
         bool mDepthTestEnable = false;
@@ -180,6 +180,15 @@ namespace vklite {
 
         SimpleGraphicEngineBuilder &operator=(SimpleGraphicEngineBuilder &&other) noexcept;
 
+        SimpleGraphicEngineBuilder &frameCount(uint32_t frameCount);
+
+        SimpleGraphicEngineBuilder &clearColor(const std::array<float, 4> &clearColor);
+
+        SimpleGraphicEngineBuilder &clearColor(float r, float g, float b, float a);
+
+        SimpleGraphicEngineBuilder &clearColor(float r, float g, float b);
+
+        SimpleGraphicEngineBuilder &clearDepth(float clearDepth);
 
         SimpleGraphicEngineBuilder &addInstancePlugin(std::unique_ptr<PluginInterface> plugin);
 

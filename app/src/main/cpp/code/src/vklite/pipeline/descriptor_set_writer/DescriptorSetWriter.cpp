@@ -9,9 +9,7 @@ namespace vklite {
     DescriptorSetWriter::DescriptorSetWriter(std::vector<DescriptorMapping> &&descriptorMappings)
             : mDescriptorMappings(std::move(descriptorMappings)) {}
 
-    DescriptorSetWriter::~DescriptorSetWriter() {
-
-    }
+    DescriptorSetWriter::~DescriptorSetWriter() = default;
 
     std::vector<vk::WriteDescriptorSet> DescriptorSetWriter::createWriteDescriptorSets() const {
         std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
