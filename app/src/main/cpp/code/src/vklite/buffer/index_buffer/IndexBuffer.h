@@ -35,7 +35,7 @@ namespace vklite {
         IndexBuffer &operator=(IndexBuffer &&other) noexcept;
 
         [[nodiscard]]
-        CombinedMemoryBuffer &getCombinedMemoryBuffer();
+        const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
 
         [[nodiscard]]
         const Buffer &getBuffer() const;
