@@ -37,6 +37,10 @@ namespace vklite {
         return mCombinedMemoryBuffer;
     }
 
+    const Buffer &UniformBuffer::getBuffer() const {
+        return mCombinedMemoryBuffer.getBuffer();
+    }
+
     const vk::Buffer &UniformBuffer::getVkBuffer() const {
         return mCombinedMemoryBuffer.getVkBuffer();
     }
@@ -52,8 +56,8 @@ namespace vklite {
     }
 
 
-    UniformBuffer &
-    UniformBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+    UniformBuffer &UniformBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset,
+                                               vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
         mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
         return *this;
     }

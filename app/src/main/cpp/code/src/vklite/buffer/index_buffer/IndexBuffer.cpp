@@ -39,6 +39,10 @@ namespace vklite {
         return mCombinedMemoryBuffer;
     }
 
+    const Buffer &IndexBuffer::getBuffer() const {
+        return mCombinedMemoryBuffer.getBuffer();
+    }
+
     const vk::Buffer &IndexBuffer::getVkBuffer() const {
         return mCombinedMemoryBuffer.getVkBuffer();
     }

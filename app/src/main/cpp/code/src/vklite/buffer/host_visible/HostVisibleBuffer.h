@@ -32,6 +32,9 @@ namespace vklite {
         HostVisibleBuffer &operator=(HostVisibleBuffer &&other) noexcept;
 
         [[nodiscard]]
+        const Buffer &getBuffer() const;
+
+        [[nodiscard]]
         const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]

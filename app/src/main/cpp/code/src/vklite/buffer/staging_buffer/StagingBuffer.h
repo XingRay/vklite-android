@@ -27,6 +27,12 @@ namespace vklite {
         StagingBuffer &operator=(StagingBuffer &&other) noexcept;
 
         [[nodiscard]]
+        const CombinedMemoryBuffer &getCombinedMemoryBuffer() const;
+
+        [[nodiscard]]
+        const Buffer &getBuffer() const;
+
+        [[nodiscard]]
         const vk::Buffer &getVkBuffer() const;
 
         [[nodiscard]]
