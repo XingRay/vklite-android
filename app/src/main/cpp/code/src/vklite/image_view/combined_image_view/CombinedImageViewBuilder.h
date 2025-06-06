@@ -16,12 +16,17 @@ namespace vklite {
 
     class CombinedImageViewBuilder {
     private:
+        vk::Device mDevice;
+
         ImageBuilder mImageBuilder;
 
         DeviceMemoryBuilder mDeviceMemoryBuilder;
+
+        vk::PhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
+        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
+
+        // bindMemory param
         vk::DeviceSize mMemoryOffset;
-        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
-        vk::MemoryPropertyFlags mMemoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
         ImageViewBuilder mImageViewBuilder;
 
@@ -47,12 +52,6 @@ namespace vklite {
 
         CombinedImageViewBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
                                                      vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
-
-        CombinedImageViewBuilder &imageBuilder(std::function<void(ImageBuilder &builder)> &&configure);
-
-        CombinedImageViewBuilder &deviceMemoryBuilder(std::function<void(Image &image, DeviceMemoryBuilder &builder)> &&configure);
-
-        CombinedImageViewBuilder &imageViewBuilder(std::function<void(Image &image, ImageViewBuilder &builder)> &&configure);
 
         CombinedImageView build();
 

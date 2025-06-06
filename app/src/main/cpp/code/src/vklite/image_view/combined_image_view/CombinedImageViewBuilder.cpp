@@ -4,6 +4,7 @@
 
 #include "CombinedImageViewBuilder.h"
 #include "vklite/Log.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -13,6 +14,8 @@ namespace vklite {
     CombinedImageViewBuilder::~CombinedImageViewBuilder() = default;
 
     CombinedImageViewBuilder &CombinedImageViewBuilder::device(vk::Device device) {
+        mDevice = device;
+
         mImageBuilder.device(device);
         mDeviceMemoryBuilder.device(device);
         mImageViewBuilder.device(device);
@@ -47,37 +50,19 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageViewBuilder &CombinedImageViewBuilder::imageBuilder(std::function<void(ImageBuilder &builder)> &&configure) {
-        mImageBuilderConfigure = std::move(configure);
-        return *this;
-    }
-
-    CombinedImageViewBuilder &CombinedImageViewBuilder::deviceMemoryBuilder(std::function<void(Image &image, DeviceMemoryBuilder &builder)> &&configure) {
-        mDeviceMemoryBuilderConfigure = std::move(configure);
-        return *this;
-    }
-
-    CombinedImageViewBuilder &CombinedImageViewBuilder::imageViewBuilder(std::function<void(Image &image, ImageViewBuilder &builder)> &&configure) {
-        mImageViewBuilderConfigure = std::move(configure);
-        return *this;
-    }
-
     CombinedImageView CombinedImageViewBuilder::build() {
         LOG_D("CombinedImageViewBuilder::build()");
 
         // create Image
-        if (mImageBuilderConfigure != nullptr) {
-            mImageBuilderConfigure(mImageBuilder);
-        }
         Image image = mImageBuilder.build();
 
         // create DeviceMemory
-        if (mPhysicalDeviceMemoryProperties.has_value()) {
-            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), image.getImage(), mMemoryPropertyFlags);
-        }
-        if (mDeviceMemoryBuilderConfigure != nullptr) {
-            mDeviceMemoryBuilderConfigure(image, mDeviceMemoryBuilder);
-        }
+        vk::MemoryRequirements memoryRequirements = mDevice.getImageMemoryRequirements(image.getImage());
+        mDeviceMemoryBuilder.allocationSize(memoryRequirements.size);
+
+        uint32_t memoryTypeIndex = VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties, memoryRequirements, mMemoryPropertyFlags);
+        mDeviceMemoryBuilder.memoryTypeIndex(memoryTypeIndex);
+
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
         // bind memory
@@ -85,9 +70,6 @@ namespace vklite {
 
         // create ImageView
         mImageViewBuilder.image(image.getImage());
-        if (mImageViewBuilderConfigure != nullptr) {
-            mImageViewBuilderConfigure(image, mImageViewBuilder);
-        }
         ImageView imageView = mImageViewBuilder.build();
 
         // combine Image / DeviceMemory / ImageView as CombinedMemoryImage

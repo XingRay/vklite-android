@@ -339,10 +339,9 @@ namespace vklite {
     }
 
     CombinedImageSamplerBuilder SimpleGraphicEngine::samplerBuilder() {
-        return CombinedImageSamplerBuilder()
+        return CombinedImageSamplerBuilder().asDefault()
                 .device(mDevice->getDevice())
-//                .sampleCount(mSampleCount)
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
 } // vklite

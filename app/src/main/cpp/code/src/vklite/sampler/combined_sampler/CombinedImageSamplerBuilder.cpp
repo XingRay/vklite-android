@@ -4,6 +4,7 @@
 
 #include "CombinedImageSamplerBuilder.h"
 #include "vklite/Log.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -24,13 +25,18 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::memoryOffset(vk::DeviceSize memoryOffset) {
+        mMemoryOffset = memoryOffset;
+        return *this;
+    }
+
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         return *this;
     }
 
-    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
-        configDeviceMemory(physicalDevice.getMemoryProperties());
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::memoryPropertyFlags(vk::MemoryPropertyFlags memoryPropertyFlags) {
+        mMemoryPropertyFlags = memoryPropertyFlags;
         return *this;
     }
 
@@ -59,18 +65,15 @@ namespace vklite {
         LOG_D("CombinedImageSamplerBuilder::build()");
 
         // create Image
-        if (mImageBuilderConfigure != nullptr) {
-            mImageBuilderConfigure(mImageBuilder);
-        }
         Image image = mImageBuilder.build();
 
         // create DeviceMemory
-        if (mPhysicalDeviceMemoryProperties.has_value()) {
-            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), image.getImage(), mMemoryPropertyFlags);
-        }
-        if (mDeviceMemoryBuilderConfigure != nullptr) {
-            mDeviceMemoryBuilderConfigure(image, mDeviceMemoryBuilder);
-        }
+        vk::MemoryRequirements memoryRequirements = mDevice.getImageMemoryRequirements(image.getImage());
+        mDeviceMemoryBuilder.allocationSize(memoryRequirements.size);
+
+        uint32_t memoryTypeIndex = VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties, memoryRequirements, mMemoryPropertyFlags);
+        mDeviceMemoryBuilder.memoryTypeIndex(memoryTypeIndex);
+
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
         // bind memory
@@ -78,9 +81,6 @@ namespace vklite {
 
         // create ImageView
         mImageViewBuilder.image(image.getImage());
-        if (mImageViewBuilderConfigure != nullptr) {
-            mImageViewBuilderConfigure(image, mImageViewBuilder);
-        }
         ImageView imageView = mImageViewBuilder.build();
 
         // create Sampler
@@ -102,6 +102,13 @@ namespace vklite {
         }
 
         return samplers;
+    }
+
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::asDefault() {
+        (*this)
+                .memoryPropertyFlags(vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+        return *this;
     }
 
 } // vklite

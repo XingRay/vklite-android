@@ -19,9 +19,11 @@ namespace vklite {
         ImageBuilder mImageBuilder;
 
         DeviceMemoryBuilder mDeviceMemoryBuilder;
-        vk::DeviceSize mMemoryOffset;
+
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
         vk::MemoryPropertyFlags mMemoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal;
+
+        vk::DeviceSize mMemoryOffset;
 
         std::function<void(ImageBuilder &builder)> mImageBuilderConfigure;
         std::function<void(Image &image, DeviceMemoryBuilder &builder)> mDeviceMemoryBuilderConfigure;

@@ -20,18 +20,14 @@ namespace vklite {
         vk::Device mDevice;
 
         ImageBuilder mImageBuilder;
-        std::function<void(ImageBuilder &builder)> mImageBuilderConfigure;
-
 
         DeviceMemoryBuilder mDeviceMemoryBuilder;
-        std::function<void(Image &image, DeviceMemoryBuilder &builder)> mDeviceMemoryBuilderConfigure;
 
         vk::DeviceSize mMemoryOffset;
-        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
-        vk::MemoryPropertyFlags mMemoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal;
+        vk::PhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
+        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
         ImageViewBuilder mImageViewBuilder;
-        std::function<void(Image &image, ImageViewBuilder &builder)> mImageViewBuilderConfigure;
 
         SamplerBuilder mSamplerBuilder;
 
@@ -43,9 +39,11 @@ namespace vklite {
 
         CombinedImageSamplerBuilder &device(vk::Device device);
 
-        CombinedImageSamplerBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
+        CombinedImageSamplerBuilder &memoryOffset(vk::DeviceSize memoryOffset);
 
-        CombinedImageSamplerBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        CombinedImageSamplerBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+
+        CombinedImageSamplerBuilder &memoryPropertyFlags(vk::MemoryPropertyFlags memoryPropertyFlags);
 
         CombinedImageSamplerBuilder &width(uint32_t width);
 
@@ -61,6 +59,8 @@ namespace vklite {
 
         [[nodiscard]]
         std::vector<CombinedImageSampler> build(uint32_t count);
+
+        CombinedImageSamplerBuilder& asDefault();
     };
 
 } // vklite
