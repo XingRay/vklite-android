@@ -6,6 +6,8 @@
 #include "Image.h"
 #include "vklite/util/VulkanUtil.h"
 #include "vklite/image/ImageMeta.h"
+#include "vklite/Log.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -104,7 +106,27 @@ namespace vklite {
     }
 
     Image ImageBuilder::build() {
+        LOG_D("mDevice.createImage(mImageCreateInfo): mImageCreateInfo:");
+        LOG_D("\timageType    : %s", VulkanUtil::toString(mImageCreateInfo.imageType).c_str());
+        LOG_D("\tformat       : %s", VulkanUtil::toString(mImageCreateInfo.format).c_str());
+        LOG_D("\textent       :");
+        LOG_D("\t\twidth      : %d", mImageCreateInfo.extent.width);
+        LOG_D("\t\theight     : %d", mImageCreateInfo.extent.height);
+        LOG_D("\t\tdepth      : %d", mImageCreateInfo.extent.depth);
+        LOG_D("\tmipLevels    : %d", mImageCreateInfo.mipLevels);
+        LOG_D("\tarrayLayers  : %d", mImageCreateInfo.arrayLayers);
+        LOG_D("\tsamples      : %s", VulkanUtil::toString(mImageCreateInfo.samples).c_str());
+        LOG_D("\ttiling       : %s", VulkanUtil::toString(mImageCreateInfo.tiling).c_str());
+        LOG_D("\tusage        : %s", VulkanUtil::toString(mImageCreateInfo.usage).c_str());
+        LOG_D("\tsharingMode  : %s", VulkanUtil::toString(mImageCreateInfo.sharingMode).c_str());
+        LOG_D("\tinitialLayout: %s", VulkanUtil::toString(mImageCreateInfo.initialLayout).c_str());
+        for (int i = 0; i < mImageCreateInfo.queueFamilyIndexCount; i++) {
+            LOG_D("\t\t%d", mImageCreateInfo.pQueueFamilyIndices[i]);
+        }
+
         vk::Image image = mDevice.createImage(mImageCreateInfo);
+        LOG_D("mDevice.createImage(mImageCreateInfo) => %p", (void *) image);
+
         ImageMeta meta{mImageCreateInfo.format, mImageCreateInfo.extent, mImageCreateInfo.mipLevels};
 //        return Image(mDevice, image, meta);
         return {mDevice, image, meta};

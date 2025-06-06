@@ -11,7 +11,6 @@ namespace test03 {
 
     Test03ColoredTriangle::Test03ColoredTriangle(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app) {
-        LOG_D("Test03ColoredTriangle::Test03ColoredTriangle");
 
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/03_colored_triangle.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/03_colored_triangle.frag.spv");
@@ -31,8 +30,6 @@ namespace test03 {
                 .shaderConfigure(std::move(graphicShaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
-
-        LOG_D("test created ");
     }
 
     void Test03ColoredTriangle::init() {

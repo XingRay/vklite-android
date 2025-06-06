@@ -58,6 +58,8 @@
 #include "vklite/push_constant/PushConstant.h"
 #include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayouts.h"
 
+#include "vklite/sampler/combined_sampler/CombinedImageSamplerBuilder.h"
+
 namespace vklite {
 
     class SimpleGraphicEngine {
@@ -98,6 +100,7 @@ namespace vklite {
 
         // config
         uint32_t mFrameCount;
+        vk::SampleCountFlagBits mSampleCount;
 
         //status
         uint32_t mCurrentFrameIndex = 0;
@@ -114,6 +117,7 @@ namespace vklite {
     public:
         SimpleGraphicEngine(
                 uint32_t frameCount,
+                vk::SampleCountFlagBits sampleCount,
                 std::unique_ptr<vklite::Instance> instance,
                 std::unique_ptr<vklite::Surface> surface,
                 std::unique_ptr<vklite::PhysicalDevice> physicalDevice,
@@ -135,7 +139,7 @@ namespace vklite {
                 std::vector<vklite::Fence> &&fences,
                 std::unique_ptr<vklite::PipelineLayout> pipelineLayout,
                 std::unique_ptr<DescriptorPool> descriptorPool,
-                DescriptorSetLayouts&& descriptorSetLayouts,
+                DescriptorSetLayouts &&descriptorSetLayouts,
                 std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
                 std::vector<PushConstant> &&pushConstants,
                 std::unique_ptr<vklite::Pipeline> pipeline);
@@ -170,21 +174,15 @@ namespace vklite {
 
         SimpleGraphicEngine &updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
 
-        VertexBufferBuilder vertexBufferBuilder();
 
         SimpleGraphicEngine &addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset = 0);
 
         SimpleGraphicEngine &addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset = 0);
 
 
-        IndexBufferBuilder indexBufferBuilder();
-
         SimpleGraphicEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
 
         SimpleGraphicEngine &indexBuffer(const IndexBuffer &buffer, uint32_t indexCount);
-
-
-        UniformBufferBuilder uniformBufferBuilder();
 
 
         StorageBufferBuilder storageBufferBuilder();
@@ -194,6 +192,15 @@ namespace vklite {
         SimpleGraphicEngine &updatePushConstant(uint32_t index, const void *data, uint32_t size);
 
         void drawIndexed();
+
+
+        VertexBufferBuilder vertexBufferBuilder();
+
+        IndexBufferBuilder indexBufferBuilder();
+
+        UniformBufferBuilder uniformBufferBuilder();
+
+        CombinedImageSamplerBuilder samplerBuilder();
     };
 
 } // vklite

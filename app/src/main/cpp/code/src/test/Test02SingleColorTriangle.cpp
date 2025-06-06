@@ -15,7 +15,7 @@ namespace test02 {
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/02_triangle_color.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/02_triangle_color.frag.spv");
 
-        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
+        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -36,11 +36,9 @@ namespace test02 {
                 });
 
         mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
-                .shaderConfigure(std::move(graphicShaderConfigure))
+                .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
-
-        LOG_D("test created ");
     }
 
     void Test02SingleColorTriangle::init() {
@@ -73,17 +71,6 @@ namespace test02 {
         mUniformBuffers = mEngine->uniformBufferBuilder()
                 .size(sizeof(ColorUniformBufferObject))
                 .build(mEngine->getFrameCount());
-
-//        vklite::StagingBuffer stagingBuffer = mEngine->stagingBufferBuilder()
-//                .size(sizeof(ColorUniformBufferObject))
-//                .build();
-//        stagingBuffer.updateBuffer(&colorUniformBufferObject, sizeof(ColorUniformBufferObject));
-//
-//        mEngine->getCommandPool().submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-//            for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-//                mUniformBuffers[i].recordUpdate(commandBuffer, stagingBuffer);
-//            }
-//        });
 
         for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
             mUniformBuffers[i].update(mEngine->getCommandPool(), &colorUniformBufferObject, sizeof(ColorUniformBufferObject));

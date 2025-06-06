@@ -54,8 +54,34 @@ namespace vklite {
         static uint32_t findMemoryTypeIndex(vk::PhysicalDevice physicalDevice, vk::Device device, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags);
 
         static uint32_t findMemoryTypeIndex(vk::PhysicalDeviceMemoryProperties memoryProperties,
-                                                               vk::MemoryRequirements memoryRequirements,
-                                                               vk::MemoryPropertyFlags memoryPropertyFlags);
+                                            vk::MemoryRequirements memoryRequirements,
+                                            vk::MemoryPropertyFlags memoryPropertyFlags);
+
+        static std::string toString(vk::ImageTiling imageTiling);
+
+        static std::string toString(vk::ImageType imageType);
+
+        static std::string toString(vk::ImageUsageFlags usage);
+
+        static std::string toString(vk::MemoryPropertyFlags memoryProperty);
+
+        static std::string toString(vk::PhysicalDeviceType deviceType);
+
+        static std::string toString(vk::QueueFlags queueFlagBits);
+
+        static std::string toString(vk::SampleCountFlags sampleCount);
+
+        static std::string toString(vk::Format format);
+
+        static std::string toString(vk::SharingMode sharingMode);
+
+        static std::string toString(vk::ImageLayout imageLayout);
+
+        static std::string toString(vk::ImageViewType imageViewType);
+
+        static std::string toString(vk::ComponentSwizzle componentSwizzle);
+
+        static std::string toString(vk::ImageAspectFlags imageAspect);
     };
 
 } // vklite

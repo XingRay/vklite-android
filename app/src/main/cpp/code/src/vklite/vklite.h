@@ -73,7 +73,6 @@
 // descriptor
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
-#include "vklite/pipeline/descriptor/DescriptorConfigure.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
 
 // pipeline resource
@@ -128,6 +127,7 @@
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
 #include "vklite/image/combined_memory_image/CombinedMemoryImageBuilder.h"
+#include "vklite/image/ImageTransition.h"
 
 // image view
 #include "vklite/image_view/ImageView.h"
@@ -139,7 +139,8 @@
 // sampler
 #include "vklite/sampler/Sampler.h"
 #include "vklite/sampler/SamplerBuilder.h"
-#include "vklite/image/ImageTransition.h"
+#include "vklite/sampler/combined_sampler/CombinedImageSampler.h"
+#include "vklite/sampler/combined_sampler/CombinedImageSamplerBuilder.h"
 
 
 // util

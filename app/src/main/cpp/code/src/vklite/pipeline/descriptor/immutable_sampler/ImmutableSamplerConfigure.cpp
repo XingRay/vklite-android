@@ -29,7 +29,7 @@ namespace vklite {
         return *this;
     }
 
-    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSampler(const SamplerInterface &sampler) {
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSampler(const Sampler &sampler) {
         addSampler(sampler.getSampler());
         return *this;
     }
@@ -41,7 +41,7 @@ namespace vklite {
         return *this;
     }
 
-    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSamplers(const std::vector<SamplerInterface> &samplers) {
+    ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSamplers(const std::vector<Sampler> &samplers) {
         for (const auto &sampler: samplers) {
             addSampler(sampler);
         }

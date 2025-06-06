@@ -27,6 +27,7 @@ namespace test03 {
         std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+
         std::vector<vklite::UniformBuffer> mUniformBuffers;
 
     public:

@@ -46,12 +46,16 @@ namespace vklite {
         return *this;
     }
 
-    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice, vk::Image image, vk::MemoryPropertyFlags memoryPropertyFlags) {
+    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice,
+                                                     vk::Image image,
+                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
         config(physicalDevice.getMemoryProperties(), mDevice.getImageMemoryRequirements(image), memoryPropertyFlags);
         return *this;
     }
 
-    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice, vk::Buffer buffer, vk::MemoryPropertyFlags memoryPropertyFlags) {
+    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice,
+                                                     vk::Buffer buffer,
+                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
         config(physicalDevice.getMemoryProperties(), mDevice.getBufferMemoryRequirements(buffer), memoryPropertyFlags);
         return *this;
     }

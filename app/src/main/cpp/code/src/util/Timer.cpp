@@ -14,11 +14,14 @@ namespace util {
         mStartTime = std::chrono::steady_clock::now();
     }
 
-    uint64_t Timer::getDeltaTimeMs() {
+    uint64_t Timer::getElapsedTimeMs() {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - mStartTime).count();
-        mStartTime = currentTime;
         return elapsedTime;
+    }
+
+    float Timer::getElapsedTimeSecond() {
+        return (float) (((double) (getElapsedTimeMs())) / 1000.0);
     }
 
 } // util

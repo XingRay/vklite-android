@@ -110,6 +110,11 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
+        addSampler(binding, 1, shaderStageFlags);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const std::function<void(SamplerConfigure &)> &configure) {
         SamplerConfigure samplerConfigure{};
         configure(samplerConfigure);

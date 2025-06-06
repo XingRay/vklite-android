@@ -10,9 +10,8 @@
 #include <functional>
 
 #include <vulkan/vulkan.hpp>
-
+#include "vklite/sampler/Sampler.h"
 #include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
-#include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
 
@@ -34,11 +33,11 @@ namespace vklite {
 
         ImmutableSamplerConfigure &addSampler(vk::Sampler sampler);
 
-        ImmutableSamplerConfigure &addSampler(const SamplerInterface &sampler);
+        ImmutableSamplerConfigure &addSampler(const Sampler &sampler);
 
         ImmutableSamplerConfigure &addSamplers(std::vector<vk::Sampler> &&samplers);
 
-        ImmutableSamplerConfigure &addSamplers(const std::vector<SamplerInterface> &samplers);
+        ImmutableSamplerConfigure &addSamplers(const std::vector<Sampler> &samplers);
 
         ImmutableSamplerConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 

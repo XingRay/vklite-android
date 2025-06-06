@@ -9,6 +9,7 @@ namespace vklite {
 
     SimpleGraphicEngine::SimpleGraphicEngine(
             uint32_t frameCount,
+            vk::SampleCountFlagBits sampleCount,
             std::unique_ptr<Instance> instance,
             std::unique_ptr<Surface> surface,
             std::unique_ptr<PhysicalDevice> physicalDevice,
@@ -35,6 +36,7 @@ namespace vklite {
             std::vector<PushConstant> &&pushConstants,
             std::unique_ptr<Pipeline> pipeline)
             : mFrameCount(frameCount),
+              mSampleCount(sampleCount),
               mInstance(std::move(instance)),
               mSurface(std::move(surface)),
               mPhysicalDevice(std::move(physicalDevice)),
@@ -66,6 +68,7 @@ namespace vklite {
 
     SimpleGraphicEngine::SimpleGraphicEngine(SimpleGraphicEngine &&other) noexcept
             : mFrameCount(other.mFrameCount),
+              mSampleCount(other.mSampleCount),
               mInstance(std::move(other.mInstance)),
               mSurface(std::move(other.mSurface)),
               mPhysicalDevice(std::move(other.mPhysicalDevice)),
@@ -96,7 +99,7 @@ namespace vklite {
     SimpleGraphicEngine &SimpleGraphicEngine::operator=(SimpleGraphicEngine &&other) noexcept {
         if (this != &other) {
             mFrameCount = other.mFrameCount;
-
+            mSampleCount = other.mSampleCount;
             // 移动赋值：逐个成员进行移动赋值
             mInstance = std::move(other.mInstance);
             mSurface = std::move(other.mSurface);
@@ -232,24 +235,6 @@ namespace vklite {
         return *this;
     }
 
-    UniformBufferBuilder SimpleGraphicEngine::uniformBufferBuilder() {
-        return UniformBufferBuilder()
-                .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
-    }
-
-    StorageBufferBuilder SimpleGraphicEngine::storageBufferBuilder() {
-        return StorageBufferBuilder()
-                .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
-    }
-
-    StagingBufferBuilder SimpleGraphicEngine::stagingBufferBuilder() {
-        return StagingBufferBuilder()
-                .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
-    }
-
     SimpleGraphicEngine &SimpleGraphicEngine::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
         mPushConstants[index].update(data, size);
         return *this;
@@ -333,6 +318,31 @@ namespace vklite {
         }
 
         mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mFrameCount;
+    }
+
+    UniformBufferBuilder SimpleGraphicEngine::uniformBufferBuilder() {
+        return UniformBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    StorageBufferBuilder SimpleGraphicEngine::storageBufferBuilder() {
+        return StorageBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    StagingBufferBuilder SimpleGraphicEngine::stagingBufferBuilder() {
+        return StagingBufferBuilder()
+                .device(mDevice->getDevice())
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+    }
+
+    CombinedImageSamplerBuilder SimpleGraphicEngine::samplerBuilder() {
+        return CombinedImageSamplerBuilder()
+                .device(mDevice->getDevice())
+//                .sampleCount(mSampleCount)
+                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
     }
 
 } // vklite

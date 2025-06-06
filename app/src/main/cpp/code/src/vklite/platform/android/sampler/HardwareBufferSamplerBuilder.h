@@ -6,12 +6,13 @@
 
 #include <memory>
 
-#include "vklite/sampler/SamplerBuilderInterface.h"
+#include "vklite/sampler/Sampler.h"
 #include "HardwareBufferYcbcrConversion.h"
+#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
-    class HardwareBufferSamplerBuilder : public SamplerBuilderInterface {
+    class HardwareBufferSamplerBuilder {
     private:
         const HardwareBufferYcbcrConversion &mAndroidSamplerYcbcrConversion;
 
@@ -19,9 +20,9 @@ namespace vklite {
 
         HardwareBufferSamplerBuilder(const HardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
 
-        ~HardwareBufferSamplerBuilder() override;
+        ~HardwareBufferSamplerBuilder();
 
-        std::unique_ptr<SamplerInterface> build(const PhysicalDevice &physicalDevice, const Device &device) override;
+        std::unique_ptr<Sampler> build(const PhysicalDevice &physicalDevice, const Device &device);
 
     };
 

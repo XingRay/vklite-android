@@ -5,29 +5,35 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
-#include "vklite/device/Device.h"
+
 #include "vklite/command_pool/CommandPool.h"
 
 #include "vklite/image/Image.h"
-#include "SamplerInterface.h"
-#include "vklite/physical_device/PhysicalDevice.h"
 
 namespace vklite {
 
-    class Sampler : public SamplerInterface {
+    class Sampler {
     private:
-        const Device &mDevice;
+        vk::Device mDevice;
 
         vk::Sampler mSampler;
 
     public:
 
-        Sampler(const PhysicalDevice &physicalDevice, const Device &device, float maxLoad);
+        Sampler(vk::Device device, vk::Sampler sampler);
 
-        ~Sampler() override;
+        ~Sampler();
+
+        Sampler(const Sampler &other) = delete;
+
+        Sampler &operator=(const Sampler &other) = delete;
+
+        Sampler(Sampler &&other) noexcept;
+
+        Sampler &operator=(Sampler &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Sampler &getSampler() const override;
+        const vk::Sampler &getSampler() const;
     };
 
 } // vklite

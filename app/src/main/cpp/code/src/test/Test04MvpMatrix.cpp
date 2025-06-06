@@ -14,7 +14,7 @@ namespace test04 {
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/04_mvp_matrix.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/04_mvp_matrix.frag.spv");
 
-        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
+        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -24,14 +24,12 @@ namespace test04 {
                             .addAttribute(0, ShaderFormat::Vec3)
                             .addAttribute(1, ShaderFormat::Vec3);
                 })
-                .addPushConstant(0, sizeof(MvpMatrix), vk::ShaderStageFlagBits::eVertex);
+                .addPushConstant(0, sizeof(glm::mat4), vk::ShaderStageFlagBits::eVertex);
 
         mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
-                .shaderConfigure(std::move(graphicShaderConfigure))
+                .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
-
-        LOG_D("test created ");
     }
 
     void Test04MvpMatrix::init() {
@@ -43,6 +41,21 @@ namespace test04 {
 
         std::vector<uint32_t> indices = {0, 1, 2};
 
+        uint32_t indicesSize = indices.size() * sizeof(uint32_t);
+        mIndexBuffer = mEngine->indexBufferBuilder()
+                .size(indicesSize)
+                .buildUnique();
+        mIndexBuffer->update(mEngine->getCommandPool(), indices);
+        mEngine->indexBuffer(*mIndexBuffer, indices.size());
+
+        uint32_t verticesSize = vertices.size() * sizeof(Vertex);
+        mVertexBuffer = mEngine->vertexBufferBuilder()
+                .size(verticesSize)
+                .buildUnique();
+        mVertexBuffer->update(mEngine->getCommandPool(), vertices.data(), verticesSize);
+        mEngine->addVertexBuffer(*mVertexBuffer);
+
+
         mMvpMatrix = MvpMatrix{};
         float scale = 1.0f;
 
@@ -53,6 +66,8 @@ namespace test04 {
                                       glm::vec3(0.0f, 0.0f, 0.0f),
                                       glm::vec3(1.0f, 1.0f, 0.0f));
         mMvpMatrix.proj = glm::perspective(glm::radians(45.0f), (float) ANativeWindow_getWidth(mApp.window) / (float) ANativeWindow_getHeight(mApp.window), 0.1f, 10.0f);
+
+        mTimer.start();
     }
 
     // 检查是否准备好
@@ -62,10 +77,7 @@ namespace test04 {
 
     // 绘制三角形帧
     void Test04MvpMatrix::drawFrame() {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
+        float time = mTimer.getElapsedTimeSecond();
         float scale = 1.0f;
 
         glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
@@ -80,7 +92,6 @@ namespace test04 {
         mEngine->updatePushConstant(0, &mvp, sizeof(glm::mat4));
 
         mEngine->drawIndexed();
-
     }
 
     // 清理操作

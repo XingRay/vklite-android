@@ -16,7 +16,7 @@ namespace test01 {
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
 
-        vklite::ShaderConfigure graphicShaderConfigure = vklite::ShaderConfigure()
+        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -27,11 +27,9 @@ namespace test01 {
                 });
 
         mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
-                .shaderConfigure(std::move(graphicShaderConfigure))
+                .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
-
-        LOG_D("test created ");
     }
 
     void Test01SimpleTriangle::init() {

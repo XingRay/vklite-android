@@ -4,24 +4,36 @@
 
 #pragma once
 
-#include "SamplerBuilderInterface.h"
-#include "vklite/physical_device/PhysicalDevice.h"
+#include <memory>
+
+#include <vulkan//vulkan.hpp>
+
+#include "vklite/sampler/Sampler.h"
 
 namespace vklite {
 
-    class SamplerBuilder : public SamplerBuilderInterface {
+    class SamplerBuilder {
     private:
-        float mMaxLoad;
+        vk::Device mDevice;
+        vk::SamplerCreateInfo mSamplerCreateInfo;
 
     public:
 
         SamplerBuilder();
 
-        ~SamplerBuilder() override;
+        ~SamplerBuilder();
+
+        SamplerBuilder &device(vk::Device device);
 
         SamplerBuilder &maxLoad(float maxLoad);
 
-        std::unique_ptr<SamplerInterface> build(const PhysicalDevice &physicalDevice,const Device &device) override;
+        SamplerBuilder &maxAnisotropy(float maxAnisotropy);
+
+        [[nodiscard]]
+        Sampler build();
+
+        [[nodiscard]]
+        std::unique_ptr<Sampler> buildUnique();
 
     };
 

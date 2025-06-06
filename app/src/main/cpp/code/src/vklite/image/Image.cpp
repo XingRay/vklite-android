@@ -106,6 +106,12 @@ namespace vklite {
         return *this;
     }
 
+    Image &Image::transitionImageLayout(const CommandPool &commandPool) {
+        transitionImageLayout(commandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
+                              vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
+        return *this;
+    }
+
     Image &Image::transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition) {
         transitionImageLayout(commandPool,
                               imageTransition.getOldImageLayout(),
@@ -123,7 +129,7 @@ namespace vklite {
                                               uint32_t levelCount,
                                               uint32_t srcQueueFamilyIndex,
                                               uint32_t dstQueueFamilyIndex,
-                                              vk::ImageAspectFlags aspectMask)  {
+                                              vk::ImageAspectFlags aspectMask) {
 
         vk::ImageSubresourceRange imageSubresourceRange;
         imageSubresourceRange
@@ -169,7 +175,7 @@ namespace vklite {
         return *this;
     }
 
-    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition)  {
+    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition) {
         recordTransitionImageLayout(commandBuffer,
                                     imageTransition.getOldImageLayout(),
                                     imageTransition.getNewImageLayout(),

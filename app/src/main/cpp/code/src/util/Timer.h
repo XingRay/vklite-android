@@ -20,7 +20,9 @@ namespace util {
 
         void start();
 
-        uint64_t getDeltaTimeMs();
+        uint64_t getElapsedTimeMs();
+
+        float getElapsedTimeSecond();
     };
 
 } // util

@@ -302,8 +302,8 @@ namespace vklite {
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
 
-        return {
-                mFrameCount,
+        return {mFrameCount,
+                sampleCount,
                 std::move(instance),
                 std::move(surface),
                 std::move(physicalDevice),

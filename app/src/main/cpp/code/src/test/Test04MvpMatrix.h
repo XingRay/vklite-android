@@ -13,6 +13,7 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/vklite.h"
+#include "util/Timer.h"
 
 namespace test04 {
 
@@ -33,9 +34,10 @@ namespace test04 {
         std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
-        std::vector<vklite::UniformBuffer> mUniformBuffers;
 
         MvpMatrix mMvpMatrix{};
+        util::Timer mTimer;
+
     public:
         // 构造函数初始化基类 TestBase，并传递 name
         explicit Test04MvpMatrix(const android_app &app, const std::string &name);

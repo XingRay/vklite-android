@@ -3,6 +3,7 @@
 //
 
 #include "CombinedImageViewBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -62,6 +63,8 @@ namespace vklite {
     }
 
     CombinedImageView CombinedImageViewBuilder::build() {
+        LOG_D("CombinedImageViewBuilder::build()");
+
         // create Image
         if (mImageBuilderConfigure != nullptr) {
             mImageBuilderConfigure(mImageBuilder);
@@ -81,6 +84,7 @@ namespace vklite {
         image.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
 
         // create ImageView
+        mImageViewBuilder.image(image.getImage());
         if (mImageViewBuilderConfigure != nullptr) {
             mImageViewBuilderConfigure(image, mImageViewBuilder);
         }
@@ -95,11 +99,7 @@ namespace vklite {
         return std::make_unique<CombinedImageView>(build());
     }
 
-
     CombinedImageViewBuilder &CombinedImageViewBuilder::asDefault() {
-        mImageViewBuilderConfigure = ([&](vklite::Image &image, vklite::ImageViewBuilder &builder) {
-            builder.image(image.getImage());
-        });
         return *this;
     }
 

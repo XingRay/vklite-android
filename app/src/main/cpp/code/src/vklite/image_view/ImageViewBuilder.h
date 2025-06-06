@@ -62,7 +62,9 @@ namespace vklite {
         ImageViewBuilder &asColorImageViewBuilder();
 
         ImageViewBuilder &asDepthImageViewBuilder();
-        
+
+        ImageViewBuilder &asTextureImageViewBuilder();
+
     public://static
 
         static ImageViewBuilder defaultImageViewBuilder();

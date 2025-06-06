@@ -359,7 +359,7 @@ namespace test08 {
     void Test08ComputeShader::drawFrame() {
         // update data by frame
         UniformBufferObject ubo{};
-        ubo.deltaTime = static_cast<float >(mTimer.getDeltaTimeMs()) * 2.0f;
+        ubo.deltaTime = static_cast<float >(mTimer.getElapsedTimeMs()) * 2.0f;
         mUniformBuffers[mCurrentFrameIndex].update(*mCommandPool, &ubo, sizeof(UniformBufferObject));
 
         const vk::Device vkDevice = mDevice->getDevice();

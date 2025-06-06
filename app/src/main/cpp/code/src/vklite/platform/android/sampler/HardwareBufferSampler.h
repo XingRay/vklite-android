@@ -10,11 +10,10 @@
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
 #include "HardwareBufferYcbcrConversion.h"
 #include "vklite/platform/android/image/HardwareBufferImage.h"
-#include "vklite/sampler/SamplerInterface.h"
 
 namespace vklite {
 
-    class HardwareBufferSampler : public SamplerInterface {
+    class HardwareBufferSampler {
     private:
         const Device &mDevice;
         vk::Sampler mSampler;
@@ -24,7 +23,7 @@ namespace vklite {
         HardwareBufferSampler(const Device &device,
                               const HardwareBufferYcbcrConversion &samplerYcbcrConversion);
 
-        ~HardwareBufferSampler() override;
+        ~HardwareBufferSampler();
 
         HardwareBufferSampler(const HardwareBufferSampler &other) = delete;
 
@@ -36,7 +35,7 @@ namespace vklite {
 
 
         [[nodiscard]]
-        const vk::Sampler &getSampler() const override;
+        const vk::Sampler &getSampler() const;
 
     };
 

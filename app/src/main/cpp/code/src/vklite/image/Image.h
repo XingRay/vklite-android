@@ -70,6 +70,8 @@ namespace vklite {
                                      uint32_t dstQueueFamilyIndex,
                                      vk::ImageAspectFlags aspectMask);
 
+        Image &transitionImageLayout(const CommandPool &commandPool);
+
         Image &transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition);
 
         Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,

@@ -12,8 +12,9 @@ namespace vklite {
 
     HardwareBufferSamplerBuilder::~HardwareBufferSamplerBuilder() = default;
 
-    std::unique_ptr<SamplerInterface> HardwareBufferSamplerBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
-        return std::make_unique<HardwareBufferSampler>(device, mAndroidSamplerYcbcrConversion);
+    std::unique_ptr<Sampler> HardwareBufferSamplerBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
+//        return std::make_unique<HardwareBufferSampler>(device, mAndroidSamplerYcbcrConversion);
+        return nullptr;
     }
 
 } // vklite
