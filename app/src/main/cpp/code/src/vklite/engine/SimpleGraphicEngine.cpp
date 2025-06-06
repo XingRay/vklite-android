@@ -202,7 +202,7 @@ namespace vklite {
     VertexBufferBuilder SimpleGraphicEngine::vertexBufferBuilder() {
         return VertexBufferBuilder()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
     SimpleGraphicEngine &SimpleGraphicEngine::addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset) {
@@ -220,7 +220,7 @@ namespace vklite {
     IndexBufferBuilder SimpleGraphicEngine::indexBufferBuilder() {
         return IndexBufferBuilder()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
     SimpleGraphicEngine &SimpleGraphicEngine::indexBuffer(const vk::Buffer &buffer, uint32_t indexCount) {
@@ -323,19 +323,19 @@ namespace vklite {
     UniformBufferBuilder SimpleGraphicEngine::uniformBufferBuilder() {
         return UniformBufferBuilder()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
     StorageBufferBuilder SimpleGraphicEngine::storageBufferBuilder() {
         return StorageBufferBuilder()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
     StagingBufferBuilder SimpleGraphicEngine::stagingBufferBuilder() {
         return StagingBufferBuilder()
                 .device(mDevice->getDevice())
-                .configDeviceMemory(mPhysicalDevice->getPhysicalDevice());
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
     CombinedImageSamplerBuilder SimpleGraphicEngine::samplerBuilder() {

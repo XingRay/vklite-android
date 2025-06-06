@@ -13,6 +13,9 @@ namespace vklite {
 
     class HostVisibleBufferBuilder {
     private:
+        vk::Device mDevice;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
         CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
@@ -26,9 +29,7 @@ namespace vklite {
 
         HostVisibleBufferBuilder &addUsage(vk::BufferUsageFlags usage);
 
-        HostVisibleBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        HostVisibleBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        HostVisibleBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         [[nodiscard]]
         HostVisibleBuffer build();

@@ -4,6 +4,7 @@
 
 #include "SamplerBuilder.h"
 #include "vklite/sampler/Sampler.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
@@ -46,6 +47,10 @@ namespace vklite {
     }
 
     Sampler SamplerBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("SamplerBuilder::build(): mDevice == nullptr");
+        }
+
         vk::Sampler sampler = mDevice.createSampler(mSamplerCreateInfo);
         return {mDevice, sampler};
     }

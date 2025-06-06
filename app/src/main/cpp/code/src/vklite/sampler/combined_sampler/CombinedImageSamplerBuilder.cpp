@@ -63,7 +63,12 @@ namespace vklite {
 
     CombinedImageSampler CombinedImageSamplerBuilder::build() {
         LOG_D("CombinedImageSamplerBuilder::build()");
-
+        if (mDevice == nullptr) {
+            throw std::runtime_error("CombinedImageSamplerBuilder::build(): mDevice == nullptr");
+        }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("CombinedImageSamplerBuilder::build(): mPhysicalDeviceMemoryProperties not set");
+        }
         // create Image
         Image image = mImageBuilder.build();
 
@@ -71,7 +76,7 @@ namespace vklite {
         vk::MemoryRequirements memoryRequirements = mDevice.getImageMemoryRequirements(image.getImage());
         mDeviceMemoryBuilder.allocationSize(memoryRequirements.size);
 
-        uint32_t memoryTypeIndex = VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties, memoryRequirements, mMemoryPropertyFlags);
+        uint32_t memoryTypeIndex = VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties.value(), memoryRequirements, mMemoryPropertyFlags);
         mDeviceMemoryBuilder.memoryTypeIndex(memoryTypeIndex);
 
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();

@@ -15,10 +15,10 @@ namespace vklite {
     class IndexBufferBuilder {
     private:
         vk::Device mDevice;
-        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
-
         vk::IndexType mIndexType;
+
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
         IndexBufferBuilder();
@@ -29,9 +29,7 @@ namespace vklite {
 
         IndexBufferBuilder &size(vk::DeviceSize size);
 
-        IndexBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        IndexBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        IndexBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         IndexBufferBuilder &indexType(vk::IndexType indexType);
 

@@ -288,7 +288,7 @@ namespace test08 {
         for (int i = 0; i < mFrameCount; i++) {
             vklite::StorageBuffer storageBuffer = vklite::StorageBufferBuilder()
                     .device(mDevice->getDevice())
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .size(shaderStorageBufferSize)
                     .addUsage(vk::BufferUsageFlagBits::eVertexBuffer)
                     .build();
@@ -297,7 +297,7 @@ namespace test08 {
 
             vklite::UniformBuffer uniformBuffer = vklite::UniformBufferBuilder()
                     .device(mDevice->getDevice())
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice())
+//                    .phys(mPhysicalDevice->getPhysicalDevice())
                     .size(sizeof(UniformBufferObject))
                     .build();
 

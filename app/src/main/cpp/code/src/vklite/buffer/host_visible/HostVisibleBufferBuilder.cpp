@@ -14,6 +14,7 @@ namespace vklite {
     HostVisibleBufferBuilder::~HostVisibleBufferBuilder() = default;
 
     HostVisibleBufferBuilder &HostVisibleBufferBuilder::device(vk::Device device) {
+        mDevice = device;
         mCombinedMemoryBufferBuilder.device(device);
         return *this;
     }
@@ -28,18 +29,20 @@ namespace vklite {
         return *this;
     }
 
-    HostVisibleBufferBuilder &HostVisibleBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    HostVisibleBufferBuilder &HostVisibleBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
-        return *this;
-    }
-
-    HostVisibleBufferBuilder &HostVisibleBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
-        configDeviceMemory(physicalDevice.getMemoryProperties());
         return *this;
     }
 
     HostVisibleBuffer HostVisibleBufferBuilder::build() {
         LOG_D("HostVisibleBufferBuilder::build()");
+        if (mDevice == nullptr) {
+            throw std::runtime_error("HostVisibleBufferBuilder::build(): mDevice == nullptr");
+        }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("HostVisibleBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
+        }
         return HostVisibleBuffer(mCombinedMemoryBufferBuilder.build());
     }
 

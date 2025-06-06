@@ -14,17 +14,14 @@ namespace vklite {
     StagingBufferBuilder::~StagingBufferBuilder() = default;
 
     StagingBufferBuilder &StagingBufferBuilder::device(vk::Device device) {
+        mDevice = device;
         mCombinedMemoryBufferBuilder.device(device);
         return *this;
     }
 
-    StagingBufferBuilder &StagingBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    StagingBufferBuilder &StagingBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+        mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
-        return *this;
-    }
-
-    StagingBufferBuilder &StagingBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
-        mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDevice.getMemoryProperties());
         return *this;
     }
 
@@ -35,6 +32,12 @@ namespace vklite {
 
     StagingBuffer StagingBufferBuilder::build() {
         LOG_D("StagingBufferBuilder::build()");
+        if (mDevice == nullptr) {
+            throw std::runtime_error("StagingBufferBuilder::build(): mDevice == nullptr");
+        }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("StagingBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
+        }
 //        return StagingBuffer(mCombinedMemoryBufferBuilder.build());
         return StagingBuffer(mCombinedMemoryBufferBuilder.build());
     }

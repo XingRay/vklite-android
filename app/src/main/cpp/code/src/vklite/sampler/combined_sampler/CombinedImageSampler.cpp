@@ -105,7 +105,7 @@ namespace vklite {
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(data, size);
 

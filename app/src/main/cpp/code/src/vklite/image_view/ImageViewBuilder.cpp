@@ -100,6 +100,12 @@ namespace vklite {
         LOG_D("\t\tbaseArrayLayer:%d", mImageViewCreateInfo.subresourceRange.baseArrayLayer);
         LOG_D("\t\tlayerCount:%d", mImageViewCreateInfo.subresourceRange.layerCount);
 
+        if (mDevice == nullptr) {
+            throw std::runtime_error("ImageViewBuilder::build(): mDevice == nullptr");
+        }
+        if (mImageViewCreateInfo.image == nullptr) {
+            throw std::runtime_error("ImageViewBuilder::build(): mImageViewCreateInfo.image == nullptr");
+        }
         vk::ImageView imageView = mDevice.createImageView(mImageViewCreateInfo);
         LOG_D("mDevice.createImageView(mImageViewCreateInfo) => %p", (void *) imageView);
 

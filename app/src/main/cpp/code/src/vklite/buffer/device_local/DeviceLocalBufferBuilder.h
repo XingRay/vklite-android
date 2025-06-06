@@ -14,8 +14,9 @@ namespace vklite {
     class DeviceLocalBufferBuilder {
     private:
         vk::Device mDevice;
-        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
         DeviceLocalBufferBuilder();
@@ -28,9 +29,7 @@ namespace vklite {
 
         DeviceLocalBufferBuilder &addUsage(vk::BufferUsageFlags usage);
 
-        DeviceLocalBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        DeviceLocalBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        DeviceLocalBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         [[nodiscard]]
         DeviceLocalBuffer build();

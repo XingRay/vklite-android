@@ -29,19 +29,20 @@ namespace vklite {
         return *this;
     }
 
-    VertexBufferBuilder &VertexBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    VertexBufferBuilder &VertexBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
         return *this;
     }
 
-    VertexBufferBuilder &VertexBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
-        configDeviceMemory(physicalDevice.getMemoryProperties());
-        return *this;
-    }
-
     VertexBuffer VertexBufferBuilder::build() {
         LOG_D("VertexBufferBuilder::build()");
+        if (mDevice == nullptr) {
+            throw std::runtime_error("VertexBufferBuilder::build(): mDevice == nullptr");
+        }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("VertexBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
+        }
 //        return VertexBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }

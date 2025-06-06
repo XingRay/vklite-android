@@ -50,14 +50,8 @@ namespace vklite {
         return *this;
     }
 
-    VertexBuffer &VertexBuffer::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
-        mPhysicalDeviceMemoryProperties = physicalDevice.getMemoryProperties();
-        return *this;
-    }
-
-
-    VertexBuffer &
-    VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
+    VertexBuffer &VertexBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset,
+                                             vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
         mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
         return *this;
     }
@@ -91,12 +85,12 @@ namespace vklite {
 
     VertexBuffer &VertexBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke VertexBuffer::configDeviceMemory()");
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke VertexBuffer::physicalDeviceMemoryProperties()");
         }
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(data, size);
 

@@ -14,8 +14,9 @@ namespace vklite {
     class VertexBufferBuilder {
     private:
         vk::Device mDevice;
-        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
         VertexBufferBuilder();
@@ -28,9 +29,7 @@ namespace vklite {
 
         VertexBufferBuilder &addUsage(vk::BufferUsageFlags usage);
 
-        VertexBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        VertexBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        VertexBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         [[nodiscard]]
         VertexBuffer build();

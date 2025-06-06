@@ -24,7 +24,7 @@ namespace vklite {
         DeviceMemoryBuilder mDeviceMemoryBuilder;
 
         vk::DeviceSize mMemoryOffset;
-        vk::PhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
         vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
         ImageViewBuilder mImageViewBuilder;
@@ -60,7 +60,7 @@ namespace vklite {
         [[nodiscard]]
         std::vector<CombinedImageSampler> build(uint32_t count);
 
-        CombinedImageSamplerBuilder& asDefault();
+        CombinedImageSamplerBuilder &asDefault();
     };
 
 } // vklite

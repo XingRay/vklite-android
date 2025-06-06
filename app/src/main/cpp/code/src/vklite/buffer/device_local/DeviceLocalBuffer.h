@@ -44,8 +44,6 @@ namespace vklite {
 
         DeviceLocalBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        DeviceLocalBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
-
         // recordUpdate
         DeviceLocalBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 

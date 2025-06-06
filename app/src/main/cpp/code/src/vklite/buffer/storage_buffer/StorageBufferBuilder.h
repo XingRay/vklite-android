@@ -14,8 +14,9 @@ namespace vklite {
     class StorageBufferBuilder {
     private:
         vk::Device mDevice;
-        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
         StorageBufferBuilder();
@@ -28,9 +29,7 @@ namespace vklite {
 
         StorageBufferBuilder &addUsage(vk::BufferUsageFlags usage);
 
-        StorageBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        StorageBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        StorageBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         [[nodiscard]]
         StorageBuffer build();

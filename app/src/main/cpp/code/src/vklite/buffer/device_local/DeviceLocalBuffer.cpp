@@ -50,12 +50,6 @@ namespace vklite {
         return *this;
     }
 
-    DeviceLocalBuffer &DeviceLocalBuffer::physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice) {
-        mPhysicalDeviceMemoryProperties = physicalDevice.getMemoryProperties();
-        return *this;
-    }
-
-
     DeviceLocalBuffer &DeviceLocalBuffer::recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer srcBuffer,
                                                        vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
         mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, srcBuffer, srcOffset, dstOffset, copyDataSize);
@@ -118,7 +112,7 @@ namespace vklite {
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(data, size);
 

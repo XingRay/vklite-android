@@ -13,6 +13,9 @@ namespace vklite {
 
     class StagingBufferBuilder {
     private:
+        vk::Device mDevice;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+
         CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
 
     public:
@@ -22,9 +25,7 @@ namespace vklite {
 
         StagingBufferBuilder &device(vk::Device device);
 
-        StagingBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
-
-        StagingBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
+        StagingBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         StagingBufferBuilder &size(vk::DeviceSize size);
 

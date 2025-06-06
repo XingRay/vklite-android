@@ -45,8 +45,6 @@ namespace vklite {
 
         VertexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
-        VertexBuffer &physicalDeviceMemoryProperties(vk::PhysicalDevice physicalDevice);
-
         // recordUpdate
         VertexBuffer &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize);
 

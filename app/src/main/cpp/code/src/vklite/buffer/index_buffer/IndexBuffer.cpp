@@ -126,14 +126,14 @@ namespace vklite {
 
     IndexBuffer &IndexBuffer::update(const CommandPool &commandPool, const std::vector<uint32_t> &indices) {
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::configDeviceMemory()");
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke IndexBuffer::physicalDeviceMemoryProperties()");
         }
 
         vk::DeviceSize size = indices.size() * sizeof(uint32_t);
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)
                 .size(size)
-                .configDeviceMemory(mPhysicalDeviceMemoryProperties.value())
+                .physicalDeviceMemoryProperties(mPhysicalDeviceMemoryProperties.value())
                 .build();
         stagingBuffer.updateBuffer(indices.data(), size);
         mCombinedMemoryBuffer.getBuffer().copyFrom(commandPool, stagingBuffer.getVkBuffer());

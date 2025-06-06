@@ -14,9 +14,9 @@ namespace vklite {
     class UniformBufferBuilder {
     private:
         vk::Device mDevice;
-        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
+        CombinedMemoryBufferBuilder mCombinedMemoryBufferBuilder;
     public:
         UniformBufferBuilder();
 
@@ -28,9 +28,7 @@ namespace vklite {
 
         UniformBufferBuilder &addUsage(vk::BufferUsageFlags usage);
 
-        UniformBufferBuilder &configDeviceMemory(vk::PhysicalDevice physicalDevice);
-
-        UniformBufferBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+        UniformBufferBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
 
         [[nodiscard]]
         UniformBuffer build();

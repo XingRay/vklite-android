@@ -29,19 +29,20 @@ namespace vklite {
         return *this;
     }
 
-    DeviceLocalBufferBuilder &DeviceLocalBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
+    DeviceLocalBufferBuilder &DeviceLocalBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         mCombinedMemoryBufferBuilder.physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
         return *this;
     }
 
-    DeviceLocalBufferBuilder &DeviceLocalBufferBuilder::configDeviceMemory(vk::PhysicalDevice physicalDevice) {
-        configDeviceMemory(physicalDevice.getMemoryProperties());
-        return *this;
-    }
-
     DeviceLocalBuffer DeviceLocalBufferBuilder::build() {
         LOG_D("DeviceLocalBufferBuilder::build()");
+        if (mDevice == nullptr) {
+            throw std::runtime_error("DeviceLocalBufferBuilder::build(): mDevice == nullptr");
+        }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("DeviceLocalBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
+        }
 //        return DeviceLocalBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
         return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }

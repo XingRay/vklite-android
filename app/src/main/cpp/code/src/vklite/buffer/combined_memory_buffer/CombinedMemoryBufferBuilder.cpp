@@ -3,15 +3,17 @@
 //
 
 #include "CombinedMemoryBufferBuilder.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
     CombinedMemoryBufferBuilder::CombinedMemoryBufferBuilder()
-            : mMemoryOffset(0), mUseConfigDeviceMemory(false) {}
+            : mMemoryOffset(0) {}
 
     CombinedMemoryBufferBuilder::~CombinedMemoryBufferBuilder() = default;
 
     CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::device(vk::Device device) {
+        mDevice = device;
         mBufferBuilder.device(device);
         mDeviceMemoryBuilder.device(device);
         return *this;
@@ -42,54 +44,50 @@ namespace vklite {
         return *this;
     }
 
-    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
-                                                                                 vk::MemoryPropertyFlags memoryPropertyFlags) {
-        this->physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
-        this->memoryPropertyFlags(memoryPropertyFlags);
-        return *this;
-    }
+//    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
+//                                                                                 vk::MemoryPropertyFlags memoryPropertyFlags) {
+//        this->physicalDeviceMemoryProperties(physicalDeviceMemoryProperties);
+//        this->memoryPropertyFlags(memoryPropertyFlags);
+//        return *this;
+//    }
 
     CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::memoryPropertyFlags(vk::MemoryPropertyFlags memoryPropertyFlags) {
-        mUseConfigDeviceMemory = true;
         mMemoryPropertyFlags = memoryPropertyFlags;
         return *this;
     }
 
     CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
-        mUseConfigDeviceMemory = true;
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
         return *this;
     }
 
-    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::bufferBuilder(std::function<void(BufferBuilder &builder)> &&configure) {
-        mBufferBuilderConfigure = std::move(configure);
-        return *this;
-    }
-
-    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::deviceMemoryBuilder(std::function<void(Buffer &buffer, DeviceMemoryBuilder &builder)> &&configure) {
-        mDeviceMemoryBuilderConfigure = std::move(configure);
-        return *this;
-    }
+//    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::bufferBuilder(std::function<void(BufferBuilder &builder)> &&configure) {
+//        mBufferBuilderConfigure = std::move(configure);
+//        return *this;
+//    }
+//
+//    CombinedMemoryBufferBuilder &CombinedMemoryBufferBuilder::deviceMemoryBuilder(std::function<void(Buffer &buffer, DeviceMemoryBuilder &builder)> &&configure) {
+//        mDeviceMemoryBuilderConfigure = std::move(configure);
+//        return *this;
+//    }
 
     CombinedMemoryBuffer CombinedMemoryBufferBuilder::build() {
-        if (mBufferBuilderConfigure != nullptr) {
-            mBufferBuilderConfigure(mBufferBuilder);
+        if (mDevice == nullptr) {
+            throw std::runtime_error("CombinedMemoryBufferBuilder::build(): mDevice == nullptr");
         }
+        if (!mPhysicalDeviceMemoryProperties.has_value()) {
+            throw std::runtime_error("CombinedMemoryBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set, must invoke physicalDeviceMemoryProperties()");
+        }
+        if (!mMemoryPropertyFlags.has_value()) {
+            throw std::runtime_error("CombinedMemoryBufferBuilder::build(): mMemoryPropertyFlags not set, must invoke memoryPropertyFlags()");
+        }
+
         Buffer buffer = mBufferBuilder.build();
 
-        if (mUseConfigDeviceMemory) {
-            if (!mPhysicalDeviceMemoryProperties.has_value()) {
-                throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke physicalDeviceMemoryProperties()");
-            }
-            if (!mMemoryPropertyFlags.has_value()) {
-                throw std::runtime_error("mMemoryPropertyFlags not set, must invoke memoryPropertyFlags()");
-            }
-            mDeviceMemoryBuilder.config(mPhysicalDeviceMemoryProperties.value(), buffer.getVkBuffer(), mMemoryPropertyFlags.value());
-        }
+        vk::MemoryRequirements memoryRequirements = mDevice.getBufferMemoryRequirements(buffer.getVkBuffer());
+        mDeviceMemoryBuilder.allocationSize(memoryRequirements.size);
+        mDeviceMemoryBuilder.memoryTypeIndex(VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties.value(), memoryRequirements, mMemoryPropertyFlags.value()));
 
-        if (mDeviceMemoryBuilderConfigure != nullptr) {
-            mDeviceMemoryBuilderConfigure(buffer, mDeviceMemoryBuilder);
-        }
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
         buffer.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
