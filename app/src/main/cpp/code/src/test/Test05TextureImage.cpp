@@ -105,12 +105,8 @@ namespace test05 {
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
                     .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
-                    .addMapping([&](vklite::DescriptorMapping &mapping) {
+                    .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
                         mapping
-//                                        .binding(0)
-                                .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-//                                        .descriptorIndex(0)
-//                                        .descriptorCount(1)
                                 .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
                     });
         });

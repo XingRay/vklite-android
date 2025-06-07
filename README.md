@@ -13,9 +13,9 @@ todo list
 
 - [x] 03 colored triangle (vertex buffer with multiple descriptors)
 
-- [ ] 04 texture image (sampler2D)
+- [x] 04 texture image (sampler2D)
 
-- [ ] 05 model loading (obj)
+- [x] 05 model loading (obj)
 
 - [x] 06 msaa (anti-aliasing) (done)
 
@@ -45,62 +45,60 @@ todo list
 
 ### todo
 
-engine api design
+demo:
 
 ```C++
-intEngine(){
-    // create vk::instance
-    engine = EngineBuilder{}
-    // set extensions
-    .extensions(..)
-    // or select extensions
-    .extensionsSelection([](availableExtensions)->vector<char>{ ... })
-    // set layers
-    .layers(..)
-    // select layers
-    .layersSelection([](availablelayers)->vector<char>{ ... })
-    // set work mode
-    .asGraphics() // or asComputer(), return GraphicsEngine or ComputerEngine
-        // set surface
-        .surface(WindowsSurface(..)) // or AndroidSurface(..)/LinuxSurface(..)/MacSurface(..)/IosSurface(..)
-        // set PhysicalDevice , use one of apis
-        .selectPhysicalDevice([](vector<vk::PhysicalDevice>->vk::PhysicalDevice){..})
-        .selectPhysicalDevice(DefaultPhysicalDeviceSelector()) // or CustomPhysicalDeviceSelector
-        .autoSelectPhysicalDevice()
-        // set mass
-        .enableMsaa() // auto select
-        .enableMsaa(maxMsaa) // select less or equal maxMsaa Samples
-        .enableMsaa([](vk::SampleCountFlags flags)->vk::SampleCountFlags) // by your own
-        //vertex shader
-        .vertexShaderBuilder()
-            .code(vertexShaderCode)
-            .addVertex(sizeof(app::Vertex)) // return VulkanVertexBuilder
-                .addAttrbute(ShaderFormat::Vec3) // binding = 0 location = 0, offset = 0
-                                                 // offset += offsetof(app::Vertex, attr1) , location++
-                .addAttrbute(ShaderFormat::Vec3) // binding = 0 location = 1, offset = 16 
-                                                 // align(16) vec3 = sizeof(vec4)
-                                                 // offset += offsetof(app::Vertex, attr2)
-            .build() // binding ++ , location = 0, offset = 0 , return to vertexShaderBuilder
-            .addVertex(..)...build()
-            .setPushConstants(sizeof(app:MvpMatrix))
-            .addUniformSet(sizeof(app::Ubo1)) // binding = 0, binding++
-            .addUniformSet(sizeof(app::Ubo2)) // binding = 1
-        .build() // vertexShaderBuilder, return to engine
-        .fragmentShaderBuilder()
-            .code(fragmentShaderCode)
-            // .. same as vertex shader, set uniform / push constants /...
-            .build()
-        .createVertexBuffer(maxCount*sizeof(app::Vertex))
-        .updateVertex(vertices)
-        .createIndexBuffer(maxCount*sizeof(uint32_t))
-        .updateIndexBuffer(indices)
-        .updateVertexPushConstant(mvpMatrix);
-}
+Test01SimpleTriangle::Test01SimpleTriangle(const android_app &app, const std::string &name)
+            : TestBase(name), mApp(app) {
 
-drawFrame(){
-    engine.updateVertexPushConstant(mvpMatrix);
-    engine->drawFrame();
-}
+        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.vert.spv");
+        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/01_triangle.frag.spv");
+
+        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                });
+
+        mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
+                .shaderConfigure(std::move(shaderConfigure))
+                .clearColor(0.2f, 0.4f, 0.8f)
+                .buildUnique();
+    }
+
+    void Test01SimpleTriangle::init() {
+        std::vector<Vertex> vertices = {
+                {{1.0f,  -1.0f, 0.0f}},
+                {{-1.0f, -1.0f, 0.0f}},
+                {{0.0f,  1.0f,  0.0f}},
+        };
+
+        std::vector<uint32_t> indices = {0, 1, 2};
+
+        uint32_t indicesSize = indices.size() * sizeof(uint32_t);
+        mIndexBuffer = mEngine->indexBufferBuilder()
+                .size(indicesSize)
+                .buildUnique();
+        mIndexBuffer->update(mEngine->getCommandPool(), indices);
+        mEngine->indexBuffer(*mIndexBuffer, indices.size());
+
+
+        uint32_t verticesSize = vertices.size() * sizeof(Vertex);
+        mVertexBuffer = mEngine->vertexBufferBuilder()
+                .size(verticesSize)
+                .buildUnique();
+        mVertexBuffer->update(mEngine->getCommandPool(), vertices.data(), verticesSize);
+        mEngine->addVertexBuffer(*mVertexBuffer);
+    }
+
+    void Test01SimpleTriangle::drawFrame() {
+        mEngine->drawIndexed();
+    }
+  
 ```
 
 
