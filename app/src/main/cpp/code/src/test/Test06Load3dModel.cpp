@@ -77,7 +77,7 @@ namespace test06 {
                                                aspectRatio,
                                                1.0f,
                                                20.0f));
-        mMvpMatrix.getProjection()[1][1] *= -1;
+        mMvpMatrix.projectionFlipY();
         mTimer.start();
 
         mSamplers = mEngine->samplerBuilder()

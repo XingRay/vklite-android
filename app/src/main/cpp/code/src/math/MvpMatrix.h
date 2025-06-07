@@ -55,6 +55,12 @@ namespace math {
         MvpMatrix &modelScaleY(float scale);
 
         MvpMatrix &modelScaleZ(float scale);
+
+        MvpMatrix &projectionFlipX();
+
+        MvpMatrix &projectionFlipY();
+
+        MvpMatrix &projectionFlipZ();
     };
 
 } // matrix
