@@ -153,6 +153,10 @@ namespace vklite {
         return mDescriptorSets[frameIndex][set];
     }
 
+    uint32_t SimpleGraphicEngine::getFrameIndex() const {
+        return mCurrentFrameIndex;
+    }
+
     uint32_t SimpleGraphicEngine::getFrameCount() const {
         return mFrameCount;
     }

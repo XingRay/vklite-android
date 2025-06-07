@@ -164,6 +164,9 @@ namespace vklite {
         uint32_t getFrameCount() const;
 
         [[nodiscard]]
+        uint32_t getFrameIndex() const;
+
+        [[nodiscard]]
         CommandPool &getCommandPool() const;
 
         [[nodiscard]]

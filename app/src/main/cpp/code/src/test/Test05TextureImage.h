@@ -9,7 +9,7 @@
 #include <cstdint>
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
-#include "test/common/glm.h"
+#include "math/glm.h"
 #include "test/common/TestBase.h"
 
 #include "vklite/vklite.h"
@@ -33,8 +33,8 @@ namespace test05 {
 
         const android_app &mApp;
         std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
-        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
+        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
 
         MvpMatrix mMvpMatrix{};
         util::Timer mTimer;

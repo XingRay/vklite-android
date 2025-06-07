@@ -8,7 +8,7 @@
 #include "test/common/TestBase.h"
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
-#include "test/common/glm.h"
+#include "math/glm.h"
 
 #include "ndk_camera/NdkCamera.h"
 #include "detector/MnnDetector.h"

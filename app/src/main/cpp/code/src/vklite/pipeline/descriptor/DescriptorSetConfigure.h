@@ -68,6 +68,8 @@ namespace vklite {
 
         DescriptorSetConfigure &addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
+        DescriptorSetConfigure &addUniform(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
+
         DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
 
 

@@ -90,6 +90,11 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
+        addUniform(binding, 1, shaderStageFlags);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformConfigure &)> &configure) {
         UniformConfigure uniformConfigure{};
         configure(uniformConfigure);

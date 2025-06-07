@@ -9,7 +9,7 @@
 #include <cstdint>
 
 #include "game_activity/native_app_glue/android_native_app_glue.h"
-#include "test/common/glm.h"
+#include "math/glm.h"
 #include "test/common/TestBase.h"
 
 #include "vklite/vklite.h"
