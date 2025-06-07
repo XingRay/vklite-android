@@ -18,11 +18,6 @@
 
 namespace test06 {
 
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec2 uv;
-    };
-
     struct MvpMatrix {
         glm::mat4 model; // 模型矩阵
         glm::mat4 view;  // 视图矩阵

@@ -12,27 +12,6 @@
 
 #include <tiny_obj_loader.h>
 
-
-namespace std {
-    template<>
-    struct hash<test06::Vertex> {
-        size_t operator()(test06::Vertex const &vertex) const {
-            size_t seed = 0;
-
-            // 哈希 position
-            hash<glm::vec3> vec3Hash;
-            seed ^= vec3Hash(vertex.position) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
-            // 哈希 uv
-            hash<glm::vec2> vec2Hash;
-            seed ^= vec2Hash(vertex.uv) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
-            return seed;
-        }
-    };
-}
-
-
 namespace test06 {
 
     Test06Load3dModel::Test06Load3dModel(const android_app &app, const std::string &name)
@@ -73,32 +52,16 @@ namespace test06 {
         model::Model model = model::ModelLoader::load(MODEL_PATH);
         std::unique_ptr<image::StbImage> textureImage = image::StbImage::loadImageAsRgb(TEXTURE_PATH);
 
-//        std::vector<Vertex> vertices = {
-//                {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},  // 左上
-//                {{1.0f,  -1.0f, 0.0f}, {1.0f, 1.0f}},  // 右上
-//                {{-1.0f, 1.0f,  0.0f}, {0.0f, 0.0f}},  // 左下
-//                {{1.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},  // 右下
-//
-//        };
-//
-//        std::vector<uint32_t> indices = {
-//                0, 2, 1, 1, 2, 3,
-//        };
-
-        std::vector<model::Vertex> vertices = model.getVertices();
-        std::vector<uint32_t> indices = model.getIndices();
-        uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = mEngine->indexBufferBuilder()
-                .size(indicesSize)
+                .size(model.getIndicesBytes())
                 .buildUnique();
-        mIndexBuffer->update(mEngine->getCommandPool(), indices);
-        mEngine->indexBuffer(*mIndexBuffer, indices.size());
+        mIndexBuffer->update(mEngine->getCommandPool(), model.getIndices());
+        mEngine->indexBuffer(*mIndexBuffer, model.getIndicesCount());
 
-        uint32_t verticesSize = vertices.size() * sizeof(Vertex);
         mVertexBuffer = mEngine->vertexBufferBuilder()
-                .size(verticesSize)
+                .size(model.getVerticesBytes())
                 .buildUnique();
-        mVertexBuffer->update(mEngine->getCommandPool(), vertices.data(), verticesSize);
+        mVertexBuffer->update(mEngine->getCommandPool(), model.getVerticesData(), model.getVerticesBytes());
         mEngine->addVertexBuffer(*mVertexBuffer);
 
 
@@ -119,7 +82,7 @@ namespace test06 {
                                            aspectRatio,
                                            1.0f,
                                            20.0f);
-        mMvpMatrix.proj[1][1]*=-1;
+        mMvpMatrix.proj[1][1] *= -1;
         mTimer.start();
 
         mSamplers = mEngine->samplerBuilder()
