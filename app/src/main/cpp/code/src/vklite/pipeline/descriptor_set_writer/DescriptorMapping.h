@@ -17,15 +17,12 @@ namespace vklite {
 
     class DescriptorMapping {
     private:
-//        vk::DescriptorSet mDescriptorSet;
         uint32_t mBinding;
-
         uint32_t mDescriptorIndex;
-        uint32_t mDescriptorCount;
-
         vk::DescriptorType mDescriptorType;
 
-        std::variant<std::vector<vk::DescriptorBufferInfo>, std::vector<vk::DescriptorImageInfo>> mTarget;
+        std::vector<vk::DescriptorBufferInfo> mBufferInfos;
+        std::vector<vk::DescriptorImageInfo> mImageInfos;
 
     public:
 
@@ -33,8 +30,13 @@ namespace vklite {
 
         ~DescriptorMapping();
 
-//        [[nodiscard]]
-//        const vk::DescriptorSet &getDescriptorSet() const;
+        DescriptorMapping(const DescriptorMapping &other) = delete;
+
+        DescriptorMapping &operator=(const DescriptorMapping &other) = delete;
+
+        DescriptorMapping(DescriptorMapping &&other) noexcept;
+
+        DescriptorMapping &operator=(DescriptorMapping &&other) noexcept;
 
         [[nodiscard]]
         uint32_t getBinding() const;
@@ -49,10 +51,10 @@ namespace vklite {
         vk::DescriptorType getDescriptorType() const;
 
         [[nodiscard]]
-        std::optional<std::reference_wrapper<const std::vector<vk::DescriptorBufferInfo>>> getDescriptorBufferInfos() const;
+        const std::vector<vk::DescriptorBufferInfo> &getDescriptorBufferInfos() const;
 
         [[nodiscard]]
-        std::optional<std::reference_wrapper<const std::vector<vk::DescriptorImageInfo>>> getDescriptorImageInfos() const;
+        const std::vector<vk::DescriptorImageInfo> &getDescriptorImageInfos() const;
 
 
         // basic info
@@ -61,8 +63,6 @@ namespace vklite {
         DescriptorMapping &binding(uint32_t binding);
 
         DescriptorMapping &descriptorIndex(uint32_t descriptorIndex);
-
-        DescriptorMapping &descriptorCount(uint32_t descriptorCount);
 
         DescriptorMapping &descriptorType(vk::DescriptorType descriptorType);
 
@@ -74,6 +74,8 @@ namespace vklite {
 
         DescriptorMapping &addBufferInfo(const Buffer &buffer);
 
+        DescriptorMapping &bufferInfos(std::vector<vk::DescriptorBufferInfo> &&bufferInfos);
+
 
         // add image info
         DescriptorMapping &addImageInfo(vk::DescriptorImageInfo imageInfo);
@@ -81,6 +83,8 @@ namespace vklite {
         DescriptorMapping &addImageInfo(vk::Sampler sampler, vk::ImageView imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
 
         DescriptorMapping &addImageInfo(const Sampler &sampler, const ImageView &imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
+
+        DescriptorMapping &imageInfos(std::vector<vk::DescriptorImageInfo> &&imageInfos);
 
     };
 

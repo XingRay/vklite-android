@@ -4,16 +4,32 @@
 
 #include "DescriptorMapping.h"
 
+#include <utility>
+
 namespace vklite {
 
     DescriptorMapping::DescriptorMapping()
-            : mBinding(0), mDescriptorIndex(0), mDescriptorCount(1) {}
+            : mBinding(0), mDescriptorIndex(0), mDescriptorType(vk::DescriptorType::eUniformBuffer) {}
 
     DescriptorMapping::~DescriptorMapping() = default;
 
-//    const vk::DescriptorSet &DescriptorMapping::getDescriptorSet() const {
-//        return mDescriptorSet;
-//    }
+    DescriptorMapping::DescriptorMapping(DescriptorMapping &&other) noexcept
+            : mBinding(other.mBinding),
+              mDescriptorIndex(other.mDescriptorIndex),
+              mDescriptorType(other.mDescriptorType),
+              mBufferInfos(std::move(other.mBufferInfos)),
+              mImageInfos(std::move(other.mImageInfos)) {}
+
+    DescriptorMapping &DescriptorMapping::operator=(DescriptorMapping &&other) noexcept {
+        if (this != &other) {
+            mBinding = other.mBinding;
+            mDescriptorIndex = other.mDescriptorIndex;
+            mDescriptorType = other.mDescriptorType;
+            mBufferInfos = std::move(other.mBufferInfos);
+            mImageInfos = std::move(other.mImageInfos);
+        }
+        return *this;
+    }
 
     uint32_t DescriptorMapping::getBinding() const {
         return mBinding;
@@ -24,29 +40,25 @@ namespace vklite {
     }
 
     uint32_t DescriptorMapping::getDescriptorCount() const {
-        return mDescriptorCount;
+        if (!mBufferInfos.empty()) {
+            return mBufferInfos.size();
+        }
+        if (!mImageInfos.empty()) {
+            return mImageInfos.size();
+        }
+        throw std::runtime_error("DescriptorMapping::getDescriptorCount(): no bufferInfos and imageInfos");
     }
 
     vk::DescriptorType DescriptorMapping::getDescriptorType() const {
         return mDescriptorType;
     }
 
-    std::optional<std::reference_wrapper<const std::vector<vk::DescriptorBufferInfo>>>
-    DescriptorMapping::getDescriptorBufferInfos() const {
-        if (auto *ptr = std::get_if<std::vector<vk::DescriptorBufferInfo>>(&mTarget)) {
-//            return std::optional(std::cref(*ptr));
-            return *ptr;
-        }
-        return std::nullopt;
+    const std::vector<vk::DescriptorBufferInfo> &DescriptorMapping::getDescriptorBufferInfos() const {
+        return mBufferInfos;
     }
 
-    std::optional<std::reference_wrapper<const std::vector<vk::DescriptorImageInfo>>>
-    DescriptorMapping::getDescriptorImageInfos() const {
-        if (auto *ptr = std::get_if<std::vector<vk::DescriptorImageInfo>>(&mTarget)) {
-//            return std::optional(std::cref(*ptr));
-            return *ptr;
-        }
-        return std::nullopt;
+    const std::vector<vk::DescriptorImageInfo> &DescriptorMapping::getDescriptorImageInfos() const {
+        return mImageInfos;
     }
 
 //    DescriptorMapping &DescriptorMapping::descriptorSet(vk::DescriptorSet descriptorSet) {
@@ -64,23 +76,13 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorMapping &DescriptorMapping::descriptorCount(uint32_t descriptorCount) {
-        mDescriptorCount = descriptorCount;
-        return *this;
-    }
-
     DescriptorMapping &DescriptorMapping::descriptorType(vk::DescriptorType descriptorType) {
         mDescriptorType = descriptorType;
         return *this;
     }
 
     DescriptorMapping &DescriptorMapping::addBufferInfo(vk::DescriptorBufferInfo bufferInfo) {
-        auto *bufferInfos = std::get_if<std::vector<vk::DescriptorBufferInfo>>(&mTarget);
-        if (bufferInfos == nullptr) {
-            mTarget = std::vector<vk::DescriptorBufferInfo>{bufferInfo};
-        } else {
-            bufferInfos->push_back(bufferInfo);
-        }
+        mBufferInfos.push_back(bufferInfo);
         return *this;
     }
 
@@ -94,13 +96,13 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorMapping &DescriptorMapping::bufferInfos(std::vector<vk::DescriptorBufferInfo> &&bufferInfos) {
+        mBufferInfos = std::move(bufferInfos);
+        return *this;
+    }
+
     DescriptorMapping &DescriptorMapping::addImageInfo(vk::DescriptorImageInfo imageInfo) {
-        auto *imageInfos = std::get_if<std::vector<vk::DescriptorImageInfo>>(&mTarget);
-        if (imageInfos == nullptr) {
-            mTarget = std::vector<vk::DescriptorImageInfo>{imageInfo};
-        } else {
-            imageInfos->push_back(imageInfo);
-        }
+        mImageInfos.push_back(imageInfo);
         return *this;
     }
 
@@ -111,6 +113,11 @@ namespace vklite {
 
     DescriptorMapping &DescriptorMapping::addImageInfo(const Sampler &sampler, const ImageView &imageView, vk::ImageLayout imageLayout) {
         addImageInfo(sampler.getSampler(), imageView.getImageView(), imageLayout);
+        return *this;
+    }
+
+    DescriptorMapping &DescriptorMapping::imageInfos(std::vector<vk::DescriptorImageInfo> &&imageInfos) {
+        mImageInfos = std::move(imageInfos);
         return *this;
     }
 

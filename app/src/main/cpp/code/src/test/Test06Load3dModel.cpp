@@ -98,20 +98,14 @@ namespace test06 {
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
                     .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
-                    .addMapping([&](vklite::DescriptorMapping &mapping) {
+                    .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
                         mapping
                                 .binding(0)
-                                .descriptorType(vk::DescriptorType::eUniformBuffer)
-//                                        .descriptorIndex(0)
-//                                        .descriptorCount(1)
                                 .addBufferInfo(mUniformBuffers[frameIndex].getBuffer());
                     })
-                    .addMapping([&](vklite::DescriptorMapping &mapping) {
+                    .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
                         mapping
                                 .binding(1)
-                                .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-//                                        .descriptorIndex(0)
-//                                        .descriptorCount(1)
                                 .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
                     });
         });

@@ -38,11 +38,11 @@ namespace vklite {
                     .setDstArrayElement(mapping.getDescriptorIndex())
 //                    .setDescriptorCount(mapping.getDescriptorCount())
                     .setDescriptorType(mapping.getDescriptorType());
-            if (mapping.getDescriptorBufferInfos().has_value()) {
-                writeDescriptorSet.setBufferInfo(mapping.getDescriptorBufferInfos().value().get());
+            if (!mapping.getDescriptorBufferInfos().empty()) {
+                writeDescriptorSet.setBufferInfo(mapping.getDescriptorBufferInfos());
             }
-            if (mapping.getDescriptorImageInfos().has_value()) {
-                writeDescriptorSet.setImageInfo(mapping.getDescriptorImageInfos().value().get());
+            if (!mapping.getDescriptorImageInfos().empty()) {
+                writeDescriptorSet.setImageInfo(mapping.getDescriptorImageInfos());
             }
 
             writeDescriptorSets.push_back(writeDescriptorSet);
