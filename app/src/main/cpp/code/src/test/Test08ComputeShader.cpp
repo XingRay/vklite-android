@@ -313,34 +313,32 @@ namespace test08 {
                 .device(mDevice->getDevice())
                 .build(mFrameCount);
 
-        vklite::DescriptorSetWriter computePipelineDescriptorSetWriter = vklite::DescriptorSetWriterBuilder()
-                .frameCount(mFrameCount)
-                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
-                    descriptorSetMappingConfigure
-                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-                                mapping
-                                        .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
-                                        .binding(0)
-                                        .descriptorType(vk::DescriptorType::eUniformBuffer)
-                                        .addBufferInfo(mUniformBuffers[frameIndex].getCombinedMemoryBuffer().getBuffer());
-                            })
-                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-                                mapping
-                                        .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
-                                        .binding(1)
-                                        .descriptorType(vk::DescriptorType::eStorageBuffer)
-                                        .addBufferInfo(mShaderStorageBuffers[(frameIndex - 1) % mFrameCount].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
-                            })
-                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-                                mapping
-                                        .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
-                                        .binding(2)
-                                        .descriptorType(vk::DescriptorType::eStorageBuffer)
-                                        .addBufferInfo(mShaderStorageBuffers[frameIndex].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
-                            });
-                })
-                .build();
-        mDevice->getDevice().updateDescriptorSets(computePipelineDescriptorSetWriter.createWriteDescriptorSets(), nullptr);
+//        vklite::DescriptorSetWriter computePipelineDescriptorSetWriter = vklite::DescriptorSetWriterBuilder()
+//                .frameCount(mFrameCount)
+//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
+//                    descriptorSetMappingConfigure
+//                            .descriptorSet(mComputePipelineResources[frameIndex].getDescriptorSets()[0])
+//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
+//                                mapping
+//                                        .binding(0)
+//                                        .descriptorType(vk::DescriptorType::eUniformBuffer)
+//                                        .addBufferInfo(mUniformBuffers[frameIndex].getCombinedMemoryBuffer().getBuffer());
+//                            })
+//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
+//                                mapping
+//                                        .binding(1)
+//                                        .descriptorType(vk::DescriptorType::eStorageBuffer)
+//                                        .addBufferInfo(mShaderStorageBuffers[(frameIndex - 1) % mFrameCount].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
+//                            })
+//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
+//                                mapping
+//                                        .binding(2)
+//                                        .descriptorType(vk::DescriptorType::eStorageBuffer)
+//                                        .addBufferInfo(mShaderStorageBuffers[frameIndex].getVkBuffer(), 0, (vk::DeviceSize) shaderStorageBufferSize);
+//                            });
+//                })
+//                .build();
+//        mDevice->getDevice().updateDescriptorSets(computePipelineDescriptorSetWriter.createWriteDescriptorSets(), nullptr);
 
         mTimer.start();
         LOG_D("test created ");

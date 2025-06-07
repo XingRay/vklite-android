@@ -17,7 +17,7 @@ namespace vklite {
 
     class DescriptorMapping {
     private:
-        vk::DescriptorSet mDescriptorSet;
+//        vk::DescriptorSet mDescriptorSet;
         uint32_t mBinding;
 
         uint32_t mDescriptorIndex;
@@ -33,8 +33,8 @@ namespace vklite {
 
         ~DescriptorMapping();
 
-        [[nodiscard]]
-        const vk::DescriptorSet &getDescriptorSet() const;
+//        [[nodiscard]]
+//        const vk::DescriptorSet &getDescriptorSet() const;
 
         [[nodiscard]]
         uint32_t getBinding() const;
@@ -56,7 +56,7 @@ namespace vklite {
 
 
         // basic info
-        DescriptorMapping &descriptorSet(vk::DescriptorSet descriptorSet);
+//        DescriptorMapping &descriptorSet(vk::DescriptorSet descriptorSet);
 
         DescriptorMapping &binding(uint32_t binding);
 

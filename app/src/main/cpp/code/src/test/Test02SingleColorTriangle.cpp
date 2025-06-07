@@ -78,9 +78,9 @@ namespace test02 {
 
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
+                    .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
                     .addMapping([&](vklite::DescriptorMapping &mapping) {
                         mapping
-                                .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
 //                                        .binding(0)
                                 .descriptorType(vk::DescriptorType::eUniformBuffer)
 //                                        .descriptorIndex(0)

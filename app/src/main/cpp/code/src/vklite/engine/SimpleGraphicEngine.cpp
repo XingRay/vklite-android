@@ -162,11 +162,17 @@ namespace vklite {
     }
 
     SimpleGraphicEngine &SimpleGraphicEngine::updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
-        DescriptorSetWriter descriptorSetWriter = DescriptorSetWriterBuilder()
+        std::vector<DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure(std::move(configure))
                 .build();
-        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriter.createWriteDescriptorSets();
+
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
+        for(DescriptorSetWriter& descriptorSetWriter : descriptorSetWriters){
+            std::vector<vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
+            writeDescriptorSets.insert(writeDescriptorSets.begin(), std::move_iterator(descriptorSets.begin()), std::move_iterator(descriptorSets.end()));
+        }
+
         LOG_D("mDevice->getDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
         for (const vk::WriteDescriptorSet &writeDescriptorSet: writeDescriptorSets) {
             LOG_D("\twriteDescriptorSet:");
@@ -194,10 +200,9 @@ namespace vklite {
                 }
             }
         }
+
         LOG_D("mDevice->getDevice().updateDescriptorSets");
-        const vk::Device &vkDevice = mDevice->getDevice();
-        LOG_D("vkDevice => %p", (void *) vkDevice);
-        vkDevice.updateDescriptorSets(writeDescriptorSets, nullptr);
+        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
         LOG_D("mDevice->getDevice().updateDescriptorSets ok");
 
         return *this;

@@ -11,9 +11,9 @@ namespace vklite {
 
     DescriptorMapping::~DescriptorMapping() = default;
 
-    const vk::DescriptorSet &DescriptorMapping::getDescriptorSet() const {
-        return mDescriptorSet;
-    }
+//    const vk::DescriptorSet &DescriptorMapping::getDescriptorSet() const {
+//        return mDescriptorSet;
+//    }
 
     uint32_t DescriptorMapping::getBinding() const {
         return mBinding;
@@ -49,10 +49,10 @@ namespace vklite {
         return std::nullopt;
     }
 
-    DescriptorMapping &DescriptorMapping::descriptorSet(vk::DescriptorSet descriptorSet) {
-        mDescriptorSet = descriptorSet;
-        return *this;
-    }
+//    DescriptorMapping &DescriptorMapping::descriptorSet(vk::DescriptorSet descriptorSet) {
+//        mDescriptorSet = descriptorSet;
+//        return *this;
+//    }
 
     DescriptorMapping &DescriptorMapping::binding(uint32_t binding) {
         mBinding = binding;

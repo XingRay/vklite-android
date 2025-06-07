@@ -10,6 +10,11 @@ namespace vklite {
 
     DescriptorSetMappingConfigure::~DescriptorSetMappingConfigure() = default;
 
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::descriptorSet(vk::DescriptorSet descriptorSet) {
+        mDescriptorSet = descriptorSet;
+        return *this;
+    }
+
     DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addMapping(DescriptorMapping &&descriptorMapping) {
         mDescriptorMappings.push_back(std::move(descriptorMapping));
         return *this;
@@ -22,8 +27,8 @@ namespace vklite {
         return *this;
     }
 
-    std::vector<DescriptorMapping> DescriptorSetMappingConfigure::getDescriptorMappings() {
-        return mDescriptorMappings;
+    DescriptorSetWriter DescriptorSetMappingConfigure::createDescriptorSetWriter() {
+        return DescriptorSetWriter(mDescriptorSet, std::move(mDescriptorMappings));
     }
 
 } // vklite

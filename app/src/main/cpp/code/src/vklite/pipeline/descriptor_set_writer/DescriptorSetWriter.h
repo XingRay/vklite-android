@@ -14,12 +14,21 @@ namespace vklite {
 
     class DescriptorSetWriter {
     private:
+        vk::DescriptorSet mDescriptorSet;
         std::vector<DescriptorMapping> mDescriptorMappings;
 
     public:
-        explicit DescriptorSetWriter(std::vector<DescriptorMapping> &&descriptorMappings);
+        explicit DescriptorSetWriter(vk::DescriptorSet descriptorSet, std::vector<DescriptorMapping> &&descriptorMappings);
 
         ~DescriptorSetWriter();
+
+        DescriptorSetWriter(const DescriptorSetWriter &other) = delete;
+
+        DescriptorSetWriter &operator=(const DescriptorSetWriter &other) = delete;
+
+        DescriptorSetWriter(DescriptorSetWriter &&other) noexcept;
+
+        DescriptorSetWriter &operator=(DescriptorSetWriter &&other) noexcept;
 
         [[nodiscard]]
         std::vector<vk::WriteDescriptorSet> createWriteDescriptorSets() const;

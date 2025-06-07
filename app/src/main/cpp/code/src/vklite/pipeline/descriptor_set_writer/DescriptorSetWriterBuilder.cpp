@@ -20,23 +20,17 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetWriter DescriptorSetWriterBuilder::build() const {
-        std::vector<DescriptorMapping> descriptorMappings;
+    std::vector<DescriptorSetWriter> DescriptorSetWriterBuilder::build() const {
+        std::vector<DescriptorSetWriter> descriptorSetWriters;
+        descriptorSetWriters.reserve(mFrameCount);
 
         for (uint32_t frameIndex = 0; frameIndex < mFrameCount; frameIndex++) {
             DescriptorSetMappingConfigure configure;
             mDescriptorSetMappingConfigure(frameIndex, configure);
-            std::vector<DescriptorMapping> writeDescriptorSetsOfFrame = configure.getDescriptorMappings();
-
-            descriptorMappings.insert(
-                    descriptorMappings.end(),
-                    std::make_move_iterator(writeDescriptorSetsOfFrame.begin()),
-                    std::make_move_iterator(writeDescriptorSetsOfFrame.end())
-            );
+            descriptorSetWriters.push_back(configure.createDescriptorSetWriter());
         }
 
-//        return DescriptorSetWriter(std::move(writeDescriptorSets));
-        return DescriptorSetWriter(std::move(descriptorMappings));
+        return descriptorSetWriters;
     }
 
 } // vklite

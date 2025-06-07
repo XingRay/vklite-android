@@ -4,12 +4,27 @@
 
 #include "DescriptorSetWriter.h"
 
+#include <utility>
+
 namespace vklite {
 
-    DescriptorSetWriter::DescriptorSetWriter(std::vector<DescriptorMapping> &&descriptorMappings)
-            : mDescriptorMappings(std::move(descriptorMappings)) {}
+    DescriptorSetWriter::DescriptorSetWriter(vk::DescriptorSet descriptorSet, std::vector<DescriptorMapping> &&descriptorMappings)
+            : mDescriptorSet(descriptorSet),
+              mDescriptorMappings(std::move(descriptorMappings)) {}
 
     DescriptorSetWriter::~DescriptorSetWriter() = default;
+
+    DescriptorSetWriter::DescriptorSetWriter(DescriptorSetWriter &&other) noexcept
+            : mDescriptorSet(std::exchange(other.mDescriptorSet, nullptr)),
+              mDescriptorMappings(std::move(other.mDescriptorMappings)) {}
+
+    DescriptorSetWriter &DescriptorSetWriter::operator=(DescriptorSetWriter &&other) noexcept {
+        if (this != &other) {
+            mDescriptorSet = std::exchange(other.mDescriptorSet, nullptr);
+            mDescriptorMappings = std::move(other.mDescriptorMappings);
+        }
+        return *this;
+    }
 
     std::vector<vk::WriteDescriptorSet> DescriptorSetWriter::createWriteDescriptorSets() const {
         std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
@@ -18,7 +33,7 @@ namespace vklite {
             vk::WriteDescriptorSet writeDescriptorSet{};
 
             writeDescriptorSet
-                    .setDstSet(mapping.getDescriptorSet())
+                    .setDstSet(mDescriptorSet)
                     .setDstBinding(mapping.getBinding())
                     .setDstArrayElement(mapping.getDescriptorIndex())
 //                    .setDescriptorCount(mapping.getDescriptorCount())

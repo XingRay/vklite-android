@@ -31,7 +31,7 @@ namespace vklite {
         DescriptorSetWriterBuilder &descriptorSetMappingConfigure(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
 
         [[nodiscard]]
-        DescriptorSetWriter build() const;
+        std::vector<DescriptorSetWriter> build() const;
     };
 
 } // vklite
