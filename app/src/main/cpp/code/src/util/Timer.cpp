@@ -24,4 +24,15 @@ namespace util {
         return (float) (((double) (getElapsedTimeMs())) / 1000.0);
     }
 
+    uint64_t Timer::getDeltaTimeMs() {
+        auto currentTime = std::chrono::steady_clock::now();
+        auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - mLastTime).count();
+        mLastTime = currentTime;
+        return deltaTime;
+    }
+
+    float Timer::getDeltaTimeSecond() {
+        return (float) (((double) (getDeltaTimeMs())) / 1000.0);
+    }
+
 } // util

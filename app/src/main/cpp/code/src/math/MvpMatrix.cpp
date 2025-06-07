@@ -12,7 +12,7 @@ namespace math {
             : mModel(model), mView(view), mProjection(projection) {}
 
     MvpMatrix::MvpMatrix()
-            : mModel{}, mView{}, mProjection{} {}
+            : mModel{glm::mat4(1.0f)}, mView{glm::mat4(1.0f)}, mProjection{glm::mat4(1.0f)} {}
 
     MvpMatrix::~MvpMatrix() = default;
 
@@ -45,6 +45,41 @@ namespace math {
 
     glm::mat4 MvpMatrix::calcMvp() {
         return mProjection * mView * mModel;
+    }
+
+    MvpMatrix &MvpMatrix::modelRotateX(float angle) {
+        mModel = glm::rotate(mModel, angle, glm::vec3(1.0f, 0.0f, 0.0f));
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelRotateY(float angle) {
+        mModel = glm::rotate(mModel, angle, glm::vec3(0.0f, 1.0f, 0.0f));
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelRotateZ(float angle) {
+        mModel = glm::rotate(mModel, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelScale(float scaleX, float scaleY, float scaleZ) {
+        mModel = glm::scale(mModel, glm::vec3(scaleX, scaleY, scaleZ));
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelScaleX(float scale) {
+        modelScale(scale, 1.0f, 1.0f);
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelScaleY(float scale) {
+        modelScale(1.0f, scale, 1.0f);
+        return *this;
+    }
+
+    MvpMatrix &MvpMatrix::modelScaleZ(float scale) {
+        modelScale(1.0f, 1.0f, scale);
+        return *this;
     }
 
 } // matrix

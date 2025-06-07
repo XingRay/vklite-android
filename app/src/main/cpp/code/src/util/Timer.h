@@ -12,6 +12,7 @@ namespace util {
     class Timer {
     private:
         std::chrono::steady_clock::time_point mStartTime;
+        std::chrono::steady_clock::time_point mLastTime;
 
     public:
         Timer();
@@ -23,6 +24,10 @@ namespace util {
         uint64_t getElapsedTimeMs();
 
         float getElapsedTimeSecond();
+
+        uint64_t getDeltaTimeMs();
+
+        float getDeltaTimeSecond();
     };
 
 } // util

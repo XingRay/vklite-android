@@ -41,6 +41,20 @@ namespace math {
         glm::mat4 &getProjection();
 
         glm::mat4 calcMvp();
+
+        MvpMatrix &modelRotateX(float angle);
+
+        MvpMatrix &modelRotateY(float angle);
+
+        MvpMatrix &modelRotateZ(float angle);
+
+        MvpMatrix &modelScale(float scaleX, float scaleY, float scaleZ);
+
+        MvpMatrix &modelScaleX(float scale);
+
+        MvpMatrix &modelScaleY(float scale);
+
+        MvpMatrix &modelScaleZ(float scale);
     };
 
 } // matrix

@@ -66,15 +66,10 @@ namespace test06 {
 
 
         mMvpMatrix = math::MvpMatrix{};
-        float scale = 1.0f;
-
         float screenWidth = ANativeWindow_getWidth(mApp.window);
         float screenHeight = ANativeWindow_getHeight(mApp.window);
         float aspectRatio = screenWidth / screenHeight;
 
-        glm::mat4 modelMat = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
-        modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        mMvpMatrix.model(modelMat);
         mMvpMatrix.view(glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f),
                                     glm::vec3(0.0f, 0.0f, 0.0f),
                                     glm::vec3(0.0f, 0.0f, 1.0f)));
@@ -99,11 +94,6 @@ namespace test06 {
         mUniformBuffers = mEngine->uniformBufferBuilder()
                 .size(sizeof(math::MvpMatrix))
                 .build(mEngine->getFrameCount());
-
-        glm::mat4 mvp = mMvpMatrix.getProjection() * mMvpMatrix.getView() * mMvpMatrix.getModel();
-        for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-            mUniformBuffers[i].update(mEngine->getCommandPool(), &mvp, sizeof(glm::mat4));
-        }
 
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
@@ -135,15 +125,11 @@ namespace test06 {
 
     // 绘制三角形帧
     void Test06Load3dModel::drawFrame() {
-        float time = mTimer.getElapsedTimeSecond();
+        float deltaTime = mTimer.getDeltaTimeSecond();
 
-        float scale = 1.0f;
+        mMvpMatrix.modelRotateZ(deltaTime * glm::radians(90.0f));
 
-        glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
-        model = glm::rotate(model, time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        mMvpMatrix.model(model);
-
-        glm::mat4 mvp = mMvpMatrix.getProjection() * mMvpMatrix.getView() * mMvpMatrix.getModel();
+        glm::mat4 mvp = mMvpMatrix.calcMvp();
         mUniformBuffers[mEngine->getFrameIndex()].update(mEngine->getCommandPool(), &mvp, sizeof(glm::mat4));
 
         mEngine->drawIndexed();
