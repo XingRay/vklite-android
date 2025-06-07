@@ -65,7 +65,7 @@ namespace test06 {
         mEngine->addVertexBuffer(*mVertexBuffer);
 
 
-        mMvpMatrix = MvpMatrix{};
+        mMvpMatrix = math::MvpMatrix{};
         float scale = 1.0f;
 
         float screenWidth = ANativeWindow_getWidth(mApp.window);
@@ -74,15 +74,15 @@ namespace test06 {
 
         glm::mat4 modelMat = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
         modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        mMvpMatrix.model = modelMat;
-        mMvpMatrix.view = glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f),
-                                      glm::vec3(0.0f, 0.0f, 0.0f),
-                                      glm::vec3(0.0f, 0.0f, 1.0f));
-        mMvpMatrix.proj = glm::perspective(glm::radians(45.0f),
-                                           aspectRatio,
-                                           1.0f,
-                                           20.0f);
-        mMvpMatrix.proj[1][1] *= -1;
+        mMvpMatrix.model(modelMat);
+        mMvpMatrix.view(glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f),
+                                    glm::vec3(0.0f, 0.0f, 0.0f),
+                                    glm::vec3(0.0f, 0.0f, 1.0f)));
+        mMvpMatrix.projection(glm::perspective(glm::radians(45.0f),
+                                               aspectRatio,
+                                               1.0f,
+                                               20.0f));
+        mMvpMatrix.getProjection()[1][1] *= -1;
         mTimer.start();
 
         mSamplers = mEngine->samplerBuilder()
@@ -100,7 +100,7 @@ namespace test06 {
                 .size(sizeof(math::MvpMatrix))
                 .build(mEngine->getFrameCount());
 
-        glm::mat4 mvp = mMvpMatrix.proj * mMvpMatrix.view * mMvpMatrix.model;
+        glm::mat4 mvp = mMvpMatrix.getProjection() * mMvpMatrix.getView() * mMvpMatrix.getModel();
         for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
             mUniformBuffers[i].update(mEngine->getCommandPool(), &mvp, sizeof(glm::mat4));
         }
@@ -141,9 +141,9 @@ namespace test06 {
 
         glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
         model = glm::rotate(model, time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        mMvpMatrix.model = model;
+        mMvpMatrix.model(model);
 
-        glm::mat4 mvp = mMvpMatrix.proj * mMvpMatrix.view * mMvpMatrix.model;
+        glm::mat4 mvp = mMvpMatrix.getProjection() * mMvpMatrix.getView() * mMvpMatrix.getModel();
         mUniformBuffers[mEngine->getFrameIndex()].update(mEngine->getCommandPool(), &mvp, sizeof(glm::mat4));
 
         mEngine->drawIndexed();

@@ -18,11 +18,11 @@
 
 namespace test06 {
 
-    struct MvpMatrix {
-        glm::mat4 model; // 模型矩阵
-        glm::mat4 view;  // 视图矩阵
-        glm::mat4 proj;  // 投影矩阵
-    };
+//    struct MvpMatrix {
+//        glm::mat4 model; // 模型矩阵
+//        glm::mat4 view;  // 视图矩阵
+//        glm::mat4 proj;  // 投影矩阵
+//    };
 
     class Test06Load3dModel : public test::TestBase {
     private:
@@ -32,7 +32,7 @@ namespace test06 {
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 
-        MvpMatrix mMvpMatrix{};
+        math::MvpMatrix mMvpMatrix{};
         util::Timer mTimer;
 
         std::vector<vklite::CombinedImageSampler> mSamplers;
