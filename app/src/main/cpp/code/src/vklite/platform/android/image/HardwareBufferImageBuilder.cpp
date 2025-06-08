@@ -3,7 +3,6 @@
 //
 
 #include "HardwareBufferImageBuilder.h"
-#include "HardwareBufferImage.h"
 
 namespace vklite {
 

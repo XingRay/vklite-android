@@ -25,9 +25,9 @@ namespace vklite {
 
         HardwareBufferDeviceMemoryBuilder &device(vk::Device device);
 
-        HardwareBufferDeviceMemoryBuilder &setHardwareBuffer(AHardwareBuffer *hardwareBuffer);
+        HardwareBufferDeviceMemoryBuilder &hardwareBuffer(AHardwareBuffer *hardwareBuffer);
 
-        HardwareBufferDeviceMemoryBuilder &setImage(vk::Image image);
+        HardwareBufferDeviceMemoryBuilder &image(vk::Image image);
 
         HardwareBufferDeviceMemoryBuilder &allocationSize(vk::DeviceSize allocationSize);
 

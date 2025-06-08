@@ -38,17 +38,10 @@ namespace test07 {
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
 
-        std::vector<vklite::CombinedImageSampler> mSamplers;
-        // hardware buffer
-        std::unique_ptr<vklite::SamplerYcbcrConversion> mConversion;
-        std::unique_ptr<vklite::Sampler> mHardwareBufferSampler;
-
-        std::unique_ptr<vklite::Image> mHardwareBufferImage;
-        std::unique_ptr<vklite::ImageView> mHardwareBufferImageView;
-
+        std::unique_ptr<vklite::CombinedHardwareBufferSampler> mSampler;
+        std::unique_ptr<vklite::CombinedHardwareBufferImageView> mImageView;
 
         std::unique_ptr<util::FrameCounter> mFrameCounter;
-
         std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
 
 

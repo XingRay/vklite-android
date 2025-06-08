@@ -4,6 +4,7 @@
 
 #include "HardwareBuffer.h"
 #include "vklite/util/VkCheck.h"
+#include <utility>
 
 namespace vklite {
 
@@ -14,9 +15,45 @@ namespace vklite {
             : mHardwareBuffer(hardwareBuffer),
               mPropertiesInfo(propertiesInfo),
               mFormatInfo(formatInfo),
-              mHardwareBufferDescription(hardwareBufferDescription) {}
+              mHardwareBufferDescription(hardwareBufferDescription) {
+        mPropertiesInfo.pNext = &mFormatInfo;
+    }
 
     HardwareBuffer::~HardwareBuffer() = default;
+
+    HardwareBuffer::HardwareBuffer(const HardwareBuffer &other) = default;
+
+    HardwareBuffer &HardwareBuffer::operator=(const HardwareBuffer &other) {
+        if (this != &other) {
+            mHardwareBuffer = other.mHardwareBuffer;
+            mPropertiesInfo = other.mPropertiesInfo;
+            mFormatInfo = other.mFormatInfo;
+            mHardwareBufferDescription = other.mHardwareBufferDescription;
+
+            mPropertiesInfo.pNext = &mFormatInfo;
+        }
+        return *this;
+    }
+
+    HardwareBuffer::HardwareBuffer(HardwareBuffer &&other) noexcept
+            : mHardwareBuffer(std::exchange(other.mHardwareBuffer, nullptr)),
+              mPropertiesInfo(other.mPropertiesInfo),
+              mFormatInfo(other.mFormatInfo),
+              mHardwareBufferDescription(other.mHardwareBufferDescription) {
+        mPropertiesInfo.pNext = &mFormatInfo;
+    }
+
+    HardwareBuffer &HardwareBuffer::operator=(HardwareBuffer &&other) noexcept {
+        if (this != &other) {
+            mHardwareBuffer = std::exchange(other.mHardwareBuffer, nullptr);
+            mPropertiesInfo = other.mPropertiesInfo;
+            mFormatInfo = other.mFormatInfo;
+            mHardwareBufferDescription = other.mHardwareBufferDescription;
+
+            mPropertiesInfo.pNext = &mFormatInfo;
+        }
+        return *this;
+    }
 
     vk::AndroidHardwareBufferPropertiesANDROID HardwareBuffer::getProperties() const {
         return mPropertiesInfo;

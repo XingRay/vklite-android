@@ -49,6 +49,8 @@ namespace ndkcamera {
 
         std::optional<Image> acquireLatestImage();
 
+        Image acquireLatestImageWithBuffer();
+
     private:
         static void onImageAvailable(void *context, AImageReader *reader);
     };

@@ -25,6 +25,14 @@ namespace vklite {
 
         ~HardwareBuffer();
 
+        HardwareBuffer(const HardwareBuffer &other);
+
+        HardwareBuffer &operator=(const HardwareBuffer &other);
+
+        HardwareBuffer(HardwareBuffer &&other) noexcept;
+
+        HardwareBuffer &operator=(HardwareBuffer &&other) noexcept;
+
         [[nodiscard]]
         vk::AndroidHardwareBufferPropertiesANDROID getProperties() const;
 

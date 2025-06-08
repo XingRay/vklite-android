@@ -103,7 +103,13 @@ namespace vklite {
         Device &getDevice() const;
 
         [[nodiscard]]
+        vk::Device getVkDevice() const;
+
+        [[nodiscard]]
         PhysicalDevice &getPhysicalDevice() const;
+
+        [[nodiscard]]
+        vk::PhysicalDeviceMemoryProperties getMemoryProperties() const;
 
         [[nodiscard]]
         uint32_t getFrameCount() const;

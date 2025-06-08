@@ -12,7 +12,6 @@
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/image/Image.h"
 
-
 namespace vklite {
 
     class HardwareBufferImageBuilder {

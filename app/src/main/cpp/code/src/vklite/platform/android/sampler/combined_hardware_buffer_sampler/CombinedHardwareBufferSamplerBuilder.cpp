@@ -3,10 +3,12 @@
 //
 
 #include "CombinedHardwareBufferSamplerBuilder.h"
+#include "vklite/util/VulkanUtil.h"
+#include "vklite/platform/android/instance/VulkanAndroidApi.h"
 
 namespace vklite {
 
-    CombinedHardwareBufferSamplerBuilder::CombinedHardwareBufferSamplerBuilder() = default;
+    CombinedHardwareBufferSamplerBuilder::CombinedHardwareBufferSamplerBuilder() {}
 
     CombinedHardwareBufferSamplerBuilder::~CombinedHardwareBufferSamplerBuilder() = default;
 
@@ -23,25 +25,16 @@ namespace vklite {
     }
 
     CombinedHardwareBufferSampler CombinedHardwareBufferSamplerBuilder::build() {
+
+
         SamplerYcbcrConversion conversion = mHardwareBufferYcbcrConversionBuilder.build();
-        Image image = mHardwareBufferImageBuilder.build();
-        DeviceMemory deviceMemory = mHardwareBufferDeviceMemoryBuilder.build();
-        ImageView imageView = mHardwareBufferImageViewBuilder.build();
+
         Sampler sampler = mHardwareBufferSamplerBuilder
                 .ycbcrConversion(conversion.getSamplerYcbcrConversion())
                 .build();
 
-//        return CombinedHardwareBufferSampler(std::move(conversion),
-//                                             std::move(image),
-//                                             std::move(deviceMemory),
-//                                             std::move(imageView),
-//                                             std::move(sampler));
-
-        return {
+        return CombinedHardwareBufferSampler{
                 std::move(conversion),
-                std::move(image),
-                std::move(deviceMemory),
-                std::move(imageView),
                 std::move(sampler)
         };
     }

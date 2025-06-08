@@ -513,6 +513,15 @@ namespace vklite {
         return VulkanUtil::findMemoryTypeIndex(memoryRequirements.memoryTypeBits, memoryPropertyFlags, memoryProperties);
     }
 
+    uint32_t VulkanUtil::findMemoryTypeIndex(vk::PhysicalDeviceMemoryProperties memoryProperties, uint32_t typeFilter) {
+        for (uint32_t index = 0; index < memoryProperties.memoryTypeCount; index++) {
+            if ((typeFilter & (1 << index)) != 0) {
+                return index;
+            }
+        }
+        throw std::runtime_error("failed to find suitable memory type for typeFilter");
+    }
+
     std::string VulkanUtil::toString(vk::ImageTiling imageTiling) {
         switch (imageTiling) {
             case vk::ImageTiling::eOptimal:

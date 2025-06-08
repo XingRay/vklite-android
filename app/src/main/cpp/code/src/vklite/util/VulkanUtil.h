@@ -57,6 +57,8 @@ namespace vklite {
                                             vk::MemoryRequirements memoryRequirements,
                                             vk::MemoryPropertyFlags memoryPropertyFlags);
 
+        static uint32_t findMemoryTypeIndex(vk::PhysicalDeviceMemoryProperties memoryProperties, uint32_t typeFilter);
+
         static std::string toString(vk::ImageTiling imageTiling);
 
         static std::string toString(vk::ImageType imageType);

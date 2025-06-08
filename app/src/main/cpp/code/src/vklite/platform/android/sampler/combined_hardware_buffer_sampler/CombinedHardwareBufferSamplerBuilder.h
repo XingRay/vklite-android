@@ -15,6 +15,7 @@
 #include "vklite/platform/android/sampler/HardwareBufferSamplerBuilder.h"
 
 #include "vklite/platform/android/sampler/combined_hardware_buffer_sampler/CombinedHardwareBufferSampler.h"
+#include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
 
 namespace vklite {
 
@@ -23,15 +24,8 @@ namespace vklite {
         vk::Device mDevice;
 
         SamplerYcbcrConversionBuilder mHardwareBufferYcbcrConversionBuilder;
-        HardwareBufferImageBuilder mHardwareBufferImageBuilder;
-        HardwareBufferDeviceMemoryBuilder mHardwareBufferDeviceMemoryBuilder;
-        HardwareBufferImageViewBuilder mHardwareBufferImageViewBuilder;
         HardwareBufferSamplerBuilder mHardwareBufferSamplerBuilder;
-
-        // bind memory
-        vk::DeviceSize mMemoryOffset;
-        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
-        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
+//        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
     public:
         CombinedHardwareBufferSamplerBuilder();

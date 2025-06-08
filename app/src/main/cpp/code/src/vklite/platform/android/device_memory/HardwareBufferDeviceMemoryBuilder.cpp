@@ -18,13 +18,13 @@ namespace vklite {
         return *this;
     }
 
-    HardwareBufferDeviceMemoryBuilder &HardwareBufferDeviceMemoryBuilder::setHardwareBuffer(AHardwareBuffer *hardwareBuffer) {
+    HardwareBufferDeviceMemoryBuilder &HardwareBufferDeviceMemoryBuilder::hardwareBuffer(AHardwareBuffer *hardwareBuffer) {
         mHardwareBufferInfo
                 .setBuffer(hardwareBuffer);
         return *this;
     }
 
-    HardwareBufferDeviceMemoryBuilder &HardwareBufferDeviceMemoryBuilder::setImage(vk::Image image) {
+    HardwareBufferDeviceMemoryBuilder &HardwareBufferDeviceMemoryBuilder::image(vk::Image image) {
         mMemoryDedicatedAllocateInfo.setImage(image);
         return *this;
     }

@@ -17,17 +17,10 @@ namespace vklite {
     class CombinedHardwareBufferSampler {
     private:
         SamplerYcbcrConversion mConversion;
-        Image mImage;
-        DeviceMemory mDeviceMemory;
-        ImageView mImageView;
         Sampler mSampler;
 
     public:
-        CombinedHardwareBufferSampler(SamplerYcbcrConversion &&conversion,
-                                      Image &&image,
-                                      DeviceMemory &&deviceMemory,
-                                      ImageView &&imageView,
-                                      Sampler &&sampler);
+        explicit CombinedHardwareBufferSampler(SamplerYcbcrConversion &&conversion, Sampler &&sampler);
 
         ~CombinedHardwareBufferSampler();
 
@@ -42,16 +35,9 @@ namespace vklite {
 
         const SamplerYcbcrConversion &getConversion() const;
 
-        const Image &getImage() const;
-
-        const DeviceMemory &getDeviceMemory() const;
-
-        const ImageView &getImageView() const;
-
         const Sampler &getSampler() const;
 
         const vk::Sampler &getVkSampler() const;
-
 
     };
 

@@ -75,6 +75,21 @@ namespace ndkcamera {
         return mImageReader->acquireLatestImage();
     }
 
+    Image NdkCamera::acquireLatestImageWithBuffer() {
+        AHardwareBuffer *pHardwareBuffer = nullptr;
+        std::optional<ndkcamera::Image> image = std::nullopt;
+        while (pHardwareBuffer == nullptr) {
+            LOG_D("waiting for getLatestHardwareBuffer...");
+            image = acquireLatestImage();
+            if (!image.has_value()) {
+                continue;
+            }
+            pHardwareBuffer = image.value().getHardwareBuffer();
+        }
+
+        return std::move(image.value());
+    }
+
     void NdkCamera::onImageAvailable(void *context, AImageReader *reader) {
         NdkCamera *ndkCamera = static_cast<NdkCamera *>(context);
         AImage *image = nullptr;

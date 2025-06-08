@@ -45,15 +45,24 @@ namespace test07 {
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
         mNdkCamera->startPreview();
 
-        AHardwareBuffer *hardwareBuffer = nullptr;
-        while (hardwareBuffer == nullptr) {
-            LOG_D("waiting for getLatestHardwareBuffer...");
-            std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
-            if (!image.has_value()) {
-                continue;
-            }
-            hardwareBuffer = image.value().getHardwareBuffer();
-        }
+//        AHardwareBuffer *pHardwareBuffer = nullptr;
+//        while (pHardwareBuffer == nullptr) {
+//            LOG_D("waiting for getLatestHardwareBuffer...");
+//            std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
+//            if (!image.has_value()) {
+//                continue;
+//            }
+//            pHardwareBuffer = image.value().getHardwareBuffer();
+//        }
+        ndkcamera::Image image = mNdkCamera->acquireLatestImageWithBuffer();
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), image.getHardwareBuffer());
+
+        mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
+                .device(mEngine->getDevice().getDevice())
+//                .memoryProperties(mEngine->getMemoryProperties())
+//                .hardwareBuffer(hardwareBuffer)
+                .buildUnique();
+
 
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/07_ndk_camera.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/07_ndk_camera.frag.spv");
@@ -72,39 +81,17 @@ namespace test07 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {}, vk::ShaderStageFlagBits::eFragment);
+                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
                 });
 
         mEngine->shaderConfigure(shaderConfigure);
-
-
-//        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mPhysicalDevice, *mDevice, vkHardwareBuffer, *mConversion);
-//        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
-//                .format(vkHardwareBuffer.getFormatProperties().format)
-//                .conversion((*mConversion).getSamplerYcbcrConversion())
-//                .buildUnique(*mDevice, *mHardwareBufferImage);
-//
-//        vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
-//                .frameCount(mFrameCount)
-//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
-//                    descriptorSetMappingConfigure
-//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-//                                mapping
-//                                        .binding(0)
-//                                        .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
-//                                        .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-//                                        .addImageInfo(*mHardwareBufferSampler, *mHardwareBufferImageView);
-//                            });
-//                })
-//                .build();
-//        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
 
         mFrameCounter = std::make_unique<util::FrameCounter>();
         LOG_D("test created ");
     }
 
     void Test07NdkCamera::init() {
-// x轴朝右, y轴朝下, z轴朝前, 右手系 (x,y)->z
+        // x轴朝右, y轴朝下, z轴朝前, 右手系 (x,y)->z
         std::vector<Vertex> vertices = {
                 {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}}, // 左上角
                 {{1.0f,  -1.0f, 0.0f}, {0.0f, 0.0f}}, // 右上角
@@ -142,125 +129,33 @@ namespace test07 {
             LOG_D("Test07NdkCamera::drawFrame(), no image");
             return;
         }
-        AHardwareBuffer *hardwareBuffer = image.value().getHardwareBuffer();
-        if (hardwareBuffer == nullptr) {
+        AHardwareBuffer *pHardwareBuffer = image.value().getHardwareBuffer();
+        if (pHardwareBuffer == nullptr) {
             LOG_D("Test07NdkCamera::drawFrame(), no hardwareBuffer");
             return;
         }
 
-//        vklite::HardwareBuffer vkHardwareBuffer = vklite::HardwareBuffer::build(*mDevice, hardwareBuffer);
-//        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mPhysicalDevice, *mDevice, vkHardwareBuffer, *mConversion);
-//        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
-//                .format(vkHardwareBuffer.getFormatProperties().format)
-//                .conversion((*mConversion).getSamplerYcbcrConversion())
-//                .buildUnique(*mDevice, *mHardwareBufferImage);
-//
-//        vklite::DescriptorSetWriter descriptorSetWriter = vklite::DescriptorSetWriterBuilder()
-//                .frameCount(mFrameCount)
-//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &descriptorSetMappingConfigure) {
-//                    descriptorSetMappingConfigure
-//                            .addMapping([&](vklite::DescriptorMapping &mapping) {
-//                                mapping
-//                                        .binding(0)
-//                                        .descriptorSet(mPipelineResources[frameIndex].getDescriptorSets()[0])
-//                                        .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-//                                        .addImageInfo(*mHardwareBufferSampler, *mHardwareBufferImageView);
-//                            });
-//                })
-//                .build();
-//        mDevice->getDevice().updateDescriptorSets(descriptorSetWriter.createWriteDescriptorSets(), nullptr);
-//
-//        const vk::Device vkDevice = mDevice->getDevice();
-//        vk::Semaphore imageAvailableSemaphore = mSyncObject->getImageAvailableSemaphore(mCurrentFrameIndex);
-//        vk::Semaphore renderFinishedSemaphore = mSyncObject->getRenderFinishedSemaphore(mCurrentFrameIndex);
-//        vk::Fence fence = mSyncObject->getFence(mCurrentFrameIndex);
-//        std::array<vk::Fence, 1> waitFences = {fence};
-//
-//        vk::Result result = vkDevice.waitForFences(waitFences, vk::True, std::numeric_limits<uint64_t>::max());
-//        if (result != vk::Result::eSuccess) {
-//            LOG_E("waitForFences failed");
-//            throw std::runtime_error("waitForFences failed");
-//        }
-//
-//        // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-//        auto [acquireResult, imageIndex] = vkDevice.acquireNextImageKHR(mSwapchain->getSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore);
-//        if (acquireResult != vk::Result::eSuccess) {
-//            if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
-//                // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。
-//                LOG_E("acquireNextImageKHR: eErrorOutOfDateKHR, recreateSwapChain");
-////                recreateSwapChain();
-//                return;
-//            } else if (acquireResult == vk::Result::eSuboptimalKHR) {
-//                //vk::Result::eSuboptimalKHR 交换链仍然可以成功显示到表面，但表面属性不再完全匹配。
-//                LOG_D("acquireNextImageKHR: eSuboptimalKHR");
-//            } else {
-//                LOG_E("acquireNextImageKHR: failed: %d", acquireResult);
-//                throw std::runtime_error("acquireNextImageKHR failed");
-//            }
-//        }
-//
-//        const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
-//        commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-//            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFrameBuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-//                mGraphicsPipeline->drawFrame(vkCommandBuffer, *mPipelineLayout, mPipelineResources[mCurrentFrameIndex], mViewports, mScissors);
-//            });
-//        });
-//
-//        result = mSyncObject->resetFence(mCurrentFrameIndex);
-//        if (result != vk::Result::eSuccess) {
-//            throw std::runtime_error("resetFences failed");
-//        }
-//
-//        std::array<vk::Semaphore, 1> waitSemaphores = {imageAvailableSemaphore};
-//        std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
-//        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer.getCommandBuffer()};
-//        std::array<vk::Semaphore, 1> signalSemaphores = {renderFinishedSemaphore};
-//
-//        vk::SubmitInfo submitInfo{};
-//        submitInfo
-//                .setWaitSemaphores(waitSemaphores)
-//                .setWaitDstStageMask(waitStages)
-//                .setCommandBuffers(commandBuffers)
-//                .setSignalSemaphores(signalSemaphores);
-//
-//        std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
-////        mDevice->getGraphicsQueue().submit(submitInfos, fence);
-//
-//        std::array<vk::SwapchainKHR, 1> swapChains = {mSwapchain->getSwapChain()};
-//        std::array<uint32_t, 1> imageIndices = {imageIndex};
-//        vk::PresentInfoKHR presentInfo{};
-//        presentInfo
-//                .setWaitSemaphores(signalSemaphores)
-//                .setSwapchains(swapChains)
-//                .setImageIndices(imageIndices);
-//
-//        // https://github.com/KhronosGroup/Vulkan-Hpp/issues/599
-//        // 当出现图片不匹配时， cpp风格的 presentKHR 会抛出异常， 而不是返回 result， 而C风格的 presentKHR 接口会返回 result
-//        try {
-////            result = mDevice->getPresentQueue().presentKHR(presentInfo);
-//        } catch (const vk::OutOfDateKHRError &e) {
-//            LOG_E("mPresentQueue.presentKHR => OutOfDateKHRError");
-//            result = vk::Result::eErrorOutOfDateKHR;
-//        }
-//
-//        if (result != vk::Result::eSuccess) {
-//            if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFramebufferResized) {
-//                mFramebufferResized = false;
-//                LOG_E("presentKHR: eErrorOutOfDateKHR or eSuboptimalKHR or mFramebufferResized, recreateSwapChain");
-//                // todo: recreateSwapChain
-////                recreateSwapChain();
-//                return;
-//            } else {
-//                throw std::runtime_error("presentKHR failed");
-//            }
-//        }
-//
-//        mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mFrameCount;
-//
-//
-//        // 增加帧计数器
-//        mFrameCounter->count();
-//        LOG_D("FPS: %.2f", mFrameCounter->getFps());
+        vklite::HardwareBuffer vkHardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), pHardwareBuffer);
+        mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
+                .device((*mEngine).getVkDevice())
+                .buildUnique();
+
+        mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &mappingConfigure) {
+            mappingConfigure
+                    .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
+                    .addMapping([&](vklite::DescriptorMapping &descriptorMapping) {
+                        descriptorMapping
+                                .binding(0)
+                                .descriptorType(vk::DescriptorType::eCombinedImageSampler)
+                                .addImageInfo(mSampler->getSampler(), mImageView->getImageView());
+                    });
+        });
+
+        mEngine->drawIndexed();
+
+        // 增加帧计数器
+        mFrameCounter->count();
+        LOG_D("FPS: %.2f", mFrameCounter->getFps());
     }
 
     // 清理操作
