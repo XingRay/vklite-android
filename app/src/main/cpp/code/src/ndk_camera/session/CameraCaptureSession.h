@@ -8,11 +8,11 @@
 
 #include "camera/NdkCameraCaptureSession.h"
 
-#include "ndk_camera/CaptureSessionOutputContainer.h"
+#include "CaptureSessionOutputContainer.h"
 #include "ndk_camera/CaptureRequest.h"
 
-#include "ndk_camera/CameraCaptureSessionStateCallbacks.h"
-#include "ndk_camera/CameraCaptureSessionCaptureCallbacks.h"
+#include "CameraCaptureSessionStateCallbacks.h"
+#include "CameraCaptureSessionCaptureCallbacks.h"
 
 namespace ndkcamera {
 

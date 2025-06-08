@@ -2,11 +2,11 @@
 // Created by leixing on 2025/1/21.
 //
 
-#include "ndk_camera/Image.h"
+#include "Image.h"
 
 #include <utility>
 
-#include "Log.h"
+#include "ndk_camera/Log.h"
 
 namespace ndkcamera {
 

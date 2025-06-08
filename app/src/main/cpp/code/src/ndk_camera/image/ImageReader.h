@@ -9,9 +9,9 @@
 
 #include <media/NdkImageReader.h>
 
-#include "ndk_camera/CaptureSessionOutput.h"
+#include "ndk_camera/session/CaptureSessionOutput.h"
 #include "ndk_camera/CameraOutputTarget.h"
-#include "ndk_camera/Image.h"
+#include "Image.h"
 #include "ndk_camera/NativeWindow.h"
 
 namespace ndkcamera {

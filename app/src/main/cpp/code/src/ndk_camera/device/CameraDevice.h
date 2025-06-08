@@ -8,9 +8,9 @@
 
 #include "camera/NdkCameraDevice.h"
 
-#include "ndk_camera/CameraCaptureSession.h"
+#include "ndk_camera/session/CameraCaptureSession.h"
 #include "ndk_camera/CaptureRequest.h"
-#include "ndk_camera/CameraDeviceStateCallbacks.h"
+#include "CameraDeviceStateCallbacks.h"
 
 namespace ndkcamera {
 

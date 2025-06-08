@@ -45,15 +45,6 @@ namespace test07 {
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
         mNdkCamera->startPreview();
 
-//        AHardwareBuffer *pHardwareBuffer = nullptr;
-//        while (pHardwareBuffer == nullptr) {
-//            LOG_D("waiting for getLatestHardwareBuffer...");
-//            std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
-//            if (!image.has_value()) {
-//                continue;
-//            }
-//            pHardwareBuffer = image.value().getHardwareBuffer();
-//        }
         ndkcamera::Image image = mNdkCamera->acquireLatestImageWithBuffer();
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), image.getHardwareBuffer());
 

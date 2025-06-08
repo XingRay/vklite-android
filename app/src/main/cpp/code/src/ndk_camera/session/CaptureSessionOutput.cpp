@@ -2,12 +2,12 @@
 // Created by leixing on 2025/1/20.
 //
 
-#include "ndk_camera/CaptureSessionOutput.h"
+#include "CaptureSessionOutput.h"
 #include "camera/NdkCameraDevice.h"
 
 #include <utility>
 
-#include "Log.h"
+#include "ndk_camera/Log.h"
 
 namespace ndkcamera {
 

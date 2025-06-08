@@ -28,7 +28,7 @@ namespace ndkcamera {
 
         CaptureRequest &operator=(CaptureRequest &&other) noexcept;
 
-
+        [[nodiscard]]
         ACaptureRequest *getCaptureRequest() const;
 
         void addTarget(const std::unique_ptr<CameraOutputTarget> &cameraOutputTarget);

@@ -9,7 +9,7 @@
 
 #include <camera/NdkCameraDevice.h>
 
-#include "ndk_camera/CaptureSessionOutput.h"
+#include "CaptureSessionOutput.h"
 
 namespace ndkcamera {
 

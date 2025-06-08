@@ -2,7 +2,7 @@
 // Created by leixing on 2025/1/20.
 //
 
-#include "ndk_camera/ImageReader.h"
+#include "ImageReader.h"
 
 #include <algorithm>
 #include <vector>

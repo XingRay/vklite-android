@@ -55,11 +55,37 @@ namespace ndkcamera {
         });
     }
 
-    void NdkCamera::setPreviewCallback(std::function<void(NdkCamera *camera, AHardwareBuffer *hardwareBuffer)> previewCallback) {
-        mPreviewCallback = previewCallback;
+    NdkCamera::~NdkCamera() = default;
+
+    NdkCamera::NdkCamera(NdkCamera &&other) noexcept
+            : mCameraManager(std::move(other.mCameraManager)),
+              mCameraDevice(std::move(other.mCameraDevice)),
+              mCaptureSession(std::move(other.mCaptureSession)),
+              mImageReader(std::move(other.mImageReader)),
+              mCaptureSessionOutputContainer(std::move(other.mCaptureSessionOutputContainer)),
+              mCaptureSessionOutput(std::move(other.mCaptureSessionOutput)),
+              mCaptureRequest(std::move(other.mCaptureRequest)),
+              mCameraOutputTarget(std::move(other.mCameraOutputTarget)),
+              mPreviewCallback(std::move(other.mPreviewCallback)) {}
+
+    NdkCamera &NdkCamera::operator=(NdkCamera &&other) noexcept {
+        if (this != &other) {
+            mCameraManager = std::move(other.mCameraManager);
+            mCameraDevice = std::move(other.mCameraDevice);
+            mCaptureSession = std::move(other.mCaptureSession);
+            mImageReader = std::move(other.mImageReader);
+            mCaptureSessionOutputContainer = std::move(other.mCaptureSessionOutputContainer);
+            mCaptureSessionOutput = std::move(other.mCaptureSessionOutput);
+            mCaptureRequest = std::move(other.mCaptureRequest);
+            mCameraOutputTarget = std::move(other.mCameraOutputTarget);
+            mPreviewCallback = std::move(other.mPreviewCallback);
+        }
+        return *this;
     }
 
-    NdkCamera::~NdkCamera() = default;
+    void NdkCamera::setPreviewCallback(std::function<void(NdkCamera *camera, AHardwareBuffer *hardwareBuffer)> &&previewCallback) {
+        mPreviewCallback = std::move(previewCallback);
+    }
 
     void NdkCamera::startPreview() {
         // 启动相机预览

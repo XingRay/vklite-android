@@ -15,9 +15,9 @@
 #include <android/hardware_buffer.h>
 
 #include "ndk_camera/CameraManager.h"
-#include "ndk_camera/CameraDevice.h"
-#include "ndk_camera/CameraCaptureSession.h"
-#include "ndk_camera/ImageReader.h"
+#include "ndk_camera/device/CameraDevice.h"
+#include "ndk_camera/session/CameraCaptureSession.h"
+#include "ndk_camera/image/ImageReader.h"
 #include "ndk_camera/CaptureRequest.h"
 #include "ndk_camera/CameraOutputTarget.h"
 
@@ -41,7 +41,15 @@ namespace ndkcamera {
 
         ~NdkCamera();
 
-        void setPreviewCallback(std::function<void(NdkCamera *camera, AHardwareBuffer *hardwareBuffer)> previewCallback);
+        NdkCamera(const NdkCamera &other) = delete;
+
+        NdkCamera &operator=(const NdkCamera &other) = delete;
+
+        NdkCamera(NdkCamera &&other) noexcept;
+
+        NdkCamera &operator=(NdkCamera &&other) noexcept;
+
+        void setPreviewCallback(std::function<void(NdkCamera *camera, AHardwareBuffer *hardwareBuffer)> &&previewCallback);
 
         void startPreview();
 

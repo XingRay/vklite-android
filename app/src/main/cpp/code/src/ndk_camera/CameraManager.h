@@ -13,7 +13,7 @@
 #include <camera/NdkCameraManager.h>
 
 #include "ndk_camera/CameraMetadata.h"
-#include "ndk_camera/CameraDevice.h"
+#include "ndk_camera/device/CameraDevice.h"
 
 namespace ndkcamera {
 
