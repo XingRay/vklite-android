@@ -26,6 +26,7 @@ namespace vklite {
 
     HardwareBufferImageBuilder &HardwareBufferImageBuilder::device(vk::Device device) {
         mDevice = device;
+        mImageBuilder.device(device);
         return *this;
     }
 

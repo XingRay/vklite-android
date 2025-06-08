@@ -84,7 +84,7 @@ namespace ndkcamera {
     void CameraCaptureSession::onCaptureStarted(
             ACameraCaptureSession *session,
             const ACaptureRequest *request, int64_t timestamp) {
-        LOG_D("CameraCaptureSession::onCaptureStarted, this:%p", this);
+//        LOG_D("CameraCaptureSession::onCaptureStarted, this:%p", this);
     }
 
     void CameraCaptureSession::onCaptureProgressed(ACameraCaptureSession *session,
@@ -94,7 +94,7 @@ namespace ndkcamera {
 
     void CameraCaptureSession::onCaptureCompleted(ACameraCaptureSession *session,
                                                   ACaptureRequest *request, const ACameraMetadata *result) {
-        LOG_D("CameraCaptureSession::onCaptureCompleted, this:%p", this);
+//        LOG_D("CameraCaptureSession::onCaptureCompleted, this:%p", this);
     }
 
     void CameraCaptureSession::onCaptureFailed(ACameraCaptureSession *session,

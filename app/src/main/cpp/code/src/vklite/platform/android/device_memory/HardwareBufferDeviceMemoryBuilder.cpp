@@ -15,6 +15,7 @@ namespace vklite {
 
     HardwareBufferDeviceMemoryBuilder &HardwareBufferDeviceMemoryBuilder::device(vk::Device device) {
         mDevice = device;
+        mDeviceMemoryBuilder.device(device);
         return *this;
     }
 

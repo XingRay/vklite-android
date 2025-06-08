@@ -26,15 +26,19 @@ namespace vklite {
         return *this;
     }
 
-    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::hardwareBuffer(AHardwareBuffer *hardwareBuffer) {
-        mHardwareBufferDeviceMemoryBuilder.hardwareBuffer(hardwareBuffer);
+    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::hardwareBufferProperties(vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties) {
+        mHardwareBufferProperties = hardwareBufferProperties;
         return *this;
     }
 
-    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::hardwareBuffer(const HardwareBuffer &androidHardwareBuffer) {
-        hardwareBufferDescription(androidHardwareBuffer.getAndroidHardwareBufferDescription());
+    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::hardwareBuffer(const HardwareBuffer &hardwareBuffer) {
+        hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription());
+        hardwareBufferProperties(hardwareBuffer.getProperties());
+        return *this;
+    }
 
-        mHardwareBufferProperties = androidHardwareBuffer.getProperties();
+    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::hardwareBuffer(AHardwareBuffer *hardwareBuffer) {
+        mHardwareBufferDeviceMemoryBuilder.hardwareBuffer(hardwareBuffer);
         return *this;
     }
 
@@ -43,12 +47,18 @@ namespace vklite {
         return *this;
     }
 
+    CombinedHardwareBufferImageViewBuilder &CombinedHardwareBufferImageViewBuilder::conversion(const vk::SamplerYcbcrConversion &conversion) {
+        mHardwareBufferImageViewBuilder.conversion(conversion);
+        return *this;
+    }
+
+
     CombinedHardwareBufferImageView CombinedHardwareBufferImageViewBuilder::build() {
         if (!mHardwareBufferProperties.has_value()) {
-            throw std::runtime_error("CombinedHardwareBufferSamplerBuilder::build() mHardwareBufferProperties not set");
+            throw std::runtime_error("CombinedHardwareBufferImageViewBuilder::build() mHardwareBufferProperties not set");
         }
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("CombinedHardwareBufferSamplerBuilder::build() mPhysicalDeviceMemoryProperties not set");
+            throw std::runtime_error("CombinedHardwareBufferImageViewBuilder::build() mPhysicalDeviceMemoryProperties not set");
         }
 
         vk::AndroidHardwareBufferPropertiesANDROID &hardwareBufferProperties = mHardwareBufferProperties.value();
@@ -60,8 +70,12 @@ namespace vklite {
 
 
         Image image = mHardwareBufferImageBuilder.build();
+
         DeviceMemory deviceMemory = mHardwareBufferDeviceMemoryBuilder.build();
-        ImageView imageView = mHardwareBufferImageViewBuilder.build();
+
+        ImageView imageView = mHardwareBufferImageViewBuilder
+                .image(image.getImage())
+                .build();
 
         vk::BindImageMemoryInfo bindImageMemoryInfo;
         bindImageMemoryInfo
@@ -86,7 +100,7 @@ namespace vklite {
                                          reinterpret_cast<VkMemoryRequirements2 *>(&memoryRequirements));
 
         if (!memoryDedicatedRequirements.prefersDedicatedAllocation || !memoryDedicatedRequirements.requiresDedicatedAllocation) {
-            throw std::runtime_error("CombinedHardwareBufferSamplerBuilder::build(): memoryDedicatedRequirements error");
+            throw std::runtime_error("CombinedHardwareBufferImageViewBuilder::build(): memoryDedicatedRequirements error");
         }
 
         return CombinedHardwareBufferImageView{std::move(image), std::move(deviceMemory), std::move(imageView)};

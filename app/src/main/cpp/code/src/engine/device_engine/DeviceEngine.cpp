@@ -180,18 +180,17 @@ namespace vklite {
                 .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
                 .buildUnique();
 
-        std::vector <std::vector<vk::DescriptorSet>> descriptorSets;
-        descriptorSets.reserve(mFrameCount);
+        mDescriptorSets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {
             std::vector <vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
             LOG_D("descriptorPool->allocateDescriptorSets:");
             for (const vk::DescriptorSet &set: sets) {
                 LOG_D("\tset:%p", (void *) set);
             }
-            descriptorSets.push_back(std::move(sets));
+            mDescriptorSets.push_back(std::move(sets));
         }
 
-        std::unique_ptr <PipelineLayout> pipelineLayout = PipelineLayoutBuilder()
+        mPipelineLayout = PipelineLayoutBuilder()
                 .device(mDevice->getDevice())
                 .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
                 .pushConstantRanges(std::move(pushConstantRanges))
@@ -210,7 +209,7 @@ namespace vklite {
         mPipeline = GraphicsPipelineBuilder()
                 .device(mDevice->getDevice())
                 .renderPass(mRenderPass->getRenderPass())
-                .pipelineLayout(pipelineLayout->getPipelineLayout())
+                .pipelineLayout(mPipelineLayout->getPipelineLayout())
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .vertexShader(std::move(vertexShader))

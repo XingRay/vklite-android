@@ -11,8 +11,12 @@ namespace vklite {
             : mDevice(device), mSamplerYcbcrConversion(samplerYcbcrConversion) {}
 
     SamplerYcbcrConversion::~SamplerYcbcrConversion() {
-        // device.destroySamplerYcbcrConversion(mConversion); // link error
-        vkDestroySamplerYcbcrConversion(mDevice, mSamplerYcbcrConversion, nullptr);
+        if (mDevice != nullptr && mSamplerYcbcrConversion != nullptr) {
+            // device.destroySamplerYcbcrConversion(mConversion); // link error
+            vkDestroySamplerYcbcrConversion(mDevice, mSamplerYcbcrConversion, nullptr);
+            mDevice = nullptr;
+            mSamplerYcbcrConversion = nullptr;
+        }
     }
 
     SamplerYcbcrConversion::SamplerYcbcrConversion(SamplerYcbcrConversion &&other) noexcept

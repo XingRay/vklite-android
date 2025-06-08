@@ -50,8 +50,7 @@ namespace test07 {
 
         mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
                 .device(mEngine->getDevice().getDevice())
-//                .memoryProperties(mEngine->getMemoryProperties())
-//                .hardwareBuffer(hardwareBuffer)
+                .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
 
 
@@ -68,7 +67,6 @@ namespace test07 {
                             .addAttribute(0, ShaderFormat::Vec3)
                             .addAttribute(1, ShaderFormat::Vec2);
                 })
-                .addPushConstant(0, sizeof(glm::mat4), vk::ShaderStageFlagBits::eVertex)
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
@@ -126,9 +124,14 @@ namespace test07 {
             return;
         }
 
-        vklite::HardwareBuffer vkHardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), pHardwareBuffer);
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), pHardwareBuffer);
         mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
                 .device((*mEngine).getVkDevice())
+                .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
+                .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
+                .hardwareBufferProperties(hardwareBuffer.getProperties())
+                .memoryProperties((*mEngine).getMemoryProperties())
+                .conversion((*mSampler).getConversion().getSamplerYcbcrConversion())
                 .buildUnique();
 
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &mappingConfigure) {

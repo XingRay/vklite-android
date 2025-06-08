@@ -8,7 +8,7 @@
 
 namespace vklite {
 
-    CombinedHardwareBufferSamplerBuilder::CombinedHardwareBufferSamplerBuilder() {}
+    CombinedHardwareBufferSamplerBuilder::CombinedHardwareBufferSamplerBuilder() = default;
 
     CombinedHardwareBufferSamplerBuilder::~CombinedHardwareBufferSamplerBuilder() = default;
 
@@ -25,8 +25,6 @@ namespace vklite {
     }
 
     CombinedHardwareBufferSampler CombinedHardwareBufferSamplerBuilder::build() {
-
-
         SamplerYcbcrConversion conversion = mHardwareBufferYcbcrConversionBuilder.build();
 
         Sampler sampler = mHardwareBufferSamplerBuilder

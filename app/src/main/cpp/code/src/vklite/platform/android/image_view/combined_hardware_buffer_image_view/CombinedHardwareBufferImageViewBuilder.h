@@ -39,11 +39,16 @@ namespace vklite {
 
         CombinedHardwareBufferImageViewBuilder &hardwareBufferDescription(AHardwareBuffer_Desc hardwareBufferDescription);
 
-        CombinedHardwareBufferImageViewBuilder &hardwareBuffer(AHardwareBuffer *hardwareBuffer);
+        CombinedHardwareBufferImageViewBuilder &hardwareBufferProperties(vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties);
 
         CombinedHardwareBufferImageViewBuilder &hardwareBuffer(const HardwareBuffer &androidHardwareBuffer);
 
+        CombinedHardwareBufferImageViewBuilder &hardwareBuffer(AHardwareBuffer *hardwareBuffer);
+
         CombinedHardwareBufferImageViewBuilder &memoryProperties(vk::PhysicalDeviceMemoryProperties memoryProperties);
+
+        CombinedHardwareBufferImageViewBuilder &conversion(const vk::SamplerYcbcrConversion &conversion);
+
 
         CombinedHardwareBufferImageView build();
 
