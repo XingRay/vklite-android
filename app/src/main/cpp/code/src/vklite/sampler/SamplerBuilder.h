@@ -25,9 +25,43 @@ namespace vklite {
 
         SamplerBuilder &device(vk::Device device);
 
-        SamplerBuilder &maxLoad(float maxLoad);
-
         SamplerBuilder &maxAnisotropy(float maxAnisotropy);
+
+        SamplerBuilder &magFilter(vk::Filter filter);
+
+        SamplerBuilder &minFilter(vk::Filter filter);
+
+        SamplerBuilder &addressModeU(vk::SamplerAddressMode mode);
+
+        SamplerBuilder &addressModeV(vk::SamplerAddressMode mode);
+
+        SamplerBuilder &addressModeW(vk::SamplerAddressMode mode);
+
+        SamplerBuilder &anisotropyEnable(vk::Bool32 enable);
+
+        SamplerBuilder &borderColor(vk::BorderColor borderColor);
+
+        SamplerBuilder &unnormalizedCoordinates(vk::Bool32 unnormalizedCoordinates);
+
+        SamplerBuilder &compareEnable(vk::Bool32 enable);
+
+        SamplerBuilder &compareOp(vk::CompareOp op);
+
+        SamplerBuilder &mipmapMode(vk::SamplerMipmapMode mode);
+
+        SamplerBuilder &mipLodBias(float bias);
+
+        SamplerBuilder &minLod(float minLod);
+
+        SamplerBuilder &maxLod(float maxLod);
+
+        SamplerBuilder &next(const void *next);
+
+        SamplerBuilder &filter(vk::Filter filter);
+
+        SamplerBuilder &addressMode(vk::SamplerAddressMode mode);
+
+        SamplerBuilder &lod(float min, float max);
 
         [[nodiscard]]
         Sampler build();

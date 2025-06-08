@@ -36,13 +36,102 @@ namespace vklite {
         return *this;
     }
 
-    SamplerBuilder &SamplerBuilder::maxLoad(float maxLoad) {
-        mSamplerCreateInfo.setMaxLod(maxLoad);
+    SamplerBuilder &SamplerBuilder::maxAnisotropy(float maxAnisotropy) {
+        mSamplerCreateInfo.setMaxAnisotropy(maxAnisotropy);
         return *this;
     }
 
-    SamplerBuilder &SamplerBuilder::maxAnisotropy(float maxAnisotropy) {
-        mSamplerCreateInfo.setMaxAnisotropy(maxAnisotropy);
+    SamplerBuilder &SamplerBuilder::magFilter(vk::Filter filter) {
+        mSamplerCreateInfo.setMagFilter(filter);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::minFilter(vk::Filter filter) {
+        mSamplerCreateInfo.setMinFilter(filter);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::addressModeU(vk::SamplerAddressMode mode) {
+        mSamplerCreateInfo.setAddressModeU(mode);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::addressModeV(vk::SamplerAddressMode mode) {
+        mSamplerCreateInfo.setAddressModeV(mode);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::addressModeW(vk::SamplerAddressMode mode) {
+        mSamplerCreateInfo.setAddressModeW(mode);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::anisotropyEnable(vk::Bool32 enable) {
+        mSamplerCreateInfo.setAnisotropyEnable(enable);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::borderColor(vk::BorderColor borderColor) {
+        mSamplerCreateInfo.setBorderColor(borderColor);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::unnormalizedCoordinates(vk::Bool32 unnormalizedCoordinates) {
+        mSamplerCreateInfo.setUnnormalizedCoordinates(unnormalizedCoordinates);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::compareEnable(vk::Bool32 enable) {
+        mSamplerCreateInfo.setCompareEnable(enable);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::compareOp(vk::CompareOp op) {
+        mSamplerCreateInfo.setCompareOp(op);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::mipmapMode(vk::SamplerMipmapMode mode) {
+        mSamplerCreateInfo.setMipmapMode(mode);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::mipLodBias(float bias) {
+        mSamplerCreateInfo.setMipLodBias(bias);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::minLod(float minLod) {
+        mSamplerCreateInfo.setMinLod(minLod);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::maxLod(float maxLod) {
+        mSamplerCreateInfo.setMaxLod(maxLod);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::next(const void *next) {
+        mSamplerCreateInfo.setPNext(next);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::filter(vk::Filter filter) {
+        magFilter(filter);
+        minFilter(filter);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::addressMode(vk::SamplerAddressMode mode) {
+        addressModeU(mode);
+        addressModeV(mode);
+        addressModeW(mode);
+        return *this;
+    }
+
+    SamplerBuilder &SamplerBuilder::lod(float min, float max) {
+        minLod(min);
+        maxLod(max);
         return *this;
     }
 

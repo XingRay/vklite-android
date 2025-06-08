@@ -31,7 +31,7 @@ namespace test04 {
     class Test04MvpMatrix : public test::TestBase {
     private:
         const android_app &mApp;
-        std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
+        std::unique_ptr<vklite::GraphicPipelineEngine> mEngine;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
 

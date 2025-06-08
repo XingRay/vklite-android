@@ -7,7 +7,7 @@
 #include <memory>
 #include <functional>
 
-#include "vklite/engine/SimpleGraphicEngine.h"
+#include "GraphicPipelineEngine.h"
 
 // plugin
 #include "vklite/plugin/PluginInterface.h"
@@ -152,7 +152,7 @@
 
 namespace vklite {
 
-    class SimpleGraphicEngineBuilder {
+    class GraphicPipelineEngineBuilder {
     private:
         uint32_t mFrameCount = 2;
         std::array<float, 4> mClearColor = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -168,53 +168,53 @@ namespace vklite {
         DeviceBuilder mDeviceBuilder;
 
     public:
-        SimpleGraphicEngineBuilder();
+        GraphicPipelineEngineBuilder();
 
-        ~SimpleGraphicEngineBuilder();
+        ~GraphicPipelineEngineBuilder();
 
-        SimpleGraphicEngineBuilder(const SimpleGraphicEngineBuilder &other) = delete;
+        GraphicPipelineEngineBuilder(const GraphicPipelineEngineBuilder &other) = delete;
 
-        SimpleGraphicEngineBuilder &operator=(SimpleGraphicEngineBuilder &other) = delete;
+        GraphicPipelineEngineBuilder &operator=(GraphicPipelineEngineBuilder &other) = delete;
 
-        SimpleGraphicEngineBuilder(SimpleGraphicEngineBuilder &&other) noexcept;
+        GraphicPipelineEngineBuilder(GraphicPipelineEngineBuilder &&other) noexcept;
 
-        SimpleGraphicEngineBuilder &operator=(SimpleGraphicEngineBuilder &&other) noexcept;
+        GraphicPipelineEngineBuilder &operator=(GraphicPipelineEngineBuilder &&other) noexcept;
 
-        SimpleGraphicEngineBuilder &frameCount(uint32_t frameCount);
+        GraphicPipelineEngineBuilder &frameCount(uint32_t frameCount);
 
-        SimpleGraphicEngineBuilder &clearColor(const std::array<float, 4> &clearColor);
+        GraphicPipelineEngineBuilder &clearColor(const std::array<float, 4> &clearColor);
 
-        SimpleGraphicEngineBuilder &clearColor(float r, float g, float b, float a);
+        GraphicPipelineEngineBuilder &clearColor(float r, float g, float b, float a);
 
-        SimpleGraphicEngineBuilder &clearColor(float r, float g, float b);
+        GraphicPipelineEngineBuilder &clearColor(float r, float g, float b);
 
-        SimpleGraphicEngineBuilder &clearDepth(float clearDepth);
+        GraphicPipelineEngineBuilder &clearDepth(float clearDepth);
 
-        SimpleGraphicEngineBuilder &addInstancePlugin(std::unique_ptr<PluginInterface> plugin);
+        GraphicPipelineEngineBuilder &addInstancePlugin(std::unique_ptr<PluginInterface> plugin);
 
-        SimpleGraphicEngineBuilder &addDevicePlugin(std::unique_ptr<PluginInterface> plugin);
+        GraphicPipelineEngineBuilder &addDevicePlugin(std::unique_ptr<PluginInterface> plugin);
 
-        SimpleGraphicEngineBuilder &surfaceBuilder(std::function<std::unique_ptr<Surface>(const Instance &Instance)> &&surfaceBuilder);
+        GraphicPipelineEngineBuilder &surfaceBuilder(std::function<std::unique_ptr<Surface>(const Instance &Instance)> &&surfaceBuilder);
 
-        SimpleGraphicEngineBuilder &physicalDeviceSelector(std::function<std::unique_ptr<PhysicalDevice>(const Instance &Instance, const Surface &surface)> &&physicalDeviceSelector);
+        GraphicPipelineEngineBuilder &physicalDeviceSelector(std::function<std::unique_ptr<PhysicalDevice>(const Instance &Instance, const Surface &surface)> &&physicalDeviceSelector);
 
-        SimpleGraphicEngineBuilder &sampleCountSelector(std::function<vk::SampleCountFlagBits(const std::vector<vk::SampleCountFlagBits> &sampleCountFlagBits)> &&sampleCountSelector);
+        GraphicPipelineEngineBuilder &sampleCountSelector(std::function<vk::SampleCountFlagBits(const std::vector<vk::SampleCountFlagBits> &sampleCountFlagBits)> &&sampleCountSelector);
 
-        SimpleGraphicEngineBuilder &enableDepthTest();
+        GraphicPipelineEngineBuilder &enableDepthTest();
 
-        SimpleGraphicEngineBuilder &shaderConfigure(ShaderConfigure &&shaderConfigure);
-
-        [[nodiscard]]
-        SimpleGraphicEngine build();
+        GraphicPipelineEngineBuilder &shaderConfigure(ShaderConfigure &&shaderConfigure);
 
         [[nodiscard]]
-        std::unique_ptr<SimpleGraphicEngine> buildUnique();
+        GraphicPipelineEngine build();
+
+        [[nodiscard]]
+        std::unique_ptr<GraphicPipelineEngine> buildUnique();
 
 
         /**
          * preset
          */
-        SimpleGraphicEngineBuilder &asDefault();
+        GraphicPipelineEngineBuilder &asDefault();
     };
 
 } // vklite

@@ -62,7 +62,7 @@
 
 namespace vklite {
 
-    class SimpleGraphicEngine {
+    class GraphicPipelineEngine {
     private:
 
         std::unique_ptr<vklite::Instance> mInstance;
@@ -115,7 +115,7 @@ namespace vklite {
         uint32_t mIndexCount;
 
     public:
-        SimpleGraphicEngine(
+        GraphicPipelineEngine(
                 uint32_t frameCount,
                 vk::SampleCountFlagBits sampleCount,
                 std::unique_ptr<vklite::Instance> instance,
@@ -144,15 +144,15 @@ namespace vklite {
                 std::vector<PushConstant> &&pushConstants,
                 std::unique_ptr<vklite::Pipeline> pipeline);
 
-        ~SimpleGraphicEngine();
+        ~GraphicPipelineEngine();
 
-        SimpleGraphicEngine(const SimpleGraphicEngine &other) = delete;
+        GraphicPipelineEngine(const GraphicPipelineEngine &other) = delete;
 
-        SimpleGraphicEngine &operator=(const SimpleGraphicEngine &other) = delete;
+        GraphicPipelineEngine &operator=(const GraphicPipelineEngine &other) = delete;
 
-        SimpleGraphicEngine(SimpleGraphicEngine &&other) noexcept;
+        GraphicPipelineEngine(GraphicPipelineEngine &&other) noexcept;
 
-        SimpleGraphicEngine &operator=(SimpleGraphicEngine &&other) noexcept;
+        GraphicPipelineEngine &operator=(GraphicPipelineEngine &&other) noexcept;
 
         [[nodiscard]]
         Device &getDevice() const;
@@ -175,24 +175,24 @@ namespace vklite {
         [[nodiscard]]
         const vk::DescriptorSet &getDescriptorSets(uint32_t frameIndex, uint32_t set) const;
 
-        SimpleGraphicEngine &updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
+        GraphicPipelineEngine &updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
 
 
-        SimpleGraphicEngine &addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset = 0);
+        GraphicPipelineEngine &addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset = 0);
 
-        SimpleGraphicEngine &addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset = 0);
+        GraphicPipelineEngine &addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset = 0);
 
 
-        SimpleGraphicEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
+        GraphicPipelineEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
 
-        SimpleGraphicEngine &indexBuffer(const IndexBuffer &buffer, uint32_t indexCount);
+        GraphicPipelineEngine &indexBuffer(const IndexBuffer &buffer, uint32_t indexCount);
 
 
         StorageBufferBuilder storageBufferBuilder();
 
         StagingBufferBuilder stagingBufferBuilder();
 
-        SimpleGraphicEngine &updatePushConstant(uint32_t index, const void *data, uint32_t size);
+        GraphicPipelineEngine &updatePushConstant(uint32_t index, const void *data, uint32_t size);
 
         void drawIndexed();
 

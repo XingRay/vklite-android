@@ -147,5 +147,5 @@
 #include "vklite/util/VulkanUtil.h"
 
 // engines
-#include "vklite/engine/SimpleGraphicEngine.h"
-#include "vklite/engine/SimpleGraphicEngineBuilder.h"
+#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
+#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"

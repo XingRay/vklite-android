@@ -12,7 +12,9 @@
 namespace vklite {
 
     ImageBuilder::ImageBuilder()
-            : mImageCreateInfo{} {}
+            : mImageCreateInfo{}, mQueueFamilyIndices{} {
+        mImageCreateInfo.setQueueFamilyIndices(mQueueFamilyIndices);
+    }
 
     ImageBuilder::~ImageBuilder() = default;
 
@@ -99,9 +101,20 @@ namespace vklite {
         return *this;
     }
 
+    ImageBuilder &ImageBuilder::queueFamilyIndices(std::vector<uint32_t> &&queueFamilyIndices) {
+        mQueueFamilyIndices = std::move(queueFamilyIndices);
+        mImageCreateInfo.setQueueFamilyIndices(mQueueFamilyIndices);
+        return *this;
+    }
+
     //用于稀疏纹理相关的标志位
     ImageBuilder &ImageBuilder::flags(vk::ImageCreateFlags flags) {
         mImageCreateInfo.flags = flags;
+        return *this;
+    }
+
+    ImageBuilder &ImageBuilder::next(const void *next) {
+        mImageCreateInfo.setPNext(next);
         return *this;
     }
 

@@ -2,19 +2,19 @@
 // Created by leixing on 2025/6/4.
 //
 
-#include "SimpleGraphicEngineBuilder.h"
+#include "GraphicPipelineEngineBuilder.h"
 #include <utility>
 
 #include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayoutsBuilder.h"
 
 namespace vklite {
 
-    SimpleGraphicEngineBuilder::SimpleGraphicEngineBuilder()
+    GraphicPipelineEngineBuilder::GraphicPipelineEngineBuilder()
             : mInstanceBuilder{}, mDeviceBuilder{} {}
 
-    SimpleGraphicEngineBuilder::~SimpleGraphicEngineBuilder() = default;
+    GraphicPipelineEngineBuilder::~GraphicPipelineEngineBuilder() = default;
 
-    SimpleGraphicEngineBuilder::SimpleGraphicEngineBuilder(SimpleGraphicEngineBuilder &&other) noexcept
+    GraphicPipelineEngineBuilder::GraphicPipelineEngineBuilder(GraphicPipelineEngineBuilder &&other) noexcept
             : mFrameCount(std::exchange(other.mFrameCount, 0)),
               mClearColor(other.mClearColor),
               mClearDepth(std::exchange(other.mClearDepth, 0.0f)),
@@ -28,7 +28,7 @@ namespace vklite {
               mSampleCountSelector(std::move(other.mSampleCountSelector)),
               mDeviceBuilder(std::move(other.mDeviceBuilder)) {}
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::operator=(SimpleGraphicEngineBuilder &&other) noexcept {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::operator=(GraphicPipelineEngineBuilder &&other) noexcept {
         if (this != &other) {
             // 基本类型：直接赋值（移动等同于拷贝）
             mFrameCount = other.mFrameCount;
@@ -48,69 +48,69 @@ namespace vklite {
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::frameCount(uint32_t frameCount) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::frameCount(uint32_t frameCount) {
         mFrameCount = frameCount;
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(const std::array<float, 4> &clearColor) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::clearColor(const std::array<float, 4> &clearColor) {
         mClearColor = clearColor;
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(float r, float g, float b, float a) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::clearColor(float r, float g, float b, float a) {
         clearColor(std::array<float, 4>{r, g, b, a});
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearColor(float r, float g, float b) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::clearColor(float r, float g, float b) {
         clearColor(r, g, b, 1.0f);
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::clearDepth(float clearDepth) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::clearDepth(float clearDepth) {
         mClearDepth = clearDepth;
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::addInstancePlugin(std::unique_ptr<PluginInterface> plugin) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::addInstancePlugin(std::unique_ptr<PluginInterface> plugin) {
         mInstanceBuilder.addPlugin(std::move(plugin));
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::addDevicePlugin(std::unique_ptr<PluginInterface> plugin) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::addDevicePlugin(std::unique_ptr<PluginInterface> plugin) {
         mDeviceBuilder.addPlugin(std::move(plugin));
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::surfaceBuilder(std::function<std::unique_ptr<Surface>(const Instance &Instance)> &&surfaceBuilder) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::surfaceBuilder(std::function<std::unique_ptr<Surface>(const Instance &Instance)> &&surfaceBuilder) {
         mSurfaceBuilder = std::move(surfaceBuilder);
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::physicalDeviceSelector(
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::physicalDeviceSelector(
             std::function<std::unique_ptr<PhysicalDevice>(const Instance &Instance, const Surface &surface)> &&physicalDeviceSelector) {
         mPhysicalDeviceSelector = std::move(physicalDeviceSelector);
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::sampleCountSelector(
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::sampleCountSelector(
             std::function<vk::SampleCountFlagBits(const std::vector<vk::SampleCountFlagBits> &sampleCountFlagBits)> &&sampleCountSelector) {
         mSampleCountSelector = std::move(sampleCountSelector);
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::enableDepthTest() {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::enableDepthTest() {
         mDepthTestEnable = true;
         return *this;
     }
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::shaderConfigure(ShaderConfigure &&shaderConfigure) {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::shaderConfigure(ShaderConfigure &&shaderConfigure) {
         mGraphicShaderConfigure = std::move(shaderConfigure);
         return *this;
     }
 
-    SimpleGraphicEngine SimpleGraphicEngineBuilder::build() {
+    GraphicPipelineEngine GraphicPipelineEngineBuilder::build() {
 
         std::unique_ptr<Instance> instance = mInstanceBuilder.buildUnique();
         std::unique_ptr<Surface> surface = mSurfaceBuilder(*instance);
@@ -332,12 +332,12 @@ namespace vklite {
         };
     }
 
-    std::unique_ptr<SimpleGraphicEngine> SimpleGraphicEngineBuilder::buildUnique() {
-        return std::make_unique<SimpleGraphicEngine>(build());
+    std::unique_ptr<GraphicPipelineEngine> GraphicPipelineEngineBuilder::buildUnique() {
+        return std::make_unique<GraphicPipelineEngine>(build());
     }
 
 
-    SimpleGraphicEngineBuilder &SimpleGraphicEngineBuilder::asDefault() {
+    GraphicPipelineEngineBuilder &GraphicPipelineEngineBuilder::asDefault() {
         (*this).physicalDeviceSelector([](const vklite::Instance &instance, const vklite::Surface &surface) {
                     return vklite::PhysicalDeviceSelector::makeDefault(surface)
                             .selectUnique(instance.enumeratePhysicalDevices());

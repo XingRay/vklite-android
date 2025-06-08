@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "vklite/engine/SimpleGraphicEngineBuilder.h"
+#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
 
 namespace vklite {
 
-    class AndroidSimpleGraphicEngineBuilder {
+    class AndroidGraphicPipelineEngineBuilder {
     private:// fields
 
     public:// methods
@@ -17,7 +17,7 @@ namespace vklite {
         /**
          * preset
          */
-        static SimpleGraphicEngineBuilder asDefault(ANativeWindow *window);
+        static GraphicPipelineEngineBuilder asDefault(ANativeWindow *window);
     };
 
 } // vklite

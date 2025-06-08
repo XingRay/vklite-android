@@ -6,19 +6,16 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/device/Device.h"
-
 namespace vklite {
 
     class HardwareBufferYcbcrConversion {
     private:
-        const Device &mDevice;
+        vk::Device mDevice;
 
         vk::SamplerYcbcrConversion mSamplerYcbcrConversion;
 
     public:
-        HardwareBufferYcbcrConversion(const Device &device,
-                                      const vk::AndroidHardwareBufferFormatPropertiesANDROID &formatInfo);
+        explicit HardwareBufferYcbcrConversion(vk::Device device, vk::SamplerYcbcrConversion samplerYcbcrConversion);
 
         ~HardwareBufferYcbcrConversion();
 
@@ -28,7 +25,7 @@ namespace vklite {
 
         HardwareBufferYcbcrConversion(HardwareBufferYcbcrConversion &&other) noexcept;
 
-        HardwareBufferYcbcrConversion &operator=(HardwareBufferYcbcrConversion &&other) noexcept = delete;
+        HardwareBufferYcbcrConversion &operator=(HardwareBufferYcbcrConversion &&other) noexcept;
 
         [[nodiscard]]
         const vk::SamplerYcbcrConversion &getSamplerYcbcrConversion() const;

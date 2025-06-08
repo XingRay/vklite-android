@@ -13,9 +13,8 @@
 
 #include "vklite/platform/android/image_view/HardwareBufferImageViewBuilder.h"
 
-#include "vklite/platform/android/sampler/HardwareBufferSampler.h"
 #include "vklite/platform/android/sampler/HardwareBufferSamplerBuilder.h"
-#include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
+#include "vklite/platform/android/conversion/HardwareBufferYcbcrConversion.h"
 
 #include "vklite/platform/android/plugin/AndroidPlugin.h"
 #include "vklite/platform/android/plugin/AndroidSurfacePlugin.h"
@@ -23,4 +22,4 @@
 
 
 // engine
-#include "vklite/platform/android/engine/AndroidSimpleGraphicEngineBuilder.h"
+#include "vklite/platform/android/engine/AndroidGraphicPipelineEngineBuilder.h"

@@ -26,7 +26,7 @@ namespace test04 {
                 })
                 .addPushConstant(0, sizeof(glm::mat4), vk::ShaderStageFlagBits::eVertex);
 
-        mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
+        mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
                 .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();

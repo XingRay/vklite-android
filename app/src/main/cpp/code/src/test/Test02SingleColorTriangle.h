@@ -29,7 +29,7 @@ namespace test02 {
     class Test02SingleColorTriangle : public test::TestBase {
     private:
         const android_app &mApp;
-        std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
+        std::unique_ptr<vklite::GraphicPipelineEngine> mEngine;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::vector<vklite::UniformBuffer> mUniformBuffers;

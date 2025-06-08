@@ -7,22 +7,29 @@
 #include <memory>
 
 #include "vklite/sampler/Sampler.h"
-#include "HardwareBufferYcbcrConversion.h"
-#include "vklite/physical_device/PhysicalDevice.h"
+#include "vklite/sampler/SamplerBuilder.h"
 
 namespace vklite {
 
     class HardwareBufferSamplerBuilder {
     private:
-        const HardwareBufferYcbcrConversion &mAndroidSamplerYcbcrConversion;
+        vk::Device mDevice;
 
+        SamplerBuilder mSamplerBuilder;
+        vk::SamplerYcbcrConversionInfo mConversionInfo;
     public:
 
-        HardwareBufferSamplerBuilder(const HardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion);
+        HardwareBufferSamplerBuilder();
 
         ~HardwareBufferSamplerBuilder();
 
-        std::unique_ptr<Sampler> build(const PhysicalDevice &physicalDevice, const Device &device);
+        HardwareBufferSamplerBuilder &device(vk::Device device);
+
+        HardwareBufferSamplerBuilder &ycbcrConversion(vk::SamplerYcbcrConversion ycbcrConversion);
+
+        Sampler build();
+
+        std::unique_ptr<Sampler> buildUnique();
 
     };
 

@@ -37,7 +37,7 @@ namespace test06 {
                             .addSampler(1, vk::ShaderStageFlagBits::eFragment);
                 });
 
-        mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
+        mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
                 .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();

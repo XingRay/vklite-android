@@ -3,18 +3,44 @@
 //
 
 #include "HardwareBufferSamplerBuilder.h"
-#include "HardwareBufferSampler.h"
 
 namespace vklite {
 
-    HardwareBufferSamplerBuilder::HardwareBufferSamplerBuilder(const HardwareBufferYcbcrConversion &vulkanAndroidSamplerYcbcrConversion)
-            : mAndroidSamplerYcbcrConversion(vulkanAndroidSamplerYcbcrConversion) {}
+    HardwareBufferSamplerBuilder::HardwareBufferSamplerBuilder() {
+        mSamplerBuilder
+                .filter(vk::Filter::eNearest)
+                .mipmapMode(vk::SamplerMipmapMode::eNearest)
+                .addressMode(vk::SamplerAddressMode::eClampToEdge)
+                .mipLodBias(0.0f)
+                .anisotropyEnable(false)
+                .maxAnisotropy(1.0f)
+                .compareEnable(false)
+                .compareOp(vk::CompareOp::eNever)
+                .lod(0.0f, 0.0f)
+                .borderColor(vk::BorderColor::eFloatOpaqueWhite)
+                .unnormalizedCoordinates(false)
+                .next(&mConversionInfo);
+    }
 
     HardwareBufferSamplerBuilder::~HardwareBufferSamplerBuilder() = default;
 
-    std::unique_ptr<Sampler> HardwareBufferSamplerBuilder::build(const PhysicalDevice &physicalDevice, const Device &device) {
-//        return std::make_unique<HardwareBufferSampler>(device, mAndroidSamplerYcbcrConversion);
-        return nullptr;
+    HardwareBufferSamplerBuilder &HardwareBufferSamplerBuilder::device(vk::Device device) {
+        mDevice = device;
+        mSamplerBuilder.device(device);
+        return *this;
+    }
+
+    HardwareBufferSamplerBuilder &HardwareBufferSamplerBuilder::ycbcrConversion(vk::SamplerYcbcrConversion ycbcrConversion) {
+        mConversionInfo.setConversion(ycbcrConversion);
+        return *this;
+    }
+
+    Sampler HardwareBufferSamplerBuilder::build() {
+        return mSamplerBuilder.build();
+    }
+
+    std::unique_ptr<Sampler> HardwareBufferSamplerBuilder::buildUnique() {
+        return std::make_unique<Sampler>(build());
     }
 
 } // vklite

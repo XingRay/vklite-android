@@ -25,6 +25,14 @@ namespace vklite {
 
         ~HardwareBufferPlugin() override;
 
+        HardwareBufferPlugin(const HardwareBufferPlugin &other) = delete;
+
+        HardwareBufferPlugin &operator=(const HardwareBufferPlugin &other) = delete;
+
+        HardwareBufferPlugin(HardwareBufferPlugin &&other) noexcept;
+
+        HardwareBufferPlugin &operator=(HardwareBufferPlugin &&other) noexcept;
+
         std::vector<const char *> getInstanceExtensions() override;
 
         std::vector<const char *> getInstanceLayers() override;

@@ -32,7 +32,7 @@ namespace test05 {
     private:
 
         const android_app &mApp;
-        std::unique_ptr<vklite::SimpleGraphicEngine> mEngine;
+        std::unique_ptr<vklite::GraphicPipelineEngine> mEngine;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
 

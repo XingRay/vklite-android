@@ -15,7 +15,7 @@
 #include "vklite/image/Image.h"
 
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
-#include "vklite/platform/android/sampler/HardwareBufferYcbcrConversion.h"
+#include "vklite/platform/android/conversion/HardwareBufferYcbcrConversion.h"
 
 namespace vklite {
 

@@ -16,6 +16,8 @@ namespace vklite {
         vk::Device mDevice;
         vk::ImageCreateInfo mImageCreateInfo;
 
+        std::vector<uint32_t> mQueueFamilyIndices;
+
     public:
         ImageBuilder();
 
@@ -57,8 +59,12 @@ namespace vklite {
 
         ImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
+        ImageBuilder &queueFamilyIndices(std::vector<uint32_t>&& queueFamilyIndices);
+
         //用于稀疏纹理相关的标志位
         ImageBuilder &flags(vk::ImageCreateFlags flags);
+
+        ImageBuilder &next(const void *next);
 
         [[nodiscard]]
         Image build();

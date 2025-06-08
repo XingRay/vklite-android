@@ -2,12 +2,12 @@
 // Created by leixing on 2025/6/4.
 //
 
-#include "SimpleGraphicEngine.h"
+#include "GraphicPipelineEngine.h"
 #include "vklite/Log.h"
 
 namespace vklite {
 
-    SimpleGraphicEngine::SimpleGraphicEngine(
+    GraphicPipelineEngine::GraphicPipelineEngine(
             uint32_t frameCount,
             vk::SampleCountFlagBits sampleCount,
             std::unique_ptr<Instance> instance,
@@ -64,9 +64,9 @@ namespace vklite {
               mPipeline(std::move(pipeline)),
               mIndexCount(0) {}
 
-    SimpleGraphicEngine::~SimpleGraphicEngine() = default;
+    GraphicPipelineEngine::~GraphicPipelineEngine() = default;
 
-    SimpleGraphicEngine::SimpleGraphicEngine(SimpleGraphicEngine &&other) noexcept
+    GraphicPipelineEngine::GraphicPipelineEngine(GraphicPipelineEngine &&other) noexcept
             : mFrameCount(other.mFrameCount),
               mSampleCount(other.mSampleCount),
               mInstance(std::move(other.mInstance)),
@@ -96,7 +96,7 @@ namespace vklite {
               mPipeline(std::move(other.mPipeline)),
               mIndexCount(other.mIndexCount) {}
 
-    SimpleGraphicEngine &SimpleGraphicEngine::operator=(SimpleGraphicEngine &&other) noexcept {
+    GraphicPipelineEngine &GraphicPipelineEngine::operator=(GraphicPipelineEngine &&other) noexcept {
         if (this != &other) {
             mFrameCount = other.mFrameCount;
             mSampleCount = other.mSampleCount;
@@ -131,37 +131,37 @@ namespace vklite {
         return *this;
     }
 
-    Device &SimpleGraphicEngine::getDevice() const {
+    Device &GraphicPipelineEngine::getDevice() const {
         return *mDevice;
     }
 
-    PhysicalDevice &SimpleGraphicEngine::getPhysicalDevice() const {
+    PhysicalDevice &GraphicPipelineEngine::getPhysicalDevice() const {
         return *mPhysicalDevice;
     }
 
-    CommandPool &SimpleGraphicEngine::getCommandPool() const {
+    CommandPool &GraphicPipelineEngine::getCommandPool() const {
         return *mCommandPool;
     }
 
     [[nodiscard]]
-    const std::vector<std::vector<vk::DescriptorSet>> &SimpleGraphicEngine::getDescriptorSets() const {
+    const std::vector<std::vector<vk::DescriptorSet>> &GraphicPipelineEngine::getDescriptorSets() const {
         return mDescriptorSets;
     }
 
     [[nodiscard]]
-    const vk::DescriptorSet &SimpleGraphicEngine::getDescriptorSets(uint32_t frameIndex, uint32_t set) const {
+    const vk::DescriptorSet &GraphicPipelineEngine::getDescriptorSets(uint32_t frameIndex, uint32_t set) const {
         return mDescriptorSets[frameIndex][set];
     }
 
-    uint32_t SimpleGraphicEngine::getFrameIndex() const {
+    uint32_t GraphicPipelineEngine::getFrameIndex() const {
         return mCurrentFrameIndex;
     }
 
-    uint32_t SimpleGraphicEngine::getFrameCount() const {
+    uint32_t GraphicPipelineEngine::getFrameCount() const {
         return mFrameCount;
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
+    GraphicPipelineEngine &GraphicPipelineEngine::updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
         std::vector<DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure(std::move(configure))
@@ -208,48 +208,48 @@ namespace vklite {
         return *this;
     }
 
-    VertexBufferBuilder SimpleGraphicEngine::vertexBufferBuilder() {
+    VertexBufferBuilder GraphicPipelineEngine::vertexBufferBuilder() {
         return VertexBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset) {
+    GraphicPipelineEngine &GraphicPipelineEngine::addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset) {
         mVertexBuffers.push_back(buffer);
         mVertexBufferOffsets.push_back(offset);
         return *this;
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset) {
+    GraphicPipelineEngine &GraphicPipelineEngine::addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset) {
         addVertexBuffer(buffer.getVkBuffer(), offset);
         return *this;
     }
 
 
-    IndexBufferBuilder SimpleGraphicEngine::indexBufferBuilder() {
+    IndexBufferBuilder GraphicPipelineEngine::indexBufferBuilder() {
         return IndexBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::indexBuffer(const vk::Buffer &buffer, uint32_t indexCount) {
+    GraphicPipelineEngine &GraphicPipelineEngine::indexBuffer(const vk::Buffer &buffer, uint32_t indexCount) {
         mIndexBuffer = buffer;
         mIndexCount = indexCount;
         return *this;
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::indexBuffer(const IndexBuffer &buffer, uint32_t indexCount) {
+    GraphicPipelineEngine &GraphicPipelineEngine::indexBuffer(const IndexBuffer &buffer, uint32_t indexCount) {
         mIndexBuffer = buffer.getVkBuffer();
         mIndexCount = indexCount;
         return *this;
     }
 
-    SimpleGraphicEngine &SimpleGraphicEngine::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
+    GraphicPipelineEngine &GraphicPipelineEngine::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
         mPushConstants[index].update(data, size);
         return *this;
     }
 
-    void SimpleGraphicEngine::drawIndexed() {
+    void GraphicPipelineEngine::drawIndexed() {
         Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
         Semaphore &renderFinishedSemaphore = mRenderFinishedSemaphores[mCurrentFrameIndex];
         Fence &fence = mFences[mCurrentFrameIndex];
@@ -329,25 +329,25 @@ namespace vklite {
         mCurrentFrameIndex = (mCurrentFrameIndex + 1) % mFrameCount;
     }
 
-    UniformBufferBuilder SimpleGraphicEngine::uniformBufferBuilder() {
+    UniformBufferBuilder GraphicPipelineEngine::uniformBufferBuilder() {
         return UniformBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    StorageBufferBuilder SimpleGraphicEngine::storageBufferBuilder() {
+    StorageBufferBuilder GraphicPipelineEngine::storageBufferBuilder() {
         return StorageBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    StagingBufferBuilder SimpleGraphicEngine::stagingBufferBuilder() {
+    StagingBufferBuilder GraphicPipelineEngine::stagingBufferBuilder() {
         return StagingBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    CombinedImageSamplerBuilder SimpleGraphicEngine::samplerBuilder() {
+    CombinedImageSamplerBuilder GraphicPipelineEngine::samplerBuilder() {
         return CombinedImageSamplerBuilder().asDefault()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());

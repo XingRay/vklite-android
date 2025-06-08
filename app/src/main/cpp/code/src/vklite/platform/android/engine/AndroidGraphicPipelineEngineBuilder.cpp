@@ -2,7 +2,7 @@
 // Created by leixing on 2025/6/4.
 //
 
-#include "AndroidSimpleGraphicEngineBuilder.h"
+#include "AndroidGraphicPipelineEngineBuilder.h"
 
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 #include "vklite/platform/android/plugin/AndroidSurfacePlugin.h"
@@ -11,10 +11,10 @@ namespace vklite {
     /**
      * preset
      */
-    SimpleGraphicEngineBuilder AndroidSimpleGraphicEngineBuilder::asDefault(ANativeWindow *window) {
-        SimpleGraphicEngineBuilder simpleGraphicEngineBuilder;
+    GraphicPipelineEngineBuilder AndroidGraphicPipelineEngineBuilder::asDefault(ANativeWindow *window) {
+        GraphicPipelineEngineBuilder graphicPipelineEngineBuilder;
 
-        simpleGraphicEngineBuilder.asDefault()
+        graphicPipelineEngineBuilder.asDefault()
                 .addInstancePlugin(AndroidSurfacePlugin::buildUniqueCombined())
                 .addDevicePlugin(AndroidSurfacePlugin::buildUniqueCombined())
                 .surfaceBuilder([=](const vklite::Instance &instance) {
@@ -24,7 +24,7 @@ namespace vklite {
                             .buildUnique();
                 });
 
-        return std::move(simpleGraphicEngineBuilder);
+        return std::move(graphicPipelineEngineBuilder);
     }
 
 } // vklite

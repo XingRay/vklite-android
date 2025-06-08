@@ -26,7 +26,7 @@ namespace test03 {
                             .addAttribute(1, ShaderFormat::Vec3);
                 });
 
-        mEngine = vklite::AndroidSimpleGraphicEngineBuilder::asDefault(mApp.window)
+        mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
                 .shaderConfigure(std::move(graphicShaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
                 .buildUnique();
