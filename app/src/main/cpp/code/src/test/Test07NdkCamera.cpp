@@ -8,6 +8,7 @@
 #include <thread>
 
 #include "util/FileUtil.h"
+#include "engine/device_engine/AndroidDeviceEngineBuilder.h"
 
 namespace std {
 
@@ -33,6 +34,13 @@ namespace std {
 namespace test07 {
     Test07NdkCamera::Test07NdkCamera(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app) {
+
+        mEngine = vklite::AndroidDeviceEngineBuilder::asDefault(mApp.window)
+                .clearColor(0.2f, 0.4f, 0.8f)
+                .addDevicePlugin(vklite::HardwareBufferPlugin::buildUnique())
+                .addInstancePlugin(vklite::HardwareBufferPlugin::buildUnique())
+                .buildUnique();
+
 
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
         mNdkCamera->startPreview();
@@ -67,12 +75,8 @@ namespace test07 {
                             .addImmutableSampler(0, {}, vk::ShaderStageFlagBits::eFragment);
                 });
 
-        mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
-                .addInstancePlugin(vklite::HardwareBufferPlugin::buildUnique())
-                .addDevicePlugin(vklite::HardwareBufferPlugin::buildUnique())
-                .shaderConfigure(std::move(shaderConfigure))
-                .clearColor(0.2f, 0.4f, 0.8f)
-                .buildUnique();
+        mEngine->shaderConfigure(shaderConfigure);
+
 
 //        mHardwareBufferImage = std::make_unique<vklite::HardwareBufferImage>(*mPhysicalDevice, *mDevice, vkHardwareBuffer, *mConversion);
 //        mHardwareBufferImageView = vklite::HardwareBufferImageViewBuilder()
@@ -109,6 +113,20 @@ namespace test07 {
         };
 
         std::vector<uint32_t> indices = {0, 2, 1, 1, 2, 3};
+
+        uint32_t indicesSize = indices.size() * sizeof(uint32_t);
+        mIndexBuffer = mEngine->indexBufferBuilder()
+                .size(indicesSize)
+                .buildUnique();
+        mIndexBuffer->update(mEngine->getCommandPool(), indices);
+        mEngine->indexBuffer(*mIndexBuffer, indices.size());
+
+        uint32_t verticesSize = vertices.size() * sizeof(Vertex);
+        mVertexBuffer = mEngine->vertexBufferBuilder()
+                .size(verticesSize)
+                .buildUnique();
+        mVertexBuffer->update(mEngine->getCommandPool(), vertices.data(), verticesSize);
+        mEngine->addVertexBuffer(*mVertexBuffer);
     }
 
     // 检查是否准备好

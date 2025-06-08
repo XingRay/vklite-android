@@ -15,8 +15,7 @@
 #include "vklite/vklite.h"
 #include "vklite/Log.h"
 
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
+#include "engine/engines.h"
 
 namespace test01 {
 

@@ -2,26 +2,26 @@
 // Created by leixing on 2025/6/7.
 //
 
-#include "HardwareBufferYcbcrConversionBuilder.h"
+#include "SamplerYcbcrConversionBuilder.h"
 #include "vklite/util/VkCheck.h"
 
 namespace vklite {
 
-    HardwareBufferYcbcrConversionBuilder::HardwareBufferYcbcrConversionBuilder() {
+    SamplerYcbcrConversionBuilder::SamplerYcbcrConversionBuilder() {
         mConversionCreateInfo
                 .setPNext(&mExternalFormat)
                 .setChromaFilter(vk::Filter::eNearest)
                 .setForceExplicitReconstruction(false);
     };
 
-    HardwareBufferYcbcrConversionBuilder::~HardwareBufferYcbcrConversionBuilder() = default;
+    SamplerYcbcrConversionBuilder::~SamplerYcbcrConversionBuilder() = default;
 
-    HardwareBufferYcbcrConversionBuilder &HardwareBufferYcbcrConversionBuilder::device(vk::Device device) {
+    SamplerYcbcrConversionBuilder &SamplerYcbcrConversionBuilder::device(vk::Device device) {
         mDevice = device;
         return *this;
     }
 
-    HardwareBufferYcbcrConversionBuilder &HardwareBufferYcbcrConversionBuilder::formatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties) {
+    SamplerYcbcrConversionBuilder &SamplerYcbcrConversionBuilder::formatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties) {
         if (formatProperties.format == vk::Format::eUndefined) {
             mExternalFormat.externalFormat = formatProperties.externalFormat;
         }
@@ -42,15 +42,15 @@ namespace vklite {
         return *this;
     }
 
-    HardwareBufferYcbcrConversion HardwareBufferYcbcrConversionBuilder::build() {
+    SamplerYcbcrConversion SamplerYcbcrConversionBuilder::build() {
         vk::SamplerYcbcrConversion samplerYcbcrConversion;
         CALL_VK(vkCreateSamplerYcbcrConversion(mDevice, reinterpret_cast<VkSamplerYcbcrConversionCreateInfo *>(&mConversionCreateInfo), nullptr,
                                                reinterpret_cast<VkSamplerYcbcrConversion *>(&samplerYcbcrConversion)));
-        return HardwareBufferYcbcrConversion(mDevice, samplerYcbcrConversion);
+        return SamplerYcbcrConversion(mDevice, samplerYcbcrConversion);
     }
 
-    std::unique_ptr<HardwareBufferYcbcrConversion> HardwareBufferYcbcrConversionBuilder::buildUnique() {
-        return std::make_unique<HardwareBufferYcbcrConversion>(build());
+    std::unique_ptr<SamplerYcbcrConversion> SamplerYcbcrConversionBuilder::buildUnique() {
+        return std::make_unique<SamplerYcbcrConversion>(build());
     }
 
 } // vklite

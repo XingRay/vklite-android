@@ -14,7 +14,6 @@ namespace vklite {
 
     DeviceMemory::~DeviceMemory() {
         if (mDevice != nullptr && mDeviceMemory != nullptr) {
-            mDevice.unmapMemory(mDeviceMemory);
             mDevice.free(mDeviceMemory);
             mDevice = nullptr;
             mDeviceMemory = nullptr;
@@ -35,7 +34,6 @@ namespace vklite {
         return *this;
     }
 
-    [[nodiscard]]
     const vk::DeviceMemory &DeviceMemory::getDeviceMemory() const {
         return mDeviceMemory;
     }

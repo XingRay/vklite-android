@@ -13,8 +13,7 @@
 #include "test/common/TestBase.h"
 
 #include "vklite/vklite.h"
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
+#include "engine/engines.h"
 
 namespace test02 {
 

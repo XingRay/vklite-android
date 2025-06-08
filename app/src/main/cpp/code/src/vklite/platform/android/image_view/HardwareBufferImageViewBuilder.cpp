@@ -6,20 +6,24 @@
 
 namespace vklite {
 
-    HardwareBufferImageViewBuilder::HardwareBufferImageViewBuilder(ImageViewBuilder imageViewBuilder,
-                                                                   vk::SamplerYcbcrConversionInfo samplerYcbcrConversionInfo)
-            : mImageViewBuilder(imageViewBuilder), mSamplerYcbcrConversionInfo(samplerYcbcrConversionInfo) {}
-
-    HardwareBufferImageViewBuilder::HardwareBufferImageViewBuilder()
-            : mImageViewBuilder(ImageViewBuilder::defaultImageViewBuilder()
-                                        .aspectMask(vk::ImageAspectFlagBits::eColor)
-                                        .viewType(vk::ImageViewType::e2D)),
-              mSamplerYcbcrConversionInfo{} {}
+    HardwareBufferImageViewBuilder::HardwareBufferImageViewBuilder() {
+        mImageViewBuilder.asDefault()
+                .aspectMask(vk::ImageAspectFlagBits::eColor)
+                .viewType(vk::ImageViewType::e2D);
+        mImageViewBuilder.next(&mSamplerYcbcrConversionInfo);
+    }
 
     HardwareBufferImageViewBuilder::~HardwareBufferImageViewBuilder() = default;
 
-    ImageViewBuilder &HardwareBufferImageViewBuilder::getImageViewBuilder() {
-        return mImageViewBuilder;
+    HardwareBufferImageViewBuilder &HardwareBufferImageViewBuilder::device(vk::Device device) {
+        mDevice = device;
+        mImageViewBuilder.device(device);
+        return *this;
+    }
+
+    HardwareBufferImageViewBuilder &HardwareBufferImageViewBuilder::image(vk::Image image) {
+        mImageViewBuilder.image(image);
+        return *this;
     }
 
     HardwareBufferImageViewBuilder &HardwareBufferImageViewBuilder::conversion(const vk::SamplerYcbcrConversion &conversion) {
@@ -32,16 +36,12 @@ namespace vklite {
         return *this;
     }
 
-    ImageView HardwareBufferImageViewBuilder::build(const Device &device, const vk::Image &image) {
-        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).build();
+    ImageView HardwareBufferImageViewBuilder::build() {
+        return mImageViewBuilder.build();
     }
 
-    ImageView HardwareBufferImageViewBuilder::build(const Device &device, const Image &image) {
-        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image.getImage()).build();
-    }
-
-    std::unique_ptr<ImageView> HardwareBufferImageViewBuilder::buildUnique(const Device &device, const vk::Image &image) {
-        return mImageViewBuilder.next(&mSamplerYcbcrConversionInfo).device(device.getDevice()).image(image).buildUnique();
+    std::unique_ptr<ImageView> HardwareBufferImageViewBuilder::buildUnique() {
+        return std::make_unique<ImageView>(build());
     }
 
 } // vklite

@@ -8,8 +8,12 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "vklite/platform/android/conversion/SamplerYcbcrConversionBuilder.h"
+#include "vklite/platform/android/image/HardwareBufferImageBuilder.h"
+#include "vklite/platform/android/device_memory/HardwareBufferDeviceMemoryBuilder.h"
+#include "vklite/platform/android/image_view/HardwareBufferImageViewBuilder.h"
 #include "vklite/platform/android/sampler/HardwareBufferSamplerBuilder.h"
-#include "vklite/platform/android/conversion/HardwareBufferYcbcrConversionBuilder.h"
+
 #include "vklite/platform/android/sampler/combined_hardware_buffer_sampler/CombinedHardwareBufferSampler.h"
 
 namespace vklite {
@@ -17,8 +21,17 @@ namespace vklite {
     class CombinedHardwareBufferSamplerBuilder {
     private:
         vk::Device mDevice;
+
+        SamplerYcbcrConversionBuilder mHardwareBufferYcbcrConversionBuilder;
+        HardwareBufferImageBuilder mHardwareBufferImageBuilder;
+        HardwareBufferDeviceMemoryBuilder mHardwareBufferDeviceMemoryBuilder;
+        HardwareBufferImageViewBuilder mHardwareBufferImageViewBuilder;
         HardwareBufferSamplerBuilder mHardwareBufferSamplerBuilder;
-        HardwareBufferYcbcrConversionBuilder mHardwareBufferYcbcrConversionBuilder;
+
+        // bind memory
+        vk::DeviceSize mMemoryOffset;
+        std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
+        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
 
     public:
         CombinedHardwareBufferSamplerBuilder();

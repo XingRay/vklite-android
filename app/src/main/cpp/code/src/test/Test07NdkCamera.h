@@ -17,8 +17,7 @@
 
 #include "ndk_camera/NdkCamera.h"
 #include "util/FrameCounter.h"
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
-#include "engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
+#include "engine/engines.h"
 
 namespace test07 {
 
@@ -35,13 +34,13 @@ namespace test07 {
     private:
 
         const android_app &mApp;
-        std::unique_ptr<vklite::GraphicPipelineEngine> mEngine;
+        std::unique_ptr<vklite::DeviceEngine> mEngine;
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
 
         std::vector<vklite::CombinedImageSampler> mSamplers;
         // hardware buffer
-        std::unique_ptr<vklite::HardwareBufferYcbcrConversion> mConversion;
+        std::unique_ptr<vklite::SamplerYcbcrConversion> mConversion;
         std::unique_ptr<vklite::Sampler> mHardwareBufferSampler;
 
         std::unique_ptr<vklite::Image> mHardwareBufferImage;
@@ -51,7 +50,6 @@ namespace test07 {
         std::unique_ptr<util::FrameCounter> mFrameCounter;
 
         std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
-
 
 
     public:

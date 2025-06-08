@@ -24,41 +24,10 @@ namespace vklite {
         return *this;
     }
 
-//    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDeviceMemoryProperties memoryProperties,
-//                                                     vk::MemoryRequirements memoryRequirements,
-//                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
-//        allocationSize(memoryRequirements.size);
-//        memoryTypeIndex(VulkanUtil::findMemoryTypeIndex(memoryProperties, memoryRequirements, memoryPropertyFlags));
-//        return *this;
-//    }
-//
-//    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDeviceMemoryProperties memoryProperties,
-//                                                     vk::Image image,
-//                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
-//        config(memoryProperties, mDevice.getImageMemoryRequirements(image), memoryPropertyFlags);
-//        return *this;
-//    }
-//
-//    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDeviceMemoryProperties memoryProperties,
-//                                                     vk::Buffer buffer,
-//                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
-//        config(memoryProperties, mDevice.getBufferMemoryRequirements(buffer), memoryPropertyFlags);
-//        return *this;
-//    }
-//
-//    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice,
-//                                                     vk::Image image,
-//                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
-//        config(physicalDevice.getMemoryProperties(), mDevice.getImageMemoryRequirements(image), memoryPropertyFlags);
-//        return *this;
-//    }
-//
-//    DeviceMemoryBuilder &DeviceMemoryBuilder::config(vk::PhysicalDevice physicalDevice,
-//                                                     vk::Buffer buffer,
-//                                                     vk::MemoryPropertyFlags memoryPropertyFlags) {
-//        config(physicalDevice.getMemoryProperties(), mDevice.getBufferMemoryRequirements(buffer), memoryPropertyFlags);
-//        return *this;
-//    }
+    DeviceMemoryBuilder &DeviceMemoryBuilder::next(const void *next) {
+        mMemoryAllocateInfo.setPNext(next);
+        return *this;
+    }
 
     DeviceMemory DeviceMemoryBuilder::build() {
         vk::DeviceMemory deviceMemory = mDevice.allocateMemory(mMemoryAllocateInfo);

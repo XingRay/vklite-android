@@ -8,6 +8,7 @@ namespace vklite {
 
     DeviceEngine::DeviceEngine(
             uint32_t frameCount,
+            bool depthTestEnable,
             vk::SampleCountFlagBits sampleCount,
             std::unique_ptr<Instance> instance,
             std::unique_ptr<Surface> surface,
@@ -27,14 +28,9 @@ namespace vklite {
             Framebuffers &&framebuffers,
             std::vector<Semaphore> &&imageAvailableSemaphores,
             std::vector<Semaphore> &&renderFinishedSemaphores,
-            std::vector<Fence> &&fences,
-            std::unique_ptr<PipelineLayout> pipelineLayout,
-            std::unique_ptr<DescriptorPool> descriptorPool,
-            DescriptorSetLayouts &&descriptorSetLayouts,
-            std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
-            std::vector<PushConstant> &&pushConstants,
-            std::unique_ptr<Pipeline> pipeline)
+            std::vector<Fence> &&fences)
             : mFrameCount(frameCount),
+              mDepthTestEnable(depthTestEnable),
               mSampleCount(sampleCount),
               mInstance(std::move(instance)),
               mSurface(std::move(surface)),
@@ -55,18 +51,13 @@ namespace vklite {
               mImageAvailableSemaphores(std::move(imageAvailableSemaphores)),
               mRenderFinishedSemaphores(std::move(renderFinishedSemaphores)),
               mFences(std::move(fences)),
-              mPipelineLayout(std::move(pipelineLayout)),
-              mDescriptorPool(std::move(descriptorPool)),
-              mDescriptorSetLayouts(std::move(descriptorSetLayouts)),
-              mDescriptorSets(std::move(descriptorSets)),
-              mPushConstants(std::move(pushConstants)),
-              mPipeline(std::move(pipeline)),
               mIndexCount(0) {}
 
     DeviceEngine::~DeviceEngine() = default;
 
     DeviceEngine::DeviceEngine(DeviceEngine &&other) noexcept
             : mFrameCount(other.mFrameCount),
+              mDepthTestEnable(other.mDepthTestEnable),
               mSampleCount(other.mSampleCount),
               mInstance(std::move(other.mInstance)),
               mSurface(std::move(other.mSurface)),
@@ -98,6 +89,7 @@ namespace vklite {
     DeviceEngine &DeviceEngine::operator=(DeviceEngine &&other) noexcept {
         if (this != &other) {
             mFrameCount = other.mFrameCount;
+            mDepthTestEnable = other.mDepthTestEnable;
             mSampleCount = other.mSampleCount;
             // 移动赋值：逐个成员进行移动赋值
             mInstance = std::move(other.mInstance);
@@ -160,6 +152,71 @@ namespace vklite {
         return mFrameCount;
     }
 
+
+    DeviceEngine &DeviceEngine::shaderConfigure(ShaderConfigure &shaderConfigure) {
+        std::vector<vk::PushConstantRange> pushConstantRanges = shaderConfigure.getPushConstantRanges();
+        mPushConstants.reserve(pushConstantRanges.size());
+        for (const vk::PushConstantRange &pushConstantRange: pushConstantRanges) {
+            mPushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
+        }
+
+        mDescriptorPool = vklite::DescriptorPoolBuilder()
+                .device(mDevice->getDevice())
+                .frameCount(mFrameCount)
+                .descriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
+                .descriptorSetCount(shaderConfigure.getDescriptorSetCount())
+                .buildUnique();
+
+        mDescriptorSetLayouts = DescriptorSetLayoutsBuilder()
+                .device(mDevice->getDevice())
+                .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
+                .buildUnique();
+
+        std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
+        descriptorSets.reserve(mFrameCount);
+        for (uint32_t i = 0; i < mFrameCount; i++) {
+            std::vector<vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
+            LOG_D("descriptorPool->allocateDescriptorSets:");
+            for (const vk::DescriptorSet &set: sets) {
+                LOG_D("\tset:%p", (void *) set);
+            }
+            descriptorSets.push_back(std::move(sets));
+        }
+
+        std::unique_ptr<PipelineLayout> pipelineLayout = PipelineLayoutBuilder()
+                .device(mDevice->getDevice())
+                .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
+                .pushConstantRanges(std::move(pushConstantRanges))
+                .buildUnique();
+
+        std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
+                .device(mDevice->getDevice())
+                .code(std::move(shaderConfigure.getVertexShaderCode()))
+                .buildUnique();
+
+        std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
+                .device(mDevice->getDevice())
+                .code(std::move(shaderConfigure.getFragmentShaderCode()))
+                .buildUnique();
+
+        mPipeline = GraphicsPipelineBuilder()
+                .device(mDevice->getDevice())
+                .renderPass(mRenderPass->getRenderPass())
+                .pipelineLayout(pipelineLayout->getPipelineLayout())
+                .viewports(mViewports)
+                .scissors(mScissors)
+                .vertexShader(std::move(vertexShader))
+                .vertexBindingDescriptions(shaderConfigure.createVertexBindingDescriptions())
+                .vertexAttributeDescriptions(shaderConfigure.createVertexAttributeDescriptions())
+                .fragmentShader(std::move(fragmentShader))
+                .sampleCount(mSampleCount)
+                .depthTestEnable(mDepthTestEnable)
+                .buildUnique();
+
+        return *this;
+    }
+
+
     DeviceEngine &DeviceEngine::updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
         std::vector<DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
@@ -167,7 +224,7 @@ namespace vklite {
                 .build();
 
         std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
-        for(DescriptorSetWriter& descriptorSetWriter : descriptorSetWriters){
+        for (DescriptorSetWriter &descriptorSetWriter: descriptorSetWriters) {
             std::vector<vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
             writeDescriptorSets.insert(writeDescriptorSets.begin(), std::move_iterator(descriptorSets.begin()), std::move_iterator(descriptorSets.end()));
         }

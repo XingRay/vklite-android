@@ -239,67 +239,9 @@ namespace vklite {
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
-        std::vector<vk::PushConstantRange> pushConstantRanges = mGraphicShaderConfigure.getPushConstantRanges();
-        std::vector<PushConstant> pushConstants;
-        pushConstants.reserve(pushConstantRanges.size());
-        for (const vk::PushConstantRange &pushConstantRange: pushConstantRanges) {
-            pushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
-        }
-
-        std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
-                .device(device->getDevice())
-                .frameCount(mFrameCount)
-                .descriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
-                .buildUnique();
-
-        DescriptorSetLayouts descriptorSetLayouts = DescriptorSetLayoutsBuilder()
-                .device(device->getDevice())
-                .bindings(mGraphicShaderConfigure.createDescriptorSetLayoutBindings())
-                .build();
-
-        std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
-        descriptorSets.reserve(mFrameCount);
-        for (uint32_t i = 0; i < mFrameCount; i++) {
-            std::vector<vk::DescriptorSet> sets = descriptorPool->allocateDescriptorSets(descriptorSetLayouts.getDescriptorSetLayouts());
-            LOG_D("descriptorPool->allocateDescriptorSets:");
-            for (const vk::DescriptorSet &set: sets) {
-                LOG_D("\tset:%p", (void *) set);
-            }
-            descriptorSets.push_back(std::move(sets));
-        }
-
-        std::unique_ptr<PipelineLayout> pipelineLayout = PipelineLayoutBuilder()
-                .device(device->getDevice())
-                .descriptorSetLayouts(descriptorSetLayouts.getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(pushConstantRanges))
-                .buildUnique();
-
-        std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
-                .device(device->getDevice())
-                .code(std::move(mGraphicShaderConfigure.getVertexShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
-                .device(device->getDevice())
-                .code(std::move(mGraphicShaderConfigure.getFragmentShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<Pipeline> pipeline = GraphicsPipelineBuilder()
-                .device(device->getDevice())
-                .renderPass(renderPass->getRenderPass())
-                .pipelineLayout(pipelineLayout->getPipelineLayout())
-                .viewports(viewports)
-                .scissors(scissors)
-                .vertexShader(std::move(vertexShader))
-                .vertexBindingDescriptions(mGraphicShaderConfigure.createVertexBindingDescriptions())
-                .vertexAttributeDescriptions(mGraphicShaderConfigure.createVertexAttributeDescriptions())
-                .fragmentShader(std::move(fragmentShader))
-                .sampleCount(sampleCount)
-                .depthTestEnable(mDepthTestEnable)
-                .buildUnique();
 
         return {mFrameCount,
+                mDepthTestEnable,
                 sampleCount,
                 std::move(instance),
                 std::move(surface),
@@ -319,13 +261,7 @@ namespace vklite {
                 std::move(framebuffers),
                 std::move(imageAvailableSemaphores),
                 std::move(renderFinishedSemaphores),
-                std::move(fences),
-                std::move(pipelineLayout),
-                std::move(descriptorPool),
-                std::move(descriptorSetLayouts),
-                std::move(descriptorSets),
-                std::move(pushConstants),
-                std::move(pipeline)
+                std::move(fences)
         };
     }
 

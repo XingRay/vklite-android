@@ -15,30 +15,26 @@ namespace vklite {
 
     class HardwareBufferImageViewBuilder {
     private:
+        vk::Device mDevice;
         ImageViewBuilder mImageViewBuilder;
         vk::SamplerYcbcrConversionInfo mSamplerYcbcrConversionInfo;
 
     public:
-        HardwareBufferImageViewBuilder(ImageViewBuilder imageViewBuilder,
-                                       vk::SamplerYcbcrConversionInfo samplerYcbcrConversionInfo);
-
         HardwareBufferImageViewBuilder();
 
         ~HardwareBufferImageViewBuilder();
 
-        ImageViewBuilder &getImageViewBuilder();
+        HardwareBufferImageViewBuilder &device(vk::Device device);
+
+        HardwareBufferImageViewBuilder &image(vk::Image image);
 
         HardwareBufferImageViewBuilder &conversion(const vk::SamplerYcbcrConversion &conversion);
 
         HardwareBufferImageViewBuilder &format(vk::Format format);
 
-        ImageView build(const Device &device, const vk::Image &image);
+        ImageView build();
 
-        std::unique_ptr<ImageView> buildUnique(const Device &device, const vk::Image &image);
-
-        ImageView build(const Device &device, const Image &image);
-
-        std::unique_ptr<ImageView> buildUnique(const Device &device, const Image &image);
+        std::unique_ptr<ImageView> buildUnique();
     };
 
 } // vklite

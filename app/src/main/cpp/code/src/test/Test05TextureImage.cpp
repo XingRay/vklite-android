@@ -82,9 +82,9 @@ namespace test05 {
         glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         mMvpMatrix.model = model;
-        mMvpMatrix.view = glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f),
+        mMvpMatrix.view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f),
                                       glm::vec3(0.0f, 0.0f, 0.0f),
-                                      glm::vec3(0.0f, 0.0f, 1.0f));
+                                      glm::vec3(0.0f, 1.0f, 0.0f));
         mMvpMatrix.proj = glm::perspective(glm::radians(45.0f),
                                            aspectRatio,
                                            1.0f,

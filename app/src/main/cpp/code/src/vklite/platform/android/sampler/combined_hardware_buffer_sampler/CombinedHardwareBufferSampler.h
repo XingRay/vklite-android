@@ -6,18 +6,28 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "vklite/platform/android/conversion/SamplerYcbcrConversion.h"
+#include "vklite/image/Image.h"
+#include "vklite/device_memory/DeviceMemory.h"
+#include "vklite/image_view/ImageView.h"
 #include "vklite/sampler/Sampler.h"
-#include "vklite/platform/android/conversion/HardwareBufferYcbcrConversion.h"
 
 namespace vklite {
 
     class CombinedHardwareBufferSampler {
     private:
+        SamplerYcbcrConversion mConversion;
+        Image mImage;
+        DeviceMemory mDeviceMemory;
+        ImageView mImageView;
         Sampler mSampler;
-        HardwareBufferYcbcrConversion mConversion;
 
     public:
-        CombinedHardwareBufferSampler(Sampler &&sampler, HardwareBufferYcbcrConversion &&conversion);
+        CombinedHardwareBufferSampler(SamplerYcbcrConversion &&conversion,
+                                      Image &&image,
+                                      DeviceMemory &&deviceMemory,
+                                      ImageView &&imageView,
+                                      Sampler &&sampler);
 
         ~CombinedHardwareBufferSampler();
 
@@ -29,11 +39,20 @@ namespace vklite {
 
         CombinedHardwareBufferSampler &operator=(CombinedHardwareBufferSampler &&other) noexcept;
 
+
+        const SamplerYcbcrConversion &getConversion() const;
+
+        const Image &getImage() const;
+
+        const DeviceMemory &getDeviceMemory() const;
+
+        const ImageView &getImageView() const;
+
         const Sampler &getSampler() const;
 
         const vk::Sampler &getVkSampler() const;
 
-        const HardwareBufferYcbcrConversion &getConversion() const;
+
     };
 
 } // vklite

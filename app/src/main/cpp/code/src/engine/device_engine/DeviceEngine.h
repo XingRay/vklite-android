@@ -42,13 +42,14 @@ namespace vklite {
 
         std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
         std::unique_ptr<DescriptorPool> mDescriptorPool;
-        DescriptorSetLayouts mDescriptorSetLayouts;
+        std::unique_ptr<DescriptorSetLayouts> mDescriptorSetLayouts;
         std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
         std::vector<PushConstant> mPushConstants;
         std::unique_ptr<vklite::Pipeline> mPipeline;
 
         // config
         uint32_t mFrameCount;
+        bool mDepthTestEnable;
         vk::SampleCountFlagBits mSampleCount;
 
         //status
@@ -66,32 +67,27 @@ namespace vklite {
     public:
         DeviceEngine(
                 uint32_t frameCount,
-        vk::SampleCountFlagBits sampleCount,
+                bool depthTestEnable,
+                vk::SampleCountFlagBits sampleCount,
                 std::unique_ptr<vklite::Instance> instance,
-        std::unique_ptr<vklite::Surface> surface,
+                std::unique_ptr<vklite::Surface> surface,
                 std::unique_ptr<vklite::PhysicalDevice> physicalDevice,
-        std::unique_ptr<vklite::Device> device,
+                std::unique_ptr<vklite::Device> device,
                 std::unique_ptr<vklite::Queue> graphicQueue,
-        std::unique_ptr<vklite::Queue> presentQueue,
+                std::unique_ptr<vklite::Queue> presentQueue,
                 std::unique_ptr<vklite::Swapchain> swapchain,
-        std::vector<vklite::ImageView> &&displayImageViews,
+                std::vector<vklite::ImageView> &&displayImageViews,
                 std::vector<vk::Viewport> &&viewports,
-        std::vector<vk::Rect2D> &&scissors,
+                std::vector<vk::Rect2D> &&scissors,
                 std::unique_ptr<vklite::CommandPool> commandPool,
-        std::unique_ptr<vklite::CommandBuffers> commandBuffers,
+                std::unique_ptr<vklite::CommandBuffers> commandBuffers,
                 std::unique_ptr<vklite::RenderPass> renderPass,
-        std::unique_ptr<vklite::CombinedImageView> colorImageView,
+                std::unique_ptr<vklite::CombinedImageView> colorImageView,
                 std::unique_ptr<vklite::CombinedImageView> depthImageView,
-        vklite::Framebuffers &&framebuffers,
+                vklite::Framebuffers &&framebuffers,
                 std::vector<vklite::Semaphore> &&imageAvailableSemaphores,
-        std::vector<vklite::Semaphore> &&renderFinishedSemaphores,
-                std::vector<vklite::Fence> &&fences,
-        std::unique_ptr<vklite::PipelineLayout> pipelineLayout,
-                std::unique_ptr<DescriptorPool> descriptorPool,
-        DescriptorSetLayouts &&descriptorSetLayouts,
-                std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
-        std::vector<PushConstant> &&pushConstants,
-                std::unique_ptr<vklite::Pipeline> pipeline);
+                std::vector<vklite::Semaphore> &&renderFinishedSemaphores,
+                std::vector<vklite::Fence> &&fences);
 
         ~DeviceEngine();
 
@@ -123,6 +119,9 @@ namespace vklite {
 
         [[nodiscard]]
         const vk::DescriptorSet &getDescriptorSets(uint32_t frameIndex, uint32_t set) const;
+
+
+        DeviceEngine &shaderConfigure(ShaderConfigure &shaderConfigure);
 
         DeviceEngine &updateDescriptorSets(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
 
