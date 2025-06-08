@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <cstdint>
 #include <functional>
 
 #include "vklite/vklite.h"
