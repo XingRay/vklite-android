@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
+#include "engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
 
 namespace vklite {
 

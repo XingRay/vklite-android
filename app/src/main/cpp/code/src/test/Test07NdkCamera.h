@@ -17,6 +17,8 @@
 
 #include "ndk_camera/NdkCamera.h"
 #include "util/FrameCounter.h"
+#include "engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
+#include "engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
 
 namespace test07 {
 

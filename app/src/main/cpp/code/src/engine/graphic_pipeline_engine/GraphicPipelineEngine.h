@@ -6,59 +6,7 @@
 
 #include <memory>
 
-#include "vklite/instance/Instance.h"
-#include "vklite/surface/Surface.h"
-#include "vklite/physical_device/PhysicalDevice.h"
-#include "vklite/device/Device.h"
-#include "vklite/device/Queue.h"
-#include "vklite/command_pool/CommandPool.h"
-#include "vklite/command_buffer/CommandBuffer.h"
-#include "vklite/command_buffer/PooledCommandBuffer.h"
-#include "vklite/command_buffer/CommandBuffers.h"
-#include "vklite/sync/Fence.h"
-#include "vklite/sync/Semaphore.h"
-#include "vklite/swapchain/Swapchain.h"
-#include "vklite/render_pass/RenderPass.h"
-#include "vklite/frame_buffer/Framebuffer.h"
-#include "vklite/frame_buffer/Framebuffers.h"
-#include "vklite/pipeline/shader_module/ShaderModule.h"
-#include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
-#include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
-#include "vklite/pipeline/pipeline/Pipeline.h"
-#include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
-#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
-#include "vklite/image/Image.h"
-#include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
-#include "vklite/image_view/ImageView.h"
-#include "vklite/image_view/combined_image_view/CombinedImageView.h"
-#include "vklite/sampler/Sampler.h"
-
-
-#include "vklite/buffer/device_local/DeviceLocalBuffer.h"
-#include "vklite/buffer/device_local/DeviceLocalBufferBuilder.h"
-
-#include "vklite/buffer/host_visible/HostVisibleBuffer.h"
-#include "vklite/buffer/host_visible/HostVisibleBufferBuilder.h"
-
-#include "vklite/buffer/staging_buffer/StagingBuffer.h"
-#include "vklite/buffer/staging_buffer/StagingBufferBuilder.h"
-
-#include "vklite/buffer/index_buffer/IndexBuffer.h"
-#include "vklite/buffer/index_buffer/IndexBufferBuilder.h"
-
-#include "vklite/buffer/vertex_buffer/VertexBuffer.h"
-#include "vklite/buffer/vertex_buffer/VertexBufferBuilder.h"
-
-#include "vklite/buffer/uniform_buffer/UniformBuffer.h"
-#include "vklite/buffer/uniform_buffer/UniformBufferBuilder.h"
-
-#include "vklite/buffer/storage_buffer/StorageBuffer.h"
-#include "vklite/buffer/storage_buffer/StorageBufferBuilder.h"
-
-#include "vklite/push_constant/PushConstant.h"
-#include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayouts.h"
-
-#include "vklite/sampler/combined_sampler/CombinedImageSamplerBuilder.h"
+#include "vklite/vklite.h"
 
 namespace vklite {
 

@@ -70,6 +70,12 @@
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
 
+
+// descriptor set layout
+#include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayouts.h"
+#include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayoutsBuilder.h"
+
+
 // descriptor
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
@@ -145,7 +151,3 @@
 
 // util
 #include "vklite/util/VulkanUtil.h"
-
-// engines
-#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngine.h"
-#include "vklite/engine/graphic_pipeline_engine/GraphicPipelineEngineBuilder.h"
