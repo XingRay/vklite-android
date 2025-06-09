@@ -18,6 +18,8 @@ namespace vklite {
         vk::ImportAndroidHardwareBufferInfoANDROID mHardwareBufferInfo;
         vk::MemoryDedicatedAllocateInfo mMemoryDedicatedAllocateInfo;
 
+        AHardwareBuffer *mHardwareBuffer;
+
     public:
         HardwareBufferDeviceMemoryBuilder();
 

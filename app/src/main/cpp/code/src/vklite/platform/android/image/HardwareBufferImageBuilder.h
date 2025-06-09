@@ -5,12 +5,13 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <vulkan/vulkan.hpp>
 #include <android/hardware_buffer.h>
 
-#include "vklite/image/ImageBuilder.h"
-#include "vklite/image/Image.h"
+#include "vklite/platform/android/image/HardwareBufferImage.h"
+#include "vklite/platform/android/image/HardwareBufferImageMeta.h"
 
 namespace vklite {
 
@@ -18,28 +19,39 @@ namespace vklite {
     private:
         vk::Device mDevice;
 
+        vk::ImageCreateInfo mImageCreateInfo;
         vk::ExternalMemoryImageCreateInfo mExternalMemoryImageCreateInfo;
         vk::ExternalFormatANDROID mExternalFormat;
-        ImageBuilder mImageBuilder;
+
+
+        std::vector<uint32_t> mQueueFamilyIndices;
+
+        // required params
+        std::optional<vk::AndroidHardwareBufferFormatPropertiesANDROID> mHardwareBufferFormatProperties;
+        std::optional<AHardwareBuffer_Desc> mHardwareBufferDescription;
 
     public:
         HardwareBufferImageBuilder();
 
         ~HardwareBufferImageBuilder();
 
+        // setter
         HardwareBufferImageBuilder &device(vk::Device device);
 
         HardwareBufferImageBuilder &externalFormat(uint64_t externalFormat);
 
-        HardwareBufferImageBuilder &formatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties);
+        HardwareBufferImageBuilder &format(vk::Format format);
+
+        HardwareBufferImageBuilder &hardwareBufferFormatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties);
 
         HardwareBufferImageBuilder &hardwareBufferDescription(AHardwareBuffer_Desc hardwareBufferDescription);
 
-        [[nodiscard]]
-        Image build();
 
         [[nodiscard]]
-        std::unique_ptr<Image> buildUnique();
+        HardwareBufferImage build();
+
+        [[nodiscard]]
+        std::unique_ptr<HardwareBufferImage> buildUnique();
     };
 
 } // vklite

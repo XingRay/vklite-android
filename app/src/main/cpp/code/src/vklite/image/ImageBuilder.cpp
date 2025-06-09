@@ -141,8 +141,8 @@ namespace vklite {
         LOG_D("mDevice.createImage(mImageCreateInfo) => %p", (void *) image);
 
         ImageMeta meta{mImageCreateInfo.format, mImageCreateInfo.extent, mImageCreateInfo.mipLevels};
-//        return Image(mDevice, image, meta);
-        return {mDevice, image, meta};
+
+        return Image{mDevice, image, meta};
     }
 
     [[nodiscard]]

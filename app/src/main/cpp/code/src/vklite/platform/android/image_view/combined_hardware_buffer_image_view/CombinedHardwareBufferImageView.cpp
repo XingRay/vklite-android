@@ -6,7 +6,7 @@
 
 namespace vklite {
 
-    CombinedHardwareBufferImageView::CombinedHardwareBufferImageView(Image &&image, DeviceMemory &&deviceMemory, ImageView &&imageView)
+    CombinedHardwareBufferImageView::CombinedHardwareBufferImageView(HardwareBufferImage &&image, DeviceMemory &&deviceMemory, ImageView &&imageView)
             : mImage(std::move(image)),
               mDeviceMemory(std::move(deviceMemory)),
               mImageView(std::move(imageView)) {}

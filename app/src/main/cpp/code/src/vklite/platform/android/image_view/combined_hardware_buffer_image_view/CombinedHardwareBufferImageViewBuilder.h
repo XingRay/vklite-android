@@ -25,10 +25,19 @@ namespace vklite {
         HardwareBufferDeviceMemoryBuilder mHardwareBufferDeviceMemoryBuilder;
         HardwareBufferImageViewBuilder mHardwareBufferImageViewBuilder;
 
+        // hardware buffer
+        AHardwareBuffer *mHardwareBuffer;
+        std::optional<AHardwareBuffer_Desc> mHardwareBufferDescription;
+        std::optional<vk::AndroidHardwareBufferPropertiesANDROID> mHardwareBufferProperties;
+        std::optional<vk::AndroidHardwareBufferFormatPropertiesANDROID> mHardwareBufferFormatProperties;
+
+        // conversion
+        std::optional<vk::SamplerYcbcrConversion> mSamplerYcbcrConversion;
+
         // bind memory
         vk::DeviceSize mMemoryOffset;
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
-        std::optional<vk::AndroidHardwareBufferPropertiesANDROID> mHardwareBufferProperties;
+
 
     public:
         CombinedHardwareBufferImageViewBuilder();
@@ -38,6 +47,8 @@ namespace vklite {
         CombinedHardwareBufferImageViewBuilder &device(vk::Device device);
 
         CombinedHardwareBufferImageViewBuilder &hardwareBufferDescription(AHardwareBuffer_Desc hardwareBufferDescription);
+
+        CombinedHardwareBufferImageViewBuilder &hardwareBufferFormatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties);
 
         CombinedHardwareBufferImageViewBuilder &hardwareBufferProperties(vk::AndroidHardwareBufferPropertiesANDROID hardwareBufferProperties);
 

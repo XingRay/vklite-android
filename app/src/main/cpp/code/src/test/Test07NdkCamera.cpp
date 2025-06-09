@@ -128,6 +128,7 @@ namespace test07 {
         mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
                 .device((*mEngine).getVkDevice())
                 .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
+                .hardwareBufferFormatProperties(hardwareBuffer.getFormatProperties())
                 .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
                 .hardwareBufferProperties(hardwareBuffer.getProperties())
                 .memoryProperties((*mEngine).getMemoryProperties())

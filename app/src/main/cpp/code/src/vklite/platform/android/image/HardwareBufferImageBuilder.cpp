@@ -3,30 +3,31 @@
 //
 
 #include "HardwareBufferImageBuilder.h"
+#include "vklite/Log.h"
 
 namespace vklite {
 
-    HardwareBufferImageBuilder::HardwareBufferImageBuilder() {
+    HardwareBufferImageBuilder::HardwareBufferImageBuilder() :
+            mExternalFormat{}, mExternalMemoryImageCreateInfo{} {
         mExternalMemoryImageCreateInfo.setHandleTypes(vk::ExternalMemoryHandleTypeFlagBitsKHR::eAndroidHardwareBufferANDROID);
         mExternalFormat.setPNext(&mExternalMemoryImageCreateInfo);
 
-        mImageBuilder
-                .next(&mExternalFormat)
-                .flags(vk::ImageCreateFlags{})
-                .imageType(vk::ImageType::e2D)
-                .mipLevels(1)
-                .sampleCount(vk::SampleCountFlagBits::e1)
-                .tiling(vk::ImageTiling::eOptimal)
-                .usage(vk::ImageUsageFlagBits::eSampled)
-                .sharingMode(vk::SharingMode::eExclusive)
-                .initialLayout(vk::ImageLayout::eUndefined);
+        mImageCreateInfo
+                .setPNext(&mExternalFormat)
+                .setFlags(vk::ImageCreateFlags{})
+                .setImageType(vk::ImageType::e2D)
+                .setMipLevels(1)
+                .setSamples(vk::SampleCountFlagBits::e1)
+                .setTiling(vk::ImageTiling::eOptimal)
+                .setUsage(vk::ImageUsageFlagBits::eSampled)
+                .setSharingMode(vk::SharingMode::eExclusive)
+                .setInitialLayout(vk::ImageLayout::eUndefined);
     }
 
     HardwareBufferImageBuilder::~HardwareBufferImageBuilder() = default;
 
     HardwareBufferImageBuilder &HardwareBufferImageBuilder::device(vk::Device device) {
         mDevice = device;
-        mImageBuilder.device(device);
         return *this;
     }
 
@@ -35,28 +36,53 @@ namespace vklite {
         return *this;
     }
 
-    HardwareBufferImageBuilder &HardwareBufferImageBuilder::formatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties) {
-        if (formatProperties.format == vk::Format::eUndefined) {
-            externalFormat(mExternalFormat.externalFormat);
+    HardwareBufferImageBuilder &HardwareBufferImageBuilder::format(vk::Format format) {
+        mImageCreateInfo.setFormat(format);
+        return *this;
+    }
+
+    HardwareBufferImageBuilder &HardwareBufferImageBuilder::hardwareBufferFormatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID hardwareBufferFormatProperties) {
+        mHardwareBufferFormatProperties = hardwareBufferFormatProperties;
+
+        if (hardwareBufferFormatProperties.format == vk::Format::eUndefined) {
+            externalFormat(hardwareBufferFormatProperties.externalFormat);
         }
-        mImageBuilder.format(formatProperties.format);
+        format(hardwareBufferFormatProperties.format);
+
         return *this;
     }
 
 
     HardwareBufferImageBuilder &HardwareBufferImageBuilder::hardwareBufferDescription(AHardwareBuffer_Desc hardwareBufferDescription) {
-        mImageBuilder
-                .extent(vk::Extent3D(hardwareBufferDescription.width, hardwareBufferDescription.height, 1))
-                .arrayLayers(hardwareBufferDescription.layers);
+        mHardwareBufferDescription = hardwareBufferDescription;
+
+        mImageCreateInfo
+                .setExtent(vk::Extent3D(hardwareBufferDescription.width, hardwareBufferDescription.height, 1))
+                .setArrayLayers(hardwareBufferDescription.layers);
         return *this;
     }
 
-    Image HardwareBufferImageBuilder::build() {
-        return mImageBuilder.build();
+    HardwareBufferImage HardwareBufferImageBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("HardwareBufferImageBuilder::build(): mDevice == nullptr");
+        }
+        if (!mHardwareBufferFormatProperties.has_value()) {
+            throw std::runtime_error("HardwareBufferImageBuilder::build(): mHardwareBufferFormatProperties not set");
+        }
+        if (!mHardwareBufferDescription.has_value()) {
+            throw std::runtime_error("HardwareBufferImageBuilder::build(): mHardwareBufferDescription not set");
+        }
+
+        vk::Image image = mDevice.createImage(mImageCreateInfo);
+        LOG_D("mDevice.createImage(mImageCreateInfo) => %p", (void *) image);
+
+        HardwareBufferImageMeta meta{mImageCreateInfo.format, mImageCreateInfo.extent, mImageCreateInfo.mipLevels};
+
+        return HardwareBufferImage{mDevice, image, meta};
     }
 
-    std::unique_ptr<Image> HardwareBufferImageBuilder::buildUnique() {
-        return std::make_unique<Image>(build());
+    std::unique_ptr<HardwareBufferImage> HardwareBufferImageBuilder::buildUnique() {
+        return std::make_unique<HardwareBufferImage>(build());
     }
 
 } // vklite

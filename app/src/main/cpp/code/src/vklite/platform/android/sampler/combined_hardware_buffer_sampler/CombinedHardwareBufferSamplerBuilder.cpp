@@ -4,7 +4,7 @@
 
 #include "CombinedHardwareBufferSamplerBuilder.h"
 #include "vklite/util/VulkanUtil.h"
-#include "vklite/platform/android/instance/VulkanAndroidApi.h"
+#include "vklite/platform/android/api/VulkanAndroidApi.h"
 
 namespace vklite {
 

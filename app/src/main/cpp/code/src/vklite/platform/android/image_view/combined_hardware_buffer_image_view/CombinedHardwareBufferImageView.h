@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "vklite/image/Image.h"
+#include "vklite/platform/android/image/HardwareBufferImage.h"
 #include "vklite/device_memory/DeviceMemory.h"
 #include "vklite/image_view/ImageView.h"
 
@@ -12,18 +12,18 @@ namespace vklite {
 
     class CombinedHardwareBufferImageView {
     private:
-        Image mImage;
+        HardwareBufferImage mImage;
         DeviceMemory mDeviceMemory;
         ImageView mImageView;
 
     public:
-        explicit CombinedHardwareBufferImageView(Image &&image, DeviceMemory &&deviceMemory, ImageView &&imageView);
+        explicit CombinedHardwareBufferImageView(HardwareBufferImage &&image, DeviceMemory &&deviceMemory, ImageView &&imageView);
 
         ~CombinedHardwareBufferImageView();
 
-        CombinedHardwareBufferImageView(const CombinedHardwareBufferImageView &other);
+        CombinedHardwareBufferImageView(const CombinedHardwareBufferImageView &other) = delete;
 
-        CombinedHardwareBufferImageView &operator=(const CombinedHardwareBufferImageView &other);
+        CombinedHardwareBufferImageView &operator=(const CombinedHardwareBufferImageView &other) = delete;
 
         CombinedHardwareBufferImageView(CombinedHardwareBufferImageView &&other) noexcept;
 

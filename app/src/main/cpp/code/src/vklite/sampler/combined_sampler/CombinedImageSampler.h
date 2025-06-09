@@ -8,6 +8,7 @@
 #include "vklite/device_memory/DeviceMemory.h"
 #include "vklite/image_view/ImageView.h"
 #include "vklite/sampler/Sampler.h"
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
 
 namespace vklite {
 

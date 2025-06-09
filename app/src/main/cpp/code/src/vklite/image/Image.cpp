@@ -3,8 +3,11 @@
 //
 
 #include "Image.h"
-#include "vklite/util/VulkanUtil.h"
+
 #include <utility>
+
+#include "vklite/buffer/staging_buffer/StagingBuffer.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 

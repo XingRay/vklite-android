@@ -22,6 +22,10 @@ namespace vklite {
     }
 
     SamplerYcbcrConversionBuilder &SamplerYcbcrConversionBuilder::formatProperties(vk::AndroidHardwareBufferFormatPropertiesANDROID formatProperties) {
+        LOG_D("SamplerYcbcrConversionBuilder::formatProperties()");
+        // 确保设置了 formatProperties
+        mFormatProperties = formatProperties;
+
         if (formatProperties.format == vk::Format::eUndefined) {
             mExternalFormat.externalFormat = formatProperties.externalFormat;
         }
@@ -43,6 +47,13 @@ namespace vklite {
     }
 
     SamplerYcbcrConversion SamplerYcbcrConversionBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("SamplerYcbcrConversionBuilder::build(): mDevice == nullptr");
+        }
+        if (!mFormatProperties.has_value()) {
+            throw std::runtime_error("SamplerYcbcrConversionBuilder::build(): mFormatProperties not set");
+        }
+
         vk::SamplerYcbcrConversion samplerYcbcrConversion;
         CALL_VK(vkCreateSamplerYcbcrConversion(mDevice, reinterpret_cast<VkSamplerYcbcrConversionCreateInfo *>(&mConversionCreateInfo), nullptr,
                                                reinterpret_cast<VkSamplerYcbcrConversion *>(&samplerYcbcrConversion)));

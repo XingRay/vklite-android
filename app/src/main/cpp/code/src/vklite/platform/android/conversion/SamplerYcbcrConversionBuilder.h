@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <vulkan/vulkan.hpp>
 
@@ -18,6 +19,8 @@ namespace vklite {
 
         vk::ExternalFormatANDROID mExternalFormat;
         vk::SamplerYcbcrConversionCreateInfo mConversionCreateInfo;
+
+        std::optional<vk::AndroidHardwareBufferFormatPropertiesANDROID> mFormatProperties;
 
     public:
         SamplerYcbcrConversionBuilder();
