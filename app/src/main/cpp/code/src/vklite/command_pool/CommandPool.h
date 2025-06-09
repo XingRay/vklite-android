@@ -24,7 +24,7 @@ namespace vklite {
         CommandPoolMeta mMeta;
 
     public:
-        CommandPool(vk::Device device, vk::CommandPool commandPool, CommandPoolMeta meta);
+        explicit CommandPool(vk::Device device, vk::CommandPool commandPool, CommandPoolMeta meta);
 
         ~CommandPool();
 

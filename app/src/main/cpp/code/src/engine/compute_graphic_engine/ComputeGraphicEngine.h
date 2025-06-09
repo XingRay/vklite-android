@@ -159,7 +159,7 @@ namespace vklite {
 
         ComputeGraphicEngine &updateDescriptorSets(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure);
 
-        ComputeGraphicEngine &addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)> configure);
+        ComputeGraphicEngine &addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)>& configure);
 
         ComputeGraphicEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
 

@@ -24,7 +24,7 @@ namespace vklite {
         std::vector<uint32_t> mPreserveAttachments;
 
     public:
-        SubpassDescription(
+        explicit SubpassDescription(
                 vk::SubpassDescriptionFlags flags,
                 vk::PipelineBindPoint pipelineBindPoint,
                 std::vector<vk::AttachmentReference> inputAttachments,

@@ -270,18 +270,7 @@ namespace vklite {
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-//ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset) {
-//    mVertexBuffers.push_back(buffer);
-//    mVertexBufferOffsets.push_back(offset);
-//    return *this;
-//}
-//
-//ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffer(const VertexBuffer &buffer, vk::DeviceSize offset) {
-//    addVertexBuffer(buffer.getVkBuffer(), offset);
-//    return *this;
-//}
-
-    ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)> configure) {
+    ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)>& configure) {
         mVertexBuffers.reserve(mFrameCount);
         mVertexBufferOffsets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {

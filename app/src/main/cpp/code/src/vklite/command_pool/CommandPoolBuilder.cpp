@@ -38,7 +38,7 @@ namespace vklite {
         }
 
         vk::CommandPool commandPool = mDevice.createCommandPool(mCommandPoolCreateInfo);
-        CommandPoolMeta meta;
+        CommandPoolMeta meta{};
         meta.queueFamilyIndex = mCommandPoolCreateInfo.queueFamilyIndex;
 
         return CommandPool(mDevice, commandPool, meta);

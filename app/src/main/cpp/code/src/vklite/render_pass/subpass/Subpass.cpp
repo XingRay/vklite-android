@@ -94,16 +94,7 @@ namespace vklite {
     }
 
     SubpassDescription Subpass::createSubpassDescription() const {
-//        return SubpassDescription(
-//                mFlags,
-//                mPipelineBindPoint,
-//                convertAttachments(mInputAttachments),
-//                convertAttachments(mColorAttachments),
-//                convertAttachments(mResolveAttachments),
-//                convertDepthStencilAttachment(mDepthStencilAttachment),
-//                convertPreserveAttachments(mPreserveAttachments)
-//        );
-        return {
+        return SubpassDescription{
                 mFlags,
                 mPipelineBindPoint,
                 convertAttachments(mInputAttachments),
