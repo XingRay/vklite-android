@@ -15,7 +15,7 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetWriterBuilder &DescriptorSetWriterBuilder::descriptorSetMappingConfigure(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure) {
+    DescriptorSetWriterBuilder &DescriptorSetWriterBuilder::descriptorSetMappingConfigure(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure) {
         mDescriptorSetMappingConfigure = std::move(configure);
         return *this;
     }

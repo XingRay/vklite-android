@@ -19,7 +19,7 @@ namespace vklite {
     class DescriptorSetWriterBuilder {
     private:
         uint32_t mFrameCount;
-        std::function<void(uint32_t, DescriptorSetMappingConfigure &)> mDescriptorSetMappingConfigure;
+        std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> mDescriptorSetMappingConfigure;
 
     public:
         DescriptorSetWriterBuilder();
@@ -28,7 +28,7 @@ namespace vklite {
 
         DescriptorSetWriterBuilder &frameCount(uint32_t frameCount);
 
-        DescriptorSetWriterBuilder &descriptorSetMappingConfigure(std::function<void(uint32_t, DescriptorSetMappingConfigure &)> &&configure);
+        DescriptorSetWriterBuilder &descriptorSetMappingConfigure(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure);
 
         [[nodiscard]]
         std::vector<DescriptorSetWriter> build() const;

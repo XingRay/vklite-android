@@ -36,8 +36,6 @@ namespace vklite {
 
         DescriptorPoolBuilder &frameCount(uint32_t frameCount);
 
-        DescriptorPoolBuilder &config(const ShaderConfigure &shaderConfigure);
-
         DescriptorPool build();
 
         std::unique_ptr<DescriptorPool> buildUnique();

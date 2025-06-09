@@ -38,7 +38,7 @@ namespace vklite {
     }
 
     Buffer BufferBuilder::build() const {
-        LOG_D("BufferBuilder::build()");
+//        LOG_D("BufferBuilder::build()");
         if (mDevice == nullptr) {
             throw std::runtime_error("DeviceLocalBufferBuilder::build() mDevice == nullptr");
         }
@@ -47,7 +47,7 @@ namespace vklite {
         }
 
         vk::Buffer buffer = mDevice.createBuffer(mBufferCreateInfo);
-        LOG_D("mDevice.createBuffer => %p", (void *) buffer);
+//        LOG_D("mDevice.createBuffer => %p", (void *) buffer);
 
         BufferMeta meta{mBufferCreateInfo.size};
 

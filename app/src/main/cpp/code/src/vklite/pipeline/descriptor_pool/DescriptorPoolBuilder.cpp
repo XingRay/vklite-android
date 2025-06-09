@@ -33,13 +33,6 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorPoolBuilder &DescriptorPoolBuilder::config(const ShaderConfigure &shaderConfigure) {
-        (*this)
-                .descriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(shaderConfigure.getDescriptorSetCount());
-        return *this;
-    }
-
     DescriptorPool DescriptorPoolBuilder::build() {
         if (mDevice == nullptr) {
             throw std::runtime_error("DescriptorPoolBuilder::build() mDevice == nullptr");

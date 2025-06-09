@@ -33,6 +33,7 @@ namespace vklite {
     ComputePipelineBuilder &ComputePipelineBuilder::computeShader(std::unique_ptr<ShaderModule> &&computeShaderModule) {
         mComputeShaderModule = std::move(computeShaderModule);
         mComputeShaderStageInfo.setModule(mComputeShaderModule->getShaderModule());
+        mComputePipelineCreateInfo.setStage(mComputeShaderStageInfo);
         return *this;
     }
 

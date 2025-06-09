@@ -12,6 +12,7 @@ namespace util {
 
     void Timer::start() {
         mStartTime = std::chrono::steady_clock::now();
+        mLastTime = mStartTime;
     }
 
     uint64_t Timer::getElapsedTimeMs() {

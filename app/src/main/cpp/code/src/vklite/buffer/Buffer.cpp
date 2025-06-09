@@ -16,7 +16,7 @@ namespace vklite {
 
     vklite::Buffer::~Buffer() {
         if (mDevice != nullptr && mVkBuffer != nullptr) {
-            LOG_D("mDevice.destroy(mVkBuffer); mVkBuffer => %p", (void *) mVkBuffer);
+//            LOG_D("mDevice.destroy(mVkBuffer); mVkBuffer => %p", (void *) mVkBuffer);
             mDevice.destroy(mVkBuffer);
         }
     }

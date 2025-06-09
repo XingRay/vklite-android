@@ -31,7 +31,7 @@ namespace vklite {
     }
 
     StagingBuffer StagingBufferBuilder::build() {
-        LOG_D("StagingBufferBuilder::build()");
+//        LOG_D("StagingBufferBuilder::build()");
         if (mDevice == nullptr) {
             throw std::runtime_error("StagingBufferBuilder::build(): mDevice == nullptr");
         }
