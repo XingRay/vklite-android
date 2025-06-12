@@ -9,7 +9,7 @@
 #include "camera/NdkCameraCaptureSession.h"
 
 #include "CaptureSessionOutputContainer.h"
-#include "ndk_camera/CaptureRequest.h"
+#include "ndk_camera/request/CaptureRequest.h"
 
 #include "CameraCaptureSessionStateCallbacks.h"
 #include "CameraCaptureSessionCaptureCallbacks.h"
@@ -28,12 +28,12 @@ namespace ndkcamera {
 
     public:
 
-        CameraCaptureSession(ACameraCaptureSession *captureSession,
-                             std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks,
-                             std::unique_ptr<CameraCaptureSessionCaptureCallbacks> captureCallbacks);
+        explicit CameraCaptureSession(ACameraCaptureSession *captureSession,
+                                      std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks,
+                                      std::unique_ptr<CameraCaptureSessionCaptureCallbacks> captureCallbacks);
 
-        CameraCaptureSession(ACameraCaptureSession *captureSession,
-                             std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks);
+        explicit CameraCaptureSession(ACameraCaptureSession *captureSession,
+                                      std::unique_ptr<CameraCaptureSessionStateCallbacks> stateCallbacks);
 
         ~CameraCaptureSession();
 

@@ -12,7 +12,7 @@
 
 #include <camera/NdkCameraManager.h>
 
-#include "ndk_camera/CameraMetadata.h"
+#include "CameraMetadata.h"
 #include "ndk_camera/device/CameraDevice.h"
 
 namespace ndkcamera {
@@ -37,7 +37,7 @@ namespace ndkcamera {
 
         std::vector<const char *> getCameraIdList();
 
-        std::optional<CameraMetadata> queryCameraMetadata(const char *cameraId);
+        CameraMetadata queryCameraMetadata(const char *cameraId);
 
         std::unique_ptr<CameraMetadata> queryUniqueCameraMetadata(const char *cameraId);
 

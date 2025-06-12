@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "camera/NdkCaptureRequest.h"
-#include "ndk_camera/CameraOutputTarget.h"
+#include "CameraOutputTarget.h"
 
 namespace ndkcamera {
 

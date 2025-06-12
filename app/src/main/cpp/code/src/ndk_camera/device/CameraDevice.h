@@ -9,7 +9,7 @@
 #include "camera/NdkCameraDevice.h"
 
 #include "ndk_camera/session/CameraCaptureSession.h"
-#include "ndk_camera/CaptureRequest.h"
+#include "ndk_camera/request/CaptureRequest.h"
 #include "CameraDeviceStateCallbacks.h"
 
 namespace ndkcamera {
@@ -40,14 +40,14 @@ namespace ndkcamera {
 
 
         // createCaptureSession
-        std::optional<CameraCaptureSession> createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer);
+        CameraCaptureSession createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer);
 
         std::unique_ptr<CameraCaptureSession> createUniqueCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer);
 
 
         // createCaptureSessionWithSessionParameters
-        std::optional<CameraCaptureSession> createCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
-                                                                                      const CaptureRequest &captureRequest);
+        CameraCaptureSession createCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
+                                                                       const CaptureRequest &captureRequest);
 
         std::unique_ptr<CameraCaptureSession> createUniqueCaptureSessionWithSessionParameters(const CaptureSessionOutputContainer &captureSessionOutputContainer,
                                                                                               const CaptureRequest &captureRequest);

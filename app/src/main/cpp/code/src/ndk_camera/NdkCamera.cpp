@@ -17,29 +17,39 @@ namespace ndkcamera {
         mCameraManager = std::make_unique<CameraManager>();
         std::vector<CameraMetadata> cameraMetadataList = mCameraManager->queryCameraMetadataList();
 
-        LOG_D("cameraInfoList: ");
-        for (const CameraMetadata &cameraMetadata: cameraMetadataList) {
-            LOG_D("CameraMetadata:\n\t\tid:%s\n\t\tlensFacing:%d\n\t\tsupportedHardwareLevel:%d\n\n",
-                  cameraMetadata.getId(),
-                  cameraMetadata.queryCameraLensFacing().value(),
-                  cameraMetadata.querySupportedHardwareLevel().value()
-            );
+        auto meta = std::find_if(cameraMetadataList.begin(), cameraMetadataList.end(), [&](const CameraMetadata &metadata) {
+            return metadata.queryCameraLensFacing() == CameraLensFacing::Value::FRONT;
+        });
+        if (meta == cameraMetadataList.end()) {
+            throw std::runtime_error("front camera not found !");
         }
 
-        mCameraDevice = mCameraManager->openCamera(cameraMetadataList[0].getId());
+        LOG_D("CameraMetadata:\n\t\tid:%s\n\t\tlensFacing:%s\n\t\tsupportedHardwareLevel:%s\n\n",
+              meta->getId(),
+              CameraLensFacing::of(meta->queryCameraLensFacing()).name(),
+              HardwareLevel::of(meta->querySupportedHardwareLevel()).name()
+        );
+
+        std::vector<StreamConfiguration> streamConfigurations = meta->queryScalerAvailableStreamConfigurations();
+        for (const StreamConfiguration &configuration: streamConfigurations) {
+            LOG_D("%s", configuration.toString().c_str());
+        }
+
+        mCameraDevice = mCameraManager->openCamera(meta->getId());
 
         // create session
         // todo: image size selector
-        mImageReader = ImageReader::buildUnique(1080, 1920, AIMAGE_FORMAT_PRIVATE, AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE, 2);
+        mImageReader = ImageReader::buildUnique(1920, 1080, AIMAGE_FORMAT_YUV_420_888, AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE, 2);
         mCaptureSessionOutput = mImageReader->createUniqueCaptureSessionOutput();
 
         mCaptureSessionOutputContainer = CaptureSessionOutputContainer::buildUnique();
         mCaptureSessionOutputContainer->add(*mCaptureSessionOutput);
 
         mCaptureRequest = mCameraDevice->createUniqueCaptureRequest();
-        std::vector<CameraFpsRange> cameraFpsRanges = cameraMetadataList[0].queryCameraFpsRanges();
-        for (const CameraFpsRange &fpsRange: cameraFpsRanges) {
-            LOG_D("fpsRange: [%d, %d]", fpsRange.min, fpsRange.max);
+        std::vector<Range> cameraFpsRanges = cameraMetadataList[0].queryCameraFpsRanges();
+        LOG_D("Supported FPS ranges:");
+        for (const Range &fpsRange: cameraFpsRanges) {
+            LOG_D("\t[%d, %d]", fpsRange.getMin(), fpsRange.getMax());
         }
         mCaptureRequest->setFps(30);
 

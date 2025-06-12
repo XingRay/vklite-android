@@ -14,12 +14,12 @@
 #include <media/NdkImageReader.h>
 #include <android/hardware_buffer.h>
 
-#include "ndk_camera/CameraManager.h"
+#include "ndk_camera/manager/CameraManager.h"
 #include "ndk_camera/device/CameraDevice.h"
 #include "ndk_camera/session/CameraCaptureSession.h"
 #include "ndk_camera/image/ImageReader.h"
-#include "ndk_camera/CaptureRequest.h"
-#include "ndk_camera/CameraOutputTarget.h"
+#include "ndk_camera/request/CaptureRequest.h"
+#include "ndk_camera/request/CameraOutputTarget.h"
 
 namespace ndkcamera {
 

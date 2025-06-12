@@ -5,7 +5,7 @@
 #pragma once
 
 #include "camera/NdkCameraCaptureSession.h"
-#include "ndk_camera/NativeWindow.h"
+#include "ndk_camera/window/NativeWindow.h"
 
 namespace ndkcamera {
 

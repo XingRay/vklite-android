@@ -2,7 +2,7 @@
 // Created by leixing on 2025/1/20.
 //
 
-#include "ndk_camera/CameraOutputTarget.h"
+#include "CameraOutputTarget.h"
 
 #include <utility>
 

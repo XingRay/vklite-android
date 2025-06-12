@@ -2,10 +2,12 @@
 // Created by leixing on 2025/1/20.
 //
 
-#include "ndk_camera/CaptureRequest.h"
+#include "CaptureRequest.h"
 #include "ndk_camera/Log.h"
 
 #include <utility>
+#include <stdexcept>
+#include <format>
 
 namespace ndkcamera {
     CaptureRequest::CaptureRequest(ACaptureRequest *captureRequest) : mCaptureRequest(captureRequest) {
@@ -33,9 +35,13 @@ namespace ndkcamera {
     }
 
     void CaptureRequest::addTarget(const std::unique_ptr<CameraOutputTarget> &cameraOutputTarget) {
-        LOG_D("ACaptureRequest_addTarget()");
-        ACaptureRequest_addTarget(mCaptureRequest, cameraOutputTarget->getCameraOutputTarget());
+        LOG_D("CaptureRequest::addTarget()");
         LOG_D("ACaptureRequest_addTarget(mCaptureRequest:%p, cameraOutputTarget->getCameraOutputTarget():%p)", mCaptureRequest, cameraOutputTarget->getCameraOutputTarget());
+        camera_status_t status = ACaptureRequest_addTarget(mCaptureRequest, cameraOutputTarget->getCameraOutputTarget());
+        if (status != ACAMERA_OK) {
+            LOG_D("CaptureRequest::addTarget(): ACaptureRequest_addTarget => %d", status);
+            throw std::runtime_error("ACaptureRequest_addTarget failed");
+        }
     }
 
     camera_status_t CaptureRequest::setFps(int32_t fps) {
@@ -59,4 +65,5 @@ namespace ndkcamera {
         }
         return status;
     }
+
 } // ndkcamera

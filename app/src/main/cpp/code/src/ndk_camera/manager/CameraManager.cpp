@@ -2,7 +2,7 @@
 // Created by leixing on 2025/1/20.
 //
 
-#include "ndk_camera/CameraManager.h"
+#include "CameraManager.h"
 #include "ndk_camera/Log.h"
 
 #include <utility>
@@ -47,22 +47,18 @@ namespace ndkcamera {
         return cameraIds;
     }
 
-    std::optional<CameraMetadata> CameraManager::queryCameraMetadata(const char *cameraId) {
+    CameraMetadata CameraManager::queryCameraMetadata(const char *cameraId) {
         ACameraMetadata *metadata;
         camera_status_t status = ACameraManager_getCameraCharacteristics(mCameraManager, cameraId, &metadata);
         if (status != ACAMERA_OK || metadata == nullptr) {
             LOG_E("ACameraManager_getCameraCharacteristics() Failed, status:%d, metadata:%p", status, metadata);
-            return std::nullopt;
+            throw std::runtime_error("ACameraManager_getCameraCharacteristics failed");
         }
         return CameraMetadata(cameraId, metadata);
     }
 
     std::unique_ptr<CameraMetadata> CameraManager::queryUniqueCameraMetadata(const char *cameraId) {
-        std::optional<CameraMetadata> cameraMetadata = queryCameraMetadata(cameraId);
-        if (!cameraMetadata.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<CameraMetadata>(std::move(cameraMetadata.value()));
+        return std::make_unique<CameraMetadata>(queryCameraMetadata(cameraId));
     }
 
     std::vector<CameraMetadata> CameraManager::queryCameraMetadataList() {
@@ -70,12 +66,8 @@ namespace ndkcamera {
 
         std::vector<const char *> ids = getCameraIdList();
         for (const char *id: ids) {
-            std::optional<CameraMetadata> metaData = queryCameraMetadata(id);
-            if (!metaData.has_value()) {
-                LOG_E("Failed to get camera characteristics");
-                continue;
-            }
-            cameraMetadataList.push_back(std::move(metaData.value()));
+            CameraMetadata metaData = queryCameraMetadata(id);
+            cameraMetadataList.push_back(std::move(metaData));
         }
         return cameraMetadataList;
     }

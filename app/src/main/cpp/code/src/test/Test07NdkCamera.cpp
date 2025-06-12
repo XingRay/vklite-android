@@ -82,13 +82,16 @@ namespace test07 {
     void Test07NdkCamera::init() {
         // x轴朝右, y轴朝下, z轴朝前, 右手系 (x,y)->z
         std::vector<Vertex> vertices = {
-                {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f}}, // 左上角
-                {{1.0f,  -1.0f, 0.0f}, {0.0f, 0.0f}}, // 右上角
-                {{-1.0f, 1.0f,  0.0f}, {1.0f, 1.0f}}, // 左下角
-                {{1.0f,  1.0f,  0.0f}, {1.0f, 0.0f}}, // 右下角
+                {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // 左上角
+                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // 右上角
+                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // 左下角
+                {{1.0f,  1.0f,  0.0f}, {0.0f, 0.0f}}, // 右下角
         };
 
-        std::vector<uint32_t> indices = {0, 2, 1, 1, 2, 3};
+        std::vector<uint32_t> indices = {
+                0, 2, 1,
+                1, 2, 3
+        };
 
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = mEngine->indexBufferBuilder()
