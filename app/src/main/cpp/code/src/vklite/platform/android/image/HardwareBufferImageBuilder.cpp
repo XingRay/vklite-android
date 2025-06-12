@@ -74,7 +74,7 @@ namespace vklite {
         }
 
         vk::Image image = mDevice.createImage(mImageCreateInfo);
-        LOG_D("mDevice.createImage(mImageCreateInfo) => %p", (void *) image);
+//        LOG_D("mDevice.createImage(mImageCreateInfo) => %p", (void *) image);
 
         HardwareBufferImageMeta meta{mImageCreateInfo.format, mImageCreateInfo.extent, mImageCreateInfo.mipLevels};
 

@@ -118,7 +118,7 @@ namespace test07 {
 //        LOG_D("Test07NdkCamera::drawFrame()");
         std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
         if (!image.has_value()) {
-            LOG_D("Test07NdkCamera::drawFrame(), no image");
+//            LOG_D("Test07NdkCamera::drawFrame(), no image");
             return;
         }
         AHardwareBuffer *pHardwareBuffer = image.value().getHardwareBuffer();
@@ -153,7 +153,9 @@ namespace test07 {
 
         // 增加帧计数器
         mFrameCounter->count();
-        LOG_D("FPS: %.2f", mFrameCounter->getFps());
+        if (mFrameCounter->getAndResetIsFpsUpdated()) {
+            LOG_D("FPS: %.2f", mFrameCounter->getFps());
+        }
     }
 
     // 清理操作

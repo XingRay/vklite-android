@@ -19,6 +19,7 @@ namespace util {
         uint64_t mResetTimeMs;
 
         float mFps;
+        bool mFpsUpdated;
 
     public:
         FrameCounter(uint64_t resetTimeMs);
@@ -33,6 +34,7 @@ namespace util {
 
         float getFps();
 
+        bool getAndResetIsFpsUpdated();
     };
 
 } // util

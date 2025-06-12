@@ -7,7 +7,7 @@
 namespace util {
 
     FrameCounter::FrameCounter(uint64_t resetTimeMs)
-            : mResetTimeMs(resetTimeMs), mFrameCount(0) {}
+            : mResetTimeMs(resetTimeMs), mFrameCount(0), mFpsUpdated(false) {}
 
     FrameCounter::FrameCounter()
             : FrameCounter(5000) {}
@@ -29,12 +29,21 @@ namespace util {
             mFps = static_cast<float>(mFrameCount * 1000) / static_cast<float>(elapsedTime);
             mStartTime = currentTime;
             mFrameCount = 0;
+            mFpsUpdated = true;
         }
         return *this;
     }
 
     float FrameCounter::getFps() {
         return mFps;
+    }
+
+    bool FrameCounter::getAndResetIsFpsUpdated() {
+        bool lastValue = mFpsUpdated;
+        if (mFpsUpdated) {
+            mFpsUpdated = false;
+        }
+        return lastValue;
     }
 
 } // util

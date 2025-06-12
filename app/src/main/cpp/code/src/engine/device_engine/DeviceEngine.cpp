@@ -10,25 +10,25 @@ namespace vklite {
             uint32_t frameCount,
             bool depthTestEnable,
             vk::SampleCountFlagBits sampleCount,
-            std::unique_ptr <Instance> instance,
-            std::unique_ptr <Surface> surface,
-            std::unique_ptr <PhysicalDevice> physicalDevice,
-            std::unique_ptr <Device> device,
-            std::unique_ptr <Queue> graphicQueue,
-            std::unique_ptr <Queue> presentQueue,
-            std::unique_ptr <Swapchain> swapchain,
-            std::vector <ImageView> &&displayImageViews,
-            std::vector <vk::Viewport> &&viewports,
-            std::vector <vk::Rect2D> &&scissors,
-            std::unique_ptr <CommandPool> commandPool,
-            std::unique_ptr <CommandBuffers> commandBuffers,
-            std::unique_ptr <RenderPass> renderPass,
-            std::unique_ptr <CombinedImageView> colorImageView,
-            std::unique_ptr <CombinedImageView> depthImageView,
+            std::unique_ptr<Instance> instance,
+            std::unique_ptr<Surface> surface,
+            std::unique_ptr<PhysicalDevice> physicalDevice,
+            std::unique_ptr<Device> device,
+            std::unique_ptr<Queue> graphicQueue,
+            std::unique_ptr<Queue> presentQueue,
+            std::unique_ptr<Swapchain> swapchain,
+            std::vector<ImageView> &&displayImageViews,
+            std::vector<vk::Viewport> &&viewports,
+            std::vector<vk::Rect2D> &&scissors,
+            std::unique_ptr<CommandPool> commandPool,
+            std::unique_ptr<CommandBuffers> commandBuffers,
+            std::unique_ptr<RenderPass> renderPass,
+            std::unique_ptr<CombinedImageView> colorImageView,
+            std::unique_ptr<CombinedImageView> depthImageView,
             Framebuffers &&framebuffers,
-            std::vector <Semaphore> &&imageAvailableSemaphores,
-            std::vector <Semaphore> &&renderFinishedSemaphores,
-            std::vector <Fence> &&fences)
+            std::vector<Semaphore> &&imageAvailableSemaphores,
+            std::vector<Semaphore> &&renderFinishedSemaphores,
+            std::vector<Fence> &&fences)
             : mFrameCount(frameCount),
               mDepthTestEnable(depthTestEnable),
               mSampleCount(sampleCount),
@@ -143,7 +143,7 @@ namespace vklite {
     }
 
     [[nodiscard]]
-    const std::vector <std::vector<vk::DescriptorSet>> &DeviceEngine::getDescriptorSets() const {
+    const std::vector<std::vector<vk::DescriptorSet>> &DeviceEngine::getDescriptorSets() const {
         return mDescriptorSets;
     }
 
@@ -162,7 +162,7 @@ namespace vklite {
 
 
     DeviceEngine &DeviceEngine::shaderConfigure(ShaderConfigure &shaderConfigure) {
-        std::vector <vk::PushConstantRange> pushConstantRanges = shaderConfigure.getPushConstantRanges();
+        std::vector<vk::PushConstantRange> pushConstantRanges = shaderConfigure.getPushConstantRanges();
         mPushConstants.reserve(pushConstantRanges.size());
         for (const vk::PushConstantRange &pushConstantRange: pushConstantRanges) {
             mPushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
@@ -182,7 +182,7 @@ namespace vklite {
 
         mDescriptorSets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {
-            std::vector <vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
+            std::vector<vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
             LOG_D("descriptorPool->allocateDescriptorSets:");
             for (const vk::DescriptorSet &set: sets) {
                 LOG_D("\tset:%p", (void *) set);
@@ -196,12 +196,12 @@ namespace vklite {
                 .pushConstantRanges(std::move(pushConstantRanges))
                 .buildUnique();
 
-        std::unique_ptr <ShaderModule> vertexShader = ShaderModuleBuilder()
+        std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
                 .device(mDevice->getDevice())
                 .code(std::move(shaderConfigure.getVertexShaderCode()))
                 .buildUnique();
 
-        std::unique_ptr <ShaderModule> fragmentShader = ShaderModuleBuilder()
+        std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
                 .device(mDevice->getDevice())
                 .code(std::move(shaderConfigure.getFragmentShaderCode()))
                 .buildUnique();
@@ -224,49 +224,50 @@ namespace vklite {
     }
 
 
-    DeviceEngine &DeviceEngine::updateDescriptorSets(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure & mappingConfigure)> &&configure) {
-        std::vector <DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
+    DeviceEngine &DeviceEngine::updateDescriptorSets(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &mappingConfigure)> &&configure) {
+        std::vector<DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure(std::move(configure))
                 .build();
 
-        std::vector <vk::WriteDescriptorSet> writeDescriptorSets;
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
         for (DescriptorSetWriter &descriptorSetWriter: descriptorSetWriters) {
-            std::vector <vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
+            std::vector<vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
             writeDescriptorSets.insert(writeDescriptorSets.begin(), std::move_iterator(descriptorSets.begin()), std::move_iterator(descriptorSets.end()));
         }
 
-        LOG_D("mDevice->getDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
-        for (const vk::WriteDescriptorSet &writeDescriptorSet: writeDescriptorSets) {
-            LOG_D("\twriteDescriptorSet:");
-            LOG_D("\t\tdstSet:%p", (void *) writeDescriptorSet.dstSet);
-            LOG_D("\t\tdstBinding:%d", writeDescriptorSet.dstBinding);
-            LOG_D("\t\tdstArrayElement:%d", writeDescriptorSet.dstArrayElement);
-            LOG_D("\t\tdescriptorType:%d", writeDescriptorSet.descriptorType);
-            LOG_D("\t\tdescriptorCount:%d", writeDescriptorSet.descriptorCount);
-            if (writeDescriptorSet.pBufferInfo != nullptr) {
-                for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
-                    const vk::DescriptorBufferInfo &bufferInfo = writeDescriptorSet.pBufferInfo[i];
-                    LOG_D("\t\tbufferInfo:");
-                    LOG_D("\t\t\tbuffer:%p", (void *) bufferInfo.buffer);
-                    LOG_D("\t\t\toffset:%ld", bufferInfo.offset);
-                    LOG_D("\t\t\trange:%ld", bufferInfo.range);
+        bool debugLog = false;
+        if (debugLog) {
+            LOG_D("mDevice->getDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
+            for (const vk::WriteDescriptorSet &writeDescriptorSet: writeDescriptorSets) {
+                LOG_D("\twriteDescriptorSet:");
+                LOG_D("\t\tdstSet:%p", (void *) writeDescriptorSet.dstSet);
+                LOG_D("\t\tdstBinding:%d", writeDescriptorSet.dstBinding);
+                LOG_D("\t\tdstArrayElement:%d", writeDescriptorSet.dstArrayElement);
+                LOG_D("\t\tdescriptorType:%d", writeDescriptorSet.descriptorType);
+                LOG_D("\t\tdescriptorCount:%d", writeDescriptorSet.descriptorCount);
+                if (writeDescriptorSet.pBufferInfo != nullptr) {
+                    for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
+                        const vk::DescriptorBufferInfo &bufferInfo = writeDescriptorSet.pBufferInfo[i];
+                        LOG_D("\t\tbufferInfo:");
+                        LOG_D("\t\t\tbuffer:%p", (void *) bufferInfo.buffer);
+                        LOG_D("\t\t\toffset:%ld", bufferInfo.offset);
+                        LOG_D("\t\t\trange:%ld", bufferInfo.range);
+                    }
                 }
-            }
-            if (writeDescriptorSet.pImageInfo != nullptr) {
-                for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
-                    const vk::DescriptorImageInfo &imageInfo = writeDescriptorSet.pImageInfo[i];
-                    LOG_D("\t\timageInfo:");
-                    LOG_D("\t\t\timageView:%p", (void *) imageInfo.imageView);
-                    LOG_D("\t\t\tsampler:%p", (void *) imageInfo.sampler);
-                    LOG_D("\t\t\timageLayout:%p", (void *) imageInfo.imageLayout);
+                if (writeDescriptorSet.pImageInfo != nullptr) {
+                    for (uint32_t i = 0; i < writeDescriptorSet.descriptorCount; i++) {
+                        const vk::DescriptorImageInfo &imageInfo = writeDescriptorSet.pImageInfo[i];
+                        LOG_D("\t\timageInfo:");
+                        LOG_D("\t\t\timageView:%p", (void *) imageInfo.imageView);
+                        LOG_D("\t\t\tsampler:%p", (void *) imageInfo.sampler);
+                        LOG_D("\t\t\timageLayout:%p", (void *) imageInfo.imageLayout);
+                    }
                 }
             }
         }
 
-        LOG_D("mDevice->getDevice().updateDescriptorSets");
         mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
-        LOG_D("mDevice->getDevice().updateDescriptorSets ok");
 
         return *this;
     }

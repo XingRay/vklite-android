@@ -84,21 +84,21 @@ namespace vklite {
     }
 
     ImageView ImageViewBuilder::build() {
-        LOG_D("mDevice.createImageView(mImageViewCreateInfo); mImageViewCreateInfo:");
-        LOG_D("\timage        : %p", (void *) mImageViewCreateInfo.image);
-        LOG_D("\tviewType     : %s", VulkanUtil::toString(mImageViewCreateInfo.viewType).c_str());
-        LOG_D("\tformat       : %s", VulkanUtil::toString(mImageViewCreateInfo.format).c_str());
-        LOG_D("\tcomponents");
-        LOG_D("\t\tr:%s", VulkanUtil::toString(mImageViewCreateInfo.components.r).c_str());
-        LOG_D("\t\tg:%s", VulkanUtil::toString(mImageViewCreateInfo.components.g).c_str());
-        LOG_D("\t\tb:%s", VulkanUtil::toString(mImageViewCreateInfo.components.b).c_str());
-        LOG_D("\t\ta:%s", VulkanUtil::toString(mImageViewCreateInfo.components.a).c_str());
-        LOG_D("\tsubresourceRange:");
-        LOG_D("\t\taspectMask:%s", VulkanUtil::toString(mImageViewCreateInfo.subresourceRange.aspectMask).c_str());
-        LOG_D("\t\tbaseMipLevel:%d", mImageViewCreateInfo.subresourceRange.baseMipLevel);
-        LOG_D("\t\tlevelCount:%d", mImageViewCreateInfo.subresourceRange.levelCount);
-        LOG_D("\t\tbaseArrayLayer:%d", mImageViewCreateInfo.subresourceRange.baseArrayLayer);
-        LOG_D("\t\tlayerCount:%d", mImageViewCreateInfo.subresourceRange.layerCount);
+//        LOG_D("mDevice.createImageView(mImageViewCreateInfo); mImageViewCreateInfo:");
+//        LOG_D("\timage        : %p", (void *) mImageViewCreateInfo.image);
+//        LOG_D("\tviewType     : %s", VulkanUtil::toString(mImageViewCreateInfo.viewType).c_str());
+//        LOG_D("\tformat       : %s", VulkanUtil::toString(mImageViewCreateInfo.format).c_str());
+//        LOG_D("\tcomponents");
+//        LOG_D("\t\tr:%s", VulkanUtil::toString(mImageViewCreateInfo.components.r).c_str());
+//        LOG_D("\t\tg:%s", VulkanUtil::toString(mImageViewCreateInfo.components.g).c_str());
+//        LOG_D("\t\tb:%s", VulkanUtil::toString(mImageViewCreateInfo.components.b).c_str());
+//        LOG_D("\t\ta:%s", VulkanUtil::toString(mImageViewCreateInfo.components.a).c_str());
+//        LOG_D("\tsubresourceRange:");
+//        LOG_D("\t\taspectMask:%s", VulkanUtil::toString(mImageViewCreateInfo.subresourceRange.aspectMask).c_str());
+//        LOG_D("\t\tbaseMipLevel:%d", mImageViewCreateInfo.subresourceRange.baseMipLevel);
+//        LOG_D("\t\tlevelCount:%d", mImageViewCreateInfo.subresourceRange.levelCount);
+//        LOG_D("\t\tbaseArrayLayer:%d", mImageViewCreateInfo.subresourceRange.baseArrayLayer);
+//        LOG_D("\t\tlayerCount:%d", mImageViewCreateInfo.subresourceRange.layerCount);
 
         if (mDevice == nullptr) {
             throw std::runtime_error("ImageViewBuilder::build(): mDevice == nullptr");
@@ -107,7 +107,7 @@ namespace vklite {
             throw std::runtime_error("ImageViewBuilder::build(): mImageViewCreateInfo.image == nullptr");
         }
         vk::ImageView imageView = mDevice.createImageView(mImageViewCreateInfo);
-        LOG_D("mDevice.createImageView(mImageViewCreateInfo) => %p", (void *) imageView);
+//        LOG_D("mDevice.createImageView(mImageViewCreateInfo) => %p", (void *) imageView);
 
         return {mDevice, imageView};
     }

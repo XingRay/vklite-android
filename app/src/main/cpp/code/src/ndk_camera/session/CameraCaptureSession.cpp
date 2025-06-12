@@ -89,7 +89,7 @@ namespace ndkcamera {
 
     void CameraCaptureSession::onCaptureProgressed(ACameraCaptureSession *session,
                                                    ACaptureRequest *request, const ACameraMetadata *result) {
-        LOG_D("CameraCaptureSession::onCaptureProgressed, this:%p", this);
+//        LOG_D("CameraCaptureSession::onCaptureProgressed, this:%p", this);
     }
 
     void CameraCaptureSession::onCaptureCompleted(ACameraCaptureSession *session,

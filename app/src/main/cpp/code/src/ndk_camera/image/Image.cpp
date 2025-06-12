@@ -15,7 +15,7 @@ namespace ndkcamera {
 
     Image::~Image() {
         if (mImage != nullptr) {
-            LOG_D("AImage_delete(mImage); mImage=>%p", mImage);
+//            LOG_D("AImage_delete(mImage); mImage=> %p", mImage);
             AImage_delete(mImage);
         }
     }
