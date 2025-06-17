@@ -11,7 +11,8 @@
 #include "math/glm.h"
 
 #include "ndk_camera/NdkCamera.h"
-#include "detector/MnnDetector.h"
+#include "nn/mnn/MnnDetector.h"
+#include "vklite/vklite.h"
 
 namespace test09 {
 

@@ -2,9 +2,9 @@
 // Created by leixing on 2025/2/26.
 //
 
-#include "image_process/Anchors.h"
+#include "image_process/Anchor.h"
 
-namespace image {
+namespace image_process {
 
     float calculate_scale(float min_scale, float max_scale, int stride_index, int num_strides) {
         if (num_strides == 1) {
@@ -14,7 +14,7 @@ namespace image {
         }
     }
 
-    std::vector<Anchor> generate_face_detection_anchors(int input_size/*= 128*/) {
+    std::vector<Anchor> Anchor::generateAnchors(int input_size) {
         int num_layers = 4;
         float min_scale = 0.1484375f; // 19/128
         float max_scale = 0.75f;

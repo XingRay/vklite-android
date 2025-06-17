@@ -59,7 +59,7 @@ android {
         jvmTarget = "17"
     }
 
-    ndkVersion = "27.2.12479018"
+    ndkVersion = "29.0.13599879"
     buildToolsVersion = "35.0.0"
     buildFeatures {
         viewBinding = false

@@ -4,8 +4,6 @@
 
 #include "Test05TextureImage.h"
 #include "util/FileUtil.h"
-
-#include "util/FileUtil.h"
 #include "vklite/vklite_android.h"
 #include "stb_image.h"
 #include "image/StbImage.h"
@@ -55,8 +53,6 @@ namespace test05 {
                 0, 2, 1, 1, 2, 3,
         };
 
-        std::unique_ptr<image::ImageInterface> textureImage = image::StbImage::loadImage("/storage/emulated/0/01.png");
-
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = mEngine->indexBufferBuilder()
                 .size(indicesSize)
@@ -90,6 +86,8 @@ namespace test05 {
                                            1.0f,
                                            20.0f);
         mTimer.start();
+
+        std::unique_ptr<image::ImageInterface> textureImage = image::StbImage::loadImage("/storage/emulated/0/01.png");
 
         mSamplers = mEngine->samplerBuilder()
                 .width(textureImage->getWidth())

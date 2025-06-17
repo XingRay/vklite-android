@@ -46,8 +46,8 @@ inline std::string currentDateTime() {
 #endif
 
 
-#define LOG_VF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
-#define LOG_DF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
-#define LOG_IF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
-#define LOG_WF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_VF(format_str, ...) LOG_V("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_DF(format_str, ...) LOG_D("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_IF(format_str, ...) LOG_I("%s", std::format(format_str, __VA_ARGS__).c_str())
+#define LOG_WF(format_str, ...) LOG_W("%s", std::format(format_str, __VA_ARGS__).c_str())
 #define LOG_EF(format_str, ...) LOG_E("%s", std::format(format_str, __VA_ARGS__).c_str())

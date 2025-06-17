@@ -35,11 +35,12 @@ set(TINYOBJLOADER_INCLUE_DIR ${TINYOBJLOADER_INSTALL_DIR})
 
 # ncnn
 # https:/github.com/Tencent/ncnn
-set(NCNN_INSTALL_DIR D:/develop/ncnn/master/install/android)
-set(NCNN_INCLUDE ${NCNN_INSTALL_DIR}/arm64-v8a/include)
-set(ncnn_DIR ${NCNN_INSTALL_DIR}/arm64-v8a/lib/cmake/ncnn)
+#set(NCNN_INSTALL_DIR D:/develop/ncnn/master/install/android/arm64-v8a/release)
+set(NCNN_INSTALL_DIR D:/develop/ncnn/ncnn-20250503/build/install/android/arm64-v8a/release)
+set(ncnn_DIR ${NCNN_INSTALL_DIR}/lib/cmake/ncnn)
 find_package(ncnn REQUIRED)
-link_directories("${NCNN_INSTALL_DIR}/arm64-v8a/lib")
+set(NCNN_INCLUDE ${NCNN_INSTALL_DIR}/include)
+
 
 # opencv
 # https://github.com/opencv/opencv
@@ -69,7 +70,7 @@ add_library(${PROJECT_NAME} SHARED
         ${PROJECT_SOURCES}
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(${PROJECT_NAME} PRIVATE
         "${LIB_MPTASK_DIR}/include"
         "code/include"
         "code/src"
@@ -101,7 +102,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${MNN_INCLUDE}
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} PRIVATE
         android
         camera2ndk
         mediandk
@@ -111,4 +112,8 @@ target_link_libraries(${PROJECT_NAME}
         ${OpenCV_LIBS}
         ${MNN_LIB_DIR}/libMNN.so
         ${MNN_LIB_DIR}/libMNN_Express.so
+)
+
+target_link_directories(${PROJECT_NAME} PRIVATE
+        "${NCNN_INSTALL_DIR}/lib"
 )

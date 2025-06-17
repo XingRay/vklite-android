@@ -14,38 +14,38 @@ namespace vklite {
     class GraphicPipelineEngine {
     private:
 
-        std::unique_ptr<vklite::Instance> mInstance;
-        std::unique_ptr<vklite::Surface> mSurface;
-        std::unique_ptr<vklite::PhysicalDevice> mPhysicalDevice;
+        std::unique_ptr<Instance> mInstance;
+        std::unique_ptr<Surface> mSurface;
+        std::unique_ptr<PhysicalDevice> mPhysicalDevice;
 
-        std::unique_ptr<vklite::Device> mDevice;
+        std::unique_ptr<Device> mDevice;
 
-        std::unique_ptr<vklite::Queue> mGraphicQueue;
-        std::unique_ptr<vklite::Queue> mPresentQueue;
+        std::unique_ptr<Queue> mGraphicQueue;
+        std::unique_ptr<Queue> mPresentQueue;
 
-        std::unique_ptr<vklite::Swapchain> mSwapchain;
-        std::vector<vklite::ImageView> mDisplayImageViews;
+        std::unique_ptr<Swapchain> mSwapchain;
+        std::vector<ImageView> mDisplayImageViews;
         std::vector<vk::Viewport> mViewports;
         std::vector<vk::Rect2D> mScissors;
 
-        std::unique_ptr<vklite::CommandPool> mCommandPool;
-        std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
+        std::unique_ptr<CommandPool> mCommandPool;
+        std::unique_ptr<CommandBuffers> mCommandBuffers;
 
-        std::unique_ptr<vklite::RenderPass> mRenderPass;
-        std::unique_ptr<vklite::CombinedImageView> mColorImageView;
-        std::unique_ptr<vklite::CombinedImageView> mDepthImageView;
-        vklite::Framebuffers mFramebuffers;
+        std::unique_ptr<RenderPass> mRenderPass;
+        std::unique_ptr<CombinedImageView> mColorImageView;
+        std::unique_ptr<CombinedImageView> mDepthImageView;
+        Framebuffers mFramebuffers;
 
-        std::vector<vklite::Semaphore> mImageAvailableSemaphores;
-        std::vector<vklite::Semaphore> mRenderFinishedSemaphores;
-        std::vector<vklite::Fence> mFences;
+        std::vector<Semaphore> mImageAvailableSemaphores;
+        std::vector<Semaphore> mRenderFinishedSemaphores;
+        std::vector<Fence> mFences;
 
-        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
+        std::unique_ptr<PipelineLayout> mPipelineLayout;
         std::unique_ptr<DescriptorPool> mDescriptorPool;
         DescriptorSetLayouts mDescriptorSetLayouts;
         std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
         std::vector<PushConstant> mPushConstants;
-        std::unique_ptr<vklite::Pipeline> mPipeline;
+        std::unique_ptr<Pipeline> mPipeline;
 
         // config
         uint32_t mFrameCount;
@@ -67,31 +67,31 @@ namespace vklite {
         GraphicPipelineEngine(
                 uint32_t frameCount,
                 vk::SampleCountFlagBits sampleCount,
-                std::unique_ptr<vklite::Instance> instance,
-                std::unique_ptr<vklite::Surface> surface,
-                std::unique_ptr<vklite::PhysicalDevice> physicalDevice,
-                std::unique_ptr<vklite::Device> device,
-                std::unique_ptr<vklite::Queue> graphicQueue,
-                std::unique_ptr<vklite::Queue> presentQueue,
-                std::unique_ptr<vklite::Swapchain> swapchain,
-                std::vector<vklite::ImageView> &&displayImageViews,
+                std::unique_ptr<Instance> instance,
+                std::unique_ptr<Surface> surface,
+                std::unique_ptr<PhysicalDevice> physicalDevice,
+                std::unique_ptr<Device> device,
+                std::unique_ptr<Queue> graphicQueue,
+                std::unique_ptr<Queue> presentQueue,
+                std::unique_ptr<Swapchain> swapchain,
+                std::vector<ImageView> &&displayImageViews,
                 std::vector<vk::Viewport> &&viewports,
                 std::vector<vk::Rect2D> &&scissors,
-                std::unique_ptr<vklite::CommandPool> commandPool,
-                std::unique_ptr<vklite::CommandBuffers> commandBuffers,
-                std::unique_ptr<vklite::RenderPass> renderPass,
-                std::unique_ptr<vklite::CombinedImageView> colorImageView,
-                std::unique_ptr<vklite::CombinedImageView> depthImageView,
-                vklite::Framebuffers &&framebuffers,
-                std::vector<vklite::Semaphore> &&imageAvailableSemaphores,
-                std::vector<vklite::Semaphore> &&renderFinishedSemaphores,
-                std::vector<vklite::Fence> &&fences,
-                std::unique_ptr<vklite::PipelineLayout> pipelineLayout,
+                std::unique_ptr<CommandPool> commandPool,
+                std::unique_ptr<CommandBuffers> commandBuffers,
+                std::unique_ptr<RenderPass> renderPass,
+                std::unique_ptr<CombinedImageView> colorImageView,
+                std::unique_ptr<CombinedImageView> depthImageView,
+                Framebuffers &&framebuffers,
+                std::vector<Semaphore> &&imageAvailableSemaphores,
+                std::vector<Semaphore> &&renderFinishedSemaphores,
+                std::vector<Fence> &&fences,
+                std::unique_ptr<PipelineLayout> pipelineLayout,
                 std::unique_ptr<DescriptorPool> descriptorPool,
                 DescriptorSetLayouts &&descriptorSetLayouts,
                 std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
                 std::vector<PushConstant> &&pushConstants,
-                std::unique_ptr<vklite::Pipeline> pipeline);
+                std::unique_ptr<Pipeline> pipeline);
 
         ~GraphicPipelineEngine();
 
