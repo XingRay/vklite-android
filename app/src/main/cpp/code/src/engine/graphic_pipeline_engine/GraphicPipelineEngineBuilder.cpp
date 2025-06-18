@@ -185,9 +185,11 @@ namespace vklite {
                 .addSubpass([&](Subpass &subpass, const std::vector<Subpass> &subpasses) {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .stageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-                            .accessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
-                            .addDependency(externalSubpass);
+                            .addDependency(externalSubpass,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eNone,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
                 })
                 .addAttachmentIf(mMsaaEnable, [&](Attachment &attachment, std::vector<Subpass> &subpasses) {
                     Attachment::msaaColorAttachment(attachment)

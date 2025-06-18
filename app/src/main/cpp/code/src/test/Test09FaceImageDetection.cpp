@@ -111,9 +111,29 @@ namespace test09 {
                 .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .stageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-                            .accessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
-                            .addDependency(externalSubpass);
+                            .addDependency(externalSubpass,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eNone,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+                })
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(externalSubpass,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eNone,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+                })
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(externalSubpass,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eNone,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
                 })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
@@ -263,7 +283,6 @@ namespace test09 {
         mVertexBuffer->update(*mCommandPool, vertices.data(), verticesSize);
         mVertexBuffers.push_back((*mVertexBuffer).getVkBuffer());
         mVertexBufferOffsets.push_back(0);
-
 
 
         AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
@@ -442,7 +461,6 @@ namespace test09 {
 
         // 关键点在原图(1080*1920)中的坐标
         std::vector<cv::Point> points = mLetterBox.transformBack(kps);
-
 
 
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];

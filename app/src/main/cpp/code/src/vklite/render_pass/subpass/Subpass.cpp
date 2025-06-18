@@ -4,11 +4,14 @@
 
 #include "Subpass.h"
 
+#include <format>
+
 namespace vklite {
 
     Subpass::Subpass()
-            : mFlags(vk::SubpassDescriptionFlags{}),
-              mPipelineBindPoint(vk::PipelineBindPoint::eGraphics) {}
+            : mIndex(0),
+              mPipelineBindPoint(vk::PipelineBindPoint::eGraphics),
+              mFlags(vk::SubpassDescriptionFlags{}) {}
 
     Subpass::~Subpass() = default;
 
@@ -27,18 +30,15 @@ namespace vklite {
         return *this;
     }
 
-    Subpass &Subpass::stageMask(vk::PipelineStageFlags stageMask) {
-        mStageMask = stageMask;
-        return *this;
-    }
+    Subpass &Subpass::addDependency(const Subpass &srcSubpass, vk::PipelineStageFlags srcStage, vk::AccessFlags srcAccess,
+                                    vk::PipelineStageFlags dstStage, vk::AccessFlags dstAccess, vk::DependencyFlags flags) {
+        if (srcSubpass.mIndex != vk::SubpassExternal && srcSubpass.mIndex >= mIndex) {
+            throw std::runtime_error(std::format("srcSubpass.mIndex({}) >= mIndex({})", srcSubpass.mIndex, mIndex));
+        }
 
-    Subpass &Subpass::accessMask(vk::AccessFlags accessMask) {
-        mAccessMask = accessMask;
-        return *this;
-    }
-
-    Subpass &Subpass::addDependency(const Subpass &srcSubpass) {
-        mDependencies.push_back(std::cref(srcSubpass));
+        mDependencies.emplace_back(SubpassDependencyItem(srcSubpass.mIndex, srcStage, srcAccess),
+                                   SubpassDependencyItem(mIndex, dstStage, dstAccess),
+                                   flags);
         return *this;
     }
 
@@ -65,6 +65,10 @@ namespace vklite {
     Subpass &Subpass::addPreserveAttachment(const Attachment &attachment, vk::ImageLayout layout) {
         mPreserveAttachments.push_back(std::move(AttachmentReference(attachment, layout)));
         return *this;
+    }
+
+    uint32_t Subpass::getIndex() const {
+        return mIndex;
     }
 
     std::vector<vk::AttachmentReference> convertAttachments(const std::vector<AttachmentReference> &attachmentReferences) {
@@ -108,15 +112,8 @@ namespace vklite {
     std::vector<vk::SubpassDependency> Subpass::createSubpassDependencies() const {
         std::vector<vk::SubpassDependency> subpassDependencies;
         subpassDependencies.reserve(mDependencies.size());
-        for (const std::reference_wrapper<const Subpass> &subpass: mDependencies) {
-            vk::SubpassDependency dependency = vk::SubpassDependency{}
-                    .setSrcSubpass(subpass.get().mIndex)
-                    .setSrcStageMask(subpass.get().mStageMask)
-                    .setSrcAccessMask(subpass.get().mAccessMask)
-                    .setDstSubpass(mIndex)
-                    .setDstStageMask(mStageMask)
-                    .setDstAccessMask(mAccessMask);
-            subpassDependencies.push_back(dependency);
+        for (const SubpassDependency &subpassDependency: mDependencies) {
+            subpassDependencies.emplace_back(subpassDependency.createSubpassDependency());
         }
 
         return subpassDependencies;
@@ -125,9 +122,7 @@ namespace vklite {
     Subpass Subpass::externalSubpass() {
         Subpass externalSubpass{};
         externalSubpass
-                .index(vk::SubpassExternal)
-                .stageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests)
-                .accessMask(vk::AccessFlagBits::eNone);
+                .index(vk::SubpassExternal);
         return externalSubpass;
     }
 

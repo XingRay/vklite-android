@@ -275,6 +275,8 @@ namespace vklite {
         mVertexBuffers.reserve(mFrameCount);
         mVertexBufferOffsets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {
+            mVertexBuffers.emplace_back();
+            mVertexBufferOffsets.emplace_back();
             configure(i, mVertexBuffers[i], mVertexBufferOffsets[i]);
         }
 

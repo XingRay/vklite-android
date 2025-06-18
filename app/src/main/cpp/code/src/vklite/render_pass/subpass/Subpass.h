@@ -10,11 +10,14 @@
 #include <vulkan/vulkan.hpp>
 #include "vklite/render_pass/subpass/SubpassDescription.h"
 #include "vklite/render_pass/attachment/AttachmentReference.h"
+#include "vklite/render_pass/subpass/SubpassDependency.h"
 
 namespace vklite {
 
     class Subpass {
     private:
+        uint32_t mIndex;
+
         // basic
         vk::SubpassDescriptionFlags mFlags;
         vk::PipelineBindPoint mPipelineBindPoint;
@@ -26,12 +29,8 @@ namespace vklite {
         std::optional<AttachmentReference> mDepthStencilAttachment;
         std::vector<AttachmentReference> mPreserveAttachments;
 
-        // as dependency
-        uint32_t mIndex;
-        vk::PipelineStageFlags mStageMask;
-        vk::AccessFlags mAccessMask;
         // dependencies
-        std::vector<std::reference_wrapper<const Subpass>> mDependencies;
+        std::vector<SubpassDependency> mDependencies;
 
     public:
         Subpass();
@@ -44,11 +43,8 @@ namespace vklite {
 
         Subpass &index(uint32_t index);
 
-        Subpass &stageMask(vk::PipelineStageFlags stageMask);
-
-        Subpass &accessMask(vk::AccessFlags accessMask);
-
-        Subpass &addDependency(const Subpass &srcSubpass);
+        Subpass &addDependency(const Subpass &srcSubpass, vk::PipelineStageFlags srcStage, vk::AccessFlags srcAccess,
+                               vk::PipelineStageFlags dstStage, vk::AccessFlags dstAccess, vk::DependencyFlags flags = vk::DependencyFlags{});
 
         Subpass &addInputAttachment(const Attachment &attachment, vk::ImageLayout layout);
 
@@ -59,6 +55,9 @@ namespace vklite {
         Subpass &setDepthStencilAttachment(const Attachment &attachment, vk::ImageLayout layout);
 
         Subpass &addPreserveAttachment(const Attachment &attachment, vk::ImageLayout layout);
+
+        [[nodiscard]]
+        uint32_t getIndex() const;
 
         [[nodiscard]]
         SubpassDescription createSubpassDescription() const;

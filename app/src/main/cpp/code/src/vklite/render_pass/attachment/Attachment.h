@@ -20,7 +20,9 @@ namespace vklite {
         vk::AttachmentStoreOp mStoreOp;
         vk::AttachmentLoadOp mStencilLoadOp;
         vk::AttachmentStoreOp mStencilStoreOp;
+        // 整个 RenderPass 流程启动前附件的 Layout
         vk::ImageLayout mInitialLayout;
+        // 整个 RenderPass 流程结束后附件的 Layout
         vk::ImageLayout mFinalLayout;
 
         // clear value
