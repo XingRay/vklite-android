@@ -144,38 +144,45 @@ namespace test09 {
         mRenderPass = vklite::RenderPassBuilder()
                 .device(mDevice->getDevice())
                 .renderAreaExtend(mSwapchain->getDisplaySize())
-//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-//                    subpass
-//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-//                            .addDependency(externalSubpass,
-//                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eNone,
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-//                })
                 .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
                             .addDependency(externalSubpass,
-                                    //subpasses[0],
+                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite,
                                            vk::AccessFlagBits::eNone,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+                })
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(//externalSubpass,
+                                    subpasses[0],
+                                    vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                    vk::AccessFlagBits::eColorAttachmentWrite,
+//                                           vk::AccessFlagBits::eNone,
+
+                                    vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                    vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
 //                                           vk::PipelineStageFlagBits::eFragmentShader,
 //                                           vk::AccessFlagBits::eInputAttachmentRead);
                 })
-//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-//                    subpass
-//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-//                            .addDependency(subpasses[1],
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(subpasses[1],
 //                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
 //                                           vk::AccessFlagBits::eColorAttachmentWrite,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite,
+
 //                                           vk::PipelineStageFlagBits::eFragmentShader,
-//                                           vk::AccessFlagBits::eInputAttachmentRead);
-//                })
+//                                           vk::AccessFlagBits::eInputAttachmentRead
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite
+                            );
+                })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
@@ -194,11 +201,12 @@ namespace test09 {
                             })
                             .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
-                                        .asColorAttachmentUsedIn(subpasses[0]);
-//                                        .asInputAttachmentUsedIn(subpasses[1])
-//                                        .asColorAttachmentUsedIn(subpasses[1])
-//                                        .asInputAttachmentUsedIn(subpasses[2])
-//                                        .asColorAttachmentUsedIn(subpasses[2]);
+                                        .asColorAttachmentUsedIn(subpasses[0])
+                                        .asInputAttachmentUsedIn(subpasses[1])
+                                        .asColorAttachmentUsedIn(subpasses[1])
+                                        .asInputAttachmentUsedIn(subpasses[2])
+                                        .asColorAttachmentUsedIn(subpasses[2])
+                                        ;
                             });
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -244,33 +252,33 @@ namespace test09 {
                 .addDescriptorSetCount(pointsShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
-//        mPipeline = vklite::CombinedGraphicPipelineBuilder()
-//                .device(mDevice->getDevice())
-//                .descriptorPool(mDescriptorPool->getDescriptorPool())
-//                .frameCount(mFrameCount)
-//                .shaderConfigure(shaderConfigure)
-//                .sampleCount(sampleCount)
-//                .depthTestEnable(mDepthTestEnable)
-//                .renderPass(mRenderPass->getRenderPass(), 0)
-//                .viewports(mViewports)
-//                .scissors(mScissors)
-//                .buildUnique();
+        mPipeline = vklite::CombinedGraphicPipelineBuilder()
+                .device(mDevice->getDevice())
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(shaderConfigure)
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
+                .renderPass(mRenderPass->getRenderPass(), 0)
+                .viewports(mViewports)
+                .scissors(mScissors)
+                .buildUnique();
 
-//        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
-//                .device(mDevice->getDevice())
-//                .descriptorPool(mDescriptorPool->getDescriptorPool())
-//                .frameCount(mFrameCount)
-//                .shaderConfigure(linesShaderConfigure)
-//                .sampleCount(sampleCount)
-//                .depthTestEnable(mDepthTestEnable)
-//                .renderPass(mRenderPass->getRenderPass(), 0)
-//                .viewports(mViewports)
-//                .scissors(mScissors)
-//                .topology(vk::PrimitiveTopology::eLineList)
-//                .polygonMode(vk::PolygonMode::eLine)
+        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
+                .device(mDevice->getDevice())
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(linesShaderConfigure)
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
+                .renderPass(mRenderPass->getRenderPass(), 1)
+                .viewports(mViewports)
+                .scissors(mScissors)
+                .topology(vk::PrimitiveTopology::eLineList)
+                .polygonMode(vk::PolygonMode::eLine)
 //                .cullMode(vk::CullModeFlagBits::eNone)
-//                .lineWidth(1.0f)
-//                .buildUnique();
+                .lineWidth(1.0f)
+                .buildUnique();
 
         mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
@@ -279,12 +287,11 @@ namespace test09 {
                 .shaderConfigure(pointsShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 0)
+                .renderPass(mRenderPass->getRenderPass(), 2)
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .topology(vk::PrimitiveTopology::ePointList)
                 .polygonMode(vk::PolygonMode::ePoint)
-//                .cullMode(vk::CullModeFlagBits::eNone)
                 .buildUnique();
     }
 
@@ -351,20 +358,20 @@ namespace test09 {
             mSamplers[i].update(*mCommandPool, mImageMat.data, mImageMat.total() * mImageMat.elemSize());
         }
 
-//        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
-//                .frameCount(mFrameCount)
-//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
-//                    configure
-//                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
-//                            .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
-//                                mapping
-//                                        .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
-//                            });
-//                })
-//                .build();
-//
-//        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
-//        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
+        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
+                            .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
+                                mapping
+                                        .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
+                            });
+                })
+                .build();
+
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
+        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
 
 //        mAnchors = image_process::Anchor::generateAnchors();
@@ -463,19 +470,20 @@ namespace test09 {
             mLinesUniformBuffers[i].update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
         }
 
-//        vklite::DescriptorSetWriters linesDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
-//                .frameCount(mFrameCount)
-//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
-//                    configure
-//                            .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
-//                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
-//                                mapping
-//                                        .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
-//                            });
-//                })
-//                .build();
-//
-//        mDevice->getDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        vklite::DescriptorSetWriters linesDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
+                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                                mapping
+                                        .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
+                            });
+                })
+                .build();
+
+        mDevice->getDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
 
         // points
         std::vector<SimpleVertex> pointsVertices = {
@@ -635,52 +643,60 @@ namespace test09 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipeline());
-//                vkCommandBuffer.setViewport(0, mViewports);
-//                vkCommandBuffer.setScissor(0, mScissors);
-//
-//                if (!mPipeline->getDescriptorSets().empty()) {
-//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipelineLayout(), 0, mPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
-//                }
-//
-//                for (const vklite::PushConstant &pushConstant: mPipeline->getPushConstants()) {
-//                    vkCommandBuffer.pushConstants(mPipeline->getVkPipelineLayout(),
-//                                                  pushConstant.getStageFlags(),
-//                                                  pushConstant.getOffset(),
-//                                                  pushConstant.getSize(),
-//                                                  pushConstant.getData());
-//                }
-//
-//                vkCommandBuffer.bindVertexBuffers(0, mVertexBuffers, mVertexBufferOffsets);
-//                vkCommandBuffer.bindIndexBuffer(mIndexVkBuffer, 0, vk::IndexType::eUint32);
-//                vkCommandBuffer.drawIndexed(mIndexCount, 1, 0, 0, 0);
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipeline());
+                vkCommandBuffer.setViewport(0, mViewports);
+                vkCommandBuffer.setScissor(0, mScissors);
+
+                if (!mPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipelineLayout(), 0, mPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+                }
+
+                for (const vklite::PushConstant &pushConstant: mPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mPipeline->getVkPipelineLayout(),
+                                                  pushConstant.getStageFlags(),
+                                                  pushConstant.getOffset(),
+                                                  pushConstant.getSize(),
+                                                  pushConstant.getData());
+                }
+
+                vkCommandBuffer.bindVertexBuffers(0, mVertexBuffers, mVertexBufferOffsets);
+                vkCommandBuffer.bindIndexBuffer(mIndexVkBuffer, 0, vk::IndexType::eUint32);
+                vkCommandBuffer.drawIndexed(mIndexCount, 1, 0, 0, 0);
+
+
+                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
+
 
 
                 // lines
-//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
-//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipeline());
-//                vkCommandBuffer.setViewport(0, mViewports);
-//                vkCommandBuffer.setScissor(0, mScissors);
-//
-//                if (!mLinesPipeline->getDescriptorSets().empty()) {
-//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipelineLayout(), 0, mLinesPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
-//                }
-//
-//                for (const vklite::PushConstant &pushConstant: mLinesPipeline->getPushConstants()) {
-//                    vkCommandBuffer.pushConstants(mLinesPipeline->getVkPipelineLayout(),
-//                                                  pushConstant.getStageFlags(),
-//                                                  pushConstant.getOffset(),
-//                                                  pushConstant.getSize(),
-//                                                  pushConstant.getData());
-//                }
-//
-//                vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
-//                vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
-//                vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipeline());
+                vkCommandBuffer.setViewport(0, mViewports);
+                vkCommandBuffer.setScissor(0, mScissors);
+//                vkCommandBuffer.setLineWidth(8.0f); //todo
+
+                if (!mLinesPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipelineLayout(), 0, mLinesPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+                }
+
+                for (const vklite::PushConstant &pushConstant: mLinesPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mLinesPipeline->getVkPipelineLayout(),
+                                                  pushConstant.getStageFlags(),
+                                                  pushConstant.getOffset(),
+                                                  pushConstant.getSize(),
+                                                  pushConstant.getData());
+                }
+
+                vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
+                vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
+                vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
+
+
+
+                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
+
 
 
                 // points
-//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
