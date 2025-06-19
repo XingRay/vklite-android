@@ -69,6 +69,8 @@
 // pipeline layout
 #include "vklite/pipeline/pipeline_layout/PipelineLayout.h"
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
+#include "vklite/pipeline/combined_pipeline/CombinedPipeline.h"
+#include "vklite/pipeline/combined_pipeline/CombinedGraphicPipelineBuilder.h"
 
 
 // descriptor set layout

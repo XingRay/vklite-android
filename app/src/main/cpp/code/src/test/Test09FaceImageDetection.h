@@ -72,12 +72,15 @@ namespace test09 {
         std::vector<vklite::Semaphore> mRenderFinishedSemaphores;
         std::vector<vklite::Fence> mFences;
 
-        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
+
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
-        std::unique_ptr<vklite::DescriptorSetLayouts> mDescriptorSetLayouts;
-        std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
-        std::vector<vklite::PushConstant> mPushConstants;
-        std::unique_ptr<vklite::Pipeline> mPipeline;
+        std::unique_ptr<vklite::CombinedPipeline> mPipeline;
+
+//        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
+//        std::unique_ptr<vklite::DescriptorSetLayouts> mDescriptorSetLayouts;
+//        std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
+//        std::vector<vklite::PushConstant> mPushConstants;
+//        std::unique_ptr<vklite::Pipeline> mPipeline;
 
         //status
         uint32_t mCurrentFrameIndex = 0;

@@ -112,35 +112,36 @@ namespace test09 {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
                             .addDependency(externalSubpass,
+                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eNone,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
                 })
-                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-                    subpass
-                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .addDependency(externalSubpass,
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eNone,
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-                })
-                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-                    subpass
-                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .addDependency(externalSubpass,
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eNone,
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-                })
+//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+//                    subpass
+//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+//                            .addDependency(subpasses[0],
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite,
+//                                           vk::PipelineStageFlagBits::eFragmentShader,
+//                                           vk::AccessFlagBits::eInputAttachmentRead);
+//                })
+//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+//                    subpass
+//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+//                            .addDependency(subpasses[1],
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite,
+//                                           vk::PipelineStageFlagBits::eFragmentShader,
+//                                           vk::AccessFlagBits::eInputAttachmentRead);
+//                })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
                             .format(mSwapchain->getDisplayFormat())
                             .clearColorValue(mClearColor)
-                            .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                            .asColorAttachmentUsedIn(subpasses[0]);
                 })
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
@@ -149,10 +150,15 @@ namespace test09 {
                             .applyIf(mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
                                         .loadOp(vk::AttachmentLoadOp::eDontCare)
-                                        .asResolveAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                                        .asResolveAttachmentUsedIn(subpasses[0]);
                             })
                             .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
-                                thiz.asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
+                                thiz
+                                        .asColorAttachmentUsedIn(subpasses[0]);
+//                                        .asInputAttachmentUsedIn(subpasses[1])
+//                                        .asColorAttachmentUsedIn(subpasses[1])
+//                                        .asInputAttachmentUsedIn(subpasses[2])
+//                                        .asColorAttachmentUsedIn(subpasses[2]);
                             });
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -202,50 +208,63 @@ namespace test09 {
                 .descriptorSetCount(shaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
-        mDescriptorSetLayouts = vklite::DescriptorSetLayoutsBuilder()
+        mPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
-                .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
-                .buildUnique();
-
-        mDescriptorSets.reserve(mFrameCount);
-        for (uint32_t i = 0; i < mFrameCount; i++) {
-            std::vector<vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
-            LOG_D("descriptorPool->allocateDescriptorSets:");
-            for (const vk::DescriptorSet &set: sets) {
-                LOG_D("\tset:%p", (void *) set);
-            }
-            mDescriptorSets.push_back(std::move(sets));
-        }
-
-        mPipelineLayout = vklite::PipelineLayoutBuilder()
-                .device(mDevice->getDevice())
-                .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(pushConstantRanges))
-                .buildUnique();
-
-        std::unique_ptr<vklite::ShaderModule> vertexShader = vklite::ShaderModuleBuilder()
-                .device(mDevice->getDevice())
-                .code(std::move(shaderConfigure.getVertexShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<vklite::ShaderModule> fragmentShader = vklite::ShaderModuleBuilder()
-                .device(mDevice->getDevice())
-                .code(std::move(shaderConfigure.getFragmentShaderCode()))
-                .buildUnique();
-
-        mPipeline = vklite::GraphicsPipelineBuilder()
-                .device(mDevice->getDevice())
-                .renderPass(mRenderPass->getRenderPass())
-                .pipelineLayout(mPipelineLayout->getPipelineLayout())
-                .viewports(mViewports)
-                .scissors(mScissors)
-                .vertexShader(std::move(vertexShader))
-                .vertexBindingDescriptions(shaderConfigure.createVertexBindingDescriptions())
-                .vertexAttributeDescriptions(shaderConfigure.createVertexAttributeDescriptions())
-                .fragmentShader(std::move(fragmentShader))
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(shaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
+                .renderPass(mRenderPass->getRenderPass(), 0)
+                .viewports(mViewports)
+                .scissors(mScissors)
                 .buildUnique();
+
+//        mDescriptorSetLayouts = vklite::DescriptorSetLayoutsBuilder()
+//                .device(mDevice->getDevice())
+//                .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
+//                .buildUnique();
+//
+//        mDescriptorSets.reserve(mFrameCount);
+//        for (uint32_t i = 0; i < mFrameCount; i++) {
+//            std::vector<vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
+//            LOG_D("descriptorPool->allocateDescriptorSets:");
+//            for (const vk::DescriptorSet &set: sets) {
+//                LOG_D("\tset:%p", (void *) set);
+//            }
+//            mDescriptorSets.push_back(std::move(sets));
+//        }
+//
+//        mPipelineLayout = vklite::PipelineLayoutBuilder()
+//                .device(mDevice->getDevice())
+//                .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
+//                .pushConstantRanges(std::move(pushConstantRanges))
+//                .buildUnique();
+//
+//        std::unique_ptr<vklite::ShaderModule> vertexShader = vklite::ShaderModuleBuilder()
+//                .device(mDevice->getDevice())
+//                .code(std::move(shaderConfigure.getVertexShaderCode()))
+//                .buildUnique();
+//
+//        std::unique_ptr<vklite::ShaderModule> fragmentShader = vklite::ShaderModuleBuilder()
+//                .device(mDevice->getDevice())
+//                .code(std::move(shaderConfigure.getFragmentShaderCode()))
+//                .buildUnique();
+
+//        mPipeline = vklite::GraphicsPipelineBuilder()
+//                .subpass(0)
+//                .device(mDevice->getDevice())
+//                .renderPass(mRenderPass->getRenderPass())
+//                .pipelineLayout(mPipelineLayout->getPipelineLayout())
+//                .viewports(mViewports)
+//                .scissors(mScissors)
+//                .vertexShader(std::move(vertexShader))
+//                .vertexBindingDescriptions(shaderConfigure.createVertexBindingDescriptions())
+//                .vertexAttributeDescriptions(shaderConfigure.createVertexAttributeDescriptions())
+//                .fragmentShader(std::move(fragmentShader))
+//                .sampleCount(sampleCount)
+//                .depthTestEnable(mDepthTestEnable)
+//                .buildUnique();
 
     }
 
@@ -316,7 +335,7 @@ namespace test09 {
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
-                            .descriptorSet(mDescriptorSets[frameIndex][0])
+                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
                             .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
                                 mapping
                                         .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
@@ -493,16 +512,16 @@ namespace test09 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getPipeline());
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
 
-                if (!mDescriptorSets.empty()) {
-                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, mDescriptorSets[mCurrentFrameIndex], nullptr);
+                if (!mPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipelineLayout(), 0, mPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
                 }
 
-                for (const vklite::PushConstant &pushConstant: mPushConstants) {
-                    vkCommandBuffer.pushConstants(mPipelineLayout->getPipelineLayout(),
+                for (const vklite::PushConstant &pushConstant: mPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mPipeline->getVkPipelineLayout(),
                                                   pushConstant.getStageFlags(),
                                                   pushConstant.getOffset(),
                                                   pushConstant.getSize(),

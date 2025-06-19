@@ -77,6 +77,8 @@ namespace vklite {
 
         GraphicsPipelineBuilder &renderPass(const vk::RenderPass &renderPass);
 
+        GraphicsPipelineBuilder &subpass(uint32_t subpass);
+
         GraphicsPipelineBuilder &pipelineLayout(const vk::PipelineLayout &pipelineLayout);
 
         GraphicsPipelineBuilder &viewports(const std::vector<vk::Viewport> &viewports);
@@ -138,16 +140,13 @@ namespace vklite {
         // depth & stencil
         GraphicsPipelineBuilder &depthTestEnable(bool depthTestEnable);
 
-
-        GraphicsPipelineBuilder &subpass(uint32_t subpass);
-
         GraphicsPipelineBuilder &basePipelineHandle(vk::Pipeline basePipelineHandle);
 
         GraphicsPipelineBuilder &basePipelineIndex(int32_t basePipelineIndex);
 
         GraphicsPipelineBuilder &pipelineCache(vk::PipelineCache pipelineCache);
 
-        GraphicsPipelineBuilder & configShader(vklite::ShaderConfigure& graphicShaderConfigure);
+        GraphicsPipelineBuilder &configShader(vklite::ShaderConfigure &graphicShaderConfigure);
 
         [[nodiscard]]
         Pipeline build();

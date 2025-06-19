@@ -57,21 +57,21 @@ namespace vklite {
 
         Attachment &index(uint32_t index);
 
-        Attachment &asInputAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asInputAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eShaderReadOnlyOptimal);
 
-        Attachment &asInputAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asInputAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eShaderReadOnlyOptimal);
 
-        Attachment &asColorAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asColorAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eColorAttachmentOptimal);
 
-        Attachment &asColorAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asColorAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eColorAttachmentOptimal);
 
-        Attachment &asResolveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asResolveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eColorAttachmentOptimal);
 
-        Attachment &asResolveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asResolveAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eColorAttachmentOptimal);
 
-        Attachment &asDepthStencilAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asDepthStencilAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
-        Attachment &asDepthStencilAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout);
+        Attachment &asDepthStencilAttachmentUsedInIf(bool condition, Subpass &Subpass, vk::ImageLayout layout = vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
         Attachment &asPreserveAttachmentUsedIn(Subpass &Subpass, vk::ImageLayout layout);
 
