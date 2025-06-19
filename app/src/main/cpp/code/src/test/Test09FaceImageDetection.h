@@ -53,7 +53,7 @@ namespace test09 {
         // config
         bool mMsaaEnable = false;
         bool mDepthTestEnable = false;
-        std::array<float, 4> mClearColor = {0.2f, 0.4f, 0.8f, 1.0f};
+        std::array<float, 4> mClearColor = {0.0f, 0.0f, 0.0f, 1.0f};
         float mClearDepth = 1.0f;
         uint32_t mFrameCount = 2;
         vk::SampleCountFlagBits mSampleCount;
@@ -88,16 +88,8 @@ namespace test09 {
 
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
         std::unique_ptr<vklite::CombinedPipeline> mPipeline;
-
         std::unique_ptr<vklite::CombinedPipeline> mLinesPipeline;
-
         std::unique_ptr<vklite::CombinedPipeline> mPointsPipeline;
-
-//        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
-//        std::unique_ptr<vklite::DescriptorSetLayouts> mDescriptorSetLayouts;
-//        std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;
-//        std::vector<vklite::PushConstant> mPushConstants;
-//        std::unique_ptr<vklite::Pipeline> mPipeline;
 
         //status
         uint32_t mCurrentFrameIndex = 0;
