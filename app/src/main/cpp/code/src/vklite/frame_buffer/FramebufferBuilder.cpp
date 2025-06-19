@@ -32,6 +32,12 @@ namespace vklite {
         return *this;
     }
 
+    FramebufferBuilder &FramebufferBuilder::size(vk::Extent2D size) {
+        width(size.width);
+        height(size.height);
+        return *this;
+    }
+
     FramebufferBuilder &FramebufferBuilder::layers(uint32_t layers) {
         mFramebufferCreateInfo.setLayers(layers);
         return *this;
@@ -58,10 +64,10 @@ namespace vklite {
 
     Framebuffer FramebufferBuilder::build() {
         // check params
-        if(mDevice== nullptr){
+        if (mDevice == nullptr) {
             throw std::runtime_error("mDevice== nullptr, must invoke FramebufferBuilder::device(vk::Device device)");
         }
-        if(mFramebufferCreateInfo.renderPass== nullptr){
+        if (mFramebufferCreateInfo.renderPass == nullptr) {
             throw std::runtime_error("mFramebufferCreateInfo.renderPass== nullptr, must invoke FramebufferBuilder::renderPass(vk::RenderPass renderPass)");
         }
 

@@ -76,6 +76,10 @@ namespace test09 {
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
         std::unique_ptr<vklite::CombinedPipeline> mPipeline;
 
+        std::unique_ptr<vklite::CombinedPipeline> mLinesPipeline;
+
+        std::unique_ptr<vklite::CombinedPipeline> mPointsPipeline;
+
 //        std::unique_ptr<vklite::PipelineLayout> mPipelineLayout;
 //        std::unique_ptr<vklite::DescriptorSetLayouts> mDescriptorSetLayouts;
 //        std::vector<std::vector<vk::DescriptorSet>> mDescriptorSets;

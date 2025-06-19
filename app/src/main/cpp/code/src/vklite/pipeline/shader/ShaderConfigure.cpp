@@ -145,7 +145,6 @@ namespace vklite {
 
     std::vector<vk::DescriptorPoolSize> ShaderConfigure::calcDescriptorPoolSizes() const {
         std::vector<vk::DescriptorPoolSize> descriptorPoolSizes;
-        std::unordered_map<vk::DescriptorType, size_t> descriptorTypeToIndexMap;
 
         for (const auto &setEntry: mDescriptorSetConfigures) {
             uint32_t set = setEntry.first;
@@ -158,12 +157,7 @@ namespace vklite {
 
                 const vk::DescriptorType type = descriptor.getDescriptorType();
                 const uint32_t count = descriptor.getDescriptorCount();
-                if (descriptorTypeToIndexMap.contains(type)) {
-                    descriptorPoolSizes[descriptorTypeToIndexMap[type]].descriptorCount += count;
-                } else {
-                    descriptorTypeToIndexMap[type] = descriptorPoolSizes.size();
-                    descriptorPoolSizes.emplace_back(type, count);
-                }
+                descriptorPoolSizes.emplace_back(type, count);
             }
         }
 

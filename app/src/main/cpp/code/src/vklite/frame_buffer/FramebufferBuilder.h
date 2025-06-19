@@ -31,6 +31,8 @@ namespace vklite {
 
         FramebufferBuilder &height(uint32_t height);
 
+        FramebufferBuilder &size(vk::Extent2D size);
+
         FramebufferBuilder &layers(uint32_t layers);
 
         FramebufferBuilder &addAttachment(vk::ImageView attachment);

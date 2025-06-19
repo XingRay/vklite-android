@@ -23,8 +23,20 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorPoolBuilder &DescriptorPoolBuilder::addDescriptorSetCount(uint32_t descriptorSetCount) {
+        mDescriptorSetCount += descriptorSetCount;
+        return *this;
+    }
+
     DescriptorPoolBuilder &DescriptorPoolBuilder::descriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes) {
         mDescriptorPoolSizes = std::move(descriptorPoolSizes);
+        return *this;
+    }
+
+    DescriptorPoolBuilder &DescriptorPoolBuilder::addDescriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes) {
+        mDescriptorPoolSizes.insert(mDescriptorPoolSizes.begin(),
+                                    std::move_iterator(descriptorPoolSizes.begin()),
+                                    std::move_iterator(descriptorPoolSizes.end()));
         return *this;
     }
 
@@ -37,7 +49,7 @@ namespace vklite {
         if (mDevice == nullptr) {
             throw std::runtime_error("DescriptorPoolBuilder::build() mDevice == nullptr");
         }
-        std::vector<vk::DescriptorPoolSize> descriptorPoolSizes = calcDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount);
+        std::vector<vk::DescriptorPoolSize> descriptorPoolSizes = mergeDescriptorPoolSizes(mDescriptorPoolSizes, mFrameCount);
         uint32_t maxSets = mDescriptorSetCount * mFrameCount;
 
         vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;
@@ -56,13 +68,23 @@ namespace vklite {
         return std::make_unique<DescriptorPool>(build());
     }
 
-    std::vector<vk::DescriptorPoolSize> DescriptorPoolBuilder::calcDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes, uint32_t framerCount) {
-        std::vector<vk::DescriptorPoolSize> poolSizes;
-        poolSizes.reserve(descriptorPoolSizes.size());
-        for (const vk::DescriptorPoolSize &descriptorPoolSize: descriptorPoolSizes) {
-            poolSizes.emplace_back(descriptorPoolSize.type, descriptorPoolSize.descriptorCount * framerCount);
+    std::vector<vk::DescriptorPoolSize> DescriptorPoolBuilder::mergeDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes, uint32_t framerCount) {
+        std::vector<vk::DescriptorPoolSize> mergedDescriptorPoolSizes;
+        // type -> index in mergedDescriptorPoolSizes
+        std::unordered_map<vk::DescriptorType, size_t> descriptorTypeToIndexMap;
+
+        for (const vk::DescriptorPoolSize &poolSize: descriptorPoolSizes) {
+            const vk::DescriptorType type = poolSize.type;
+            const uint32_t count = poolSize.descriptorCount * framerCount;
+            if (descriptorTypeToIndexMap.contains(type)) {
+                mergedDescriptorPoolSizes[descriptorTypeToIndexMap[type]].descriptorCount += count;
+            } else {
+                descriptorTypeToIndexMap[type] = descriptorPoolSizes.size();
+                mergedDescriptorPoolSizes.emplace_back(type, count);
+            }
         }
-        return poolSizes;
+
+        return mergedDescriptorPoolSizes;
     }
 
 } // vklite

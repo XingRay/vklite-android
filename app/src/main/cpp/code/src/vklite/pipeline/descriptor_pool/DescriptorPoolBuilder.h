@@ -32,7 +32,11 @@ namespace vklite {
 
         DescriptorPoolBuilder &descriptorSetCount(uint32_t descriptorSetCount);
 
+        DescriptorPoolBuilder &addDescriptorSetCount(uint32_t descriptorSetCount);
+
         DescriptorPoolBuilder &descriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes);
+
+        DescriptorPoolBuilder &addDescriptorPoolSizes(std::vector<vk::DescriptorPoolSize> &&descriptorPoolSizes);
 
         DescriptorPoolBuilder &frameCount(uint32_t frameCount);
 
@@ -42,8 +46,7 @@ namespace vklite {
 
         //static
     private:
-    public:
-        static std::vector<vk::DescriptorPoolSize> calcDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes,
+        static std::vector<vk::DescriptorPoolSize> mergeDescriptorPoolSizes(const std::vector<vk::DescriptorPoolSize> &descriptorPoolSizes,
                                                                            uint32_t framerCount);
     };
 

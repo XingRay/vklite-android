@@ -32,6 +32,42 @@ namespace test09 {
                             .addSampler(0, vk::ShaderStageFlagBits::eFragment);
                 });
 
+        std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.vert.spv");
+        std::vector<uint32_t> linesFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.frag.spv");
+
+        vklite::ShaderConfigure linesShaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                });
+
+        std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.vert.spv");
+        std::vector<uint32_t> pointsFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.frag.spv");
+
+        vklite::ShaderConfigure pointsShaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                });
+
         mInstance = vklite::InstanceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .buildUnique();
@@ -118,24 +154,24 @@ namespace test09 {
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
                 })
-//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-//                    subpass
-//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-//                            .addDependency(subpasses[0],
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite,
-//                                           vk::PipelineStageFlagBits::eFragmentShader,
-//                                           vk::AccessFlagBits::eInputAttachmentRead);
-//                })
-//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-//                    subpass
-//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-//                            .addDependency(subpasses[1],
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite,
-//                                           vk::PipelineStageFlagBits::eFragmentShader,
-//                                           vk::AccessFlagBits::eInputAttachmentRead);
-//                })
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(subpasses[0],
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::AccessFlagBits::eColorAttachmentWrite,
+                                           vk::PipelineStageFlagBits::eFragmentShader,
+                                           vk::AccessFlagBits::eInputAttachmentRead);
+                })
+                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+                    subpass
+                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+                            .addDependency(subpasses[1],
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
+                                           vk::AccessFlagBits::eColorAttachmentWrite,
+                                           vk::PipelineStageFlagBits::eFragmentShader,
+                                           vk::AccessFlagBits::eInputAttachmentRead);
+                })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
@@ -154,11 +190,11 @@ namespace test09 {
                             })
                             .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
-                                        .asColorAttachmentUsedIn(subpasses[0]);
-//                                        .asInputAttachmentUsedIn(subpasses[1])
-//                                        .asColorAttachmentUsedIn(subpasses[1])
-//                                        .asInputAttachmentUsedIn(subpasses[2])
-//                                        .asColorAttachmentUsedIn(subpasses[2]);
+                                        .asColorAttachmentUsedIn(subpasses[0])
+                                        .asInputAttachmentUsedIn(subpasses[1])
+                                        .asColorAttachmentUsedIn(subpasses[1])
+                                        .asInputAttachmentUsedIn(subpasses[2])
+                                        .asColorAttachmentUsedIn(subpasses[2]);
                             });
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -176,8 +212,7 @@ namespace test09 {
                     return vklite::FramebufferBuilder()
                             .device(mDevice->getDevice())
                             .renderPass(mRenderPass->getRenderPass())
-                            .width(mSwapchain->getDisplaySize().width)
-                            .height(mSwapchain->getDisplaySize().height)
+                            .size(mSwapchain->getDisplaySize())
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                             .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView().getImageView(); })
                             .addAttachment(mDisplayImageViews[index].getImageView())
@@ -193,13 +228,6 @@ namespace test09 {
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
-
-        std::vector<vk::PushConstantRange> pushConstantRanges = shaderConfigure.getPushConstantRanges();
-        std::vector<vklite::PushConstant> pushConstants;
-        pushConstants.reserve(pushConstantRanges.size());
-        for (const vk::PushConstantRange &pushConstantRange: pushConstantRanges) {
-            pushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
-        }
 
         mDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
@@ -220,52 +248,29 @@ namespace test09 {
                 .scissors(mScissors)
                 .buildUnique();
 
-//        mDescriptorSetLayouts = vklite::DescriptorSetLayoutsBuilder()
-//                .device(mDevice->getDevice())
-//                .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
-//                .buildUnique();
-//
-//        mDescriptorSets.reserve(mFrameCount);
-//        for (uint32_t i = 0; i < mFrameCount; i++) {
-//            std::vector<vk::DescriptorSet> sets = mDescriptorPool->allocateDescriptorSets(mDescriptorSetLayouts->getDescriptorSetLayouts());
-//            LOG_D("descriptorPool->allocateDescriptorSets:");
-//            for (const vk::DescriptorSet &set: sets) {
-//                LOG_D("\tset:%p", (void *) set);
-//            }
-//            mDescriptorSets.push_back(std::move(sets));
-//        }
-//
-//        mPipelineLayout = vklite::PipelineLayoutBuilder()
-//                .device(mDevice->getDevice())
-//                .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
-//                .pushConstantRanges(std::move(pushConstantRanges))
-//                .buildUnique();
-//
-//        std::unique_ptr<vklite::ShaderModule> vertexShader = vklite::ShaderModuleBuilder()
-//                .device(mDevice->getDevice())
-//                .code(std::move(shaderConfigure.getVertexShaderCode()))
-//                .buildUnique();
-//
-//        std::unique_ptr<vklite::ShaderModule> fragmentShader = vklite::ShaderModuleBuilder()
-//                .device(mDevice->getDevice())
-//                .code(std::move(shaderConfigure.getFragmentShaderCode()))
-//                .buildUnique();
+        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
+                .device(mDevice->getDevice())
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(linesShaderConfigure)
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
+                .renderPass(mRenderPass->getRenderPass(), 1)
+                .viewports(mViewports)
+                .scissors(mScissors)
+                .buildUnique();
 
-//        mPipeline = vklite::GraphicsPipelineBuilder()
-//                .subpass(0)
-//                .device(mDevice->getDevice())
-//                .renderPass(mRenderPass->getRenderPass())
-//                .pipelineLayout(mPipelineLayout->getPipelineLayout())
-//                .viewports(mViewports)
-//                .scissors(mScissors)
-//                .vertexShader(std::move(vertexShader))
-//                .vertexBindingDescriptions(shaderConfigure.createVertexBindingDescriptions())
-//                .vertexAttributeDescriptions(shaderConfigure.createVertexAttributeDescriptions())
-//                .fragmentShader(std::move(fragmentShader))
-//                .sampleCount(sampleCount)
-//                .depthTestEnable(mDepthTestEnable)
-//                .buildUnique();
-
+        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
+                .device(mDevice->getDevice())
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(pointsShaderConfigure)
+                .sampleCount(sampleCount)
+                .depthTestEnable(mDepthTestEnable)
+                .renderPass(mRenderPass->getRenderPass(), 2)
+                .viewports(mViewports)
+                .scissors(mScissors)
+                .buildUnique();
     }
 
     void Test09FaceImageDetection::init() {
