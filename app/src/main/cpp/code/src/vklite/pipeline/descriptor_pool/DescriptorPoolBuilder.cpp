@@ -79,7 +79,7 @@ namespace vklite {
             if (descriptorTypeToIndexMap.contains(type)) {
                 mergedDescriptorPoolSizes[descriptorTypeToIndexMap[type]].descriptorCount += count;
             } else {
-                descriptorTypeToIndexMap[type] = descriptorPoolSizes.size();
+                descriptorTypeToIndexMap[type] = mergedDescriptorPoolSizes.size();
                 mergedDescriptorPoolSizes.emplace_back(type, count);
             }
         }

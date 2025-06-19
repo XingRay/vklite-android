@@ -13,25 +13,29 @@
 #include "vklite/device/Device.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriter.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetMappingConfigure.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriters.h"
 
 namespace vklite {
 
-    class DescriptorSetWriterBuilder {
+    class DescriptorSetWritersBuilder {
     private:
         uint32_t mFrameCount;
         std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> mDescriptorSetMappingConfigure;
 
     public:
-        DescriptorSetWriterBuilder();
+        DescriptorSetWritersBuilder();
 
-        ~DescriptorSetWriterBuilder();
+        ~DescriptorSetWritersBuilder();
 
-        DescriptorSetWriterBuilder &frameCount(uint32_t frameCount);
+        DescriptorSetWritersBuilder &frameCount(uint32_t frameCount);
 
-        DescriptorSetWriterBuilder &descriptorSetMappingConfigure(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure);
+        DescriptorSetWritersBuilder &descriptorSetMappingConfigure(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure);
 
         [[nodiscard]]
-        std::vector<DescriptorSetWriter> build() const;
+        DescriptorSetWriters build() const;
+
+        [[nodiscard]]
+        std::unique_ptr<DescriptorSetWriters> buildUnique() const;
     };
 
 } // vklite

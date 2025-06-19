@@ -72,6 +72,11 @@ namespace vklite {
         return *this;
     }
 
+    CombinedGraphicPipelineBuilder &CombinedGraphicPipelineBuilder::topology(vk::PrimitiveTopology topology) {
+        mGraphicsPipelineBuilder.topology(topology);
+        return *this;
+    }
+
     CombinedGraphicPipelineBuilder &CombinedGraphicPipelineBuilder::vertexBindingDescriptions(std::vector<vk::VertexInputBindingDescription> &&vertexBindingDescriptions) {
         mGraphicsPipelineBuilder.vertexBindingDescriptions(std::move(vertexBindingDescriptions));
         return *this;

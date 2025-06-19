@@ -81,7 +81,12 @@
 // descriptor
 #include "vklite/pipeline/descriptor_pool/DescriptorPool.h"
 #include "vklite/pipeline/descriptor_pool/DescriptorPoolBuilder.h"
-#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriterBuilder.h"
+
+// descriptor set writer
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriter.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriters.h"
+#include "vklite/pipeline/descriptor_set_writer/DescriptorSetWritersBuilder.h"
+
 
 // pipeline resource
 #include "vklite/pipeline/pipeline_resource/PipelineResource.h"

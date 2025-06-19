@@ -32,6 +32,19 @@ namespace test09 {
         }
     };
 
+    struct SimpleVertex {
+        glm::vec3 position;
+
+        bool operator==(const SimpleVertex &other) const {
+            return position == other.position;
+        }
+    };
+
+    struct ColorUniformBufferObject {
+        // 颜色数据
+        alignas(16) glm::vec3 color;
+    };
+
     class Test09FaceImageDetection : public test::TestBase {
     private:
 
@@ -90,17 +103,37 @@ namespace test09 {
         uint32_t mCurrentFrameIndex = 0;
         bool mFramebufferResized = false;
 
+
         // vertex buffer
+        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::vector<vk::Buffer> mVertexBuffers;
         std::vector<vk::DeviceSize> mVertexBufferOffsets;
 
         // index buffer
+        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         vk::Buffer mIndexVkBuffer;
         uint32_t mIndexCount;
 
 
-        std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
-        std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
+        // lines pipeline resources
+        // vertex buffer
+        std::unique_ptr<vklite::VertexBuffer> mLinesVertexBuffer;
+        std::vector<vk::Buffer> mLinesVertexBuffers;
+        std::vector<vk::DeviceSize> mLinesVertexBufferOffsets;
+
+        // index buffer
+        std::unique_ptr<vklite::IndexBuffer> mLinesIndexBuffer;
+        vk::Buffer mLinesIndexVkBuffer;
+        uint32_t mLinesIndexCount;
+
+        std::vector<vklite::UniformBuffer> mLinesUniformBuffers;
+
+        // points pipeline resources
+        // vertex buffer
+        std::unique_ptr<vklite::VertexBuffer> mPointsVertexBuffer;
+        std::vector<vk::Buffer> mPointsVertexBuffers;
+        std::vector<vk::DeviceSize> mPointsVertexBufferOffsets;
+        uint32_t mPointsCount;
 
 
         // model

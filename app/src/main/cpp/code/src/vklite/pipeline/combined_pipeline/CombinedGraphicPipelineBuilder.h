@@ -60,6 +60,8 @@ namespace vklite {
 
         CombinedGraphicPipelineBuilder &scissors(std::vector<vk::Rect2D> &&scissors);
 
+        CombinedGraphicPipelineBuilder &topology(vk::PrimitiveTopology topology);
+
         CombinedGraphicPipelineBuilder &vertexBindingDescriptions(std::vector<vk::VertexInputBindingDescription> &&vertexBindingDescriptions);
 
         CombinedGraphicPipelineBuilder &vertexAttributeDescriptions(std::vector<vk::VertexInputAttributeDescription> &&vertexAttributeDescriptions);

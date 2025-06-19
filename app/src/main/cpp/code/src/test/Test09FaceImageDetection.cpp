@@ -36,8 +36,8 @@ namespace test09 {
         std::vector<uint32_t> linesFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.frag.spv");
 
         vklite::ShaderConfigure linesShaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(vertexShaderCode))
-                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .vertexShaderCode(std::move(linesVertexShaderCode))
+                .fragmentShaderCode(std::move(linesFragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
                     vertexBindingConfigure
                             .binding(0)
@@ -54,8 +54,8 @@ namespace test09 {
         std::vector<uint32_t> pointsFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.frag.spv");
 
         vklite::ShaderConfigure pointsShaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(vertexShaderCode))
-                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .vertexShaderCode(std::move(pointsVertexShaderCode))
+                .fragmentShaderCode(std::move(pointsFragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
                     vertexBindingConfigure
                             .binding(0)
@@ -144,34 +144,38 @@ namespace test09 {
         mRenderPass = vklite::RenderPassBuilder()
                 .device(mDevice->getDevice())
                 .renderAreaExtend(mSwapchain->getDisplaySize())
+//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+//                    subpass
+//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+//                            .addDependency(externalSubpass,
+//                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eNone,
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+//                })
                 .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
                             .addDependency(externalSubpass,
-                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
+                                    //subpasses[0],
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite,
                                            vk::AccessFlagBits::eNone,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+//                                           vk::PipelineStageFlagBits::eFragmentShader,
+//                                           vk::AccessFlagBits::eInputAttachmentRead);
                 })
-                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-                    subpass
-                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .addDependency(subpasses[0],
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eColorAttachmentWrite,
-                                           vk::PipelineStageFlagBits::eFragmentShader,
-                                           vk::AccessFlagBits::eInputAttachmentRead);
-                })
-                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
-                    subpass
-                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
-                            .addDependency(subpasses[1],
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
-                                           vk::AccessFlagBits::eColorAttachmentWrite,
-                                           vk::PipelineStageFlagBits::eFragmentShader,
-                                           vk::AccessFlagBits::eInputAttachmentRead);
-                })
+//                .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
+//                    subpass
+//                            .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
+//                            .addDependency(subpasses[1],
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite,
+//                                           vk::PipelineStageFlagBits::eFragmentShader,
+//                                           vk::AccessFlagBits::eInputAttachmentRead);
+//                })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
@@ -190,11 +194,11 @@ namespace test09 {
                             })
                             .applyIf(!mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
-                                        .asColorAttachmentUsedIn(subpasses[0])
-                                        .asInputAttachmentUsedIn(subpasses[1])
-                                        .asColorAttachmentUsedIn(subpasses[1])
-                                        .asInputAttachmentUsedIn(subpasses[2])
-                                        .asColorAttachmentUsedIn(subpasses[2]);
+                                        .asColorAttachmentUsedIn(subpasses[0]);
+//                                        .asInputAttachmentUsedIn(subpasses[1])
+//                                        .asColorAttachmentUsedIn(subpasses[1])
+//                                        .asInputAttachmentUsedIn(subpasses[2])
+//                                        .asColorAttachmentUsedIn(subpasses[2]);
                             });
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -232,8 +236,12 @@ namespace test09 {
         mDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
                 .frameCount(mFrameCount)
-                .descriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(shaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(shaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(linesShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(linesShaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(pointsShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(pointsShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
         mPipeline = vklite::CombinedGraphicPipelineBuilder()
@@ -248,29 +256,33 @@ namespace test09 {
                 .scissors(mScissors)
                 .buildUnique();
 
-        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
-                .frameCount(mFrameCount)
-                .shaderConfigure(linesShaderConfigure)
-                .sampleCount(sampleCount)
-                .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 1)
-                .viewports(mViewports)
-                .scissors(mScissors)
-                .buildUnique();
-
-        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
-                .frameCount(mFrameCount)
-                .shaderConfigure(pointsShaderConfigure)
-                .sampleCount(sampleCount)
-                .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 2)
-                .viewports(mViewports)
-                .scissors(mScissors)
-                .buildUnique();
+//        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
+//                .device(mDevice->getDevice())
+//                .descriptorPool(mDescriptorPool->getDescriptorPool())
+//                .frameCount(mFrameCount)
+//                .shaderConfigure(linesShaderConfigure)
+//                .sampleCount(sampleCount)
+//                .depthTestEnable(mDepthTestEnable)
+//                .renderPass(mRenderPass->getRenderPass(), 1)
+//                .viewports(mViewports)
+//                .scissors(mScissors)
+//                .topology(vk::PrimitiveTopology::eLineList)
+//                .polygonMode(vk::PolygonMode::eLine)
+//                .buildUnique();
+//
+//        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
+//                .device(mDevice->getDevice())
+//                .descriptorPool(mDescriptorPool->getDescriptorPool())
+//                .frameCount(mFrameCount)
+//                .shaderConfigure(pointsShaderConfigure)
+//                .sampleCount(sampleCount)
+//                .depthTestEnable(mDepthTestEnable)
+//                .renderPass(mRenderPass->getRenderPass(), 2)
+//                .viewports(mViewports)
+//                .scissors(mScissors)
+//                .topology(vk::PrimitiveTopology::ePointList)
+//                .polygonMode(vk::PolygonMode::ePoint)
+//                .buildUnique();
     }
 
     void Test09FaceImageDetection::init() {
@@ -336,7 +348,7 @@ namespace test09 {
             mSamplers[i].update(*mCommandPool, mImageMat.data, mImageMat.total() * mImageMat.elemSize());
         }
 
-        std::vector<vklite::DescriptorSetWriter> descriptorSetWriters = vklite::DescriptorSetWriterBuilder()
+        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
@@ -348,61 +360,140 @@ namespace test09 {
                 })
                 .build();
 
-        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
-        for (vklite::DescriptorSetWriter &descriptorSetWriter: descriptorSetWriters) {
-            std::vector<vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
-            writeDescriptorSets.insert(writeDescriptorSets.begin(), std::move_iterator(descriptorSets.begin()), std::move_iterator(descriptorSets.end()));
-        }
-
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
         mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
 
-        mAnchors = image_process::Anchor::generateAnchors();
-        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
-        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
-        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
-        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
-        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
-        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
+//        mAnchors = image_process::Anchor::generateAnchors();
+//        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
+//        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
+//        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
+//        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
+//        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
+//        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
+//
+//        int gpu_count = ncnn::get_gpu_count();
+//        if (gpu_count > 0) {
+//            LOG_D("use_vulkan_compute");
+//            mNet.opt.use_vulkan_compute = true;
+//
+//            // set specified vulkan device before loading param and model
+//            mNet.set_vulkan_device(0); // use device-0
+//
+//            mNet.opt.use_fp16_packed = false;
+//            mNet.opt.use_fp16_storage = false;
+//            mNet.opt.use_fp16_arithmetic = false;
+//            mNet.opt.use_int8_storage = false;
+//            mNet.opt.use_int8_arithmetic = false;
+//
+//            mNet.opt.use_shader_pack8 = true;
+//        }
+//
+//        LOG_D("加载 param 文件");
+//        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
+//        if (mNet.load_param(modelParams) != 0) {
+//            LOG_E("加载 param 文件失败");
+//            return;
+//        } else {
+//            LOG_D("加载 param 文件完成");
+//        }
+//        AAsset_close(modelParams);
+//
+//        LOG_D("加载 bin 文件");
+//        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
+//        if (mNet.load_model(modelBin) != 0) {
+//            LOG_E("加载 bin 文件失败");
+//            return;
+//        } else {
+//            LOG_D("加载 bin 文件完成");
+//        }
+//        AAsset_close(modelBin);
+//
+//        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
 
-        int gpu_count = ncnn::get_gpu_count();
-        if (gpu_count > 0) {
-            LOG_D("use_vulkan_compute");
-            mNet.opt.use_vulkan_compute = true;
 
-            // set specified vulkan device before loading param and model
-            mNet.set_vulkan_device(0); // use device-0
+        // lines pipeline resources
+        std::vector<SimpleVertex> linesVertices = {
+                {{-0.5f, -0.5f, 0.0f}},  // 左下角
+                {{0.5f,  -0.5f, 0.0f}},  // 右下角
+                {{0.5f,  0.5f,  0.0f}},  // 右上角
+                {{-0.5f, 0.5f,  0.0f}}   // 左上角
 
-            mNet.opt.use_fp16_packed = false;
-            mNet.opt.use_fp16_storage = false;
-            mNet.opt.use_fp16_arithmetic = false;
-            mNet.opt.use_int8_storage = false;
-            mNet.opt.use_int8_arithmetic = false;
+        };
 
-            mNet.opt.use_shader_pack8 = true;
+        std::vector<uint32_t> linesIndices = {
+                0, 1,  // 底边
+                1, 2,  // 右边
+                2, 3,  // 顶边
+                3, 0   // 左边
+        };
+
+        uint32_t linesIndicesSize = linesIndices.size() * sizeof(uint32_t);
+        mLinesIndexBuffer = vklite::IndexBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(linesIndicesSize)
+                .buildUnique();
+        mLinesIndexBuffer->update(*mCommandPool, linesIndices);
+        mLinesIndexVkBuffer = mLinesIndexBuffer->getVkBuffer();
+        mLinesIndexCount = linesIndices.size();
+
+
+        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
+        mLinesVertexBuffer = vklite::VertexBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(linesVerticesSize)
+                .buildUnique();
+        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
+        mLinesVertexBuffers.push_back((*mLinesVertexBuffer).getVkBuffer());
+        mLinesVertexBufferOffsets.push_back(0);
+
+
+        ColorUniformBufferObject colorUniformBufferObject{{0.8f, 0.4f, 0.2f}};
+        mLinesUniformBuffers = vklite::UniformBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(sizeof(ColorUniformBufferObject))
+                .build(mFrameCount);
+
+        for (uint32_t i = 0; i < mFrameCount; i++) {
+            mLinesUniformBuffers[i].update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
         }
 
-        LOG_D("加载 param 文件");
-        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
-        if (mNet.load_param(modelParams) != 0) {
-            LOG_E("加载 param 文件失败");
-            return;
-        } else {
-            LOG_D("加载 param 文件完成");
-        }
-        AAsset_close(modelParams);
+        vklite::DescriptorSetWriters linesDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
+                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                                mapping
+                                        .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
+                            });
+                })
+                .build();
 
-        LOG_D("加载 bin 文件");
-        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
-        if (mNet.load_model(modelBin) != 0) {
-            LOG_E("加载 bin 文件失败");
-            return;
-        } else {
-            LOG_D("加载 bin 文件完成");
-        }
-        AAsset_close(modelBin);
+        mDevice->getDevice().updateDescriptorSets(descriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
-        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
+        // points
+        std::vector<SimpleVertex> pointsVertices = {
+                {{-0.25f, -0.25f, 0.0f}},  // 左下角
+                {{0.25f,  -0.25f, 0.0f}},  // 右下角
+                {{0.25f,  0.25f,  0.0f}},  // 右上角
+                {{-0.25f, 0.25f,  0.0f}}   // 左上角
+
+        };
+
+        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
+        mPointsVertexBuffer = vklite::VertexBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(pointsVerticesSize)
+                .buildUnique();
+        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+        mPointsVertexBuffers.push_back((*mPointsVertexBuffer).getVkBuffer());
+        mPointsVertexBufferOffsets.push_back(0);
+        mPointsCount = pointsVertices.size();
 
         mFrameCounter.start();
 
@@ -417,74 +508,74 @@ namespace test09 {
     // 绘制三角形帧
     void Test09FaceImageDetection::drawFrame() {
 
-        mExtractor->input("in0", mMatIn);
-
-        ncnn::Mat regressors;
-        ncnn::Mat scores;
-        mExtractor->extract("out0", regressors);
-        mExtractor->extract("out1", scores);
-
-        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
-        int num_scores = scores.w * scores.h * scores.c; // 896
-        float *regressors_data = (float *) regressors.data;
-        float *scores_data = (float *) scores.data;
-
-        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
-        std::vector<float> score_vec(scores_data, scores_data + num_scores);
-
-        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
-        for (auto &s: score_vec) {
-            if (s < -100.0f) {
-                s = -100.0f;
-            }
-            if (s > 100.0f) {
-                s = 100.0f;
-            }
-            s = 1.0f / (1.0f + std::exp(-s));
-        }
-        // 找到最大分数索引
-        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
-        float max_score = score_vec[maxIndex];
-
-        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
-        float box_dx = bestRegressor[0];
-        float box_dy = bestRegressor[1];
-        float w_box = bestRegressor[2];
-        float h_box = bestRegressor[3];
-
-        // 相对于 anchor 中心点的归一化偏移量
-        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
-        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
-        const image_process::Anchor &anchor = mAnchors[maxIndex];
-
-        // 计算边界框在输入图片(128*128)中的位置
-        float box_center_x = box_dx + anchor.centerX * 128.0f;
-        float box_center_y = box_dy + anchor.centerY * 128.0f;
-        float box_w = w_box;
-        float box_h = h_box;
-        float box_x = box_center_x - box_w / 2.0f;
-        float box_y = box_center_y - box_h / 2.0f;
-
-        // 检测框的坐标
-        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
-                     cv::Size(std::round(box_w), std::round(box_h)));
-
-        // 检测框在原图(1080*1920)中的坐标
-        cv::Rect originalBox = mLetterBox.transformBack(box);
-
-        // 解析关键点在输入图片(128*128)中的坐标
-        std::vector<cv::Point2f> kps;
-        kps.reserve(keyPoints.size() / 2);
-        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
-            float kp_dx = keyPoints[i];
-            float kp_dy = keyPoints[i + 1];
-            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
-            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
-            kps.emplace_back(kp_x, kp_y);
-        }
-
-        // 关键点在原图(1080*1920)中的坐标
-        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+//        mExtractor->input("in0", mMatIn);
+//
+//        ncnn::Mat regressors;
+//        ncnn::Mat scores;
+//        mExtractor->extract("out0", regressors);
+//        mExtractor->extract("out1", scores);
+//
+//        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
+//        int num_scores = scores.w * scores.h * scores.c; // 896
+//        float *regressors_data = (float *) regressors.data;
+//        float *scores_data = (float *) scores.data;
+//
+//        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
+//        std::vector<float> score_vec(scores_data, scores_data + num_scores);
+//
+//        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
+//        for (auto &s: score_vec) {
+//            if (s < -100.0f) {
+//                s = -100.0f;
+//            }
+//            if (s > 100.0f) {
+//                s = 100.0f;
+//            }
+//            s = 1.0f / (1.0f + std::exp(-s));
+//        }
+//        // 找到最大分数索引
+//        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
+//        float max_score = score_vec[maxIndex];
+//
+//        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
+//        float box_dx = bestRegressor[0];
+//        float box_dy = bestRegressor[1];
+//        float w_box = bestRegressor[2];
+//        float h_box = bestRegressor[3];
+//
+//        // 相对于 anchor 中心点的归一化偏移量
+//        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
+//        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
+//        const image_process::Anchor &anchor = mAnchors[maxIndex];
+//
+//        // 计算边界框在输入图片(128*128)中的位置
+//        float box_center_x = box_dx + anchor.centerX * 128.0f;
+//        float box_center_y = box_dy + anchor.centerY * 128.0f;
+//        float box_w = w_box;
+//        float box_h = h_box;
+//        float box_x = box_center_x - box_w / 2.0f;
+//        float box_y = box_center_y - box_h / 2.0f;
+//
+//        // 检测框的坐标
+//        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
+//                     cv::Size(std::round(box_w), std::round(box_h)));
+//
+//        // 检测框在原图(1080*1920)中的坐标
+//        cv::Rect originalBox = mLetterBox.transformBack(box);
+//
+//        // 解析关键点在输入图片(128*128)中的坐标
+//        std::vector<cv::Point2f> kps;
+//        kps.reserve(keyPoints.size() / 2);
+//        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
+//            float kp_dx = keyPoints[i];
+//            float kp_dy = keyPoints[i + 1];
+//            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
+//            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
+//            kps.emplace_back(kp_x, kp_y);
+//        }
+//
+//        // 关键点在原图(1080*1920)中的坐标
+//        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
 
 
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
@@ -536,6 +627,51 @@ namespace test09 {
                 vkCommandBuffer.bindVertexBuffers(0, mVertexBuffers, mVertexBufferOffsets);
                 vkCommandBuffer.bindIndexBuffer(mIndexVkBuffer, 0, vk::IndexType::eUint32);
                 vkCommandBuffer.drawIndexed(mIndexCount, 1, 0, 0, 0);
+
+
+//                // lines
+//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
+//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipeline());
+//                vkCommandBuffer.setViewport(0, mViewports);
+//                vkCommandBuffer.setScissor(0, mScissors);
+//
+//                if (!mLinesPipeline->getDescriptorSets().empty()) {
+//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipelineLayout(), 0, mLinesPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+//                }
+//
+//                for (const vklite::PushConstant &pushConstant: mLinesPipeline->getPushConstants()) {
+//                    vkCommandBuffer.pushConstants(mLinesPipeline->getVkPipelineLayout(),
+//                                                  pushConstant.getStageFlags(),
+//                                                  pushConstant.getOffset(),
+//                                                  pushConstant.getSize(),
+//                                                  pushConstant.getData());
+//                }
+//
+//                vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
+//                vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
+//                vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
+
+
+//                // points
+//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
+//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipeline());
+//                vkCommandBuffer.setViewport(0, mViewports);
+//                vkCommandBuffer.setScissor(0, mScissors);
+//
+//                if (!mPointsPipeline->getDescriptorSets().empty()) {
+//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipelineLayout(), 0, mPointsPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+//                }
+//
+//                for (const vklite::PushConstant &pushConstant: mPointsPipeline->getPushConstants()) {
+//                    vkCommandBuffer.pushConstants(mPointsPipeline->getVkPipelineLayout(),
+//                                                  pushConstant.getStageFlags(),
+//                                                  pushConstant.getOffset(),
+//                                                  pushConstant.getSize(),
+//                                                  pushConstant.getData());
+//                }
+//
+//                vkCommandBuffer.bindVertexBuffers(0, mPointsVertexBuffers, mPointsVertexBufferOffsets);
+//                vkCommandBuffer.draw(mPointsCount, 1, 0, 0);
             });
         });
 

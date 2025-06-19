@@ -225,16 +225,12 @@ namespace vklite {
 
 
     DeviceEngine &DeviceEngine::updateDescriptorSets(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &mappingConfigure)> &&configure) {
-        std::vector<DescriptorSetWriter> descriptorSetWriters = DescriptorSetWriterBuilder()
+        DescriptorSetWriters descriptorSetWriters = DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure(std::move(configure))
                 .build();
 
-        std::vector<vk::WriteDescriptorSet> writeDescriptorSets;
-        for (DescriptorSetWriter &descriptorSetWriter: descriptorSetWriters) {
-            std::vector<vk::WriteDescriptorSet> descriptorSets = descriptorSetWriter.createWriteDescriptorSets();
-            writeDescriptorSets.insert(writeDescriptorSets.begin(), std::move_iterator(descriptorSets.begin()), std::move_iterator(descriptorSets.end()));
-        }
+        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
 
         bool debugLog = false;
         if (debugLog) {
