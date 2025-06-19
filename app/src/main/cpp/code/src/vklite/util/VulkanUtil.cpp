@@ -1032,4 +1032,55 @@ namespace vklite {
         return str;
     }
 
+    void VulkanUtil::printExtensions(const std::vector<vk::ExtensionProperties> &instanceExtensionProperties) {
+        // 计算最大扩展名长度和最大版本号长度
+        size_t maxNameLen = strlen("Extension Name");
+        size_t maxVersionLen = 0;
+        for (const vk::ExtensionProperties &prop: instanceExtensionProperties) {
+            maxNameLen = std::max(maxNameLen, strlen(prop.extensionName));
+            maxVersionLen = std::max(maxVersionLen, std::to_string(prop.specVersion).size());
+        }
+
+        // 计算列宽（增加2个字符作为边距）
+        const size_t nameWidth = maxNameLen + 2;
+        const size_t versionWidth = std::max(maxVersionLen, strlen("Spec Version")) + 2;
+
+        // 构建表格边框
+        std::string topLine = "+" + std::string(nameWidth, '-') + "+" + std::string(versionWidth, '-') + "+";
+        std::string divider = "|" + std::string(nameWidth, '-') + "+" + std::string(versionWidth, '-') + "|";
+
+        // 构建表头
+        std::string header = "| ";
+        header += "Extension Name";
+        header.append(nameWidth - strlen("Extension Name") - 1, ' ');
+        header += "| ";
+        header += "Spec Version";
+        header.append(versionWidth - strlen("Spec Version") - 1, ' ');
+        header += "|";
+
+        // 输出表格
+        LOG_D("Available instance extensions:[%ld]", instanceExtensionProperties.size());
+        LOG_D("%s", topLine.c_str());
+        LOG_D("%s", header.c_str());
+        LOG_D("%s", divider.c_str());
+
+        // 输出每个扩展的信息
+        for (const vk::ExtensionProperties &prop: instanceExtensionProperties) {
+            std::string versionStr = std::to_string(prop.specVersion);
+
+            std::string row = "| ";
+            row += prop.extensionName.data();
+            row.append(nameWidth - strlen(prop.extensionName) - 1, ' ');
+
+            row += "| ";
+            row += versionStr;
+            row.append(versionWidth - versionStr.size() - 1, ' ');
+            row += "|";
+
+            LOG_D("%s", row.c_str());
+        }
+
+        LOG_D("%s", topLine.c_str());
+    }
+
 } // vklite

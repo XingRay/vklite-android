@@ -84,6 +84,8 @@ namespace vklite {
         static std::string toString(vk::ComponentSwizzle componentSwizzle);
 
         static std::string toString(vk::ImageAspectFlags imageAspect);
+
+        static void printExtensions(const std::vector<vk::ExtensionProperties>& extensionProperties);
     };
 
 } // vklite

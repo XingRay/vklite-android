@@ -21,6 +21,7 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #include "vklite/util/StringUtil.h"
 #include "vklite/instance/InstanceApi.h"
 #include "vklite/util/CStringUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -102,11 +103,12 @@ namespace vklite {
         InstanceApi::initInstanceApi(dynamicLoader);
 
         // InstanceExtension
-        std::vector<const char *> availableExtensionNames = InstanceApi::enumerateInstanceExtensionNames();
-        LOG_D("Available instance extensions:[%ld]", availableExtensionNames.size());
-        for (const auto &name: availableExtensionNames) {
-            LOG_D("  %s", name);
-        }
+        std::vector<vk::ExtensionProperties> instanceExtensionProperties = InstanceApi::enumerateInstanceExtensionProperties();
+        VulkanUtil::printExtensions(instanceExtensionProperties);
+//        LOG_D("Available instance extensions:[%ld]", instanceExtensionProperties.size());
+//        for (const vk::ExtensionProperties &extensionProperty: instanceExtensionProperties) {
+//            LOG_D("\t%s ( version:%d )", extensionProperty.extensionName.data(), extensionProperty.specVersion);
+//        }
 
         for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
             std::vector<const char *> pluginExtensions = plugin->getInstanceExtensions();

@@ -8,6 +8,7 @@
 
 #include "vklite/Log.h"
 #include "vklite/util/CStringUtil.h"
+#include "vklite/util/VulkanUtil.h"
 
 namespace vklite {
 
@@ -169,6 +170,10 @@ namespace vklite {
         if (mCheckPhysicalDeviceFeatures) {
             checkPhysicalDeviceFeatures();
         }
+
+        std::vector<vk::ExtensionProperties> extensionProperties = mPhysicalDevice.enumerateDeviceExtensionProperties();
+        LOG_D("PhysicalDevice Supported Extensions:[%ld]", extensionProperties.size());
+        VulkanUtil::printExtensions(extensionProperties);
 
         for (const std::unique_ptr<PluginInterface> &plugin: mPlugins) {
             std::vector<const char *> deviceExtensions = plugin->getDeviceExtensions();

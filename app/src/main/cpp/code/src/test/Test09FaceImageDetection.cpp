@@ -269,7 +269,7 @@ namespace test09 {
                 .topology(vk::PrimitiveTopology::eLineList)
                 .polygonMode(vk::PolygonMode::eLine)
                 .cullMode(vk::CullModeFlagBits::eNone)
-                .lineWidth(1.0f)
+//                .lineWidth(1.0f)
                 .buildUnique();
 
 //        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
