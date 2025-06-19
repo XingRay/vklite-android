@@ -45,6 +45,12 @@ namespace test09 {
         alignas(16) glm::vec3 color;
     };
 
+    struct PointAttribute {
+        // 颜色数据
+        alignas(16) glm::vec3 color;
+        alignas(4) float size;
+    };
+
     class Test09FaceImageDetection : public test::TestBase {
     private:
 
@@ -120,6 +126,7 @@ namespace test09 {
 
         std::vector<vklite::UniformBuffer> mLinesUniformBuffers;
 
+
         // points pipeline resources
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mPointsVertexBuffer;
@@ -127,8 +134,10 @@ namespace test09 {
         std::vector<vk::DeviceSize> mPointsVertexBufferOffsets;
         uint32_t mPointsCount;
 
+        std::vector<vklite::UniformBuffer> mPointsUniformBuffers;
 
-        // model
+
+        // nn model
         cv::Mat mImageMat;
 
         std::vector<vklite::CombinedImageSampler> mSamplers;

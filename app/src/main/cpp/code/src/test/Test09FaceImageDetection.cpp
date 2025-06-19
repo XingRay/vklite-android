@@ -256,35 +256,36 @@ namespace test09 {
 //                .scissors(mScissors)
 //                .buildUnique();
 
-        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
+//        mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
+//                .device(mDevice->getDevice())
+//                .descriptorPool(mDescriptorPool->getDescriptorPool())
+//                .frameCount(mFrameCount)
+//                .shaderConfigure(linesShaderConfigure)
+//                .sampleCount(sampleCount)
+//                .depthTestEnable(mDepthTestEnable)
+//                .renderPass(mRenderPass->getRenderPass(), 0)
+//                .viewports(mViewports)
+//                .scissors(mScissors)
+//                .topology(vk::PrimitiveTopology::eLineList)
+//                .polygonMode(vk::PolygonMode::eLine)
+//                .cullMode(vk::CullModeFlagBits::eNone)
+//                .lineWidth(1.0f)
+//                .buildUnique();
+
+        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
                 .frameCount(mFrameCount)
-                .shaderConfigure(linesShaderConfigure)
+                .shaderConfigure(pointsShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .renderPass(mRenderPass->getRenderPass(), 0)
                 .viewports(mViewports)
                 .scissors(mScissors)
-                .topology(vk::PrimitiveTopology::eLineList)
-                .polygonMode(vk::PolygonMode::eLine)
-                .cullMode(vk::CullModeFlagBits::eNone)
-//                .lineWidth(1.0f)
+                .topology(vk::PrimitiveTopology::ePointList)
+                .polygonMode(vk::PolygonMode::ePoint)
+//                .cullMode(vk::CullModeFlagBits::eNone)
                 .buildUnique();
-
-//        mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
-//                .device(mDevice->getDevice())
-//                .descriptorPool(mDescriptorPool->getDescriptorPool())
-//                .frameCount(mFrameCount)
-//                .shaderConfigure(pointsShaderConfigure)
-//                .sampleCount(sampleCount)
-//                .depthTestEnable(mDepthTestEnable)
-//                .renderPass(mRenderPass->getRenderPass(), 2)
-//                .viewports(mViewports)
-//                .scissors(mScissors)
-//                .topology(vk::PrimitiveTopology::ePointList)
-//                .polygonMode(vk::PolygonMode::ePoint)
-//                .buildUnique();
     }
 
     void Test09FaceImageDetection::init() {
@@ -462,39 +463,64 @@ namespace test09 {
             mLinesUniformBuffers[i].update(*mCommandPool, &colorUniformBufferObject, sizeof(ColorUniformBufferObject));
         }
 
-        vklite::DescriptorSetWriters linesDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+//        vklite::DescriptorSetWriters linesDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+//                .frameCount(mFrameCount)
+//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+//                    configure
+//                            .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
+//                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+//                                mapping
+//                                        .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
+//                            });
+//                })
+//                .build();
+//
+//        mDevice->getDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
+        // points
+        std::vector<SimpleVertex> pointsVertices = {
+                {{-0.25f, -0.25f, 0.0f}},  // 左上角
+                {{0.25f,  -0.25f, 0.0f}},  // 右上角
+                {{0.25f,  0.25f,  0.0f}},  // 右下角
+                {{-0.25f, 0.25f,  0.0f}}   // 左下角
+
+        };
+
+        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
+        mPointsVertexBuffer = vklite::VertexBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(pointsVerticesSize)
+                .buildUnique();
+        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+        mPointsVertexBuffers.push_back((*mPointsVertexBuffer).getVkBuffer());
+        mPointsVertexBufferOffsets.push_back(0);
+        mPointsCount = pointsVertices.size();
+
+        PointAttribute pointAttribute{{1.0f, 0.0f, 0.0f}, 14.0f};
+        mPointsUniformBuffers = vklite::UniformBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .size(sizeof(PointAttribute))
+                .build(mFrameCount);
+
+        for (uint32_t i = 0; i < mFrameCount; i++) {
+            mPointsUniformBuffers[i].update(*mCommandPool, &pointAttribute, sizeof(PointAttribute));
+        }
+
+        vklite::DescriptorSetWriters pointsDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
-                            .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
+                            .descriptorSet(mPointsPipeline->getDescriptorSet(frameIndex, 0))
                             .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
                                 mapping
-                                        .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
+                                        .addBufferInfo(mPointsUniformBuffers[frameIndex].getBuffer());
                             });
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
-
-        // points
-//        std::vector<SimpleVertex> pointsVertices = {
-//                {{-0.25f, -0.25f, 0.0f}},  // 左下角
-//                {{0.25f,  -0.25f, 0.0f}},  // 右下角
-//                {{0.25f,  0.25f,  0.0f}},  // 右上角
-//                {{-0.25f, 0.25f,  0.0f}}   // 左上角
-//
-//        };
-//
-//        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
-//        mPointsVertexBuffer = vklite::VertexBufferBuilder()
-//                .device(mDevice->getDevice())
-//                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-//                .size(pointsVerticesSize)
-//                .buildUnique();
-//        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
-//        mPointsVertexBuffers.push_back((*mPointsVertexBuffer).getVkBuffer());
-//        mPointsVertexBufferOffsets.push_back(0);
-//        mPointsCount = pointsVertices.size();
+        mDevice->getDevice().updateDescriptorSets(pointsDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
         mFrameCounter.start();
 
@@ -632,47 +658,47 @@ namespace test09 {
 
                 // lines
 //                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
-                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipeline());
-                vkCommandBuffer.setViewport(0, mViewports);
-                vkCommandBuffer.setScissor(0, mScissors);
-
-                if (!mLinesPipeline->getDescriptorSets().empty()) {
-                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipelineLayout(), 0, mLinesPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
-                }
-
-                for (const vklite::PushConstant &pushConstant: mLinesPipeline->getPushConstants()) {
-                    vkCommandBuffer.pushConstants(mLinesPipeline->getVkPipelineLayout(),
-                                                  pushConstant.getStageFlags(),
-                                                  pushConstant.getOffset(),
-                                                  pushConstant.getSize(),
-                                                  pushConstant.getData());
-                }
-
-                vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
-                vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
-                vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
-
-
-//                // points
-//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
-//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipeline());
+//                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipeline());
 //                vkCommandBuffer.setViewport(0, mViewports);
 //                vkCommandBuffer.setScissor(0, mScissors);
 //
-//                if (!mPointsPipeline->getDescriptorSets().empty()) {
-//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipelineLayout(), 0, mPointsPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+//                if (!mLinesPipeline->getDescriptorSets().empty()) {
+//                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mLinesPipeline->getVkPipelineLayout(), 0, mLinesPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
 //                }
 //
-//                for (const vklite::PushConstant &pushConstant: mPointsPipeline->getPushConstants()) {
-//                    vkCommandBuffer.pushConstants(mPointsPipeline->getVkPipelineLayout(),
+//                for (const vklite::PushConstant &pushConstant: mLinesPipeline->getPushConstants()) {
+//                    vkCommandBuffer.pushConstants(mLinesPipeline->getVkPipelineLayout(),
 //                                                  pushConstant.getStageFlags(),
 //                                                  pushConstant.getOffset(),
 //                                                  pushConstant.getSize(),
 //                                                  pushConstant.getData());
 //                }
 //
-//                vkCommandBuffer.bindVertexBuffers(0, mPointsVertexBuffers, mPointsVertexBufferOffsets);
-//                vkCommandBuffer.draw(mPointsCount, 1, 0, 0);
+//                vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
+//                vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
+//                vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
+
+
+                // points
+//                vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipeline());
+                vkCommandBuffer.setViewport(0, mViewports);
+                vkCommandBuffer.setScissor(0, mScissors);
+
+                if (!mPointsPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPointsPipeline->getVkPipelineLayout(), 0, mPointsPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+                }
+
+                for (const vklite::PushConstant &pushConstant: mPointsPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mPointsPipeline->getVkPipelineLayout(),
+                                                  pushConstant.getStageFlags(),
+                                                  pushConstant.getOffset(),
+                                                  pushConstant.getSize(),
+                                                  pushConstant.getData());
+                }
+
+                vkCommandBuffer.bindVertexBuffers(0, mPointsVertexBuffers, mPointsVertexBufferOffsets);
+                vkCommandBuffer.draw(mPointsCount, 1, 0, 0);
             });
         });
 
