@@ -172,15 +172,15 @@ namespace test09 {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
                             .addDependency(subpasses[1],
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite,
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                                           vk::PipelineStageFlagBits::eColorAttachmentOutput,
                                            vk::AccessFlagBits::eColorAttachmentWrite,
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite,
 
-//                                           vk::PipelineStageFlagBits::eFragmentShader,
-//                                           vk::AccessFlagBits::eInputAttachmentRead
-                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite
+                                           vk::PipelineStageFlagBits::eFragmentShader,
+                                           vk::AccessFlagBits::eInputAttachmentRead
+//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+//                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite
                             );
                 })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -205,8 +205,7 @@ namespace test09 {
                                         .asInputAttachmentUsedIn(subpasses[1])
                                         .asColorAttachmentUsedIn(subpasses[1])
                                         .asInputAttachmentUsedIn(subpasses[2])
-                                        .asColorAttachmentUsedIn(subpasses[2])
-                                        ;
+                                        .asColorAttachmentUsedIn(subpasses[2]);
                             });
                 })
                 .addAttachmentIf(mDepthTestEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -297,6 +296,68 @@ namespace test09 {
 
     void Test09FaceImageDetection::init() {
 
+        AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
+        const uint8_t *data = static_cast<const uint8_t *>(AAsset_getBuffer(image));
+        LOG_D("AAsset_getLength(image): %ld", AAsset_getLength(image));
+        std::vector<uint8_t> buffer(data, data + AAsset_getLength(image));
+        cv::Mat imageMat = cv::imdecode(buffer, cv::IMREAD_COLOR); // 内存解码
+        AAsset_close(image);
+
+        LOG_DF("imageMat: cols:{}, rows:{}, depth:{}, channels:{}, dimensions:{}", imageMat.cols, imageMat.rows, imageMat.depth(), imageMat.channels(), imageMat.dims);
+        if (imageMat.channels() == 4) {
+            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGRA2RGB);
+        } else {
+            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGR2RGB);
+        }
+
+        mAnchors = image_process::Anchor::generateAnchors();
+        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
+        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
+        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
+        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
+        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
+        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
+
+        int gpu_count = ncnn::get_gpu_count();
+        if (gpu_count > 0) {
+            LOG_D("use_vulkan_compute");
+            mNet.opt.use_vulkan_compute = true;
+
+            // set specified vulkan device before loading param and model
+            mNet.set_vulkan_device(0); // use device-0
+
+            mNet.opt.use_fp16_packed = false;
+            mNet.opt.use_fp16_storage = false;
+            mNet.opt.use_fp16_arithmetic = false;
+            mNet.opt.use_int8_storage = false;
+            mNet.opt.use_int8_arithmetic = false;
+
+            mNet.opt.use_shader_pack8 = true;
+        }
+
+        LOG_D("加载 param 文件");
+        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
+        if (mNet.load_param(modelParams) != 0) {
+            LOG_E("加载 param 文件失败");
+            return;
+        } else {
+            LOG_D("加载 param 文件完成");
+        }
+        AAsset_close(modelParams);
+
+        LOG_D("加载 bin 文件");
+        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
+        if (mNet.load_model(modelBin) != 0) {
+            LOG_E("加载 bin 文件失败");
+            return;
+        } else {
+            LOG_D("加载 bin 文件完成");
+        }
+        AAsset_close(modelBin);
+
+        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
+
+
         std::vector<Vertex> vertices = {
                 {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},  // 左上
                 {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}},  // 右上
@@ -331,20 +392,6 @@ namespace test09 {
         mVertexBufferOffsets.push_back(0);
 
 
-        AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
-        const uint8_t *data = static_cast<const uint8_t *>(AAsset_getBuffer(image));
-        LOG_D("AAsset_getLength(image): %ld", AAsset_getLength(image));
-        std::vector<uint8_t> buffer(data, data + AAsset_getLength(image));
-        cv::Mat imageMat = cv::imdecode(buffer, cv::IMREAD_COLOR); // 内存解码
-        AAsset_close(image);
-
-        LOG_DF("imageMat: cols:{}, rows:{}, depth:{}, channels:{}, dimensions:{}", imageMat.cols, imageMat.rows, imageMat.depth(), imageMat.channels(), imageMat.dims);
-        if (imageMat.channels() == 4) {
-            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGRA2RGB);
-        } else {
-            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGR2RGB);
-        }
-
         mSamplers = vklite::CombinedImageSamplerBuilder().asDefault()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
@@ -373,53 +420,6 @@ namespace test09 {
         std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
         mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
-
-//        mAnchors = image_process::Anchor::generateAnchors();
-//        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
-//        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
-//        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
-//        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
-//        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
-//        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
-//
-//        int gpu_count = ncnn::get_gpu_count();
-//        if (gpu_count > 0) {
-//            LOG_D("use_vulkan_compute");
-//            mNet.opt.use_vulkan_compute = true;
-//
-//            // set specified vulkan device before loading param and model
-//            mNet.set_vulkan_device(0); // use device-0
-//
-//            mNet.opt.use_fp16_packed = false;
-//            mNet.opt.use_fp16_storage = false;
-//            mNet.opt.use_fp16_arithmetic = false;
-//            mNet.opt.use_int8_storage = false;
-//            mNet.opt.use_int8_arithmetic = false;
-//
-//            mNet.opt.use_shader_pack8 = true;
-//        }
-//
-//        LOG_D("加载 param 文件");
-//        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
-//        if (mNet.load_param(modelParams) != 0) {
-//            LOG_E("加载 param 文件失败");
-//            return;
-//        } else {
-//            LOG_D("加载 param 文件完成");
-//        }
-//        AAsset_close(modelParams);
-//
-//        LOG_D("加载 bin 文件");
-//        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
-//        if (mNet.load_model(modelBin) != 0) {
-//            LOG_E("加载 bin 文件失败");
-//            return;
-//        } else {
-//            LOG_D("加载 bin 文件完成");
-//        }
-//        AAsset_close(modelBin);
-//
-//        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
 
 
         // lines pipeline resources
@@ -487,10 +487,12 @@ namespace test09 {
 
         // points
         std::vector<SimpleVertex> pointsVertices = {
-                {{-0.25f, -0.25f, 0.0f}},  // 左上角
-                {{0.25f,  -0.25f, 0.0f}},  // 右上角
-                {{0.25f,  0.25f,  0.0f}},  // 右下角
-                {{-0.25f, 0.25f,  0.0f}}   // 左下角
+                {{-0.25f, -0.25f, 0.0f}},
+                {{0.25f,  -0.25f, 0.0f}},
+                {{0.25f,  0.25f,  0.0f}},
+                {{-0.25f, 0.25f,  0.0f}},
+                {{0.0f,   0.0f,   0.0f}},
+                {{0.0f,   0.0f,   0.0f}},
 
         };
 
@@ -543,74 +545,98 @@ namespace test09 {
     // 绘制三角形帧
     void Test09FaceImageDetection::drawFrame() {
 
-//        mExtractor->input("in0", mMatIn);
-//
-//        ncnn::Mat regressors;
-//        ncnn::Mat scores;
-//        mExtractor->extract("out0", regressors);
-//        mExtractor->extract("out1", scores);
-//
-//        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
-//        int num_scores = scores.w * scores.h * scores.c; // 896
-//        float *regressors_data = (float *) regressors.data;
-//        float *scores_data = (float *) scores.data;
-//
-//        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
-//        std::vector<float> score_vec(scores_data, scores_data + num_scores);
-//
-//        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
-//        for (auto &s: score_vec) {
-//            if (s < -100.0f) {
-//                s = -100.0f;
-//            }
-//            if (s > 100.0f) {
-//                s = 100.0f;
-//            }
-//            s = 1.0f / (1.0f + std::exp(-s));
-//        }
-//        // 找到最大分数索引
-//        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
-//        float max_score = score_vec[maxIndex];
-//
-//        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
-//        float box_dx = bestRegressor[0];
-//        float box_dy = bestRegressor[1];
-//        float w_box = bestRegressor[2];
-//        float h_box = bestRegressor[3];
-//
-//        // 相对于 anchor 中心点的归一化偏移量
-//        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
-//        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
-//        const image_process::Anchor &anchor = mAnchors[maxIndex];
-//
-//        // 计算边界框在输入图片(128*128)中的位置
-//        float box_center_x = box_dx + anchor.centerX * 128.0f;
-//        float box_center_y = box_dy + anchor.centerY * 128.0f;
-//        float box_w = w_box;
-//        float box_h = h_box;
-//        float box_x = box_center_x - box_w / 2.0f;
-//        float box_y = box_center_y - box_h / 2.0f;
-//
-//        // 检测框的坐标
-//        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
-//                     cv::Size(std::round(box_w), std::round(box_h)));
-//
-//        // 检测框在原图(1080*1920)中的坐标
-//        cv::Rect originalBox = mLetterBox.transformBack(box);
-//
-//        // 解析关键点在输入图片(128*128)中的坐标
-//        std::vector<cv::Point2f> kps;
-//        kps.reserve(keyPoints.size() / 2);
-//        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
-//            float kp_dx = keyPoints[i];
-//            float kp_dy = keyPoints[i + 1];
-//            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
-//            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
-//            kps.emplace_back(kp_x, kp_y);
-//        }
-//
-//        // 关键点在原图(1080*1920)中的坐标
-//        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+        mExtractor->input("in0", mMatIn);
+
+        ncnn::Mat regressors;
+        ncnn::Mat scores;
+        mExtractor->extract("out0", regressors);
+        mExtractor->extract("out1", scores);
+
+        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
+        int num_scores = scores.w * scores.h * scores.c; // 896
+        float *regressors_data = (float *) regressors.data;
+        float *scores_data = (float *) scores.data;
+
+        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
+        std::vector<float> score_vec(scores_data, scores_data + num_scores);
+
+        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
+        for (auto &s: score_vec) {
+            if (s < -100.0f) {
+                s = -100.0f;
+            }
+            if (s > 100.0f) {
+                s = 100.0f;
+            }
+            s = 1.0f / (1.0f + std::exp(-s));
+        }
+        // 找到最大分数索引
+        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
+        float max_score = score_vec[maxIndex];
+
+        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
+        float box_dx = bestRegressor[0];
+        float box_dy = bestRegressor[1];
+        float w_box = bestRegressor[2];
+        float h_box = bestRegressor[3];
+
+        // 相对于 anchor 中心点的归一化偏移量
+        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
+        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
+        const image_process::Anchor &anchor = mAnchors[maxIndex];
+
+        // 计算边界框在输入图片(128*128)中的位置
+        float box_center_x = box_dx + anchor.centerX * 128.0f;
+        float box_center_y = box_dy + anchor.centerY * 128.0f;
+        float box_w = w_box;
+        float box_h = h_box;
+        float box_x = box_center_x - box_w / 2.0f;
+        float box_y = box_center_y - box_h / 2.0f;
+
+        // 检测框的坐标
+        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
+                     cv::Size(std::round(box_w), std::round(box_h)));
+
+        // 检测框在原图(1080*1920)中的坐标
+        cv::Rect originalBox = mLetterBox.transformBack(box);
+        float x0 = (originalBox.x / 1080.0f) * 2.0f - 1.0f;
+        float y0 = (originalBox.y / 1920.0f) * 2.0f - 1.0f;
+        float x1 = ((originalBox.x + originalBox.width) / 1080.0f) * 2.0f - 1.0f;
+        float y1 = ((originalBox.y + originalBox.height) / 1920.0f) * 2.0f - 1.0f;
+
+        std::vector<SimpleVertex> linesVertices;
+        linesVertices.reserve(4);
+        linesVertices.emplace_back(glm::vec3(x0, y0, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x1, y0, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x1, y1, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x0, y1, 0.0f));
+
+        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
+        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
+
+
+        // 解析关键点在输入图片(128*128)中的坐标
+        std::vector<cv::Point2f> kps;
+        kps.reserve(keyPoints.size() / 2);
+        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
+            float kp_dx = keyPoints[i];
+            float kp_dy = keyPoints[i + 1];
+            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
+            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
+            kps.emplace_back(kp_x, kp_y);
+        }
+
+        // 关键点在原图(1080*1920)中的坐标
+        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+
+        std::vector<SimpleVertex> pointsVertices;
+        pointsVertices.reserve(points.size());
+        for (const cv::Point &point: points) {
+            pointsVertices.emplace_back(glm::vec3((point.x / 1080.0f) * 2.0f - 1.0f, (point.y / 1920.0f) * 2.0f - 1.0f, 0.0f));
+        }
+
+        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
+        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
 
 
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
@@ -689,7 +715,6 @@ namespace test09 {
                 vkCommandBuffer.bindVertexBuffers(0, mLinesVertexBuffers, mLinesVertexBufferOffsets);
                 vkCommandBuffer.bindIndexBuffer(mLinesIndexVkBuffer, 0, vk::IndexType::eUint32);
                 vkCommandBuffer.drawIndexed(mLinesIndexCount, 1, 0, 0, 0);
-
 
 
                 vkCommandBuffer.nextSubpass(vk::SubpassContents::eInline);
