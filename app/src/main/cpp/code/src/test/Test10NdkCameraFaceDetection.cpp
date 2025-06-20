@@ -14,6 +14,11 @@ namespace test10 {
     Test10NdkCameraFaceDetection::Test10NdkCameraFaceDetection(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app), mNet() {
 
+        mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
+        mNdkCamera->startPreview();
+
+        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
+
         mInstance = vklite::InstanceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
@@ -189,14 +194,15 @@ namespace test10 {
                 .build(mFrameCount);
 
 
-        mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
-        mNdkCamera->startPreview();
-
-        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
                 .device(mDevice->getDevice())
-                .hardwareBuffer(image.getHardwareBuffer()).build();
+                .hardwareBuffer(image.getHardwareBuffer())
+                .build();
 
+        mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
+                .device(mDevice->getDevice())
+                .formatProperties(hardwareBuffer.getFormatProperties())
+                .buildUnique();
 
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.frag.spv");
@@ -214,7 +220,7 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addSampler(0, vk::ShaderStageFlagBits::eFragment);
+                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
                 });
 
         std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.vert.spv");
@@ -354,19 +360,11 @@ namespace test10 {
         mAnchors = image_process::Anchor::generateAnchors();
         mLetterBox = image_process::LetterBox::calcLetterbox(1080, 1920, 128, 128);
 
-//        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
-//        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
-//        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
-//        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
-//        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
-
-
         std::vector<Vertex> vertices = {
-                {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},  // 左上
-                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}},  // 右上
-                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}},  // 左下
-                {{1.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},  // 右下
-
+                {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // 显示左上角  => uv右下角
+                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // 显示右上角 => uv右上角
+                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // 左下角 => uv左下角
+                {{1.0f,  1.0f,  0.0f}, {0.0f, 0.0f}}, // 右下角 => uv左上角
         };
 
         std::vector<uint32_t> indices = {
@@ -393,35 +391,6 @@ namespace test10 {
         mVertexBuffer->update(*mCommandPool, vertices.data(), verticesSize);
         mVertexBuffers.push_back((*mVertexBuffer).getVkBuffer());
         mVertexBufferOffsets.push_back(0);
-
-
-        mSamplers = vklite::CombinedImageSamplerBuilder().asDefault()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .width(mImageMat.cols)
-                .height(mImageMat.rows)
-                .format(vk::Format::eR8G8B8Srgb)
-                .build(mFrameCount);
-
-        for (uint32_t i = 0; i < mFrameCount; i++) {
-            mSamplers[i].getImage().transitionImageLayout(*mCommandPool);
-            mSamplers[i].update(*mCommandPool, mImageMat.data, mImageMat.total() * mImageMat.elemSize());
-        }
-
-        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
-                .frameCount(mFrameCount)
-                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
-                    configure
-                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
-                            .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
-                                mapping
-                                        .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
-                            });
-                })
-                .build();
-
-        std::vector<vk::WriteDescriptorSet> writeDescriptorSets = descriptorSetWriters.createWriteDescriptorSets();
-        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
 
 
@@ -548,98 +517,140 @@ namespace test10 {
     // 绘制三角形帧
     void Test10NdkCameraFaceDetection::drawFrame() {
 
-        mExtractor->input("in0", mMatIn);
-
-        ncnn::Mat regressors;
-        ncnn::Mat scores;
-        mExtractor->extract("out0", regressors);
-        mExtractor->extract("out1", scores);
-
-        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
-        int num_scores = scores.w * scores.h * scores.c; // 896
-        float *regressors_data = (float *) regressors.data;
-        float *scores_data = (float *) scores.data;
-
-        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
-        std::vector<float> score_vec(scores_data, scores_data + num_scores);
-
-        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
-        for (auto &s: score_vec) {
-            if (s < -100.0f) {
-                s = -100.0f;
-            }
-            if (s > 100.0f) {
-                s = 100.0f;
-            }
-            s = 1.0f / (1.0f + std::exp(-s));
+        std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
+        if (!image.has_value()) {
+//            LOG_D("Test07NdkCamera::drawFrame(), no image");
+            return;
         }
-        // 找到最大分数索引
-        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
-        float max_score = score_vec[maxIndex];
-
-        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
-        float box_dx = bestRegressor[0];
-        float box_dy = bestRegressor[1];
-        float w_box = bestRegressor[2];
-        float h_box = bestRegressor[3];
-
-        // 相对于 anchor 中心点的归一化偏移量
-        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
-        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
-        const image_process::Anchor &anchor = mAnchors[maxIndex];
-
-        // 计算边界框在输入图片(128*128)中的位置
-        float box_center_x = box_dx + anchor.centerX * 128.0f;
-        float box_center_y = box_dy + anchor.centerY * 128.0f;
-        float box_w = w_box;
-        float box_h = h_box;
-        float box_x = box_center_x - box_w / 2.0f;
-        float box_y = box_center_y - box_h / 2.0f;
-
-        // 检测框的坐标
-        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
-                     cv::Size(std::round(box_w), std::round(box_h)));
-
-        // 检测框在原图(1080*1920)中的坐标
-        cv::Rect originalBox = mLetterBox.transformBack(box);
-        float x0 = (originalBox.x / 1080.0f) * 2.0f - 1.0f;
-        float y0 = (originalBox.y / 1920.0f) * 2.0f - 1.0f;
-        float x1 = ((originalBox.x + originalBox.width) / 1080.0f) * 2.0f - 1.0f;
-        float y1 = ((originalBox.y + originalBox.height) / 1920.0f) * 2.0f - 1.0f;
-
-        std::vector<SimpleVertex> linesVertices;
-        linesVertices.reserve(4);
-        linesVertices.emplace_back(glm::vec3(x0, y0, 0.0f));
-        linesVertices.emplace_back(glm::vec3(x1, y0, 0.0f));
-        linesVertices.emplace_back(glm::vec3(x1, y1, 0.0f));
-        linesVertices.emplace_back(glm::vec3(x0, y1, 0.0f));
-
-        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
-        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
-
-
-        // 解析关键点在输入图片(128*128)中的坐标
-        std::vector<cv::Point2f> kps;
-        kps.reserve(keyPoints.size() / 2);
-        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
-            float kp_dx = keyPoints[i];
-            float kp_dy = keyPoints[i + 1];
-            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
-            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
-            kps.emplace_back(kp_x, kp_y);
+        AHardwareBuffer *pHardwareBuffer = image.value().getHardwareBuffer();
+        if (pHardwareBuffer == nullptr) {
+            LOG_D("Test07NdkCamera::drawFrame(), no hardwareBuffer");
+            return;
         }
 
-        // 关键点在原图(1080*1920)中的坐标
-        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
+                .device(mDevice->getDevice())
+                .hardwareBuffer(pHardwareBuffer)
+                .build();
+        mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
+                .device(mDevice->getDevice())
+                .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
+                .hardwareBufferFormatProperties(hardwareBuffer.getFormatProperties())
+                .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
+                .hardwareBufferProperties(hardwareBuffer.getProperties())
+                .memoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .conversion((*mSampler).getConversion().getSamplerYcbcrConversion())
+                .buildUnique();
 
-        std::vector<SimpleVertex> pointsVertices;
-        pointsVertices.reserve(points.size());
-        for (const cv::Point &point: points) {
-            pointsVertices.emplace_back(glm::vec3((point.x / 1080.0f) * 2.0f - 1.0f, (point.y / 1920.0f) * 2.0f - 1.0f, 0.0f));
-        }
+        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
+                            .addMapping([&](vklite::DescriptorMapping &descriptorMapping) {
+                                descriptorMapping
+                                        .binding(0)
+                                        .descriptorType(vk::DescriptorType::eCombinedImageSampler)
+                                        .addImageInfo(mSampler->getSampler(), mImageView->getImageView());
+                            });
+                })
+                .build();
 
-        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
-        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+        mDevice->getDevice().updateDescriptorSets(descriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
+//        mExtractor->input("in0", mMatIn);
+//
+//        ncnn::Mat regressors;
+//        ncnn::Mat scores;
+//        mExtractor->extract("out0", regressors);
+//        mExtractor->extract("out1", scores);
+//
+//        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
+//        int num_scores = scores.w * scores.h * scores.c; // 896
+//        float *regressors_data = (float *) regressors.data;
+//        float *scores_data = (float *) scores.data;
+//
+//        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
+//        std::vector<float> score_vec(scores_data, scores_data + num_scores);
+//
+//        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
+//        for (auto &s: score_vec) {
+//            if (s < -100.0f) {
+//                s = -100.0f;
+//            }
+//            if (s > 100.0f) {
+//                s = 100.0f;
+//            }
+//            s = 1.0f / (1.0f + std::exp(-s));
+//        }
+//        // 找到最大分数索引
+//        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
+//        float max_score = score_vec[maxIndex];
+//
+//        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
+//        float box_dx = bestRegressor[0];
+//        float box_dy = bestRegressor[1];
+//        float w_box = bestRegressor[2];
+//        float h_box = bestRegressor[3];
+//
+//        // 相对于 anchor 中心点的归一化偏移量
+//        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
+//        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
+//        const image_process::Anchor &anchor = mAnchors[maxIndex];
+//
+//        // 计算边界框在输入图片(128*128)中的位置
+//        float box_center_x = box_dx + anchor.centerX * 128.0f;
+//        float box_center_y = box_dy + anchor.centerY * 128.0f;
+//        float box_w = w_box;
+//        float box_h = h_box;
+//        float box_x = box_center_x - box_w / 2.0f;
+//        float box_y = box_center_y - box_h / 2.0f;
+//
+//        // 检测框的坐标
+//        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
+//                     cv::Size(std::round(box_w), std::round(box_h)));
+//
+//        // 检测框在原图(1080*1920)中的坐标
+//        cv::Rect originalBox = mLetterBox.transformBack(box);
+//        float x0 = (originalBox.x / 1080.0f) * 2.0f - 1.0f;
+//        float y0 = (originalBox.y / 1920.0f) * 2.0f - 1.0f;
+//        float x1 = ((originalBox.x + originalBox.width) / 1080.0f) * 2.0f - 1.0f;
+//        float y1 = ((originalBox.y + originalBox.height) / 1920.0f) * 2.0f - 1.0f;
+//
+//        std::vector<SimpleVertex> linesVertices;
+//        linesVertices.reserve(4);
+//        linesVertices.emplace_back(glm::vec3(x0, y0, 0.0f));
+//        linesVertices.emplace_back(glm::vec3(x1, y0, 0.0f));
+//        linesVertices.emplace_back(glm::vec3(x1, y1, 0.0f));
+//        linesVertices.emplace_back(glm::vec3(x0, y1, 0.0f));
+//
+//        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
+//        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
+//
+//
+//        // 解析关键点在输入图片(128*128)中的坐标
+//        std::vector<cv::Point2f> kps;
+//        kps.reserve(keyPoints.size() / 2);
+//        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
+//            float kp_dx = keyPoints[i];
+//            float kp_dy = keyPoints[i + 1];
+//            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
+//            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
+//            kps.emplace_back(kp_x, kp_y);
+//        }
+//
+//        // 关键点在原图(1080*1920)中的坐标
+//        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+//
+//        std::vector<SimpleVertex> pointsVertices;
+//        pointsVertices.reserve(points.size());
+//        for (const cv::Point &point: points) {
+//            pointsVertices.emplace_back(glm::vec3((point.x / 1080.0f) * 2.0f - 1.0f, (point.y / 1920.0f) * 2.0f - 1.0f, 0.0f));
+//        }
+//
+//        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
+//        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+
 
 
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];

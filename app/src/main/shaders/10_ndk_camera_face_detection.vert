@@ -1,6 +1,4 @@
 #version 460
-
-// 允许开发者独立编译和管理不同阶段的着色器（如顶点、片段、几何着色器等）
 #extension GL_ARB_separate_shader_objects: enable
 
 layout (location = 0) in vec3 inPosition;

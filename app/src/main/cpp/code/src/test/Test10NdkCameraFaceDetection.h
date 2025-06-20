@@ -13,6 +13,7 @@
 #include "math/glm.h"
 
 #include "vklite/vklite.h"
+#include "vklite/vklite_android.h"
 #include "engine/engines.h"
 #include "util/FrameCounter.h"
 
@@ -113,6 +114,9 @@ namespace test10 {
         vk::Buffer mIndexVkBuffer;
         uint32_t mIndexCount;
 
+        std::unique_ptr<vklite::CombinedHardwareBufferSampler> mSampler;
+        std::unique_ptr<vklite::CombinedHardwareBufferImageView> mImageView;
+
 
         // lines pipeline resources
         // vertex buffer
@@ -139,14 +143,9 @@ namespace test10 {
 
 
         // nn model
-        cv::Mat mImageMat;
-
-        std::vector<vklite::CombinedImageSampler> mSamplers;
-
         std::vector<image_process::Anchor> mAnchors;
         image_process::LetterBox mLetterBox;
 
-        ncnn::Mat mMatIn;
         ncnn::Net mNet;
         std::unique_ptr<ncnn::Extractor> mExtractor;
 

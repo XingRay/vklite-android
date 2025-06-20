@@ -314,12 +314,7 @@ namespace test09 {
         }
 
         mAnchors = image_process::Anchor::generateAnchors();
-        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
-        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
-        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
-        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
-        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
-        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
+        mLetterBox = image_process::LetterBox::calcLetterbox(mImageMat.cols, mImageMat.rows, 128, 128);
 
         int gpu_count = ncnn::get_gpu_count();
         if (gpu_count > 0) {
@@ -547,8 +542,14 @@ namespace test09 {
 
     // 绘制三角形帧
     void Test09FaceImageDetection::drawFrame() {
+        // preprocess
+        cv::Mat padded = mLetterBox.copyMakeBorder(mImageMat);
+        ncnn::Mat matIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
+        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
+        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
+        matIn.substract_mean_normalize(mean_vals, norm_vals);
 
-        mExtractor->input("in0", mMatIn);
+        mExtractor->input("in0", matIn);
 
         ncnn::Mat regressors;
         ncnn::Mat scores;

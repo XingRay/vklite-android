@@ -137,15 +137,14 @@ namespace test09 {
         std::vector<vklite::UniformBuffer> mPointsUniformBuffers;
 
 
-        // nn model
-        cv::Mat mImageMat;
-
         std::vector<vklite::CombinedImageSampler> mSamplers;
+
+        // nn model
 
         std::vector<image_process::Anchor> mAnchors;
         image_process::LetterBox mLetterBox;
 
-        ncnn::Mat mMatIn;
+        cv::Mat mImageMat;
         ncnn::Net mNet;
         std::unique_ptr<ncnn::Extractor> mExtractor;
 

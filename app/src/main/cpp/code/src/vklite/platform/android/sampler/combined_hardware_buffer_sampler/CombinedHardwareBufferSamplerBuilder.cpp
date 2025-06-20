@@ -25,6 +25,9 @@ namespace vklite {
     }
 
     CombinedHardwareBufferSampler CombinedHardwareBufferSamplerBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("CombinedHardwareBufferSamplerBuilder::build(): mDevice == nullptr");
+        }
         SamplerYcbcrConversion conversion = mHardwareBufferYcbcrConversionBuilder.build();
 
         Sampler sampler = mHardwareBufferSamplerBuilder
