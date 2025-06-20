@@ -35,6 +35,7 @@
 #include "test/Test07NdkCamera.h"
 #include "test/Test08ComputeShader.h"
 #include "test/Test09FaceImageDetection.h"
+#include "test/Test10NdkCameraFaceDetection.h"
 
 void handle_cmd(android_app *app, int32_t cmd) {
 //    LOG_D("AndroidMain#handle_cmd, cmd:%d", cmd);
@@ -49,7 +50,9 @@ void handle_cmd(android_app *app, int32_t cmd) {
 //            app->test = new test06::Test06Load3dModel(*app, "Test06Load3dModel");
 //            app->test = new test07::Test07NdkCamera(*app, "Test07NdkCamera");
 //            app->test = new test08::Test08ComputeShader(*app, "Test08ComputeShader");
-            app->test = new test09::Test09FaceImageDetection(*app, "Test09FaceImageDetection");
+//            app->test = new test09::Test09FaceImageDetection(*app, "Test09FaceImageDetection");
+            app->test = new test10::Test10NdkCameraFaceDetection(*app, "Test10NdkCameraFaceDetection");
+
             app->test->init();
         }
             break;
