@@ -184,16 +184,16 @@ namespace vklite {
         }
 
         mExtensions = CStringUtil::removeDuplicates(mExtensions);
-        LOG_E("DeviceBuilder::build: extensions:");
+        LOG_D("DeviceBuilder::build: extensions:");
         for (const char *name: mExtensions) {
-            LOG_E("\t%s", name);
+            LOG_D("\t%s", name);
         }
         mDeviceCreateInfo.setPEnabledExtensionNames(mExtensions);
 
         mLayers = CStringUtil::removeDuplicates(mLayers);
-        LOG_E("DeviceBuilder::build: layers:");
+        LOG_D("DeviceBuilder::build: layers:");
         for (const char *name: mLayers) {
-            LOG_E("\t%s", name);
+            LOG_D("\t%s", name);
         }
         mDeviceCreateInfo.setPEnabledLayerNames(mLayers);
 

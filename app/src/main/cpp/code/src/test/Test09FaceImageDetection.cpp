@@ -296,12 +296,15 @@ namespace test09 {
 
     void Test09FaceImageDetection::init() {
 
-        AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
-        const uint8_t *data = static_cast<const uint8_t *>(AAsset_getBuffer(image));
-        LOG_D("AAsset_getLength(image): %ld", AAsset_getLength(image));
-        std::vector<uint8_t> buffer(data, data + AAsset_getLength(image));
-        cv::Mat imageMat = cv::imdecode(buffer, cv::IMREAD_COLOR); // 内存解码
-        AAsset_close(image);
+//        AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
+//        const uint8_t *data = static_cast<const uint8_t *>(AAsset_getBuffer(image));
+//        LOG_D("AAsset_getLength(image): %ld", AAsset_getLength(image));
+//        std::vector<uint8_t> buffer(data, data + AAsset_getLength(image));
+//        cv::Mat imageMat = cv::imdecode(buffer, cv::IMREAD_COLOR); // 内存解码
+//        AAsset_close(image);
+
+        const char *imageFilePath = "/storage/emulated/0/test/face_image/face_image_04.png";
+        cv::Mat imageMat = cv::imread(imageFilePath);
 
         LOG_DF("imageMat: cols:{}, rows:{}, depth:{}, channels:{}, dimensions:{}", imageMat.cols, imageMat.rows, imageMat.depth(), imageMat.channels(), imageMat.dims);
         if (imageMat.channels() == 4) {
@@ -459,7 +462,7 @@ namespace test09 {
         mLinesVertexBufferOffsets.push_back(0);
 
 
-        ColorUniformBufferObject colorUniformBufferObject{{0.8f, 0.6f, 0.4f}};
+        ColorUniformBufferObject colorUniformBufferObject{{0.0f, 0.0f, 1.0f}};
         mLinesUniformBuffers = vklite::UniformBufferBuilder()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
