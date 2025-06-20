@@ -111,7 +111,7 @@ namespace ndkcamera {
         return mImageReader->acquireLatestImage();
     }
 
-    Image NdkCamera::acquireLatestImageWithBuffer() {
+    Image NdkCamera::loopAcquireImageWithBuffer() {
         AHardwareBuffer *pHardwareBuffer = nullptr;
         std::optional<ndkcamera::Image> image = std::nullopt;
         while (pHardwareBuffer == nullptr) {

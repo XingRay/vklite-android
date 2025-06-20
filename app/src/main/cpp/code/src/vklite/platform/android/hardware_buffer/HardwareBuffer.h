@@ -5,23 +5,20 @@
 #pragma once
 
 #include <android/hardware_buffer.h>
+#include <vulkan/vulkan.hpp>
 
-#include "vklite/device/Device.h"
+#include "vklite/platform/android/hardware_buffer/HardwareBufferMeta.h"
 
 namespace vklite {
 
     class HardwareBuffer {
     private:
         AHardwareBuffer *mHardwareBuffer;
-        vk::AndroidHardwareBufferPropertiesANDROID mPropertiesInfo;
-        vk::AndroidHardwareBufferFormatPropertiesANDROID mFormatInfo;
-        AHardwareBuffer_Desc mHardwareBufferDescription;
+        HardwareBufferMeta mMeta;
 
     public:
-        HardwareBuffer(AHardwareBuffer *hardwareBuffer,
-                       vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo,
-                       vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo,
-                       AHardwareBuffer_Desc hardwareBufferDescription);
+        explicit HardwareBuffer(AHardwareBuffer *hardwareBuffer,
+                                HardwareBufferMeta meta);
 
         ~HardwareBuffer();
 
@@ -48,8 +45,8 @@ namespace vklite {
         [[nodiscard]]
         AHardwareBuffer *getHardwareBuffer() const;
 
-    public://static
-        static HardwareBuffer build(const Device &device, AHardwareBuffer *hardwareBuffer);
+//    public://static
+//        static HardwareBuffer build(const Device &device, AHardwareBuffer *hardwareBuffer);
     };
 
 } // vklite

@@ -7,6 +7,8 @@
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"
+#include "vklite/platform/android/hardware_buffer/HardwareBufferBuilder.h"
+#include "vklite/platform/android/hardware_buffer/HardwareBufferMeta.h"
 
 #include "vklite/platform/android/conversion/SamplerYcbcrConversion.h"
 #include "vklite/platform/android/conversion/SamplerYcbcrConversionBuilder.h"

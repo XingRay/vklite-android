@@ -37,16 +37,19 @@ namespace test07 {
 
         mEngine = vklite::AndroidDeviceEngineBuilder::asDefault(mApp.window)
                 .clearColor(0.2f, 0.4f, 0.8f)
-                .addDevicePlugin(vklite::HardwareBufferPlugin::buildUnique())
                 .addInstancePlugin(vklite::HardwareBufferPlugin::buildUnique())
+                .addDevicePlugin(vklite::HardwareBufferPlugin::buildUnique())
                 .buildUnique();
 
 
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
         mNdkCamera->startPreview();
 
-        ndkcamera::Image image = mNdkCamera->acquireLatestImageWithBuffer();
-        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), image.getHardwareBuffer());
+        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
+                .device(mEngine->getDevice().getDevice())
+                .hardwareBuffer(image.getHardwareBuffer())
+                .build();
 
         mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
                 .device(mEngine->getDevice().getDevice())
@@ -127,7 +130,10 @@ namespace test07 {
             return;
         }
 
-        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mEngine->getDevice(), pHardwareBuffer);
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
+                .device(mEngine->getDevice().getDevice())
+                .hardwareBuffer(pHardwareBuffer)
+                .build();
         mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
                 .device((*mEngine).getVkDevice())
                 .hardwareBuffer(hardwareBuffer.getHardwareBuffer())

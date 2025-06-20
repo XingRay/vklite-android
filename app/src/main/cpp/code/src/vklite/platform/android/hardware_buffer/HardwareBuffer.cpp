@@ -9,15 +9,9 @@
 namespace vklite {
 
     HardwareBuffer::HardwareBuffer(AHardwareBuffer *hardwareBuffer,
-                                   vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo,
-                                   vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo,
-                                   AHardwareBuffer_Desc hardwareBufferDescription)
+                                   HardwareBufferMeta meta)
             : mHardwareBuffer(hardwareBuffer),
-              mPropertiesInfo(propertiesInfo),
-              mFormatInfo(formatInfo),
-              mHardwareBufferDescription(hardwareBufferDescription) {
-        mPropertiesInfo.pNext = &mFormatInfo;
-    }
+              mMeta(meta) {}
 
     HardwareBuffer::~HardwareBuffer() = default;
 
@@ -26,68 +20,56 @@ namespace vklite {
     HardwareBuffer &HardwareBuffer::operator=(const HardwareBuffer &other) {
         if (this != &other) {
             mHardwareBuffer = other.mHardwareBuffer;
-            mPropertiesInfo = other.mPropertiesInfo;
-            mFormatInfo = other.mFormatInfo;
-            mHardwareBufferDescription = other.mHardwareBufferDescription;
-
-            mPropertiesInfo.pNext = &mFormatInfo;
+            mMeta = other.mMeta;
         }
         return *this;
     }
 
     HardwareBuffer::HardwareBuffer(HardwareBuffer &&other) noexcept
             : mHardwareBuffer(std::exchange(other.mHardwareBuffer, nullptr)),
-              mPropertiesInfo(other.mPropertiesInfo),
-              mFormatInfo(other.mFormatInfo),
-              mHardwareBufferDescription(other.mHardwareBufferDescription) {
-        mPropertiesInfo.pNext = &mFormatInfo;
-    }
+              mMeta(std::move(other.mMeta)) {}
 
     HardwareBuffer &HardwareBuffer::operator=(HardwareBuffer &&other) noexcept {
         if (this != &other) {
             mHardwareBuffer = std::exchange(other.mHardwareBuffer, nullptr);
-            mPropertiesInfo = other.mPropertiesInfo;
-            mFormatInfo = other.mFormatInfo;
-            mHardwareBufferDescription = other.mHardwareBufferDescription;
-
-            mPropertiesInfo.pNext = &mFormatInfo;
+            mMeta = std::move(other.mMeta);
         }
         return *this;
     }
 
     vk::AndroidHardwareBufferPropertiesANDROID HardwareBuffer::getProperties() const {
-        return mPropertiesInfo;
+        return mMeta.getPropertiesInfo();
     }
 
     vk::AndroidHardwareBufferFormatPropertiesANDROID HardwareBuffer::getFormatProperties() const {
-        return mFormatInfo;
+        return mMeta.getFormatInfo();
     }
 
     AHardwareBuffer_Desc HardwareBuffer::getAndroidHardwareBufferDescription() const {
-        return mHardwareBufferDescription;
+        return mMeta.getHardwareBufferDescription();
     }
 
-    uint32_t HardwareBuffer::getDataSize() const {
-        return mHardwareBufferDescription.width * mHardwareBufferDescription.height * mHardwareBufferDescription.layers;
+    uint32_t HardwareBuffer::getDataSize() const{
+        return mMeta.getDataSize();
     }
 
     AHardwareBuffer *HardwareBuffer::getHardwareBuffer() const {
         return mHardwareBuffer;
     }
 
-    HardwareBuffer HardwareBuffer::build(const Device &device, AHardwareBuffer *hardwareBuffer) {
-        const vk::Device &vkDevice = device.getDevice();
-        // 获取 HardwareBuffer 属性
-        vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
-        vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
-        propertiesInfo.pNext = &formatInfo;
-
-        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(vkDevice, hardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
-
-        AHardwareBuffer_Desc hardwareBufferDescription;
-        AHardwareBuffer_describe(hardwareBuffer, &hardwareBufferDescription);
-
-//        return HardwareBuffer(hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription);
-        return {hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription};
-    }
+//    HardwareBuffer HardwareBuffer::build(const Device &device, AHardwareBuffer *hardwareBuffer) {
+//        const vk::Device &vkDevice = device.getDevice();
+//        // 获取 HardwareBuffer 属性
+//        vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
+//        vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
+//        propertiesInfo.pNext = &formatInfo;
+//
+//        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(vkDevice, hardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
+//
+//        AHardwareBuffer_Desc hardwareBufferDescription;
+//        AHardwareBuffer_describe(hardwareBuffer, &hardwareBufferDescription);
+//
+////        return HardwareBuffer(hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription);
+//        return {hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription};
+//    }
 } // vklite

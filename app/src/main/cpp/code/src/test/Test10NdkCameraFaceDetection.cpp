@@ -14,63 +14,9 @@ namespace test10 {
     Test10NdkCameraFaceDetection::Test10NdkCameraFaceDetection(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app), mNet() {
 
-        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection.vert.spv");
-        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection.frag.spv");
-
-        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(vertexShaderCode))
-                .fragmentShaderCode(std::move(fragmentShaderCode))
-                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-                    vertexBindingConfigure
-                            .binding(0)
-                            .stride(sizeof(Vertex))
-                            .addAttribute(0, ShaderFormat::Vec3)
-                            .addAttribute(1, ShaderFormat::Vec2);
-                })
-                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-                    descriptorSetConfigure
-                            .set(0)
-                            .addSampler(0, vk::ShaderStageFlagBits::eFragment);
-                });
-
-        std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.vert.spv");
-        std::vector<uint32_t> linesFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.frag.spv");
-
-        vklite::ShaderConfigure linesShaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(linesVertexShaderCode))
-                .fragmentShaderCode(std::move(linesFragmentShaderCode))
-                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-                    vertexBindingConfigure
-                            .binding(0)
-                            .stride(sizeof(SimpleVertex))
-                            .addAttribute(0, ShaderFormat::Vec3);
-                })
-                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-                    descriptorSetConfigure
-                            .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
-                });
-
-        std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.vert.spv");
-        std::vector<uint32_t> pointsFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.frag.spv");
-
-        vklite::ShaderConfigure pointsShaderConfigure = vklite::ShaderConfigure()
-                .vertexShaderCode(std::move(pointsVertexShaderCode))
-                .fragmentShaderCode(std::move(pointsFragmentShaderCode))
-                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
-                    vertexBindingConfigure
-                            .binding(0)
-                            .stride(sizeof(SimpleVertex))
-                            .addAttribute(0, ShaderFormat::Vec3);
-                })
-                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
-                    descriptorSetConfigure
-                            .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
-                });
-
         mInstance = vklite::InstanceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
+                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
                 .buildUnique();
 
         mSurface = vklite::AndroidSurfaceBuilder()
@@ -91,6 +37,7 @@ namespace test10 {
 
         mDevice = vklite::DeviceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
+                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
                 .physicalDevice(mPhysicalDevice->getPhysicalDevice())
                 .addQueueFamily(graphicQueueFamilyIndex)
                 .addQueueFamily(presentQueueFamilyIndex)
@@ -241,6 +188,72 @@ namespace test10 {
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
+
+        mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
+        mNdkCamera->startPreview();
+
+        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
+        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
+                .device(mDevice->getDevice())
+                .hardwareBuffer(image.getHardwareBuffer()).build();
+
+
+        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
+        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.frag.spv");
+
+        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(vertexShaderCode))
+                .fragmentShaderCode(std::move(fragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3)
+                            .addAttribute(1, ShaderFormat::Vec2);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addSampler(0, vk::ShaderStageFlagBits::eFragment);
+                });
+
+        std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.vert.spv");
+        std::vector<uint32_t> linesFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.frag.spv");
+
+        vklite::ShaderConfigure linesShaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(linesVertexShaderCode))
+                .fragmentShaderCode(std::move(linesFragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(SimpleVertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                });
+
+        std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_03_points.vert.spv");
+        std::vector<uint32_t> pointsFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_03_points.frag.spv");
+
+        vklite::ShaderConfigure pointsShaderConfigure = vklite::ShaderConfigure()
+                .vertexShaderCode(std::move(pointsVertexShaderCode))
+                .fragmentShaderCode(std::move(pointsFragmentShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(SimpleVertex))
+                            .addAttribute(0, ShaderFormat::Vec3);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                });
+
+
         mDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
                 .frameCount(mFrameCount)
@@ -293,41 +306,9 @@ namespace test10 {
                 .topology(vk::PrimitiveTopology::ePointList)
                 .polygonMode(vk::PolygonMode::ePoint)
                 .buildUnique();
-    }
 
-    void Test10NdkCameraFaceDetection::init() {
 
-        mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
-        mNdkCamera->startPreview();
-
-        ndkcamera::Image image = mNdkCamera->acquireLatestImageWithBuffer();
-        vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBuffer::build(mDevice, image.getHardwareBuffer());
-
-//        AAsset *image = AAssetManager_open(mApp.activity->assetManager, "test/image/test_face_image_1080_1920_01.png", AASSET_MODE_BUFFER);
-//        const uint8_t *data = static_cast<const uint8_t *>(AAsset_getBuffer(image));
-//        LOG_D("AAsset_getLength(image): %ld", AAsset_getLength(image));
-//        std::vector<uint8_t> buffer(data, data + AAsset_getLength(image));
-//        cv::Mat imageMat = cv::imdecode(buffer, cv::IMREAD_COLOR); // 内存解码
-//        AAsset_close(image);
-
-        const char *imageFilePath = "/storage/emulated/0/test/face_image/face_image_04.png";
-        cv::Mat imageMat = cv::imread(imageFilePath);
-
-        LOG_DF("imageMat: cols:{}, rows:{}, depth:{}, channels:{}, dimensions:{}", imageMat.cols, imageMat.rows, imageMat.depth(), imageMat.channels(), imageMat.dims);
-        if (imageMat.channels() == 4) {
-            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGRA2RGB);
-        } else {
-            cv::cvtColor(imageMat, mImageMat, cv::COLOR_BGR2RGB);
-        }
-
-        mAnchors = image_process::Anchor::generateAnchors();
-        mLetterBox = image_process::LetterBox::calcLetterbox(imageMat.cols, imageMat.rows, 128, 128);
-        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
-        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
-        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
-        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
-        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
-
+        // nn model
         int gpu_count = ncnn::get_gpu_count();
         if (gpu_count > 0) {
             LOG_D("use_vulkan_compute");
@@ -366,6 +347,18 @@ namespace test10 {
         AAsset_close(modelBin);
 
         mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
+
+    }
+
+    void Test10NdkCameraFaceDetection::init() {
+        mAnchors = image_process::Anchor::generateAnchors();
+        mLetterBox = image_process::LetterBox::calcLetterbox(1080, 1920, 128, 128);
+
+//        cv::Mat padded = mLetterBox.copyMakeBorder(imageMat);
+//        mMatIn = ncnn::Mat::from_pixels(padded.data, ncnn::Mat::PIXEL_RGB, padded.cols, padded.rows);
+//        const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
+//        const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
+//        mMatIn.substract_mean_normalize(mean_vals, norm_vals);
 
 
         std::vector<Vertex> vertices = {
