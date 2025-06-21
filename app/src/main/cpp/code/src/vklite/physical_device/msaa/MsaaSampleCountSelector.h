@@ -13,7 +13,7 @@ namespace vklite {
 
     class MsaaSampleCountSelector {
     public:
-        MsaaSampleCountSelector();
+        explicit MsaaSampleCountSelector();
 
         virtual ~MsaaSampleCountSelector() = 0;
 

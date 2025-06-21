@@ -22,7 +22,7 @@ namespace vklite {
         std::vector<std::unique_ptr<PhysicalDeviceFilter>> mPhysicalDeviceFilters;
 
     public:
-        PhysicalDeviceSelector();
+        explicit PhysicalDeviceSelector();
 
         ~PhysicalDeviceSelector();
 

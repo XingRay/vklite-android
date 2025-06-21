@@ -71,7 +71,7 @@
 #include "vklite/pipeline/pipeline_layout/PipelineLayoutBuilder.h"
 #include "vklite/pipeline/combined_pipeline/CombinedPipeline.h"
 #include "vklite/pipeline/combined_pipeline/CombinedGraphicPipelineBuilder.h"
-
+#include "vklite/pipeline/combined_pipeline/CombinedComputePipelineBuilder.h"
 
 // descriptor set layout
 #include "vklite/pipeline/descriptor_set_layout/DescriptorSetLayouts.h"

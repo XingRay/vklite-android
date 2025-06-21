@@ -52,7 +52,7 @@ namespace vklite {
         BufferMeta meta{mBufferCreateInfo.size};
 
 //        return Buffer(mDevice, buffer, std::move(meta));
-        return {mDevice, buffer, std::move(meta)};
+        return Buffer{mDevice, buffer, std::move(meta)};
     }
 
     std::unique_ptr<Buffer> BufferBuilder::buildUnique() const {

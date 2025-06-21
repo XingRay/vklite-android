@@ -313,8 +313,7 @@ namespace vklite {
             throw std::runtime_error("createGraphicsPipelines failed");
         }
 
-//        return Pipeline(mDevice, pipeline);
-        return {mDevice, pipeline};
+        return Pipeline{mDevice, pipeline};
     }
 
     std::unique_ptr<Pipeline> GraphicsPipelineBuilder::buildUnique() {

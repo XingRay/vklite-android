@@ -26,7 +26,7 @@ namespace vklite {
 
     public:
 
-        DescriptorMapping();
+        explicit DescriptorMapping();
 
         ~DescriptorMapping();
 

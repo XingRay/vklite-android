@@ -41,8 +41,7 @@ namespace vklite {
             descriptorSetLayouts.push_back(descriptorSetLayout);
         }
 
-//        return DescriptorSetLayouts(mDevice, std::move(descriptorSetLayouts));
-        return {mDevice, std::move(descriptorSetLayouts)};
+        return DescriptorSetLayouts{mDevice, std::move(descriptorSetLayouts)};
     }
 
     std::unique_ptr<DescriptorSetLayouts> DescriptorSetLayoutsBuilder::buildUnique() {

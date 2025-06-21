@@ -15,7 +15,7 @@ namespace vklite {
 
     public:
 
-        Pipeline(vk::Device device, vk::Pipeline pipeline);
+        explicit Pipeline(vk::Device device, vk::Pipeline pipeline);
 
         ~Pipeline();
 

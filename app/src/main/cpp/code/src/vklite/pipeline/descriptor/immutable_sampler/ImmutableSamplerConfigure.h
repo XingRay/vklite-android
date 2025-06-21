@@ -23,7 +23,7 @@ namespace vklite {
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-        ImmutableSamplerConfigure(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags);
+        explicit ImmutableSamplerConfigure(uint32_t binding, std::vector<vk::Sampler> &&samplers, vk::ShaderStageFlags shaderStageFlags);
 
         ImmutableSamplerConfigure();
 

@@ -33,8 +33,7 @@ namespace vklite {
     }
 
     DescriptorBindingConfigure SamplerConfigure::createDescriptorBindingConfigure() const {
-//        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
-        return {mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorCount, mShaderStageFlags};
+        return DescriptorBindingConfigure{mBinding, vk::DescriptorType::eCombinedImageSampler, mDescriptorCount, mShaderStageFlags};
     }
 
 } // vklite

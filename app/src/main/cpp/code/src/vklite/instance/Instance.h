@@ -18,7 +18,7 @@ namespace vklite {
 //        vk::DebugUtilsMessengerEXT mDebugMessenger;
 
     public:
-        Instance(const vk::Instance& instance);
+        explicit Instance(const vk::Instance &instance);
 
         ~Instance();
 

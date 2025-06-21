@@ -22,9 +22,9 @@ namespace vklite {
         std::unordered_map<vk::PhysicalDeviceType, uint32_t> mPhysicalDeviceTypeScore;
 
     public:
-        PhysicalDeviceScoreCalculator();
+        explicit PhysicalDeviceScoreCalculator();
 
-        PhysicalDeviceScoreCalculator(
+        explicit PhysicalDeviceScoreCalculator(
                 uint32_t geometryShaderScore,
                 uint32_t samplerAnisotropyScore,
                 uint32_t integratedGpuScore,

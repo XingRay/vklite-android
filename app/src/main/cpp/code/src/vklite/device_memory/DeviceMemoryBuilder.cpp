@@ -32,8 +32,7 @@ namespace vklite {
     DeviceMemory DeviceMemoryBuilder::build() {
         vk::DeviceMemory deviceMemory = mDevice.allocateMemory(mMemoryAllocateInfo);
         DeviceMemoryMeta meta(mMemoryAllocateInfo.allocationSize, mMemoryAllocateInfo.memoryTypeIndex);
-//        return DeviceMemory(mDevice, deviceMemory, std::move(meta));
-        return {mDevice, deviceMemory, std::move(meta)};
+        return DeviceMemory{mDevice, deviceMemory, std::move(meta)};
     }
 
     std::unique_ptr<DeviceMemory> DeviceMemoryBuilder::buildUnique() {

@@ -16,7 +16,7 @@ namespace vklite {
         vk::DeviceSize mOffset;
 
     public:
-        IndexBufferInfo(const IndexBuffer &indexBuffer, vk::DeviceSize offset = 0);
+        explicit IndexBufferInfo(const IndexBuffer &indexBuffer, vk::DeviceSize offset = 0);
 
         IndexBufferInfo(const IndexBufferInfo &other);
 

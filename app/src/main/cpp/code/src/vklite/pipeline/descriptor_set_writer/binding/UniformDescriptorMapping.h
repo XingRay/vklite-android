@@ -21,7 +21,7 @@ namespace vklite {
         std::vector<vk::DescriptorBufferInfo> mDescriptorBufferInfos;
 
     public:
-        UniformDescriptorMapping();
+        explicit UniformDescriptorMapping();
 
         ~UniformDescriptorMapping();
 

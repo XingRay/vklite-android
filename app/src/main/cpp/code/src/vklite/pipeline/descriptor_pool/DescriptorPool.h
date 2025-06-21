@@ -16,7 +16,7 @@ namespace vklite {
         vk::DescriptorPool mDescriptorPool;
 
     public:
-        DescriptorPool(vk::Device device, vk::DescriptorPool descriptorPool);
+        explicit DescriptorPool(vk::Device device, vk::DescriptorPool descriptorPool);
 
         ~DescriptorPool();
 

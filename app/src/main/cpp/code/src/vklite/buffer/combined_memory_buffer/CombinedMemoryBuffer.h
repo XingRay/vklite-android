@@ -15,7 +15,7 @@ namespace vklite {
         DeviceMemory mDeviceMemory;
 
     public:
-        CombinedMemoryBuffer(Buffer &&buffer, DeviceMemory &&deviceMemory);
+        explicit CombinedMemoryBuffer(Buffer &&buffer, DeviceMemory &&deviceMemory);
 
         ~CombinedMemoryBuffer();
 

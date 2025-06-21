@@ -19,12 +19,12 @@ namespace vklite {
         vk::ImageLayout mLayout;
 
     public:
-        AttachmentReference(const Attachment &attachment, vk::ImageLayout layout);
+        explicit AttachmentReference(const Attachment &attachment, vk::ImageLayout layout);
 
         ~AttachmentReference();
 
         [[nodiscard]]
-        uint32_t getIndex()const;
+        uint32_t getIndex() const;
 
         [[nodiscard]]
         vk::AttachmentReference createAttachmentReference() const;

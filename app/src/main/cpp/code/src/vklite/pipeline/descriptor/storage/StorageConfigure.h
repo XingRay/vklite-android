@@ -20,7 +20,7 @@ namespace vklite {
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-        StorageConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        explicit StorageConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
         StorageConfigure();
 

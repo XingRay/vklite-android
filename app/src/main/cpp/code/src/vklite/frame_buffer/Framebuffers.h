@@ -16,7 +16,7 @@ namespace vklite {
         std::vector<Framebuffer> mFramebuffers;
 
     public:
-        Framebuffers();
+        explicit Framebuffers();
 
         explicit Framebuffers(std::vector<Framebuffer> Framebuffers);
 

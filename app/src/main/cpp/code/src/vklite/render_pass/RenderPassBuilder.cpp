@@ -131,11 +131,8 @@ namespace vklite {
         }
         mRenderPassBeginInfo.clearValues(std::move(clearValues));
 
-
         vk::RenderPass renderPass = mDevice.createRenderPass(mRenderPassCreateInfo);
-
-//        return RenderPass(mDevice, renderPass, std::move(mRenderPassBeginInfo));
-        return {mDevice, renderPass, std::move(mRenderPassBeginInfo)};
+        return RenderPass{mDevice, renderPass, std::move(mRenderPassBeginInfo)};
     }
 
     std::unique_ptr<RenderPass> RenderPassBuilder::buildUnique() {

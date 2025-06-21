@@ -46,7 +46,7 @@ namespace vklite {
             throw std::runtime_error("IndexBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
         }
 
-        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, IndexBufferMeta{mIndexType}};
+        return IndexBuffer{mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties, IndexBufferMeta{mIndexType}};
     }
 
     std::unique_ptr<IndexBuffer> IndexBufferBuilder::buildUnique() {

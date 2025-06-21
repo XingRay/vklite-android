@@ -16,7 +16,7 @@ namespace vklite {
         vk::WriteDescriptorSet mWriteDescriptorSet;
 
     public:
-        WriteDescriptorSet();
+        explicit WriteDescriptorSet();
 
         ~WriteDescriptorSet();
 

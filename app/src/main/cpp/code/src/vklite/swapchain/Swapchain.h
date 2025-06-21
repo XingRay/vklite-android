@@ -19,7 +19,7 @@ namespace vklite {
 
     public:
 
-        Swapchain(vk::Device device, vk::SwapchainKHR swapChain, SwapchainMeta meta);
+        explicit Swapchain(vk::Device device, vk::SwapchainKHR swapChain, SwapchainMeta meta);
 
         ~Swapchain();
 

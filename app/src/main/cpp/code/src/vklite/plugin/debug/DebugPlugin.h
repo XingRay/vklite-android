@@ -13,11 +13,11 @@
 
 namespace vklite {
 
-    class DebugPlugin :public PluginInterface{
+    class DebugPlugin : public PluginInterface {
     private:
-        
+
     public:
-        DebugPlugin();
+        explicit DebugPlugin();
 
         ~DebugPlugin() override;
 

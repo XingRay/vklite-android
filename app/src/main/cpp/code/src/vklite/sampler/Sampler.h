@@ -15,12 +15,11 @@ namespace vklite {
     class Sampler {
     private:
         vk::Device mDevice;
-
         vk::Sampler mSampler;
 
     public:
 
-        Sampler(vk::Device device, vk::Sampler sampler);
+        explicit Sampler(vk::Device device, vk::Sampler sampler);
 
         ~Sampler();
 

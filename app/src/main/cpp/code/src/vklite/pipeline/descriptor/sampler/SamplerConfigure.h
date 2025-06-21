@@ -12,8 +12,7 @@
 #include "vklite/pipeline/descriptor/DescriptorBindingConfigure.h"
 
 namespace vklite {
-
-
+    
     class SamplerConfigure {
     private:
         uint32_t mBinding;
@@ -21,7 +20,7 @@ namespace vklite {
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-        SamplerConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        explicit SamplerConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
         SamplerConfigure();
 

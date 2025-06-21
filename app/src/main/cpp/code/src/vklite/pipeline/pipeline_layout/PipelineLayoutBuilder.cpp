@@ -10,7 +10,7 @@
 
 namespace vklite {
 
-    PipelineLayoutBuilder::PipelineLayoutBuilder(){
+    PipelineLayoutBuilder::PipelineLayoutBuilder() {
         mPipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo{};
     };
 
@@ -59,7 +59,7 @@ namespace vklite {
         LOG_D("mDevice.createPipelineLayout => %p", (void *) pipelineLayout);
 
 //        return PipelineLayout(mDevice, pipelineLayout);
-        return {mDevice, pipelineLayout};
+        return PipelineLayout{mDevice, pipelineLayout};
     }
 
     std::unique_ptr<PipelineLayout> PipelineLayoutBuilder::buildUnique() {

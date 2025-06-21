@@ -13,11 +13,11 @@
 
 namespace vklite {
 
-    class AndroidPlugin : public PluginInterface{
+    class AndroidPlugin : public PluginInterface {
     private:
 
     public:
-        AndroidPlugin();
+        explicit AndroidPlugin();
 
         ~AndroidPlugin() override;
 

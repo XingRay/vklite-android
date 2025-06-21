@@ -16,7 +16,7 @@ namespace vklite {
         uint32_t mMemoryTypeIndex;
 
     public:
-        DeviceMemoryMeta(vk::DeviceSize allocationSize, uint32_t memoryTypeIndex);
+        explicit DeviceMemoryMeta(vk::DeviceSize allocationSize, uint32_t memoryTypeIndex);
 
         ~DeviceMemoryMeta();
 

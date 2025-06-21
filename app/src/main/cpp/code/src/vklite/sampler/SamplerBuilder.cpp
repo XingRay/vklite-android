@@ -141,7 +141,7 @@ namespace vklite {
         }
 
         vk::Sampler sampler = mDevice.createSampler(mSamplerCreateInfo);
-        return {mDevice, sampler};
+        return Sampler{mDevice, sampler};
     }
 
     std::unique_ptr<Sampler> SamplerBuilder::buildUnique() {

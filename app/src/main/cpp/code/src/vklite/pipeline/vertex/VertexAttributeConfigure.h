@@ -17,7 +17,7 @@ namespace vklite {
         uint32_t mOffset;
 
     public:
-        VertexAttributeConfigure(vk::Format format, uint32_t offset);
+        explicit VertexAttributeConfigure(vk::Format format, uint32_t offset);
 
         ~VertexAttributeConfigure();
 

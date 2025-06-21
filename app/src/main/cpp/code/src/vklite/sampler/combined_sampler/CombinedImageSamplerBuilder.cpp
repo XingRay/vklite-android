@@ -91,7 +91,7 @@ namespace vklite {
         // create Sampler
         Sampler sampler = mSamplerBuilder.build();
 
-        return {mDevice, mPhysicalDeviceMemoryProperties, std::move(image), std::move(deviceMemory), std::move(imageView), std::move(sampler)};
+        return CombinedImageSampler{mDevice, mPhysicalDeviceMemoryProperties, std::move(image), std::move(deviceMemory), std::move(imageView), std::move(sampler)};
     }
 
     std::unique_ptr<CombinedImageSampler> CombinedImageSamplerBuilder::buildUnique() {

@@ -16,9 +16,9 @@ namespace vklite {
         AHardwareBuffer_Desc mHardwareBufferDescription;
 
     public:
-        HardwareBufferMeta(vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo,
-                           vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo,
-                           AHardwareBuffer_Desc hardwareBufferDescription);
+        explicit HardwareBufferMeta(vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo,
+                                    vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo,
+                                    AHardwareBuffer_Desc hardwareBufferDescription);
 
         ~HardwareBufferMeta();
 

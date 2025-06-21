@@ -20,12 +20,12 @@ namespace vklite {
         vk::ImageAspectFlags mAspectMask;
 
     public:
-        ImageTransition(vk::ImageLayout oldImageLayout,
-                        vk::ImageLayout newImageLayout,
-                        uint32_t levelCount,
-                        uint32_t srcQueueFamilyIndex,
-                        uint32_t dstQueueFamilyIndex,
-                        vk::ImageAspectFlags aspectMask);
+        explicit ImageTransition(vk::ImageLayout oldImageLayout,
+                                 vk::ImageLayout newImageLayout,
+                                 uint32_t levelCount,
+                                 uint32_t srcQueueFamilyIndex,
+                                 uint32_t dstQueueFamilyIndex,
+                                 vk::ImageAspectFlags aspectMask);
 
         ~ImageTransition();
 
@@ -33,19 +33,19 @@ namespace vklite {
         vk::ImageLayout getOldImageLayout() const;
 
         [[nodiscard]]
-        vk::ImageLayout getNewImageLayout()const;
+        vk::ImageLayout getNewImageLayout() const;
 
         [[nodiscard]]
-        uint32_t getLevelCount()const;
+        uint32_t getLevelCount() const;
 
         [[nodiscard]]
-        uint32_t getSrcQueueFamilyIndex()const;
+        uint32_t getSrcQueueFamilyIndex() const;
 
         [[nodiscard]]
-        uint32_t getDstQueueFamilyIndex()const;
+        uint32_t getDstQueueFamilyIndex() const;
 
         [[nodiscard]]
-        vk::ImageAspectFlags getAspectMask()const;
+        vk::ImageAspectFlags getAspectMask() const;
 
     public://static
 

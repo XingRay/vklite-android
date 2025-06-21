@@ -17,7 +17,7 @@ namespace vklite {
         DeviceMemoryMeta mMeta;
 
     public:
-        DeviceMemory(const vk::Device &device, const vk::DeviceMemory &deviceMemory, DeviceMemoryMeta &&meta);
+        explicit DeviceMemory(const vk::Device &device, const vk::DeviceMemory &deviceMemory, DeviceMemoryMeta &&meta);
 
         ~DeviceMemory();
 

@@ -20,14 +20,14 @@ namespace vklite {
         std::vector<vk::ImageMemoryBarrier> mImageMemoryBarriers;
 
     public:
-        PipelineBarrier(vk::PipelineStageFlags srcStageMask,
-                        vk::PipelineStageFlags dstStageMask,
-                        vk::DependencyFlags dependencyFlags,
-                        std::vector<vk::MemoryBarrier> memoryBarriers,
-                        std::vector<vk::BufferMemoryBarrier> bufferMemoryBarriers,
-                        std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers);
+        explicit PipelineBarrier(vk::PipelineStageFlags srcStageMask,
+                                 vk::PipelineStageFlags dstStageMask,
+                                 vk::DependencyFlags dependencyFlags,
+                                 std::vector<vk::MemoryBarrier> memoryBarriers,
+                                 std::vector<vk::BufferMemoryBarrier> bufferMemoryBarriers,
+                                 std::vector<vk::ImageMemoryBarrier> imageMemoryBarriers);
 
-        PipelineBarrier();
+        explicit PipelineBarrier();
 
         ~PipelineBarrier();
 

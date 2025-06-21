@@ -19,9 +19,9 @@ namespace vklite {
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        UniformBuffer(const vk::Device &device,
-                      CombinedMemoryBuffer &&combinedMemoryBuffer,
-                      std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
+        explicit UniformBuffer(const vk::Device &device,
+                               CombinedMemoryBuffer &&combinedMemoryBuffer,
+                               std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~UniformBuffer();
 

@@ -19,7 +19,7 @@ namespace vklite {
         RenderPassBeginInfo mBeginInfo;
 
     public://methods
-        RenderPass(const vk::Device &device, const vk::RenderPass &renderPass, RenderPassBeginInfo &&beginInfo);
+        explicit RenderPass(const vk::Device &device, const vk::RenderPass &renderPass, RenderPassBeginInfo &&beginInfo);
 
         ~RenderPass();
 

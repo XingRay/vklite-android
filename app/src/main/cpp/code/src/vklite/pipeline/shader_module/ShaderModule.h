@@ -16,7 +16,7 @@ namespace vklite {
         vk::ShaderModule mShaderModule;
 
     public:
-        ShaderModule(vk::Device device, vk::ShaderModule shaderModule);
+        explicit ShaderModule(vk::Device device, vk::ShaderModule shaderModule);
 
         ~ShaderModule();
 

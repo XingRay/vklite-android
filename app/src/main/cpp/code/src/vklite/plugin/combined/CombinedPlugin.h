@@ -13,12 +13,12 @@
 
 namespace vklite {
 
-    class CombinedPlugin :public PluginInterface{
+    class CombinedPlugin : public PluginInterface {
     private:
         std::vector<std::unique_ptr<PluginInterface>> mDependencies;
 
     public:
-        CombinedPlugin();
+        explicit CombinedPlugin();
 
         ~CombinedPlugin() override;
 
@@ -40,11 +40,11 @@ namespace vklite {
         void onPreCreateDevice(vk::DeviceCreateInfo &deviceCreateInfo) override;
 
 
-        CombinedPlugin& addDependency(std::unique_ptr<PluginInterface> plugin);
+        CombinedPlugin &addDependency(std::unique_ptr<PluginInterface> plugin);
 
     public: // static
         static std::unique_ptr<CombinedPlugin> buildUnique();
-        
+
     };
 
 } // vklite

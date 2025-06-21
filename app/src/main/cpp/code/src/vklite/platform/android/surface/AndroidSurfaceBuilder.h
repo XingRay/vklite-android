@@ -18,7 +18,7 @@ namespace vklite {
         vk::AndroidSurfaceCreateInfoKHR mSurfaceCreateInfo;
 
     public:
-        AndroidSurfaceBuilder();
+        explicit AndroidSurfaceBuilder();
 
         ~AndroidSurfaceBuilder() override;
 

@@ -19,7 +19,7 @@ namespace vklite {
         vk::SamplerYcbcrConversionInfo mConversionInfo;
     public:
 
-        HardwareBufferSamplerBuilder();
+        explicit HardwareBufferSamplerBuilder();
 
         ~HardwareBufferSamplerBuilder();
 

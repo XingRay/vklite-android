@@ -26,8 +26,7 @@ namespace vklite {
         vk::FenceCreateInfo fenceCreateInfo{};
         fenceCreateInfo.setFlags(mFenceCreateFlags);
 
-//        return Fence(mDevice, mDevice.createFence(fenceCreateInfo));
-        return {mDevice, mDevice.createFence(fenceCreateInfo)};
+        return Fence{mDevice, mDevice.createFence(fenceCreateInfo)};
     }
 
     std::unique_ptr<Fence> FenceBuilder::buildUnique() {

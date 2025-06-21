@@ -17,7 +17,7 @@ namespace vklite {
     private:
 
     public:
-        SurfacePlugin();
+        explicit SurfacePlugin();
 
         ~SurfacePlugin() override;
 

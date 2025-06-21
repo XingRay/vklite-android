@@ -22,11 +22,11 @@ namespace vklite {
         std::vector<PushConstant> mPushConstants;
 
     public:
-        CombinedPipeline(Pipeline &&pipeline,
-                         DescriptorSetLayouts &&descriptorSetLayouts,
-                         PipelineLayout &&pipelineLayout,
-                         std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
-                         std::vector<PushConstant> &&pushConstants);
+        explicit CombinedPipeline(Pipeline &&pipeline,
+                                  DescriptorSetLayouts &&descriptorSetLayouts,
+                                  PipelineLayout &&pipelineLayout,
+                                  std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
+                                  std::vector<PushConstant> &&pushConstants);
 
         ~CombinedPipeline();
 

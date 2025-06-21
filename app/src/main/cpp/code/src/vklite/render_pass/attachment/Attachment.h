@@ -29,7 +29,7 @@ namespace vklite {
         vk::ClearValue mClearValue;
 
     public:
-        Attachment();
+        explicit Attachment();
 
         ~Attachment();
 

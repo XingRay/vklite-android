@@ -19,7 +19,7 @@ namespace vklite {
         std::unordered_map<uint32_t, DescriptorSetConfigure> mDescriptorSetConfigures;
 
     public:
-        DescriptorConfigure();
+        explicit DescriptorConfigure();
 
         ~DescriptorConfigure();
 

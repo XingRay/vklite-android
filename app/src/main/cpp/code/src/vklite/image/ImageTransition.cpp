@@ -46,13 +46,11 @@ namespace vklite {
     }
 
     ImageTransition ImageTransition::depthImageTransition() {
-//        return ImageTransition(vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth);
-        return {vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth};
+        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth};
     }
 
     ImageTransition ImageTransition::textureImageTransition() {
-//        return ImageTransition(vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
-        return {vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor};
+        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor};
     }
 
 } // vklite

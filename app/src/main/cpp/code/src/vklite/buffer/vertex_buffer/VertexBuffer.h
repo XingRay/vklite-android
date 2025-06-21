@@ -20,9 +20,9 @@ namespace vklite {
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        VertexBuffer(const vk::Device &device,
-                     CombinedMemoryBuffer &&combinedMemoryBuffer,
-                     std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
+        explicit VertexBuffer(const vk::Device &device,
+                              CombinedMemoryBuffer &&combinedMemoryBuffer,
+                              std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~VertexBuffer();
 

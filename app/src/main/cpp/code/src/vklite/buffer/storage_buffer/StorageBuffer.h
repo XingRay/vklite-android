@@ -19,9 +19,9 @@ namespace vklite {
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        StorageBuffer(const vk::Device &device,
-                      CombinedMemoryBuffer &&combinedMemoryBuffer,
-                      std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
+        explicit StorageBuffer(const vk::Device &device,
+                               CombinedMemoryBuffer &&combinedMemoryBuffer,
+                               std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~StorageBuffer();
 

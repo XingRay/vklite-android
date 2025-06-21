@@ -17,7 +17,7 @@ namespace vklite {
         vk::SubpassContents mSubpassContents;
 
     public:
-        RenderPassBeginInfo(vk::RenderPassBeginInfo beginInfo, std::vector<vk::ClearValue> &&clearValues, vk::SubpassContents subpassContents);
+        explicit RenderPassBeginInfo(vk::RenderPassBeginInfo beginInfo, std::vector<vk::ClearValue> &&clearValues, vk::SubpassContents subpassContents);
 
         RenderPassBeginInfo();
 

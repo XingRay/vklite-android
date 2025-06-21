@@ -30,7 +30,7 @@ namespace vklite {
         std::unordered_map<uint32_t, DescriptorSetConfigure> mDescriptorSetConfigures;
 
     public:
-        ShaderConfigure();
+        explicit ShaderConfigure();
 
         ~ShaderConfigure();
 
@@ -73,7 +73,7 @@ namespace vklite {
 
         ShaderConfigure &addPushConstant(uint32_t offset, uint32_t size, vk::ShaderStageFlags stageFlags);
 
-        std::vector<vk::PushConstantRange>& getPushConstantRanges();
+        std::vector<vk::PushConstantRange> &getPushConstantRanges();
 
         /**
          *

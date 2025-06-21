@@ -30,8 +30,7 @@ namespace vklite {
     }
 
     DescriptorBindingConfigure StorageConfigure::createDescriptorBindingConfigure() const {
-//        return DescriptorBindingConfigure(mBinding, vk::DescriptorType::eUniformBuffer, mShaderStageFlags, mDescriptorCount);
-        return {mBinding, vk::DescriptorType::eStorageBuffer, mDescriptorCount, mShaderStageFlags};
+        return DescriptorBindingConfigure{mBinding, vk::DescriptorType::eStorageBuffer, mDescriptorCount, mShaderStageFlags};
     }
 
 } // vklite

@@ -46,7 +46,7 @@ namespace vklite {
                 .setCommandBufferCount(count);
 
         std::vector<vk::CommandBuffer> vkCommandBuffers = mDevice.allocateCommandBuffers(commandBufferAllocateInfo);
-        return {mDevice, mCommandPool, std::move(vkCommandBuffers)};
+        return CommandBuffers{mDevice, mCommandPool, std::move(vkCommandBuffers)};
     }
 
     std::unique_ptr<CommandBuffers> CommandPool::allocateUnique(uint32_t count, vk::CommandBufferLevel level) const {
@@ -62,8 +62,7 @@ namespace vklite {
                 .setCommandBufferCount(1);
 
         vk::CommandBuffer commandBuffer = mDevice.allocateCommandBuffers(commandBufferAllocateInfo)[0];
-//        return CommandBuffer(mDevice, mCommandPool, commandBuffer);
-        return {mDevice, mCommandPool, commandBuffer};
+        return CommandBuffer{mDevice, mCommandPool, commandBuffer};
     }
 
     std::unique_ptr<CommandBuffer> CommandPool::allocateOneUnique(vk::CommandBufferLevel level) const {

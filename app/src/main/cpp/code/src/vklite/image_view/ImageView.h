@@ -9,15 +9,15 @@
 
 namespace vklite {
 
-    class ImageView  {
+    class ImageView {
     private:
         vk::Device mDevice;
         vk::ImageView mImageView;
 
     public:
-        ImageView(vk::Device device, vk::ImageView imageView);
+        explicit ImageView(vk::Device device, vk::ImageView imageView);
 
-        ~ImageView() ;
+        ~ImageView();
 
         ImageView(const ImageView &other) = delete;
 
@@ -28,7 +28,7 @@ namespace vklite {
         ImageView &operator=(ImageView &&other) noexcept;
 
         [[nodiscard]]
-        const vk::ImageView &getImageView() const ;
+        const vk::ImageView &getImageView() const;
     };
 
 } // vklite

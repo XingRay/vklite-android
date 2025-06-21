@@ -14,7 +14,7 @@ namespace vklite {
         vk::Semaphore mSemaphore;
 
     public:
-        Semaphore(vk::Device device, vk::Semaphore semaphore);
+        explicit Semaphore(vk::Device device, vk::Semaphore semaphore);
 
         ~Semaphore();
 
@@ -27,7 +27,7 @@ namespace vklite {
         Semaphore &operator=(Semaphore &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Semaphore& getSemaphore()const;
+        const vk::Semaphore &getSemaphore() const;
     };
 
 } // vklite

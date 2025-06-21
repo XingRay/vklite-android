@@ -47,7 +47,7 @@ namespace vklite {
         return *this;
     }
 
-    std::optional<Pipeline> ComputePipelineBuilder::build() {
+    Pipeline ComputePipelineBuilder::build() {
         if (mDevice == nullptr) {
             throw std::runtime_error("ComputePipelineBuilder::build() mDevice == nullptr");
         }
@@ -60,8 +60,8 @@ namespace vklite {
 
         auto [result, pipeline] = mDevice.createComputePipeline(mPipelineCache, mComputePipelineCreateInfo);
         if (result != vk::Result::eSuccess) {
-            LOG_E("createComputePipeline() failed");
-            return std::nullopt;
+            LOG_E("createComputePipeline() failed: %d", make_error_code(result).value());
+            throw std::runtime_error("ComputePipelineBuilder::build(): createComputePipeline() failed");
         }
 
         return Pipeline(mDevice, pipeline);

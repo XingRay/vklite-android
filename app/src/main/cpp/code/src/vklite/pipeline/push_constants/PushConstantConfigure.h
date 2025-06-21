@@ -15,7 +15,7 @@ namespace vklite {
         vk::ShaderStageFlagBits mStageFlagBits;
 
     public:
-        PushConstantConfigure(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits);
+        explicit PushConstantConfigure(uint32_t size, uint32_t offset, vk::ShaderStageFlagBits stageFlagBits);
 
         ~PushConstantConfigure();
 

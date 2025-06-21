@@ -16,7 +16,7 @@ namespace vklite {
         std::vector<vk::DescriptorSetLayout> mDescriptorSetLayouts;
 
     public:
-        DescriptorSetLayouts(vk::Device device, std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts);
+        explicit DescriptorSetLayouts(vk::Device device, std::vector<vk::DescriptorSetLayout> &&descriptorSetLayouts);
 
         ~DescriptorSetLayouts();
 

@@ -17,9 +17,9 @@ namespace vklite {
         vk::AccessFlags mAccess;
 
     public:
-        SubpassDependencyItem(uint32_t subpassIndex,
-                              vk::PipelineStageFlags stage,
-                              vk::AccessFlags access);
+        explicit SubpassDependencyItem(uint32_t subpassIndex,
+                                       vk::PipelineStageFlags stage,
+                                       vk::AccessFlags access);
 
         ~SubpassDependencyItem();
 

@@ -92,8 +92,7 @@ namespace vklite {
 
         buffer.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
 
-//        return CombinedMemoryBuffer(std::move(buffer), std::move(deviceMemory));
-        return {std::move(buffer), std::move(deviceMemory)};
+        return CombinedMemoryBuffer{std::move(buffer), std::move(deviceMemory)};
     }
 
     std::unique_ptr<CombinedMemoryBuffer> CombinedMemoryBufferBuilder::buildUnique() {

@@ -17,14 +17,13 @@ namespace vklite {
         uint32_t mFixValue;
 
     public:
-        FixUint32Selector(uint32_t value);
+        explicit FixUint32Selector(uint32_t value);
 
         ~FixUint32Selector() override;
 
         [[nodiscard]]
         uint32_t select(const std::vector<uint32_t> &candidates) const override;
     };
-
 
 
     class LambdaUint32Selector : public ValueSelector<uint32_t> {

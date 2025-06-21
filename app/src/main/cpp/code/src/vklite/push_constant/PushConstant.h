@@ -18,17 +18,17 @@ namespace vklite {
         vk::ShaderStageFlags mStageFlags;
 
     public:
-        PushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags);
+        explicit PushConstant(uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags);
 
-        PushConstant(const void *data, uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags);
+        explicit PushConstant(const void *data, uint32_t size, uint32_t offset, vk::ShaderStageFlags stageFlags);
 
-        PushConstant(const void *data, uint32_t size, vk::ShaderStageFlags stageFlags);
+        explicit PushConstant(const void *data, uint32_t size, vk::ShaderStageFlags stageFlags);
 
-        PushConstant(const void *data, uint32_t size);
+        explicit PushConstant(const void *data, uint32_t size);
 
-        PushConstant(std::vector<uint8_t> &&data, uint32_t offset, vk::ShaderStageFlags stageFlags);
+        explicit PushConstant(std::vector<uint8_t> &&data, uint32_t offset, vk::ShaderStageFlags stageFlags);
 
-        PushConstant(std::vector<uint8_t> &&data, vk::ShaderStageFlags stageFlags);
+        explicit PushConstant(std::vector<uint8_t> &&data, vk::ShaderStageFlags stageFlags);
 
         explicit PushConstant(std::vector<uint8_t> &&data);
 

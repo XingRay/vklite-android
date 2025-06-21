@@ -21,9 +21,9 @@ namespace vklite {
         std::vector<PooledCommandBuffer> mPooledCommandBuffers;
 
     public:
-        CommandBuffers(vk::Device device,
-                       vk::CommandPool commandPool,
-                       std::vector<vk::CommandBuffer> &&commandBuffers);
+        explicit CommandBuffers(vk::Device device,
+                                vk::CommandPool commandPool,
+                                std::vector<vk::CommandBuffer> &&commandBuffers);
 
         ~CommandBuffers();
 

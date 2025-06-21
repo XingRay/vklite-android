@@ -20,7 +20,7 @@ namespace vklite {
         vk::SamplerYcbcrConversionInfo mSamplerYcbcrConversionInfo;
 
     public:
-        HardwareBufferImageViewBuilder();
+        explicit HardwareBufferImageViewBuilder();
 
         ~HardwareBufferImageViewBuilder();
 

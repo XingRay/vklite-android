@@ -15,7 +15,7 @@ namespace vklite {
         vk::CommandBuffer mCommandBuffer;
 
     public:
-        CommandBuffer(vk::Device device, vk::CommandPool commandPool, vk::CommandBuffer commandBuffer);
+        explicit CommandBuffer(vk::Device device, vk::CommandPool commandPool, vk::CommandBuffer commandBuffer);
 
         ~CommandBuffer() override;
 

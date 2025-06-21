@@ -60,8 +60,8 @@ namespace vklite {
 
         vk::DescriptorPool descriptorPool = mDevice.createDescriptorPool(descriptorPoolCreateInfo);
         LOG_D("mDevice.createDescriptorPool => %p", (void *) descriptorPool);
-//        return DescriptorPool(mDevice, descriptorPool);
-        return {mDevice, descriptorPool};
+
+        return DescriptorPool{mDevice, descriptorPool};
     }
 
     std::unique_ptr<DescriptorPool> DescriptorPoolBuilder::buildUnique() {

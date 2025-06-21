@@ -23,7 +23,7 @@ namespace vklite {
         BufferMeta mMeta;
 
     public:
-        Buffer(vk::Device device, vk::Buffer buffer, BufferMeta &&meta);
+        explicit Buffer(vk::Device device, vk::Buffer buffer, BufferMeta &&meta);
 
         ~Buffer();
 

@@ -22,7 +22,7 @@ namespace vklite {
 
     public:
 
-        SamplerDescriptorMapping();
+        explicit SamplerDescriptorMapping();
 
         ~SamplerDescriptorMapping();
 
@@ -53,7 +53,7 @@ namespace vklite {
         SamplerDescriptorMapping &addImageInfo(vk::Sampler sampler, vk::ImageView imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
 
         SamplerDescriptorMapping &addImageInfo(const Sampler &sampler, const ImageView &imageView, vk::ImageLayout imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal);
-        
+
     };
 
 } // vklite

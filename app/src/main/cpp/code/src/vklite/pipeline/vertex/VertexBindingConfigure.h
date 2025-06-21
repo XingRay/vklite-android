@@ -28,7 +28,7 @@ namespace vklite {
         uint32_t mCurrentAttributeOffset = 0;
 
     public:
-        VertexBindingConfigure();
+        explicit VertexBindingConfigure();
 
         ~VertexBindingConfigure();
 

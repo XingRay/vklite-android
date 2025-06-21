@@ -35,6 +35,11 @@ namespace vklite {
         return *this;
     }
 
+    CombinedGraphicPipelineBuilder &CombinedGraphicPipelineBuilder::bindings(std::vector<std::vector<vk::DescriptorSetLayoutBinding>> &&descriptorSetLayoutBindings) {
+        mDescriptorSetLayoutsBuilder.bindings(std::move(descriptorSetLayoutBindings));
+        return *this;
+    }
+
     CombinedGraphicPipelineBuilder &CombinedGraphicPipelineBuilder::vertexShaderCode(std::vector<uint32_t> &&code) {
         mVertexShaderModuleBuilder.code(std::move(code));
         return *this;
@@ -119,7 +124,7 @@ namespace vklite {
 
     CombinedGraphicPipelineBuilder &CombinedGraphicPipelineBuilder::shaderConfigure(ShaderConfigure &shaderConfigure) {
         pushConstantRange(std::move(shaderConfigure.getPushConstantRanges()));
-        mDescriptorSetLayoutsBuilder.bindings(shaderConfigure.createDescriptorSetLayoutBindings());
+        bindings(std::move(shaderConfigure.createDescriptorSetLayoutBindings()));
 
         vertexShaderCode(std::move(shaderConfigure.getVertexShaderCode()));
         fragmentShaderCode(std::move(shaderConfigure.getFragmentShaderCode()));

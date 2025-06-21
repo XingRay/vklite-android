@@ -21,7 +21,7 @@ namespace vklite {
         std::unordered_map<uint32_t, VertexBindingConfigure> mVertexBindingConfigures;
 
     public:
-        VertexConfigure();
+        explicit VertexConfigure();
 
         ~VertexConfigure();
 

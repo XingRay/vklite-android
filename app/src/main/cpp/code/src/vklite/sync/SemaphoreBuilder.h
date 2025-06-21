@@ -17,6 +17,7 @@ namespace vklite {
     class SemaphoreBuilder {
     private:
         vk::Device mDevice;
+        vk::SemaphoreCreateInfo mSemaphoreCreateInfo;
 
     public:
         SemaphoreBuilder();

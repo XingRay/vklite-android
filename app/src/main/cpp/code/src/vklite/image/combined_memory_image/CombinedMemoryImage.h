@@ -17,7 +17,7 @@ namespace vklite {
         DeviceMemory mDeviceMemory;
 
     public:
-        CombinedMemoryImage(Image &&image, DeviceMemory &&deviceMemory);
+        explicit CombinedMemoryImage(Image &&image, DeviceMemory &&deviceMemory);
 
         ~CombinedMemoryImage();
 

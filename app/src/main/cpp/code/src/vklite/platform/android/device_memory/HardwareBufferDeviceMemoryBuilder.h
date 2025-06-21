@@ -21,7 +21,7 @@ namespace vklite {
         AHardwareBuffer *mHardwareBuffer;
 
     public:
-        HardwareBufferDeviceMemoryBuilder();
+        explicit HardwareBufferDeviceMemoryBuilder();
 
         ~HardwareBufferDeviceMemoryBuilder();
 

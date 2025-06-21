@@ -14,7 +14,7 @@ namespace vklite {
         vk::Fence mFence;
 
     public:
-        Fence(vk::Device device, vk::Fence fence);
+        explicit Fence(vk::Device device, vk::Fence fence);
 
         ~Fence();
 

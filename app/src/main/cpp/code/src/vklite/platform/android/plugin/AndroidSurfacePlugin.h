@@ -18,7 +18,7 @@ namespace vklite {
     private:
 
     public:
-        AndroidSurfacePlugin();
+        explicit AndroidSurfacePlugin();
 
         ~AndroidSurfacePlugin() override;
 
@@ -41,6 +41,7 @@ namespace vklite {
 
     public: // static
         static std::unique_ptr<AndroidSurfacePlugin> buildUnique();
+
         static std::unique_ptr<CombinedPlugin> buildUniqueCombined();
     };
 

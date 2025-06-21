@@ -14,7 +14,7 @@ namespace vklite {
         vk::PipelineLayout mPipelineLayout;
 
     public:
-        PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout);
+        explicit PipelineLayout(vk::Device device, vk::PipelineLayout pipelineLayout);
 
         ~PipelineLayout();
 

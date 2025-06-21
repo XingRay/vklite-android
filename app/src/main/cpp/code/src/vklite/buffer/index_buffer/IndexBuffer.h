@@ -19,10 +19,10 @@ namespace vklite {
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        IndexBuffer(const vk::Device &device,
-                    CombinedMemoryBuffer &&combinedMemoryBuffer,
-                    std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
-                    IndexBufferMeta &&meta);
+        explicit IndexBuffer(const vk::Device &device,
+                             CombinedMemoryBuffer &&combinedMemoryBuffer,
+                             std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
+                             IndexBufferMeta &&meta);
 
         ~IndexBuffer();
 

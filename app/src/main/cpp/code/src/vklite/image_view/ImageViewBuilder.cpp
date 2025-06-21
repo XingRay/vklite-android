@@ -109,7 +109,7 @@ namespace vklite {
         vk::ImageView imageView = mDevice.createImageView(mImageViewCreateInfo);
 //        LOG_D("mDevice.createImageView(mImageViewCreateInfo) => %p", (void *) imageView);
 
-        return {mDevice, imageView};
+        return ImageView{mDevice, imageView};
     }
 
     std::unique_ptr<ImageView> ImageViewBuilder::buildUnique() {

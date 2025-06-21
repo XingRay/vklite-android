@@ -73,8 +73,7 @@ namespace vklite {
         ImageView imageView = mImageViewBuilder.build();
 
         // combine Image / DeviceMemory / ImageView as CombinedMemoryImage
-//        return CombinedMemoryImage(std::move(image), std::move(deviceMemory), std::move(imageView));
-        return {std::move(image), std::move(deviceMemory), std::move(imageView)};
+        return CombinedImageView{std::move(image), std::move(deviceMemory), std::move(imageView)};
     }
 
     std::unique_ptr<CombinedImageView> CombinedImageViewBuilder::buildUnique() {

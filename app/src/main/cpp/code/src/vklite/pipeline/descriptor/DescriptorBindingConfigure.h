@@ -19,11 +19,10 @@ namespace vklite {
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-
-        DescriptorBindingConfigure(uint32_t binding,
-                                   vk::DescriptorType descriptorType,
-                                   uint32_t descriptorCount,
-                                   vk::ShaderStageFlags shaderStageFlags);
+        explicit DescriptorBindingConfigure(uint32_t binding,
+                                            vk::DescriptorType descriptorType,
+                                            uint32_t descriptorCount,
+                                            vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorBindingConfigure(uint32_t binding,
                                    vk::DescriptorType descriptorType,

@@ -11,7 +11,7 @@ namespace vklite {
     class PhysicalDeviceFilter {
     private:
     public:
-        PhysicalDeviceFilter();
+        explicit PhysicalDeviceFilter();
 
         virtual ~PhysicalDeviceFilter();
 

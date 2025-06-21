@@ -517,6 +517,7 @@ namespace test10 {
     // 绘制三角形帧
     void Test10NdkCameraFaceDetection::drawFrame() {
 
+
         std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
         if (!image.has_value()) {
 //            LOG_D("Test07NdkCamera::drawFrame(), no image");
@@ -559,6 +560,7 @@ namespace test10 {
         mDevice->getDevice().updateDescriptorSets(descriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 //        mExtractor->input("in0", mMatIn);
+
 //
 //        ncnn::Mat regressors;
 //        ncnn::Mat scores;

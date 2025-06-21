@@ -69,14 +69,14 @@ namespace vklite {
             indexType = mIndexBufferInfo->getIndexBuffer().getIndexType();
         }
 
-        return {std::move(vertexBuffers),
-                std::move(vertexBufferOffsets),
-                indexBuffer,
-                indexBufferOffset,
-                indexType,
-                mIndicesCount,
-                std::move(mPushConstants),
-                std::move(mDescriptorSets)};
+        return PipelineResource{std::move(vertexBuffers),
+                                std::move(vertexBufferOffsets),
+                                indexBuffer,
+                                indexBufferOffset,
+                                indexType,
+                                mIndicesCount,
+                                std::move(mPushConstants),
+                                std::move(mDescriptorSets)};
     }
 
 } // vklite

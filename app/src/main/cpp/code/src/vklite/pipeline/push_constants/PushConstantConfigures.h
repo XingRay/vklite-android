@@ -16,7 +16,7 @@ namespace vklite {
         std::vector<PushConstantConfigure> mPushConstantConfigures;
 
     public:
-        PushConstantConfigures();
+        explicit PushConstantConfigures();
 
         ~PushConstantConfigures();
 

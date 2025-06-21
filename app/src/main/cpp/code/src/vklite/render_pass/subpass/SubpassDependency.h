@@ -17,9 +17,9 @@ namespace vklite {
         vk::DependencyFlags mFlags;
 
     public:
-        SubpassDependency(SubpassDependencyItem src,
-                          SubpassDependencyItem dst,
-                          vk::DependencyFlags flags);
+        explicit SubpassDependency(SubpassDependencyItem src,
+                                   SubpassDependencyItem dst,
+                                   vk::DependencyFlags flags);
 
         ~SubpassDependency();
 

@@ -46,6 +46,8 @@ namespace vklite {
 
         CombinedGraphicPipelineBuilder &pushConstantRange(std::vector<vk::PushConstantRange> &&pushConstantRanges);
 
+        CombinedGraphicPipelineBuilder &bindings(std::vector<std::vector<vk::DescriptorSetLayoutBinding>> &&descriptorSetLayoutBindings);
+
         CombinedGraphicPipelineBuilder &vertexShaderCode(std::vector<uint32_t> &&code);
 
         CombinedGraphicPipelineBuilder &fragmentShaderCode(std::vector<uint32_t> &&code);

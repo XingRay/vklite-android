@@ -37,14 +37,14 @@ namespace vklite {
 
     public:
 
-        PipelineResource(std::vector<vk::Buffer> &&vertexBuffers,
-                         std::vector<vk::DeviceSize> &&vertexBufferOffsets,
-                         vk::Buffer indexBuffer,
-                         vk::DeviceSize indexBufferOffset,
-                         vk::IndexType indexType,
-                         uint32_t indicesCount,
-                         std::vector<PushConstant> &&pushConstants,
-                         std::vector<vk::DescriptorSet> &&descriptorSets);
+        explicit PipelineResource(std::vector<vk::Buffer> &&vertexBuffers,
+                                  std::vector<vk::DeviceSize> &&vertexBufferOffsets,
+                                  vk::Buffer indexBuffer,
+                                  vk::DeviceSize indexBufferOffset,
+                                  vk::IndexType indexType,
+                                  uint32_t indicesCount,
+                                  std::vector<PushConstant> &&pushConstants,
+                                  std::vector<vk::DescriptorSet> &&descriptorSets);
 
         ~PipelineResource();
 
@@ -72,7 +72,7 @@ namespace vklite {
         [[nodiscard]]
         const std::vector<vk::DescriptorSet> &getDescriptorSets() const;
 
-        PipelineResource& updatePushConstant(uint32_t index, const void *data, uint32_t size);
+        PipelineResource &updatePushConstant(uint32_t index, const void *data, uint32_t size);
     };
 
 } // vklite

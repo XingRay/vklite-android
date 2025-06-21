@@ -21,7 +21,7 @@ namespace vklite {
         vk::PhysicalDeviceSamplerYcbcrConversionFeatures mPhysicalDeviceSamplerYcbcrConversionFeatures;
 
     public:
-        HardwareBufferPlugin();
+        explicit HardwareBufferPlugin();
 
         ~HardwareBufferPlugin() override;
 

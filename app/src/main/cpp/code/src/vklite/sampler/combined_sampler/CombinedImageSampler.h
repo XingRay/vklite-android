@@ -22,12 +22,12 @@ namespace vklite {
         Sampler mSampler;
 
     public:
-        CombinedImageSampler(const vk::Device &device,
-                        std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
-                        Image &&image,
-                        DeviceMemory &&deviceMemory,
-                        ImageView &&imageView,
-                        Sampler &&sampler);
+        explicit CombinedImageSampler(const vk::Device &device,
+                                      std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
+                                      Image &&image,
+                                      DeviceMemory &&deviceMemory,
+                                      ImageView &&imageView,
+                                      Sampler &&sampler);
 
         ~CombinedImageSampler();
 
@@ -55,14 +55,14 @@ namespace vklite {
         [[nodiscard]]
         Sampler &getSampler();
 
-        CombinedImageSampler &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer) ;
+        CombinedImageSampler &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer);
 
-        CombinedImageSampler &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer) ;
+        CombinedImageSampler &recordUpdate(const vk::CommandBuffer &commandBuffer, const StagingBuffer &stagingBuffer);
 
 
-        CombinedImageSampler &update(const CommandPool &commandPool, const vk::Buffer &stagingBuffer) ;
+        CombinedImageSampler &update(const CommandPool &commandPool, const vk::Buffer &stagingBuffer);
 
-        CombinedImageSampler &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer) ;
+        CombinedImageSampler &update(const CommandPool &commandPool, const StagingBuffer &stagingBuffer);
 
         CombinedImageSampler &update(const CommandPool &commandPool, const void *data, uint32_t size);
     };

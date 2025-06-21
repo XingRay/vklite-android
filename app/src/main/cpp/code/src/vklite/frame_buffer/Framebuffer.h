@@ -18,7 +18,7 @@ namespace vklite {
         vk::Framebuffer mFramebuffer;
 
     public:
-        Framebuffer(vk::Device device, vk::Framebuffer frameBuffer);
+        explicit Framebuffer(vk::Device device, vk::Framebuffer frameBuffer);
 
         ~Framebuffer();
 

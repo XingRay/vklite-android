@@ -41,8 +41,7 @@ namespace vklite {
 
         image.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
 
-//        return CombinedMemoryImage(std::move(image), std::move(deviceMemory));
-        return {std::move(image), std::move(deviceMemory)};
+        return CombinedMemoryImage{std::move(image), std::move(deviceMemory)};
     }
 
     std::unique_ptr<CombinedMemoryImage> CombinedMemoryImageBuilder::buildUnique() {

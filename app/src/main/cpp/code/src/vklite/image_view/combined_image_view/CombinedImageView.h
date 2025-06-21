@@ -19,7 +19,7 @@ namespace vklite {
         ImageView mImageView;
 
     public:
-        CombinedImageView(Image&& image, DeviceMemory&& deviceMemory, ImageView&& imageView);
+        explicit CombinedImageView(Image &&image, DeviceMemory &&deviceMemory, ImageView &&imageView);
 
         ~CombinedImageView();
 
@@ -32,13 +32,13 @@ namespace vklite {
         CombinedImageView &operator=(CombinedImageView &&other) noexcept;
 
         [[nodiscard]]
-        Image& getImage();
+        Image &getImage();
 
         [[nodiscard]]
-        DeviceMemory& getDeviceMemory();
+        DeviceMemory &getDeviceMemory();
 
         [[nodiscard]]
-        ImageView& getImageView();
+        ImageView &getImageView();
     };
 
 } // vklite

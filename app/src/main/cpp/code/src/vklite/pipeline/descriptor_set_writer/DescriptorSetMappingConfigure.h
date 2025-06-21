@@ -23,7 +23,7 @@ namespace vklite {
         vk::DescriptorSet mDescriptorSet;
 
     public:
-        DescriptorSetMappingConfigure();
+        explicit DescriptorSetMappingConfigure();
 
         ~DescriptorSetMappingConfigure();
 

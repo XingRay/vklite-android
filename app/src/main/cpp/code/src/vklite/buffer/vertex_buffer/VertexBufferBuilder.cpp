@@ -43,8 +43,7 @@ namespace vklite {
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
             throw std::runtime_error("VertexBufferBuilder::build(): mPhysicalDeviceMemoryProperties not set");
         }
-//        return VertexBuffer(mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties);
-        return {mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
+        return VertexBuffer{mDevice, mCombinedMemoryBufferBuilder.build(), mPhysicalDeviceMemoryProperties};
     }
 
     std::unique_ptr<VertexBuffer> VertexBufferBuilder::buildUnique() {

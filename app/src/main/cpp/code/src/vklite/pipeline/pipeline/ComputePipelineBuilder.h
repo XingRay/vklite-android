@@ -24,19 +24,19 @@ namespace vklite {
         vk::PipelineCache mPipelineCache;
 
     public:
-        ComputePipelineBuilder();
+        explicit ComputePipelineBuilder();
 
         ~ComputePipelineBuilder();
 
         ComputePipelineBuilder &device(vk::Device device);
 
-        ComputePipelineBuilder &computeShader(std::unique_ptr<ShaderModule>&& computeShaderModule);
+        ComputePipelineBuilder &computeShader(std::unique_ptr<ShaderModule> &&computeShaderModule);
 
         ComputePipelineBuilder &pipelineLayout(vk::PipelineLayout pipelineLayout);
 
         ComputePipelineBuilder &pipelineCache(vk::PipelineCache pipelineCache);
 
-        std::optional<Pipeline> build();
+        Pipeline build();
 
         std::unique_ptr<Pipeline> buildUnique();
 

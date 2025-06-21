@@ -27,7 +27,7 @@ namespace vklite {
 
     public:
 
-        DescriptorSetConfigure();
+        explicit DescriptorSetConfigure();
 
         ~DescriptorSetConfigure();
 

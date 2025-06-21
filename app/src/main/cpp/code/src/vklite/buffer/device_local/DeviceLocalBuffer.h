@@ -19,9 +19,9 @@ namespace vklite {
         std::optional<vk::PhysicalDeviceMemoryProperties> mPhysicalDeviceMemoryProperties;
 
     public:
-        DeviceLocalBuffer(const vk::Device &device,
-                          CombinedMemoryBuffer &&combinedMemoryBuffer,
-                          std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
+        explicit DeviceLocalBuffer(const vk::Device &device,
+                                   CombinedMemoryBuffer &&combinedMemoryBuffer,
+                                   std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties);
 
         ~DeviceLocalBuffer();
 

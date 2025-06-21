@@ -33,7 +33,7 @@ namespace vklite {
         std::vector<SubpassDependency> mDependencies;
 
     public:
-        Subpass();
+        explicit Subpass();
 
         ~Subpass();
 

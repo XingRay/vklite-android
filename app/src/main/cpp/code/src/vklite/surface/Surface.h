@@ -14,7 +14,7 @@ namespace vklite {
 
     public:
 
-        Surface(vk::Instance instance, vk::SurfaceKHR surface);
+        explicit Surface(vk::Instance instance, vk::SurfaceKHR surface);
 
         ~Surface();
 

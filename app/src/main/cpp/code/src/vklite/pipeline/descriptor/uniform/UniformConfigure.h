@@ -20,9 +20,9 @@ namespace vklite {
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-        UniformConfigure(uint32_t binding,
-                         uint32_t descriptorCount,
-                         vk::ShaderStageFlags shaderStageFlags);
+        explicit UniformConfigure(uint32_t binding,
+                                  uint32_t descriptorCount,
+                                  vk::ShaderStageFlags shaderStageFlags);
 
         UniformConfigure();
 
