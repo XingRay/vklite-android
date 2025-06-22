@@ -61,7 +61,7 @@ namespace vklite {
     }
 
     std::vector<ImageView> Swapchain::createDisplayImageViews() const {
-        return ImageViewBuilder::colorImageViewBuilder()
+        return ImageViewBuilder().asColorAttachment()
                 .device(mDevice)
                 .format(getDisplayFormat())
                 .build(getDisplayImages());

@@ -55,6 +55,8 @@ namespace vklite {
 
         ImageBuilder &usage(vk::ImageUsageFlags usage);
 
+        ImageBuilder &addUsage(vk::ImageUsageFlagBits usage);
+
         ImageBuilder &sharingMode(vk::SharingMode sharingMode);
 
         ImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
@@ -74,12 +76,13 @@ namespace vklite {
 
         ImageBuilder &asDefault();
 
-        ImageBuilder &asColorImageBuilder();
+        ImageBuilder &asColorAttachment();
 
-        ImageBuilder &asDepthImageBuilder();
+        ImageBuilder &asDepthAttachment();
 
-        ImageBuilder &asTextureImageBuilder();
+        ImageBuilder &asTexture();
 
+        ImageBuilder &asStorage();
     };
 
 } // vklite

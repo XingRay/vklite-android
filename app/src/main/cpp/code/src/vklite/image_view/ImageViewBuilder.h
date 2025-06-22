@@ -59,20 +59,13 @@ namespace vklite {
 
         ImageViewBuilder &asDefault();
 
-        ImageViewBuilder &asColorImageViewBuilder();
+        ImageViewBuilder &asColorAttachment();
 
-        ImageViewBuilder &asDepthImageViewBuilder();
+        ImageViewBuilder &asDepthAttachment();
 
-        ImageViewBuilder &asTextureImageViewBuilder();
+        ImageViewBuilder &asTexture();
 
-    public://static
-
-        static ImageViewBuilder defaultImageViewBuilder();
-
-        static ImageViewBuilder colorImageViewBuilder();
-
-        static ImageViewBuilder depthImageViewBuilder();
-
+        ImageViewBuilder &asStorage();
     };
 
 } // vklite

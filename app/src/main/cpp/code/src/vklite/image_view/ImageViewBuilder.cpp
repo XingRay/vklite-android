@@ -141,34 +141,28 @@ namespace vklite {
                 .viewType(vk::ImageViewType::e2D);
     }
 
-    ImageViewBuilder &ImageViewBuilder::asColorImageViewBuilder() {
+    ImageViewBuilder &ImageViewBuilder::asColorAttachment() {
         return (*this)
                 .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eColor);
     }
 
-    ImageViewBuilder &ImageViewBuilder::asDepthImageViewBuilder() {
+    ImageViewBuilder &ImageViewBuilder::asDepthAttachment() {
         return (*this)
                 .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eDepth);
     }
 
-    ImageViewBuilder &ImageViewBuilder::asTextureImageViewBuilder() {
+    ImageViewBuilder &ImageViewBuilder::asTexture() {
         return (*this)
                 .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eColor);
     }
 
-    ImageViewBuilder ImageViewBuilder::defaultImageViewBuilder() {
-        return ImageViewBuilder().asDefault();
-    }
-
-    ImageViewBuilder ImageViewBuilder::colorImageViewBuilder() {
-        return ImageViewBuilder().asColorImageViewBuilder();
-    }
-
-    ImageViewBuilder ImageViewBuilder::depthImageViewBuilder() {
-        return ImageViewBuilder().asDepthImageViewBuilder();
+    ImageViewBuilder &ImageViewBuilder::asStorage() {
+        return (*this)
+                .asDefault()
+                .aspectMask(vk::ImageAspectFlagBits::eColor);
     }
 
 } // vklite

@@ -63,6 +63,8 @@ namespace vklite {
         CombinedImageViewBuilder &asColor();
 
         CombinedImageViewBuilder &asDepth();
+
+        CombinedImageViewBuilder &asStorage();
     };
 
 } // vklite

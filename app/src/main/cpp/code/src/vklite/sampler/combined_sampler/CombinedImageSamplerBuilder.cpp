@@ -10,7 +10,7 @@ namespace vklite {
 
     CombinedImageSamplerBuilder::CombinedImageSamplerBuilder()
             : mMemoryOffset(0) {
-        mImageBuilder.asTextureImageBuilder();
+        mImageBuilder.asTexture();
         mImageViewBuilder.asDefault();
     }
 

@@ -91,6 +91,11 @@ namespace vklite {
         return *this;
     }
 
+    ImageBuilder &ImageBuilder::addUsage(vk::ImageUsageFlagBits usage) {
+        mImageCreateInfo.usage |= usage;
+        return *this;
+    }
+
     ImageBuilder &ImageBuilder::sharingMode(vk::SharingMode sharingMode) {
         mImageCreateInfo.sharingMode = sharingMode;
         return *this;
@@ -163,22 +168,28 @@ namespace vklite {
                 .flags(vk::ImageCreateFlags{});
     }
 
-    ImageBuilder &ImageBuilder::asColorImageBuilder() {
+    ImageBuilder &ImageBuilder::asColorAttachment() {
         return (*this)
                 .asDefault()
                 .usage(vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment);
     }
 
-    ImageBuilder &ImageBuilder::asDepthImageBuilder() {
+    ImageBuilder &ImageBuilder::asDepthAttachment() {
         return (*this)
                 .asDefault()
                 .usage(vk::ImageUsageFlagBits::eDepthStencilAttachment);
     }
 
-    ImageBuilder &ImageBuilder::asTextureImageBuilder() {
+    ImageBuilder &ImageBuilder::asTexture() {
         return (*this)
                 .asDefault()
-                .usage(vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled)
+                .usage(vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled);
+    }
+
+    ImageBuilder &ImageBuilder::asStorage() {
+        return (*this)
+                .asDefault()
+                .usage(vk::ImageUsageFlagBits::eStorage | vk::ImageUsageFlagBits::eSampled)
                 .sampleCount(vk::SampleCountFlagBits::e1);
     }
 
