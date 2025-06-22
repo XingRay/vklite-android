@@ -189,6 +189,11 @@ namespace vklite {
         return *this;
     }
 
+    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const PipelineBarrier &pipelineBarrier) {
+        pipelineBarrier.record(commandBuffer);
+        return *this;
+    }
+
     Image &Image::generateMipmaps(const CommandPool &commandPool) {
 //        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
 //            throw std::runtime_error("texture image format does not support linear tiling!");

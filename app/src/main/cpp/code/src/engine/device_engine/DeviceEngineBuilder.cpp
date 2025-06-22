@@ -160,7 +160,7 @@ namespace vklite {
                     .format(swapchain->getDisplayFormat())
                     .size(swapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(physicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(physicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
@@ -171,7 +171,7 @@ namespace vklite {
                     .format(physicalDevice->findDepthFormat())
                     .size(swapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(physicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(physicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 

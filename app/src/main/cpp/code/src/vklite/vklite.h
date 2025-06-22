@@ -43,10 +43,19 @@
 #include "vklite/command_buffer/CommandBuffers.h"
 
 // sync objects
-#include "vklite/sync/Fence.h"
-#include "vklite/sync/FenceBuilder.h"
-#include "vklite/sync/Semaphore.h"
-#include "vklite/sync/SemaphoreBuilder.h"
+#include "vklite/sync/fence/Fence.h"
+#include "vklite/sync/fence/FenceBuilder.h"
+
+#include "vklite/sync/semaphore/Semaphore.h"
+#include "vklite/sync/semaphore/SemaphoreBuilder.h"
+
+#include "vklite/sync/pipeline_barrier/PipelineBarrier.h"
+#include "vklite/sync/pipeline_barrier/PipelineBarrierBuilder.h"
+
+#include "vklite/sync/pipeline_barrier/memory_barrier/MemoryBarrierBuilder.h"
+#include "vklite/sync/pipeline_barrier/buffer_memory_barrier/BufferMemoryBarrierBuilder.h"
+#include "vklite/sync/pipeline_barrier/image_memory_barrier/ImageMemoryBarrierBuilder.h"
+
 
 // swapchain
 #include "vklite/swapchain/Swapchain.h"

@@ -10,7 +10,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/sync/Semaphore.h"
+#include "Semaphore.h"
 
 namespace vklite {
 

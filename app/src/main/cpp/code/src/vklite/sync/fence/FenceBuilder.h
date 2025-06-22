@@ -10,7 +10,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "vklite/sync/Fence.h"
+#include "Fence.h"
 
 namespace vklite {
 

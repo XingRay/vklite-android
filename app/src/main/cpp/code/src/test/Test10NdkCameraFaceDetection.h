@@ -117,6 +117,7 @@ namespace test10 {
         std::unique_ptr<vklite::CombinedHardwareBufferSampler> mSampler;
         std::unique_ptr<vklite::CombinedHardwareBufferImageView> mImageView;
 
+        std::unique_ptr<vklite::CombinedImageView> mStorageImageView;
 
         // lines pipeline resources
         // vertex buffer

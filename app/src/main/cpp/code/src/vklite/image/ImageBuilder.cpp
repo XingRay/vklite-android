@@ -124,6 +124,16 @@ namespace vklite {
     }
 
     Image ImageBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("ImageBuilder::build(): mDevice == nullptr");
+        }
+        if (mImageCreateInfo.extent.width == 0) {
+            throw std::runtime_error("ImageBuilder::build(): mImageCreateInfo.extent.width == 0");
+        }
+        if (mImageCreateInfo.extent.height == 0) {
+            throw std::runtime_error("ImageBuilder::build(): mImageCreateInfo.extent.height == 0");
+        }
+
         LOG_D("mDevice.createImage(mImageCreateInfo): mImageCreateInfo:");
         LOG_D("\timageType    : %s", VulkanUtil::toString(mImageCreateInfo.imageType).c_str());
         LOG_D("\tformat       : %s", VulkanUtil::toString(mImageCreateInfo.format).c_str());
@@ -150,7 +160,6 @@ namespace vklite {
         return Image{mDevice, image, meta};
     }
 
-    [[nodiscard]]
     std::unique_ptr<Image> ImageBuilder::buildUnique() {
         return std::make_unique<Image>(build());
     }
@@ -189,8 +198,7 @@ namespace vklite {
     ImageBuilder &ImageBuilder::asStorage() {
         return (*this)
                 .asDefault()
-                .usage(vk::ImageUsageFlagBits::eStorage | vk::ImageUsageFlagBits::eSampled)
-                .sampleCount(vk::SampleCountFlagBits::e1);
+                .usage(vk::ImageUsageFlagBits::eStorage | vk::ImageUsageFlagBits::eSampled);
     }
 
 } // vklite

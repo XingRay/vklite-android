@@ -25,12 +25,14 @@ namespace vklite {
         return *this;
     }
 
-    [[nodiscard]]
     Image &CombinedImageView::getImage() {
         return mImage;
     }
 
-    [[nodiscard]]
+    const vk::Image &CombinedImageView::getVkImage() const {
+        return mImage.getImage();
+    }
+
     DeviceMemory &CombinedImageView::getDeviceMemory() {
         return mDeviceMemory;
     }

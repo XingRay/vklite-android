@@ -142,12 +142,10 @@ namespace vklite {
         return *mCommandPool;
     }
 
-    [[nodiscard]]
     const std::vector<std::vector<vk::DescriptorSet>> &DeviceEngine::getDescriptorSets() const {
         return mDescriptorSets;
     }
 
-    [[nodiscard]]
     const vk::DescriptorSet &DeviceEngine::getDescriptorSets(uint32_t frameIndex, uint32_t set) const {
         return mDescriptorSets[frameIndex][set];
     }

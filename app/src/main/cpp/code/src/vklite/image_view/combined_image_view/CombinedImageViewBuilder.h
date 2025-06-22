@@ -23,7 +23,7 @@ namespace vklite {
         DeviceMemoryBuilder mDeviceMemoryBuilder;
 
         vk::PhysicalDeviceMemoryProperties mPhysicalDeviceMemoryProperties;
-        vk::MemoryPropertyFlags mMemoryPropertyFlags;// = vk::MemoryPropertyFlagBits::eDeviceLocal;
+        vk::MemoryPropertyFlags mMemoryPropertyFlags;
 
         // bindMemory param
         vk::DeviceSize mMemoryOffset;
@@ -46,12 +46,16 @@ namespace vklite {
 
         CombinedImageViewBuilder &size(vk::Extent2D size);
 
+        CombinedImageViewBuilder &size(uint32_t width, uint32_t height);
+
         CombinedImageViewBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
         CombinedImageViewBuilder &memoryOffset(vk::DeviceSize memoryOffset);
 
-        CombinedImageViewBuilder &configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
-                                                     vk::MemoryPropertyFlags memoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal);
+        CombinedImageViewBuilder &physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties);
+
+        CombinedImageViewBuilder &memoryProperty(vk::MemoryPropertyFlags memoryProperty);
+
 
         CombinedImageView build();
 

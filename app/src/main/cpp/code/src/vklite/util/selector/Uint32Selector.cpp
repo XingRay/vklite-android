@@ -31,7 +31,6 @@ namespace vklite {
 
     LambdaUint32Selector::~LambdaUint32Selector() = default;
 
-    [[nodiscard]]
     uint32_t LambdaUint32Selector::select(const std::vector<uint32_t> &candidates) const {
         return mSelector(candidates);
     }

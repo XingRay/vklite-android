@@ -107,7 +107,7 @@ namespace vklite {
 
     DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, const void *data, uint32_t size) {
         if (!mPhysicalDeviceMemoryProperties.has_value()) {
-            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke DeviceLocalBuffer::configDeviceMemory()");
+            throw std::runtime_error("mPhysicalDeviceMemoryProperties not set, must invoke DeviceLocalBuffer::physicalDeviceMemoryProperties()");
         }
         StagingBuffer stagingBuffer = StagingBufferBuilder()
                 .device(mDevice)

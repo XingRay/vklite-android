@@ -78,7 +78,7 @@ namespace test10 {
                     .format(mSwapchain->getDisplayFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
@@ -89,7 +89,7 @@ namespace test10 {
                     .format(mPhysicalDevice->findDepthFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
@@ -194,6 +194,8 @@ namespace test10 {
                 .build(mFrameCount);
 
 
+        // 1 image process by compute shader
+
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
@@ -203,6 +205,23 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
+
+        mStorageImageView = vklite::CombinedImageViewBuilder()
+                .asStorage()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .format(vk::Format::eR8G8B8A8Unorm)
+                .size(128, 128)
+                .buildUnique();
+
+        vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder().asDefault()
+                .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+                    builder.asDefault().image(mStorageImageView->getVkImage());
+                })
+                .build();
+        pipelineBarrier.exec(*mCommandPool);
+//        mStorageImageView->getImage().transitionImageLayout(*mCommandPool);
+
 
         std::vector<uint32_t> computeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
         vklite::ShaderConfigure computeShaderConfigure = vklite::ShaderConfigure()

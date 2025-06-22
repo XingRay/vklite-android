@@ -9,7 +9,7 @@
 namespace vklite {
 
     CombinedImageViewBuilder::CombinedImageViewBuilder()
-            : mMemoryOffset(0) {}
+            : mMemoryOffset(0), mMemoryPropertyFlags(vk::MemoryPropertyFlagBits::eDeviceLocal) {}
 
     CombinedImageViewBuilder::~CombinedImageViewBuilder() = default;
 
@@ -33,6 +33,11 @@ namespace vklite {
         return *this;
     }
 
+    CombinedImageViewBuilder &CombinedImageViewBuilder::size(uint32_t width, uint32_t height) {
+        size(vk::Extent2D{width, height});
+        return *this;
+    }
+
     CombinedImageViewBuilder &CombinedImageViewBuilder::sampleCount(vk::SampleCountFlagBits sampleCount) {
         mImageBuilder.sampleCount(sampleCount);
         return *this;
@@ -43,15 +48,21 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageViewBuilder &CombinedImageViewBuilder::configDeviceMemory(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties,
-                                                                           vk::MemoryPropertyFlags memoryPropertyFlags) {
+    CombinedImageViewBuilder &CombinedImageViewBuilder::physicalDeviceMemoryProperties(vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties) {
         mPhysicalDeviceMemoryProperties = physicalDeviceMemoryProperties;
-        mMemoryPropertyFlags = memoryPropertyFlags;
+        return *this;
+    }
+
+    CombinedImageViewBuilder &CombinedImageViewBuilder::memoryProperty(vk::MemoryPropertyFlags memoryProperty) {
+        mMemoryPropertyFlags = memoryProperty;
         return *this;
     }
 
     CombinedImageView CombinedImageViewBuilder::build() {
         LOG_D("CombinedImageViewBuilder::build()");
+        if (mDevice == nullptr) {
+            throw std::runtime_error("CombinedImageViewBuilder::build(): mDevice == nullptr");
+        }
 
         // create Image
         Image image = mImageBuilder.build();

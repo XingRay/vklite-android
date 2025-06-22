@@ -8,15 +8,15 @@ namespace vklite {
 
     ImageTransition::ImageTransition(vk::ImageLayout oldImageLayout,
                                      vk::ImageLayout newImageLayout,
-                                     uint32_t levelCount,
                                      uint32_t srcQueueFamilyIndex,
                                      uint32_t dstQueueFamilyIndex,
+                                     uint32_t levelCount,
                                      vk::ImageAspectFlags aspectMask)
             : mOldImageLayout(oldImageLayout),
               mNewImageLayout(newImageLayout),
-              mLevelCount(levelCount),
               mSrcQueueFamilyIndex(srcQueueFamilyIndex),
               mDstQueueFamilyIndex(dstQueueFamilyIndex),
+              mLevelCount(levelCount),
               mAspectMask(aspectMask) {}
 
     ImageTransition::~ImageTransition() = default;
@@ -46,11 +46,11 @@ namespace vklite {
     }
 
     ImageTransition ImageTransition::depthImageTransition() {
-        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eDepth};
+        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, 1, vk::ImageAspectFlagBits::eDepth};
     }
 
     ImageTransition ImageTransition::textureImageTransition() {
-        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor};
+        return ImageTransition{vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, 1, vk::ImageAspectFlagBits::eColor};
     }
 
 } // vklite

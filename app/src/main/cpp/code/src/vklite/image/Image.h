@@ -8,6 +8,7 @@
 #include "vklite/command_pool/CommandPool.h"
 #include "vklite/image/ImageTransition.h"
 #include "vklite/image/ImageMeta.h"
+#include "vklite/sync/pipeline_barrier/PipelineBarrier.h"
 
 namespace vklite {
 
@@ -53,12 +54,6 @@ namespace vklite {
         Image &recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
 
 
-        // generate mipmaps
-        Image &generateMipmaps(const CommandPool &commandPool);
-
-        Image &recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
-
-
         // transition image layout
         Image &transitionImageLayout(const CommandPool &commandPool,
                                      vk::ImageLayout oldImageLayout,
@@ -81,6 +76,14 @@ namespace vklite {
                                            vk::ImageAspectFlags aspectMask);
 
         Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition);
+
+        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const PipelineBarrier &imageTransition);
+
+
+        // generate mipmaps
+        Image &generateMipmaps(const CommandPool &commandPool);
+
+        Image &recordGenerateMipmaps(const vk::CommandBuffer &commandBuffer);
     };
 
 } // vklite

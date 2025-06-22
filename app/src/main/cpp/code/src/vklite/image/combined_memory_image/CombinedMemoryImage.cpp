@@ -24,12 +24,10 @@ namespace vklite {
         return *this;
     }
 
-    [[nodiscard]]
     Image &CombinedMemoryImage::getImage() {
         return mImage;
     }
 
-    [[nodiscard]]
     DeviceMemory &CombinedMemoryImage::getDeviceMemory() {
         return mDeviceMemory;
     }

@@ -125,7 +125,7 @@ namespace test09 {
                     .format(mSwapchain->getDisplayFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 
@@ -136,7 +136,7 @@ namespace test09 {
                     .format(mPhysicalDevice->findDepthFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .configDeviceMemory(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                     .buildUnique();
         }
 

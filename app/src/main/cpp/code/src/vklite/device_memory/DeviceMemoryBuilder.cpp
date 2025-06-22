@@ -30,6 +30,9 @@ namespace vklite {
     }
 
     DeviceMemory DeviceMemoryBuilder::build() {
+        if (mDevice == nullptr) {
+            throw std::runtime_error("DeviceMemoryBuilder::build(): mDevice == nullptr");
+        }
         vk::DeviceMemory deviceMemory = mDevice.allocateMemory(mMemoryAllocateInfo);
         DeviceMemoryMeta meta(mMemoryAllocateInfo.allocationSize, mMemoryAllocateInfo.memoryTypeIndex);
         return DeviceMemory{mDevice, deviceMemory, std::move(meta)};
