@@ -204,6 +204,23 @@ namespace test10 {
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
 
+        std::vector<uint32_t> computeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
+        vklite::ShaderConfigure computeShaderConfigure = vklite::ShaderConfigure()
+                .computeShaderCode(std::move(computeShaderCode))
+                .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
+                    vertexBindingConfigure
+                            .binding(0)
+                            .stride(sizeof(Vertex))
+                            .addAttribute(0, ShaderFormat::Vec3)
+                            .addAttribute(1, ShaderFormat::Vec2);
+                })
+                .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
+                    descriptorSetConfigure
+                            .set(0)
+                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute);
+                });
+
+
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.frag.spv");
 

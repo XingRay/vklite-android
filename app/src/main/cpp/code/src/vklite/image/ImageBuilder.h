@@ -80,15 +80,6 @@ namespace vklite {
 
         ImageBuilder &asTextureImageBuilder();
 
-    public:// static
-
-        static ImageBuilder defaultImageBuilder();
-
-        static ImageBuilder colorImageBuilder();
-
-        static ImageBuilder depthImageBuilder();
-
-        static ImageBuilder textureImageBuilder();
     };
 
 } // vklite

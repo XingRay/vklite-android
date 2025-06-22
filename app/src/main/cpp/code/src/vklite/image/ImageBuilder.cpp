@@ -182,20 +182,4 @@ namespace vklite {
                 .sampleCount(vk::SampleCountFlagBits::e1);
     }
 
-    ImageBuilder ImageBuilder::defaultImageBuilder() {
-        return ImageBuilder().asDefault();
-    }
-
-    ImageBuilder ImageBuilder::colorImageBuilder() {
-        return ImageBuilder().asColorImageBuilder();
-    }
-
-    ImageBuilder ImageBuilder::depthImageBuilder() {
-        return ImageBuilder().asDepthImageBuilder();
-    }
-
-    ImageBuilder ImageBuilder::textureImageBuilder() {
-        return ImageBuilder().asTextureImageBuilder();
-    }
-
 } // vklite
