@@ -78,14 +78,14 @@ namespace vklite {
     }
 
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformConfigure &configure) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformBufferConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
         return *this;
     }
 
     DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
-        UniformConfigure uniformConfigure(binding, descriptorCount, shaderStageFlags);
+        UniformBufferConfigure uniformConfigure(binding, descriptorCount, shaderStageFlags);
         addUniform(uniformConfigure);
         return *this;
     }
@@ -95,8 +95,8 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformConfigure &)> &configure) {
-        UniformConfigure uniformConfigure{};
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformBufferConfigure &)> &configure) {
+        UniformBufferConfigure uniformConfigure{};
         configure(uniformConfigure);
         addUniform(uniformConfigure);
         return *this;
@@ -146,24 +146,25 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(const StorageConfigure &configure) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(const StorageBufferConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
-        StorageConfigure storageConfigure(binding, descriptorCount, shaderStageFlags);
-        addStorage(storageConfigure);
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+        StorageBufferConfigure storageConfigure(binding, descriptorCount, shaderStageFlags);
+        addStorageBuffer(storageConfigure);
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addStorage(const std::function<void(StorageConfigure &)> &configure) {
-        StorageConfigure storageConfigure{};
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(const std::function<void(StorageBufferConfigure &)> &configure) {
+        StorageBufferConfigure storageConfigure{};
         configure(storageConfigure);
-        addStorage(storageConfigure);
+        addStorageBuffer(storageConfigure);
         return *this;
     }
+
 
     std::vector<vk::DescriptorSetLayoutBinding> DescriptorSetConfigure::createDescriptorSetLayoutBindings() const {
         std::vector<vk::DescriptorSetLayoutBinding> descriptorSetLayoutBindings;

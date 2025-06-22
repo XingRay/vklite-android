@@ -27,7 +27,7 @@ namespace test02 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform([&](vklite::UniformConfigure &uniformConfigure) {
+                            .addUniform([&](vklite::UniformBufferConfigure &uniformConfigure) {
                                 uniformConfigure
                                         .binding(0)
                                         .descriptorCount(1)

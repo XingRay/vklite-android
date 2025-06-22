@@ -60,8 +60,8 @@ namespace test08 {
                     descriptorSetConfigure
                             .set(0)
                             .addUniform(0, 1, vk::ShaderStageFlagBits::eCompute)
-                            .addStorage(1, 1, vk::ShaderStageFlagBits::eCompute)
-                            .addStorage(2, 1, vk::ShaderStageFlagBits::eCompute);
+                            .addStorageBuffer(1, 1, vk::ShaderStageFlagBits::eCompute)
+                            .addStorageBuffer(2, 1, vk::ShaderStageFlagBits::eCompute);
                 });
 
         mEngine = vklite::AndroidComputeGraphicEngineBuilder::asDefault(app.window)

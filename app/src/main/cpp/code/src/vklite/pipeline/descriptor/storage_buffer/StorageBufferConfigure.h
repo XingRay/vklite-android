@@ -13,24 +13,24 @@
 
 namespace vklite {
 
-    class StorageConfigure {
+    class StorageBufferConfigure {
     private:
         uint32_t mBinding;
         uint32_t mDescriptorCount;
         vk::ShaderStageFlags mShaderStageFlags;
 
     public:
-        explicit StorageConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        explicit StorageBufferConfigure(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
-        StorageConfigure();
+        StorageBufferConfigure();
 
-        ~StorageConfigure();
+        ~StorageBufferConfigure();
 
-        StorageConfigure &binding(uint32_t binding);
+        StorageBufferConfigure &binding(uint32_t binding);
 
-        StorageConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
+        StorageBufferConfigure &shaderStageFlags(vk::ShaderStageFlags shaderStageFlags);
 
-        StorageConfigure &descriptorCount(uint32_t descriptorCount);
+        StorageBufferConfigure &descriptorCount(uint32_t descriptorCount);
 
         [[nodiscard]]
         DescriptorBindingConfigure createDescriptorBindingConfigure() const;

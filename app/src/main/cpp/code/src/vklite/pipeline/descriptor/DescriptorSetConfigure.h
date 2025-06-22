@@ -11,10 +11,11 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vklite/device/Device.h"
-#include "vklite/pipeline/descriptor/uniform/UniformConfigure.h"
+
+#include "vklite/pipeline/descriptor/uniform_buffer/UniformBufferConfigure.h"
 #include "vklite/pipeline/descriptor/combined_image_sampler/CombinedImageSamplerConfigure.h"
 #include "vklite/pipeline/descriptor/immutable_sampler/ImmutableSamplerConfigure.h"
-#include "vklite/pipeline/descriptor/storage/StorageConfigure.h"
+#include "vklite/pipeline/descriptor/storage_buffer/StorageBufferConfigure.h"
 
 namespace vklite {
 
@@ -64,13 +65,13 @@ namespace vklite {
 
 
         // uniform
-        DescriptorSetConfigure &addUniform(const UniformConfigure &configure);
+        DescriptorSetConfigure &addUniform(const UniformBufferConfigure &configure);
 
         DescriptorSetConfigure &addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorSetConfigure &addUniform(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
+        DescriptorSetConfigure &addUniform(const std::function<void(UniformBufferConfigure & )> &configure);
 
 
         // combined image sampler
@@ -91,12 +92,22 @@ namespace vklite {
         DescriptorSetConfigure &addImmutableSampler(const std::function<void(ImmutableSamplerConfigure &)> &configure);
 
 
+        // uniform
+//        DescriptorSetConfigure &addImage(const UniformConfigure &configure);
+//
+//        DescriptorSetConfigure &addImage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+//
+//        DescriptorSetConfigure &addImage(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
+//
+//        DescriptorSetConfigure &addImage(const std::function<void(UniformConfigure & )> &configure);
+
+
         //storage buffer
-        DescriptorSetConfigure &addStorage(const StorageConfigure &configure);
+        DescriptorSetConfigure &addStorageBuffer(const StorageBufferConfigure &configure);
 
-        DescriptorSetConfigure &addStorage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        DescriptorSetConfigure &addStorageBuffer(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addStorage(const std::function<void(StorageConfigure &)> &configure);
+        DescriptorSetConfigure &addStorageBuffer(const std::function<void(StorageBufferConfigure & )> &configure);
 
         //todo: addXxx()
 

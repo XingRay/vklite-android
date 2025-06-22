@@ -24,10 +24,10 @@ namespace vklite {
                                             uint32_t descriptorCount,
                                             vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorBindingConfigure(uint32_t binding,
-                                   vk::DescriptorType descriptorType,
-                                   std::vector<vk::Sampler> &&immutableSamplers,
-                                   vk::ShaderStageFlags shaderStageFlags);
+        explicit DescriptorBindingConfigure(uint32_t binding,
+                                            vk::DescriptorType descriptorType,
+                                            std::vector<vk::Sampler> &&immutableSamplers,
+                                            vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorBindingConfigure();
 
