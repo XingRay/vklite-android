@@ -73,14 +73,14 @@ namespace vklite {
         DescriptorSetConfigure &addUniform(const std::function<void(UniformConfigure &)> &configure);
 
 
-        // sampler
-        DescriptorSetConfigure &addSampler(const CombinedImageSamplerConfigure &configure);
+        // combined image sampler
+        DescriptorSetConfigure &addCombinedImageSampler(const CombinedImageSamplerConfigure &configure);
 
-        DescriptorSetConfigure &addSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        DescriptorSetConfigure &addCombinedImageSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addSampler(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
+        DescriptorSetConfigure &addCombinedImageSampler(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addSampler(const std::function<void(CombinedImageSamplerConfigure &)> &configure);
+        DescriptorSetConfigure &addCombinedImageSampler(const std::function<void(CombinedImageSamplerConfigure &)> &configure);
 
 
         // immutable sampler

@@ -29,7 +29,7 @@ namespace test09 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addSampler(0, vk::ShaderStageFlagBits::eFragment);
+                            .addCombinedImageSampler(0, vk::ShaderStageFlagBits::eFragment);
                 });
 
         std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_02_lines.vert.spv");

@@ -34,7 +34,7 @@ namespace test06 {
                     descriptorSetConfigure
                             .set(0)
                             .addUniform(0, vk::ShaderStageFlagBits::eVertex)
-                            .addSampler(1, vk::ShaderStageFlagBits::eFragment);
+                            .addCombinedImageSampler(1, vk::ShaderStageFlagBits::eFragment);
                 });
 
         mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)

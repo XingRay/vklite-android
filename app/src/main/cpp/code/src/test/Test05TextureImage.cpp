@@ -30,7 +30,7 @@ namespace test05 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addSampler(0, vk::ShaderStageFlagBits::eFragment);
+                            .addCombinedImageSampler(0, vk::ShaderStageFlagBits::eFragment);
                 });
 
         mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
