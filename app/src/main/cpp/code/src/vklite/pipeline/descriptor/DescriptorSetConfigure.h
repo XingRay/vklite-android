@@ -65,13 +65,13 @@ namespace vklite {
 
 
         // uniform
-        DescriptorSetConfigure &addUniform(const UniformBufferConfigure &configure);
+        DescriptorSetConfigure &addUniformBuffer(const UniformBufferConfigure &configure);
 
-        DescriptorSetConfigure &addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
+        DescriptorSetConfigure &addUniformBuffer(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addUniform(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
+        DescriptorSetConfigure &addUniformBuffer(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addUniform(const std::function<void(UniformBufferConfigure & )> &configure);
+        DescriptorSetConfigure &addUniformBuffer(const std::function<void(UniformBufferConfigure & )> &configure);
 
 
         // combined image sampler

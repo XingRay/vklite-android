@@ -59,7 +59,7 @@ namespace test08 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, 1, vk::ShaderStageFlagBits::eCompute)
+                            .addUniformBuffer(0, 1, vk::ShaderStageFlagBits::eCompute)
                             .addStorageBuffer(1, 1, vk::ShaderStageFlagBits::eCompute)
                             .addStorageBuffer(2, 1, vk::ShaderStageFlagBits::eCompute);
                 });

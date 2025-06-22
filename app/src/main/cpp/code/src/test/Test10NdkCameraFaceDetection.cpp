@@ -230,7 +230,7 @@ namespace test10 {
                             .set(0)
                             .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
 //                            .addImage()
-                            .addUniform(2, vk::ShaderStageFlagBits::eCompute);
+                            .addUniformBuffer(2, vk::ShaderStageFlagBits::eCompute);
                 });
 
 
@@ -268,7 +268,7 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                            .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex);
                 });
 
         std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_03_points.vert.spv");
@@ -286,7 +286,7 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                            .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex);
                 });
 
 

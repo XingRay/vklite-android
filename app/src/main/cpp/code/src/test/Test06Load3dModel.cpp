@@ -33,7 +33,7 @@ namespace test06 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex)
+                            .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex)
                             .addCombinedImageSampler(1, vk::ShaderStageFlagBits::eFragment);
                 });
 

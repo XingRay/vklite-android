@@ -47,7 +47,7 @@ namespace test09 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                            .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex);
                 });
 
         std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/09_face_image_detection_03_points.vert.spv");
@@ -65,7 +65,7 @@ namespace test09 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addUniform(0, vk::ShaderStageFlagBits::eVertex);
+                            .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex);
                 });
 
         mInstance = vklite::InstanceBuilder()

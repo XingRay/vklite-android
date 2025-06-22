@@ -78,27 +78,27 @@ namespace vklite {
     }
 
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const UniformBufferConfigure &configure) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniformBuffer(const UniformBufferConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniformBuffer(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
         UniformBufferConfigure uniformConfigure(binding, descriptorCount, shaderStageFlags);
-        addUniform(uniformConfigure);
+        addUniformBuffer(uniformConfigure);
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
-        addUniform(binding, 1, shaderStageFlags);
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniformBuffer(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
+        addUniformBuffer(binding, 1, shaderStageFlags);
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addUniform(const std::function<void(UniformBufferConfigure &)> &configure) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addUniformBuffer(const std::function<void(UniformBufferConfigure &)> &configure) {
         UniformBufferConfigure uniformConfigure{};
         configure(uniformConfigure);
-        addUniform(uniformConfigure);
+        addUniformBuffer(uniformConfigure);
         return *this;
     }
 
