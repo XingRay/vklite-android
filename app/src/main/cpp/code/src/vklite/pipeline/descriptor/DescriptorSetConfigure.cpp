@@ -103,14 +103,14 @@ namespace vklite {
     }
 
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const SamplerConfigure &configure) {
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const CombinedImageSamplerConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
         addDescriptorBinding(std::move(bindingConfigure));
         return *this;
     }
 
     DescriptorSetConfigure &DescriptorSetConfigure::addSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
-        SamplerConfigure samplerConfigure(binding, descriptorCount, shaderStageFlags);
+        CombinedImageSamplerConfigure samplerConfigure(binding, descriptorCount, shaderStageFlags);
         addSampler(samplerConfigure);
         return *this;
     }
@@ -120,8 +120,8 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const std::function<void(SamplerConfigure &)> &configure) {
-        SamplerConfigure samplerConfigure{};
+    DescriptorSetConfigure &DescriptorSetConfigure::addSampler(const std::function<void(CombinedImageSamplerConfigure &)> &configure) {
+        CombinedImageSamplerConfigure samplerConfigure{};
         configure(samplerConfigure);
         addSampler(samplerConfigure);
         return *this;

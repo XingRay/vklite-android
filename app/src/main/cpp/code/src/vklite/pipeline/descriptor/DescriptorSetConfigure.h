@@ -12,7 +12,7 @@
 
 #include "vklite/device/Device.h"
 #include "vklite/pipeline/descriptor/uniform/UniformConfigure.h"
-#include "vklite/pipeline/descriptor/sampler/SamplerConfigure.h"
+#include "vklite/pipeline/descriptor/combined_image_sampler/CombinedImageSamplerConfigure.h"
 #include "vklite/pipeline/descriptor/immutable_sampler/ImmutableSamplerConfigure.h"
 #include "vklite/pipeline/descriptor/storage/StorageConfigure.h"
 
@@ -74,13 +74,13 @@ namespace vklite {
 
 
         // sampler
-        DescriptorSetConfigure &addSampler(const SamplerConfigure &configure);
+        DescriptorSetConfigure &addSampler(const CombinedImageSamplerConfigure &configure);
 
         DescriptorSetConfigure &addSampler(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags);
 
         DescriptorSetConfigure &addSampler(uint32_t binding, vk::ShaderStageFlags shaderStageFlags);
 
-        DescriptorSetConfigure &addSampler(const std::function<void(SamplerConfigure &)> &configure);
+        DescriptorSetConfigure &addSampler(const std::function<void(CombinedImageSamplerConfigure &)> &configure);
 
 
         // immutable sampler
