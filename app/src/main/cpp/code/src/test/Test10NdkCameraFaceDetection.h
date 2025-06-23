@@ -25,6 +25,12 @@
 
 namespace test10 {
 
+    struct LetterboxParam {
+        glm::ivec2 unpaddingSize;// 输出图像不包含 padding 部分的长宽
+        glm::ivec2 padding;        // padding: left, top
+        glm::vec4 fillColor;      // 填充颜色 (RGBA)
+    };
+
     struct Vertex {
         glm::vec3 position;
         glm::vec2 uv;
@@ -99,7 +105,6 @@ namespace test10 {
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
 
 
-
         //status
         uint32_t mCurrentFrameIndex = 0;
         bool mFramebufferResized = false;
@@ -114,7 +119,7 @@ namespace test10 {
         std::unique_ptr<vklite::CombinedHardwareBufferImageView> mCameraInputImageView;
 
         std::vector<vklite::CombinedImageView> mStorageImageViews;
-        std::vector<vklite::UniformBuffer> mProcessParamUniformBuffers;
+        std::vector<vklite::UniformBuffer> mLetterboxParamsUniformBuffers;
 
 
         //image pipeline

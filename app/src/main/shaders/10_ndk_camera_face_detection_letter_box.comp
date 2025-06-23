@@ -7,16 +7,17 @@ layout (binding = 0) uniform sampler2D inputSampler;
 // 输出：128x128 RGBA8存储图像
 layout (binding = 1, rgba8) uniform writeonly image2D outputImage;
 
+// todo: 使用 pushConstants
 // Letterbox参数（通过Uniform Buffer传递）
-layout (binding = 2) uniform LetterboxParams {
-    vec2 scale;       // 缩放比例 (min(output/input))
-    vec2 padding;     // 填充区域 (output_size - scaled_size) / 2.0
-    vec2 validRange;  // 有效区域范围 (scaled_size / output_size)
-    vec4 fillColor;    // 填充颜色 (114/255 ≈ 0.447)
-} params;
+layout (binding = 2) uniform LetterboxParam {
+    ivec2 unpaddingSize; // 输出图像不包含 padding 部分的长宽
+    ivec2 padding;     // padding left/top
+    vec4 fillColor;    // 填充颜色 rgba
+} letterBoxParam;
 
 void main() {
     ivec2 outputCoord = ivec2(gl_GlobalInvocationID.xy);
+    // todo: 使用 pushConstants
     ivec2 outputSize = imageSize(outputImage);
 
     // 边界保护：跳过超出输出范围的线程
@@ -25,17 +26,17 @@ void main() {
     }
 
     // 计算归一化UV（将输出坐标映射到[0,1]区间）
-    vec2 uv = (vec2(outputCoord) - params.padding) / (params.scale * outputSize);
+    vec2 uv = vec2(outputCoord - letterBoxParam.padding.xy) / letterBoxParam.unpaddingSize;
 
     // 判断是否在有效区域内（用step替代分支）
-    vec2 inBounds = step(vec2(0.0), uv) * step(uv, params.validRange);
+    vec2 inBounds = step(vec2(0.0), uv) * step(uv, vec2(1.0, 1.0));
     float isInside = inBounds.x * inBounds.y; // 仅当x/y均有效时为1
 
     // 采样输入图像（双线性滤波）
     vec4 color = texture(inputSampler, uv);
 
     // 混合填充色与采样色（避免if分支）
-    vec4 finalColor = mix(params.fillColor, color, isInside);
+    vec4 finalColor = mix(letterBoxParam.fillColor, color, isInside);
 
     // 写入输出图像
     imageStore(outputImage, outputCoord, finalColor);

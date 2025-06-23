@@ -414,9 +414,21 @@ namespace test10 {
             pipelineBarrier.exec(*mCommandPool);
         }
 
-        mProcessParamUniformBuffers = vklite::UniformBufferBuilder()
+        LetterboxParam letterboxParam;
+        float scale = std::min(128.0f / 1080.0f, 128.0f / 1920.0f);
+        letterboxParam.unpaddingSize = {1080 * scale, 1920 * scale};
+        letterboxParam.padding = {(128 - letterboxParam.unpaddingSize.x) / 2, (128 - letterboxParam.unpaddingSize.y) / 2};
+        letterboxParam.fillColor = {1.0f, 0.2f, 0.2, 1.0f};
+
+        mLetterboxParamsUniformBuffers = vklite::UniformBufferBuilder()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
                 .addUsage(vk::BufferUsageFlagBits::eStorageBuffer)
+                .size(sizeof(LetterboxParam))
                 .build(mFrameCount);
+        for (int i = 0; i < mFrameCount; i++) {
+            mLetterboxParamsUniformBuffers[i].update(*mCommandPool, &letterboxParam, sizeof(LetterboxParam));
+        }
 
         vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
@@ -425,7 +437,8 @@ namespace test10 {
                             .descriptorSet(mComputePipeline->getDescriptorSet(frameIndex, 0))
                             .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
                                 mapping
-                                        .addBufferInfo(mProcessParamUniformBuffers[frameIndex].getBuffer());
+                                        .binding(2)
+                                        .addBufferInfo(mLetterboxParamsUniformBuffers[frameIndex].getBuffer());
                             });
                 })
                 .build();
