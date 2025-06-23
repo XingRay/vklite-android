@@ -28,12 +28,9 @@ namespace vklite {
             std::vector<Semaphore> &&imageAvailableSemaphores,
             std::vector<Semaphore> &&renderFinishedSemaphores,
             std::vector<Fence> &&fences,
-            std::unique_ptr<PipelineLayout> pipelineLayout,
+
             std::unique_ptr<DescriptorPool> descriptorPool,
-            DescriptorSetLayouts &&descriptorSetLayouts,
-            std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
-            std::vector<PushConstant> &&pushConstants,
-            std::unique_ptr<Pipeline> pipeline,
+            std::unique_ptr<CombinedPipeline> graphicPipeline,
 
             std::unique_ptr<Queue> computeQueue,
             std::unique_ptr<CommandBuffers> computeCommandBuffers,
@@ -69,12 +66,8 @@ namespace vklite {
               mGraphicImageAvailableSemaphores(std::move(imageAvailableSemaphores)),
               mGraphicRenderFinishedSemaphores(std::move(renderFinishedSemaphores)),
               mGraphicFences(std::move(fences)),
-              mGraphicPipelineLayout(std::move(pipelineLayout)),
-              mGraphicDescriptorPool(std::move(descriptorPool)),
-              mGraphicDescriptorSetLayouts(std::move(descriptorSetLayouts)),
-              mGraphicDescriptorSets(std::move(descriptorSets)),
-              mGraphicPushConstants(std::move(pushConstants)),
-              mGraphicPipeline(std::move(pipeline)),
+              mDescriptorPool(std::move(descriptorPool)),
+              mGraphicPipeline(std::move(graphicPipeline)),
 
               mComputeQueue(std::move(computeQueue)),
               mComputeCommandBuffers(std::move(computeCommandBuffers)),
@@ -114,11 +107,7 @@ namespace vklite {
               mGraphicImageAvailableSemaphores(std::move(other.mGraphicImageAvailableSemaphores)),
               mGraphicRenderFinishedSemaphores(std::move(other.mGraphicRenderFinishedSemaphores)),
               mGraphicFences(std::move(other.mGraphicFences)),
-              mGraphicPipelineLayout(std::move(other.mGraphicPipelineLayout)),
-              mGraphicDescriptorPool(std::move(other.mGraphicDescriptorPool)),
-              mGraphicDescriptorSetLayouts(std::move(other.mGraphicDescriptorSetLayouts)),
-              mGraphicDescriptorSets(std::move(other.mGraphicDescriptorSets)),
-              mGraphicPushConstants(std::move(other.mGraphicPushConstants)),
+              mDescriptorPool(std::move(other.mDescriptorPool)),
               mGraphicPipeline(std::move(other.mGraphicPipeline)),
 
               mComputeQueue(std::move(other.mComputeQueue)),
@@ -159,11 +148,7 @@ namespace vklite {
             mGraphicImageAvailableSemaphores = std::move(other.mGraphicImageAvailableSemaphores);
             mGraphicRenderFinishedSemaphores = std::move(other.mGraphicRenderFinishedSemaphores);
             mGraphicFences = std::move(other.mGraphicFences);
-            mGraphicPipelineLayout = std::move(other.mGraphicPipelineLayout);
-            mGraphicDescriptorPool = std::move(other.mGraphicDescriptorPool);
-            mGraphicDescriptorSetLayouts = std::move(other.mGraphicDescriptorSetLayouts);
-            mGraphicDescriptorSets = std::move(other.mGraphicDescriptorSets);
-            mGraphicPushConstants = std::move(other.mGraphicPushConstants);
+            mDescriptorPool = std::move(other.mDescriptorPool);
             mGraphicPipeline = std::move(other.mGraphicPipeline);
 
             mComputeQueue = std::move(other.mComputeQueue);
@@ -194,11 +179,11 @@ namespace vklite {
     }
 
     const std::vector<std::vector<vk::DescriptorSet>> &ComputeGraphicEngine::getDescriptorSets() const {
-        return mGraphicDescriptorSets;
+        return mGraphicPipeline->getDescriptorSets();
     }
 
     const vk::DescriptorSet &ComputeGraphicEngine::getDescriptorSets(uint32_t frameIndex, uint32_t set) const {
-        return mGraphicDescriptorSets[frameIndex][set];
+        return mGraphicPipeline->getDescriptorSet(frameIndex, set);
     }
 
     const std::vector<std::vector<vk::DescriptorSet>> &ComputeGraphicEngine::getComputeDescriptorSets() const {
@@ -267,7 +252,7 @@ namespace vklite {
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
     }
 
-    ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)>& configure) {
+    ComputeGraphicEngine &ComputeGraphicEngine::addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer> &buffers, std::vector<vk::DeviceSize> &offsets)> &configure) {
         mVertexBuffers.reserve(mFrameCount);
         mVertexBufferOffsets.reserve(mFrameCount);
         for (uint32_t i = 0; i < mFrameCount; i++) {
@@ -299,7 +284,7 @@ namespace vklite {
     }
 
     ComputeGraphicEngine &ComputeGraphicEngine::updatePushConstant(uint32_t index, const void *data, uint32_t size) {
-        mGraphicPushConstants[index].update(data, size);
+        mGraphicPipeline->getPushConstants()[index].update(data, size);
         return *this;
     }
 
@@ -366,16 +351,16 @@ namespace vklite {
         const PooledCommandBuffer &commandBuffer = (*mGraphicCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicPipeline->getPipeline());
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mGraphicPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
 
-                if (!mGraphicDescriptorSets.empty()) {
-                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mGraphicPipelineLayout->getPipelineLayout(), 0, mGraphicDescriptorSets[mCurrentFrameIndex], nullptr);
+                if (!mGraphicPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mGraphicPipeline->getVkPipelineLayout(), 0, mGraphicPipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
                 }
 
-                for (const PushConstant &pushConstant: mGraphicPushConstants) {
-                    vkCommandBuffer.pushConstants(mGraphicPipelineLayout->getPipelineLayout(),
+                for (const PushConstant &pushConstant: mGraphicPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mGraphicPipeline->getVkPipelineLayout(),
                                                   pushConstant.getStageFlags(),
                                                   pushConstant.getOffset(),
                                                   pushConstant.getSize(),

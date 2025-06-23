@@ -42,12 +42,9 @@ namespace vklite {
         std::vector<Semaphore> mGraphicRenderFinishedSemaphores;
         std::vector<Fence> mGraphicFences;
 
-        std::unique_ptr<PipelineLayout> mGraphicPipelineLayout;
-        std::unique_ptr<DescriptorPool> mGraphicDescriptorPool;
-        DescriptorSetLayouts mGraphicDescriptorSetLayouts;
-        std::vector<std::vector<vk::DescriptorSet>> mGraphicDescriptorSets;
-        std::vector<PushConstant> mGraphicPushConstants;
-        std::unique_ptr<Pipeline> mGraphicPipeline;
+        std::unique_ptr<DescriptorPool> mDescriptorPool;
+
+        std::unique_ptr<CombinedPipeline> mGraphicPipeline;
 
         std::unique_ptr<Queue> mComputeQueue;
         std::unique_ptr<CommandBuffers> mComputeCommandBuffers;
@@ -101,12 +98,8 @@ namespace vklite {
                 std::vector<Semaphore> &&imageAvailableSemaphores,
                 std::vector<Semaphore> &&renderFinishedSemaphores,
                 std::vector<Fence> &&fences,
-                std::unique_ptr<PipelineLayout> pipelineLayout,
                 std::unique_ptr<DescriptorPool> descriptorPool,
-                DescriptorSetLayouts &&descriptorSetLayouts,
-                std::vector<std::vector<vk::DescriptorSet>> &&descriptorSets,
-                std::vector<PushConstant> &&pushConstants,
-                std::unique_ptr<Pipeline> pipeline,
+                std::unique_ptr<CombinedPipeline> graphicPipeline,
 
                 std::unique_ptr<Queue> computeQueue,
                 std::unique_ptr<CommandBuffers> computeCommandBuffers,

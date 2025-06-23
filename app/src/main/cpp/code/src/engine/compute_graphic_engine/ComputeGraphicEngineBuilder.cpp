@@ -253,56 +253,21 @@ namespace vklite {
             graphicPushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
         }
 
-        std::unique_ptr<DescriptorPool> graphicDescriptorPool = vklite::DescriptorPoolBuilder()
+        std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
                 .descriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
                 .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
-
-        DescriptorSetLayouts graphicDescriptorSetLayouts = DescriptorSetLayoutsBuilder()
+        
+        std::unique_ptr<CombinedPipeline> graphicPipeline = CombinedGraphicPipelineBuilder()
                 .device(device->getDevice())
-                .bindings(mGraphicShaderConfigure.createDescriptorSetLayoutBindings())
-                .build();
-
-        std::vector<std::vector<vk::DescriptorSet>> graphicDescriptorSets;
-        graphicDescriptorSets.reserve(mFrameCount);
-        for (uint32_t i = 0; i < mFrameCount; i++) {
-            std::vector<vk::DescriptorSet> sets = graphicDescriptorPool->allocateDescriptorSets(graphicDescriptorSetLayouts.getDescriptorSetLayouts());
-            LOG_D("descriptorPool->allocateDescriptorSets:");
-            for (const vk::DescriptorSet &set: sets) {
-                LOG_D("\tset:%p", (void *) set);
-            }
-            graphicDescriptorSets.push_back(std::move(sets));
-        }
-
-        std::unique_ptr<PipelineLayout> graphicPipelineLayout = PipelineLayoutBuilder()
-                .device(device->getDevice())
-                .descriptorSetLayouts(graphicDescriptorSetLayouts.getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(graphicPushConstantRanges))
-                .buildUnique();
-
-        std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
-                .device(device->getDevice())
-                .code(std::move(mGraphicShaderConfigure.getVertexShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
-                .device(device->getDevice())
-                .code(std::move(mGraphicShaderConfigure.getFragmentShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<Pipeline> pipeline = GraphicsPipelineBuilder()
-                .device(device->getDevice())
-                .topology(vk::PrimitiveTopology::ePointList)
+                .frameCount(mFrameCount)
                 .renderPass(renderPass->getRenderPass())
-                .pipelineLayout(graphicPipelineLayout->getPipelineLayout())
+                .shaderConfigure(mGraphicShaderConfigure)
+                .topology(vk::PrimitiveTopology::ePointList)
                 .viewports(viewports)
                 .scissors(scissors)
-                .vertexShader(std::move(vertexShader))
-                .vertexBindingDescriptions(mGraphicShaderConfigure.createVertexBindingDescriptions())
-                .vertexAttributeDescriptions(mGraphicShaderConfigure.createVertexAttributeDescriptions())
-                .fragmentShader(std::move(fragmentShader))
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .buildUnique();
@@ -391,12 +356,9 @@ namespace vklite {
                                     std::move(imageAvailableSemaphores),
                                     std::move(renderFinishedSemaphores),
                                     std::move(fences),
-                                    std::move(graphicPipelineLayout),
-                                    std::move(graphicDescriptorPool),
-                                    std::move(graphicDescriptorSetLayouts),
-                                    std::move(graphicDescriptorSets),
-                                    std::move(graphicPushConstants),
-                                    std::move(pipeline),
+
+                                    std::move(descriptorPool),
+                                    std::move(graphicPipeline),
 
                                     std::move(computeQueue),
                                     std::move(computeCommandBuffers),
