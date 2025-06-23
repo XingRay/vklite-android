@@ -49,9 +49,9 @@ void handle_cmd(android_app *app, int32_t cmd) {
 //            app->test = new test05::Test05TextureImage(*app, "Test05TextureImage");
 //            app->test = new test06::Test06Load3dModel(*app, "Test06Load3dModel");
 //            app->test = new test07::Test07NdkCamera(*app, "Test07NdkCamera");
-//            app->test = new test08::Test08ComputeShader(*app, "Test08ComputeShader");
+            app->test = new test08::Test08ComputeShader(*app, "Test08ComputeShader");
 //            app->test = new test09::Test09FaceImageDetection(*app, "Test09FaceImageDetection");
-            app->test = new test10::Test10NdkCameraFaceDetection(*app, "Test10NdkCameraFaceDetection");
+//            app->test = new test10::Test10NdkCameraFaceDetection(*app, "Test10NdkCameraFaceDetection");
 
             app->test->init();
         }
@@ -101,26 +101,15 @@ void android_main(struct android_app *app) {
 //
 //}
 
-void runInLooper(const android_app *app, int color) {
-    LOG_D("AndroidMain#runInLooper, thread:%ld", pthread_self());
-    LOG_D("AndroidMain#runInLooper, color:%d", color);
-
+void runInLooper(const android_app *app, int inputData) {
     if (app->test != nullptr) {
-//        VkCommandPool &commandPool = app->vulkanEngine->render.cmdPool_;
         LOG_D("vklite test:%p", app->test);
-        // 将32位颜色值转换为浮点RGB
-        float r = ((color >> 16) & 0xFF) / 255.0f;
-        float g = ((color >> 8) & 0xFF) / 255.0f;
-        float b = (color & 0xFF) / 255.0f;
-
-        // 调用VulkanEngine中的更新颜色方法
-//        app->test->UpdateColor(r, g, b);
     }
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_io_github_xingray_vulkandemo_MainActivity_changeTriangleColor(JNIEnv *env, jobject thiz, jlong native_handle, jint color) {
+Java_io_github_xingray_vulkandemo_MainActivity_changeTriangleColor(JNIEnv *env, jobject thiz, jlong native_handle, jint inputData) {
     NativeCode *code = reinterpret_cast<NativeCode *>(native_handle);
     LOG_D("changeTriangleColor, thread:%ld", pthread_self());
     android_app *app = reinterpret_cast<android_app *>(code->instance);
@@ -143,10 +132,11 @@ Java_io_github_xingray_vulkandemo_MainActivity_changeTriangleColor(JNIEnv *env, 
     // 注册到 ALooper 中
     ALooper_addFd(looper, readFd, 0, ALOOPER_EVENT_INPUT, [](int fd, int events, void *data) -> int {
         if (events & ALOOPER_EVENT_INPUT) {
-            int color;
-            ssize_t bytesRead = read(fd, &color, sizeof(color));
+            android_app *app = reinterpret_cast<android_app *>(data);
+            int inputData;
+            ssize_t bytesRead = read(fd, &inputData, sizeof(inputData));
             if (bytesRead > 0) {
-                runInLooper(reinterpret_cast<android_app *>(data), color);
+                runInLooper(app, inputData);
             } else {
                 LOG_E("Failed to read from pipe: %s", strerror(errno));
             }
@@ -158,6 +148,6 @@ Java_io_github_xingray_vulkandemo_MainActivity_changeTriangleColor(JNIEnv *env, 
         return 0;
     }, app);
 
-    write(writeFd, &color, sizeof(color));
+    write(writeFd, &inputData, sizeof(inputData));
     close(writeFd);
 }

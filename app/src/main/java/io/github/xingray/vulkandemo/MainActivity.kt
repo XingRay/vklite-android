@@ -58,20 +58,6 @@ class MainActivity : GameActivity() {
 //                execTasks()
             }
         }
-
-        val sdCardPath = Environment.getExternalStorageDirectory().absolutePath
-        val imagePath = "$sdCardPath/01.png"
-        val file = File(imagePath)
-        if (file.exists()) {
-            Log.d(TAG, "onCreate: file:${file.absolutePath}")
-        } else {
-            Log.d(TAG, "onCreate: file not exist")
-        }
-
-        val handler = Handler(Looper.getMainLooper())
-        handler.post {
-            println("in post callback")
-        }
     }
 
     override fun onCreateSurfaceView() {
