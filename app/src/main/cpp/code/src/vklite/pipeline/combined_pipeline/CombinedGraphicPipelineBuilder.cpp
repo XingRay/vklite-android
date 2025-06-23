@@ -164,16 +164,15 @@ namespace vklite {
             }
         }
 
-        mPipelineLayoutBuilder
+        PipelineLayout pipelineLayout = mPipelineLayoutBuilder
                 .descriptorSetLayouts(descriptorSetLayouts.getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(mPushConstantRanges));
-
-        PipelineLayout pipelineLayout = mPipelineLayoutBuilder.build();
-        mGraphicsPipelineBuilder.pipelineLayout(pipelineLayout.getPipelineLayout());
+                .pushConstantRanges(std::move(mPushConstantRanges))
+                .build();
 
         Pipeline pipeline = mGraphicsPipelineBuilder
                 .vertexShader(mVertexShaderModuleBuilder.buildUnique())
                 .fragmentShader(mFragmentShaderModuleBuilder.buildUnique())
+                .pipelineLayout(pipelineLayout.getPipelineLayout())
                 .build();
 
         return CombinedPipeline(

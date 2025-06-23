@@ -66,7 +66,7 @@ namespace vklite {
         return mPipelineLayout.getPipelineLayout();
     }
 
-    const std::vector<PushConstant> &CombinedPipeline::getPushConstants() const {
+    std::vector<PushConstant> &CombinedPipeline::getPushConstants() {
         return mPushConstants;
     }
 

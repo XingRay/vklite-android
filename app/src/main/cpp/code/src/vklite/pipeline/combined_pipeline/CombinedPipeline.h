@@ -60,7 +60,7 @@ namespace vklite {
         const vk::PipelineLayout &getVkPipelineLayout();
 
         [[nodiscard]]
-        const std::vector<PushConstant> &getPushConstants() const;
+        std::vector<PushConstant> &getPushConstants();
     };
 
 } // vklite
