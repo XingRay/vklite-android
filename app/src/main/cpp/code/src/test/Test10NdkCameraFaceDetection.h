@@ -74,6 +74,7 @@ namespace test10 {
         std::unique_ptr<vklite::Device> mDevice;
 
         std::unique_ptr<vklite::Queue> mGraphicQueue;
+        std::unique_ptr<vklite::Queue> mComputeQueue;
         std::unique_ptr<vklite::Queue> mPresentQueue;
 
         std::unique_ptr<vklite::Swapchain> mSwapchain;
@@ -83,6 +84,7 @@ namespace test10 {
 
         std::unique_ptr<vklite::CommandPool> mCommandPool;
         std::unique_ptr<vklite::CommandBuffers> mCommandBuffers;
+        std::unique_ptr<vklite::CommandBuffers> mComputeCommandBuffers;
 
         std::unique_ptr<vklite::RenderPass> mRenderPass;
         std::unique_ptr<vklite::CombinedImageView> mColorImageView;
@@ -95,15 +97,28 @@ namespace test10 {
 
 
         std::unique_ptr<vklite::DescriptorPool> mDescriptorPool;
-        std::unique_ptr<vklite::CombinedPipeline> mPipeline;
-        std::unique_ptr<vklite::CombinedPipeline> mLinesPipeline;
-        std::unique_ptr<vklite::CombinedPipeline> mPointsPipeline;
+
+
 
         //status
         uint32_t mCurrentFrameIndex = 0;
         bool mFramebufferResized = false;
 
 
+        // image preprocess compute pipeline
+        std::unique_ptr<vklite::CombinedPipeline> mComputePipeline;
+        std::vector<vklite::Fence> mComputeFences;
+        std::vector<vklite::Semaphore> mComputeFinishSemaphores;
+
+        std::unique_ptr<vklite::CombinedHardwareBufferSampler> mCameraInputSampler;
+        std::unique_ptr<vklite::CombinedHardwareBufferImageView> mCameraInputImageView;
+
+        std::vector<vklite::CombinedImageView> mStorageImageViews;
+        std::vector<vklite::UniformBuffer> mProcessParamUniformBuffers;
+
+
+        //image pipeline
+        std::unique_ptr<vklite::CombinedPipeline> mPipeline;
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::vector<vk::Buffer> mVertexBuffers;
@@ -114,12 +129,9 @@ namespace test10 {
         vk::Buffer mIndexVkBuffer;
         uint32_t mIndexCount;
 
-        std::unique_ptr<vklite::CombinedHardwareBufferSampler> mSampler;
-        std::unique_ptr<vklite::CombinedHardwareBufferImageView> mImageView;
-
-        std::unique_ptr<vklite::CombinedImageView> mStorageImageView;
 
         // lines pipeline resources
+        std::unique_ptr<vklite::CombinedPipeline> mLinesPipeline;
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mLinesVertexBuffer;
         std::vector<vk::Buffer> mLinesVertexBuffers;
@@ -134,6 +146,7 @@ namespace test10 {
 
 
         // points pipeline resources
+        std::unique_ptr<vklite::CombinedPipeline> mPointsPipeline;
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mPointsVertexBuffer;
         std::vector<vk::Buffer> mPointsVertexBuffers;

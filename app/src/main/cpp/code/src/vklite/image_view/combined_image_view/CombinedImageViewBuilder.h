@@ -59,6 +59,8 @@ namespace vklite {
 
         CombinedImageView build();
 
+        std::vector<CombinedImageView> build(uint32_t count);
+
         std::unique_ptr<CombinedImageView> buildUnique();
 
 

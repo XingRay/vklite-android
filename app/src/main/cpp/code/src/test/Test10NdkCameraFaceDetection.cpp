@@ -38,18 +38,19 @@ namespace test10 {
         }
 
         uint32_t presentQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface())[0];
-        uint32_t graphicQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics)[0];
+        uint32_t graphicAndComputeQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)[0];
 
         mDevice = vklite::DeviceBuilder()
                 .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
                 .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
                 .physicalDevice(mPhysicalDevice->getPhysicalDevice())
-                .addQueueFamily(graphicQueueFamilyIndex)
+                .addQueueFamily(graphicAndComputeQueueFamilyIndex)
                 .addQueueFamily(presentQueueFamilyIndex)
                 .buildUnique();
         LOG_D("device => %p", (void *) mDevice->getDevice());
 
-        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicQueueFamilyIndex));
+        mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndex));
+        mComputeQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndex));
         mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(presentQueueFamilyIndex));
 
         mSwapchain = vklite::SwapchainBuilder()
@@ -64,9 +65,10 @@ namespace test10 {
 
         mCommandPool = vklite::CommandPoolBuilder()
                 .device(mDevice->getDevice())
-                .queueFamilyIndex(graphicQueueFamilyIndex)
+                .queueFamilyIndex(graphicAndComputeQueueFamilyIndex)
                 .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
+        mComputeCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
 
         // 创建附件
         mDisplayImageViews = mSwapchain->createDisplayImageViews();
@@ -195,41 +197,25 @@ namespace test10 {
 
 
         // 1 image process by compute shader
-
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
                 .build();
 
-        mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
+        mCameraInputSampler = vklite::CombinedHardwareBufferSamplerBuilder()
                 .device(mDevice->getDevice())
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
 
-        mStorageImageView = vklite::CombinedImageViewBuilder()
-                .asStorage()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .format(vk::Format::eR8G8B8A8Unorm)
-                .size(128, 128)
-                .buildUnique();
 
-        vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder().asDefault()
-                .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
-                    builder.asDefault().image(mStorageImageView->getVkImage());
-                })
-                .build();
-        pipelineBarrier.exec(*mCommandPool);
-
-
-        std::vector<uint32_t> computeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
+        std::vector<uint32_t> computeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_letter_box.comp.spv");
         vklite::ShaderConfigure computeShaderConfigure = vklite::ShaderConfigure()
                 .computeShaderCode(std::move(computeShaderCode))
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
-//                            .addImage()
+                            .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
+                            .addStorageImage(1, vk::ShaderStageFlagBits::eCompute)
                             .addUniformBuffer(2, vk::ShaderStageFlagBits::eCompute);
                 });
 
@@ -250,7 +236,7 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
+                            .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
                 });
 
         std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.vert.spv");
@@ -293,6 +279,8 @@ namespace test10 {
         mDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
                 .frameCount(mFrameCount)
+                .addDescriptorPoolSizes(computeShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(computeShaderConfigure.getDescriptorSetCount())
                 .addDescriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(shaderConfigure.getDescriptorSetCount())
                 .addDescriptorPoolSizes(linesShaderConfigure.calcDescriptorPoolSizes())
@@ -300,6 +288,23 @@ namespace test10 {
                 .addDescriptorPoolSizes(pointsShaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(pointsShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
+
+        mComputePipeline = vklite::CombinedComputePipelineBuilder()
+                .device(mDevice->getDevice())
+                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .frameCount(mFrameCount)
+                .shaderConfigure(computeShaderConfigure)
+                .buildUnique();
+
+        mComputeFences = vklite::FenceBuilder()
+                .device(mDevice->getDevice())
+                        // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
+                .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
+                .build(mFrameCount);
+
+        mComputeFinishSemaphores = vklite::SemaphoreBuilder()
+                .device(mDevice->getDevice())
+                .build(mFrameCount);
 
         mPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
@@ -390,6 +395,44 @@ namespace test10 {
         mAnchors = image_process::Anchor::generateAnchors();
         mLetterBox = image_process::LetterBox::calcLetterbox(1080, 1920, 128, 128);
 
+
+        // image process compute pipeline
+        mStorageImageViews = vklite::CombinedImageViewBuilder()
+                .asStorage()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .format(vk::Format::eR8G8B8A8Unorm)
+                .size(128, 128)
+                .build(mFrameCount);
+
+        for (int i = 0; i < mFrameCount; i++) {
+            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder().asDefault()
+                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+                        builder.asDefault().image(mStorageImageViews[i].getVkImage());
+                    })
+                    .build();
+            pipelineBarrier.exec(*mCommandPool);
+        }
+
+        mProcessParamUniformBuffers = vklite::UniformBufferBuilder()
+                .addUsage(vk::BufferUsageFlagBits::eStorageBuffer)
+                .build(mFrameCount);
+
+        vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mComputePipeline->getDescriptorSet(frameIndex, 0))
+                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                                mapping
+                                        .addBufferInfo(mProcessParamUniformBuffers[frameIndex].getBuffer());
+                            });
+                })
+                .build();
+
+        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
+        // image pipeline
         std::vector<Vertex> vertices = {
                 {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // 显示左上角  => uv右下角
                 {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // 显示右上角 => uv右上角
@@ -547,7 +590,7 @@ namespace test10 {
     // 绘制三角形帧
     void Test10NdkCameraFaceDetection::drawFrame() {
 
-
+        // camera input
         std::optional<ndkcamera::Image> image = mNdkCamera->acquireLatestImage();
         if (!image.has_value()) {
 //            LOG_D("Test07NdkCamera::drawFrame(), no image");
@@ -563,16 +606,17 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .hardwareBuffer(pHardwareBuffer)
                 .build();
-        mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
+        mCameraInputImageView = vklite::CombinedHardwareBufferImageViewBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
                 .hardwareBufferFormatProperties(hardwareBuffer.getFormatProperties())
                 .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
                 .hardwareBufferProperties(hardwareBuffer.getProperties())
                 .memoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .conversion((*mSampler).getConversion().getSamplerYcbcrConversion())
+                .conversion((*mCameraInputSampler).getConversion().getSamplerYcbcrConversion())
                 .buildUnique();
 
+        // bind to pipeline resources
         vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
@@ -582,13 +626,45 @@ namespace test10 {
                                 descriptorMapping
                                         .binding(0)
                                         .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-                                        .addImageInfo(mSampler->getSampler(), mImageView->getImageView());
+                                        .addImageInfo(mCameraInputSampler->getSampler(), mCameraInputImageView->getImageView());
                             });
                 })
                 .build();
 
         mDevice->getDevice().updateDescriptorSets(descriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
+        // compute shader preprocess
+        vk::Result result = mComputeFences[mCurrentFrameIndex].wait();
+        if (result != vk::Result::eSuccess) {
+            LOG_E("waitForFences failed");
+            throw std::runtime_error("waitForFences failed");
+        }
+
+        result = mComputeFences[mCurrentFrameIndex].reset();
+        if (result != vk::Result::eSuccess) {
+            throw std::runtime_error("mComputeFences[mCurrentFrameIndex] resetFences failed");
+        }
+
+        const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
+        computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
+            commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipeline());
+            commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipelineLayout(), 0, mComputePipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
+
+            // todo: local_size_x local_size_y local_size_z
+            commandBuffer.dispatch(128 / 32, 128 / 16, 1);
+        });
+
+        mComputeQueue->submit(computeCommandBuffer.getCommandBuffer(),
+                              mComputeFinishSemaphores[mCurrentFrameIndex].getSemaphore(),
+                              mComputeFences[mCurrentFrameIndex].getFence());
+
+        result = mComputeFences[mCurrentFrameIndex].wait();
+        if (result != vk::Result::eSuccess) {
+            LOG_E("waitForFences failed");
+            throw std::runtime_error("waitForFences failed");
+        }
+
+        // nn net face detection
 //        mExtractor->input("in0", mMatIn);
 
 //
@@ -683,13 +759,12 @@ namespace test10 {
 //        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
 //        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
 
-
-
+        // graphic pipeline
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];
         vklite::Semaphore &renderFinishedSemaphore = mRenderFinishedSemaphores[mCurrentFrameIndex];
         vklite::Fence &fence = mFences[mCurrentFrameIndex];
 
-        vk::Result result = mFences[mCurrentFrameIndex].wait();
+        result = mFences[mCurrentFrameIndex].wait();
         if (result != vk::Result::eSuccess) {
             LOG_E("waitForFences failed");
             throw std::runtime_error("waitForFences failed");

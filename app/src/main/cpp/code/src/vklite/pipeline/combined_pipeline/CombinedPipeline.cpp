@@ -41,6 +41,10 @@ namespace vklite {
         return mDescriptorSets;
     }
 
+    const std::vector<vk::DescriptorSet> &CombinedPipeline::getDescriptorSets(uint32_t frameIndex) const {
+        return mDescriptorSets[frameIndex];
+    }
+
     const vk::DescriptorSet &CombinedPipeline::getDescriptorSet(uint32_t frameIndex, uint32_t set) const {
         return mDescriptorSets[frameIndex][set];
     }

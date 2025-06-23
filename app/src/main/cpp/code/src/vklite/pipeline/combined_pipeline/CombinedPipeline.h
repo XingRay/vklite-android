@@ -42,6 +42,9 @@ namespace vklite {
         const std::vector<std::vector<vk::DescriptorSet>> &getDescriptorSets() const;
 
         [[nodiscard]]
+        const std::vector<vk::DescriptorSet> &getDescriptorSets(uint32_t frameIndex) const;
+
+        [[nodiscard]]
         const vk::DescriptorSet &getDescriptorSet(uint32_t frameIndex, uint32_t set) const;
 
         [[nodiscard]]

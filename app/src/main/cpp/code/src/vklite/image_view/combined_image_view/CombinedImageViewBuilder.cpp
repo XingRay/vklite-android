@@ -87,6 +87,17 @@ namespace vklite {
         return CombinedImageView{std::move(image), std::move(deviceMemory), std::move(imageView)};
     }
 
+    std::vector<CombinedImageView> CombinedImageViewBuilder::build(uint32_t count) {
+        std::vector<CombinedImageView> imageViews;
+        imageViews.reserve(count);
+
+        for (int i = 0; i < count; i++) {
+            imageViews.emplace_back(build());
+        }
+
+        return imageViews;
+    }
+
     std::unique_ptr<CombinedImageView> CombinedImageViewBuilder::buildUnique() {
         return std::make_unique<CombinedImageView>(build());
     }

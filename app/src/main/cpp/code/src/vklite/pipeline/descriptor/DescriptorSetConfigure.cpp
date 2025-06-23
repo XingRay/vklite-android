@@ -139,12 +139,44 @@ namespace vklite {
         return *this;
     }
 
+    DescriptorSetConfigure &DescriptorSetConfigure::addImmutableSampler(uint32_t binding, vk::Sampler sampler, vk::ShaderStageFlags shaderStageFlags) {
+        ImmutableSamplerConfigure immutableSamplerConfigure(binding, {sampler}, shaderStageFlags);
+        addImmutableSampler(immutableSamplerConfigure);
+        return *this;
+    }
+
     DescriptorSetConfigure &DescriptorSetConfigure::addImmutableSampler(const std::function<void(ImmutableSamplerConfigure &)> &configure) {
         ImmutableSamplerConfigure immutableSamplerConfigure{};
         configure(immutableSamplerConfigure);
         addImmutableSampler(immutableSamplerConfigure);
         return *this;
     }
+
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageImage(const StorageImageConfigure &configure) {
+        DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
+        addDescriptorBinding(std::move(bindingConfigure));
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageImage(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
+        StorageImageConfigure storageImageConfigure(binding, descriptorCount, shaderStageFlags);
+        addStorageImage(storageImageConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageImage(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
+        addStorageImage(binding, 1, shaderStageFlags);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageImage(const std::function<void(StorageImageConfigure &)> &configure) {
+        StorageImageConfigure storageImageConfigure{};
+        configure(storageImageConfigure);
+        addStorageImage(storageImageConfigure);
+        return *this;
+    }
+
 
     DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(const StorageBufferConfigure &configure) {
         DescriptorBindingConfigure bindingConfigure = configure.createDescriptorBindingConfigure();
@@ -155,6 +187,11 @@ namespace vklite {
     DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(uint32_t binding, uint32_t descriptorCount, vk::ShaderStageFlags shaderStageFlags) {
         StorageBufferConfigure storageConfigure(binding, descriptorCount, shaderStageFlags);
         addStorageBuffer(storageConfigure);
+        return *this;
+    }
+
+    DescriptorSetConfigure &DescriptorSetConfigure::addStorageBuffer(uint32_t binding, vk::ShaderStageFlags shaderStageFlags) {
+        addStorageBuffer(binding, 1, shaderStageFlags);
         return *this;
     }
 

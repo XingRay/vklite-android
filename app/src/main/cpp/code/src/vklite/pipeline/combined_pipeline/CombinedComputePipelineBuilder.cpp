@@ -68,6 +68,7 @@ namespace vklite {
         for (const vk::PushConstantRange &pushConstantRange: mPushConstantRanges) {
             pushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
         }
+
         DescriptorSetLayouts descriptorSetLayouts = mDescriptorSetLayoutsBuilder.build();
         std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
         if (!descriptorSetLayouts.getDescriptorSetLayouts().empty()) {
@@ -85,24 +86,23 @@ namespace vklite {
             }
         }
 
-        mPipelineLayoutBuilder
+        PipelineLayout pipelineLayout = mPipelineLayoutBuilder
                 .descriptorSetLayouts(descriptorSetLayouts.getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(mPushConstantRanges));
-
-        PipelineLayout pipelineLayout = mPipelineLayoutBuilder.build();
-        mComputePipelineBuilder.pipelineLayout(pipelineLayout.getPipelineLayout());
+                .pushConstantRanges(std::move(mPushConstantRanges))
+                .build();
 
         Pipeline pipeline = mComputePipelineBuilder
                 .computeShader(mComputeShaderModuleBuilder.buildUnique())
+                .pipelineLayout(pipelineLayout.getPipelineLayout())
                 .build();
 
-        return CombinedPipeline(
+        return CombinedPipeline{
                 std::move(pipeline),
                 std::move(descriptorSetLayouts),
                 std::move(pipelineLayout),
                 std::move(descriptorSets),
-                std::move(pushConstants)
-        );
+                std::move(pushConstants),
+        };
     }
 
     std::unique_ptr<CombinedPipeline> CombinedComputePipelineBuilder::buildUnique() {
