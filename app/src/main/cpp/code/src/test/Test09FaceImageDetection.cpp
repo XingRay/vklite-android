@@ -408,7 +408,7 @@ namespace test09 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
-                            .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
+                            .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &mapping) {
                                 mapping
                                         .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
                             });
@@ -473,7 +473,7 @@ namespace test09 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
-                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                            .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
                             });
@@ -521,7 +521,7 @@ namespace test09 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mPointsPipeline->getDescriptorSet(frameIndex, 0))
-                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                            .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .addBufferInfo(mPointsUniformBuffers[frameIndex].getBuffer());
                             });

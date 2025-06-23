@@ -98,12 +98,12 @@ namespace test06 {
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
                     .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
-                    .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                    .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                         mapping
                                 .binding(0)
                                 .addBufferInfo(mUniformBuffers[frameIndex].getBuffer());
                     })
-                    .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
+                    .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &mapping) {
                         mapping
                                 .binding(1)
                                 .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());

@@ -11,9 +11,10 @@
 #include "vklite/pipeline/descriptor_set_writer/DescriptorMapping.h"
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWriter.h"
 
-#include "vklite/pipeline/descriptor_set_writer/binding/SamplerDescriptorMapping.h"
-#include "vklite/pipeline/descriptor_set_writer/binding/StorageDescriptorMapping.h"
-#include "vklite/pipeline/descriptor_set_writer/binding/UniformDescriptorMapping.h"
+#include "vklite/pipeline/descriptor_set_writer/binding/CombinedImageSamplerDescriptorMapping.h"
+#include "vklite/pipeline/descriptor_set_writer/binding/StorageBufferDescriptorMapping.h"
+#include "vklite/pipeline/descriptor_set_writer/binding/UniformBufferDescriptorMapping.h"
+#include "vklite/pipeline/descriptor_set_writer/binding/StorageImageDescriptorMapping.h"
 
 namespace vklite {
 
@@ -34,20 +35,24 @@ namespace vklite {
         DescriptorSetMappingConfigure &addMapping(const std::function<void(DescriptorMapping &descriptorMapping)> &configure);
 
 
-        DescriptorSetMappingConfigure &addUniform(UniformDescriptorMapping &&descriptorMapping);
+        DescriptorSetMappingConfigure &addUniformBuffer(UniformBufferDescriptorMapping &&descriptorMapping);
 
-        DescriptorSetMappingConfigure &addUniform(const std::function<void(UniformDescriptorMapping &descriptorMapping)> &configure);
-
-
-        DescriptorSetMappingConfigure &addSampler(SamplerDescriptorMapping &&descriptorMapping);
-
-        DescriptorSetMappingConfigure &addSampler(const std::function<void(SamplerDescriptorMapping &descriptorMapping)> &configure);
+        DescriptorSetMappingConfigure &addUniformBuffer(const std::function<void(UniformBufferDescriptorMapping &descriptorMapping)> &configure);
 
 
-        DescriptorSetMappingConfigure &addStorage(StorageDescriptorMapping &&descriptorMapping);
+        DescriptorSetMappingConfigure &addStorageBuffer(StorageBufferDescriptorMapping &&descriptorMapping);
 
-        DescriptorSetMappingConfigure &addStorage(const std::function<void(StorageDescriptorMapping &descriptorMapping)> &configure);
+        DescriptorSetMappingConfigure &addStorageBuffer(const std::function<void(StorageBufferDescriptorMapping &descriptorMapping)> &configure);
 
+
+        DescriptorSetMappingConfigure &addCombinedImageSampler(CombinedImageSamplerDescriptorMapping &&descriptorMapping);
+
+        DescriptorSetMappingConfigure &addCombinedImageSampler(const std::function<void(CombinedImageSamplerDescriptorMapping &descriptorMapping)> &configure);
+
+
+        DescriptorSetMappingConfigure &addStorageImage(StorageImageDescriptorMapping &&descriptorMapping);
+
+        DescriptorSetMappingConfigure &addStorageImage(const std::function<void(StorageImageDescriptorMapping &descriptorMapping)> &configure);
 
         [[nodiscard]]
         DescriptorSetWriter createDescriptorSetWriter();

@@ -103,7 +103,7 @@ namespace test05 {
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
             configure
                     .descriptorSet(mEngine->getDescriptorSets(frameIndex, 0))
-                    .addSampler([&](vklite::SamplerDescriptorMapping &mapping) {
+                    .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &mapping) {
                         mapping
                                 .addImageInfo(mSamplers[frameIndex].getSampler(), mSamplers[frameIndex].getImageView());
                     });

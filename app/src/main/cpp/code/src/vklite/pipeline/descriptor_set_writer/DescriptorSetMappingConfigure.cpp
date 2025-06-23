@@ -20,14 +20,14 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addMapping(const std::function<void(DescriptorMapping &descriptorMapping)> &configure) {
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addMapping(const std::function<void(DescriptorMapping & descriptorMapping)> &configure) {
         DescriptorMapping descriptorMapping;
         configure(descriptorMapping);
         addMapping(std::move(descriptorMapping));
         return *this;
     }
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addUniform(UniformDescriptorMapping &&descriptorMapping) {
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addUniformBuffer(UniformBufferDescriptorMapping &&descriptorMapping) {
         DescriptorMapping mapping{};
         mapping.binding(descriptorMapping.getBinding())
                 .descriptorType(vk::DescriptorType::eUniformBuffer)
@@ -38,34 +38,15 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addUniform(const std::function<void(UniformDescriptorMapping &descriptorMapping)> &configure) {
-        UniformDescriptorMapping mapping;
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addUniformBuffer(const std::function<void(UniformBufferDescriptorMapping & descriptorMapping)> &configure) {
+        UniformBufferDescriptorMapping mapping;
         configure(mapping);
-        addUniform(std::move(mapping));
+        addUniformBuffer(std::move(mapping));
         return *this;
     }
 
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addSampler(SamplerDescriptorMapping &&descriptorMapping) {
-        DescriptorMapping mapping{};
-        mapping.binding(descriptorMapping.getBinding())
-                .descriptorType(vk::DescriptorType::eCombinedImageSampler)
-                .descriptorIndex(descriptorMapping.getDescriptorIndex())
-                .imageInfos(std::move(descriptorMapping.getDescriptorImageInfos()));
-        addMapping(std::move(mapping));
-
-        return *this;
-    }
-
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addSampler(const std::function<void(SamplerDescriptorMapping &descriptorMapping)> &configure) {
-        SamplerDescriptorMapping mapping;
-        configure(mapping);
-        addSampler(std::move(mapping));
-        return *this;
-    }
-
-
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorage(StorageDescriptorMapping &&descriptorMapping) {
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorageBuffer(StorageBufferDescriptorMapping &&descriptorMapping) {
         DescriptorMapping mapping{};
         mapping.binding(descriptorMapping.getBinding())
                 .descriptorType(vk::DescriptorType::eStorageBuffer)
@@ -76,10 +57,48 @@ namespace vklite {
         return *this;
     }
 
-    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorage(const std::function<void(StorageDescriptorMapping &descriptorMapping)> &configure) {
-        StorageDescriptorMapping mapping;
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorageBuffer(const std::function<void(StorageBufferDescriptorMapping & descriptorMapping)> &configure) {
+        StorageBufferDescriptorMapping mapping;
         configure(mapping);
-        addStorage(std::move(mapping));
+        addStorageBuffer(std::move(mapping));
+        return *this;
+    }
+
+
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addCombinedImageSampler(CombinedImageSamplerDescriptorMapping &&descriptorMapping) {
+        DescriptorMapping mapping{};
+        mapping.binding(descriptorMapping.getBinding())
+                .descriptorType(vk::DescriptorType::eCombinedImageSampler)
+                .descriptorIndex(descriptorMapping.getDescriptorIndex())
+                .imageInfos(std::move(descriptorMapping.getDescriptorImageInfos()));
+        addMapping(std::move(mapping));
+
+        return *this;
+    }
+
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addCombinedImageSampler(const std::function<void(CombinedImageSamplerDescriptorMapping & descriptorMapping)> &configure) {
+        CombinedImageSamplerDescriptorMapping mapping;
+        configure(mapping);
+        addCombinedImageSampler(std::move(mapping));
+        return *this;
+    }
+
+
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorageImage(StorageImageDescriptorMapping &&descriptorMapping) {
+        DescriptorMapping mapping{};
+        mapping.binding(descriptorMapping.getBinding())
+                .descriptorType(vk::DescriptorType::eStorageImage)
+                .descriptorIndex(descriptorMapping.getDescriptorIndex())
+                .imageInfos(std::move(descriptorMapping.getDescriptorImageInfos()));
+        addMapping(std::move(mapping));
+
+        return *this;
+    }
+
+    DescriptorSetMappingConfigure &DescriptorSetMappingConfigure::addStorageImage(const std::function<void(StorageImageDescriptorMapping & descriptorMapping)> &configure) {
+        StorageImageDescriptorMapping mapping;
+        configure(mapping);
+        addStorageImage(std::move(mapping));
         return *this;
     }
 

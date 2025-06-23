@@ -435,7 +435,7 @@ namespace test10 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mComputePipeline->getDescriptorSet(frameIndex, 0))
-                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                            .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .binding(2)
                                         .addBufferInfo(mLetterboxParamsUniformBuffers[frameIndex].getBuffer());
@@ -533,7 +533,7 @@ namespace test10 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mLinesPipeline->getDescriptorSet(frameIndex, 0))
-                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                            .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .addBufferInfo(mLinesUniformBuffers[frameIndex].getBuffer());
                             });
@@ -581,7 +581,7 @@ namespace test10 {
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mPointsPipeline->getDescriptorSet(frameIndex, 0))
-                            .addUniform([&](vklite::UniformDescriptorMapping &mapping) {
+                            .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .addBufferInfo(mPointsUniformBuffers[frameIndex].getBuffer());
                             });
