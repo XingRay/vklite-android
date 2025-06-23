@@ -51,7 +51,6 @@ namespace vklite {
         std::vector<Fence> mComputeFences;
         std::vector<Semaphore> mComputeFinishSemaphores;
 
-        std::unique_ptr<DescriptorPool> mComputeDescriptorPool;
         std::unique_ptr<CombinedPipeline> mComputePipeline;
 
         // config
@@ -102,8 +101,6 @@ namespace vklite {
                 std::vector<Fence> &&computeFences,
                 std::vector<Semaphore> &&computeFinishSemaphores,
 
-
-                std::unique_ptr<DescriptorPool> computeDescriptorPool,
                 std::unique_ptr<CombinedPipeline> computePipeline);
 
         ~ComputeGraphicEngine();
@@ -138,14 +135,14 @@ namespace vklite {
         const vk::DescriptorSet &getDescriptorSets(uint32_t frameIndex, uint32_t set) const;
 
         [[nodiscard]]
-        const std::vector<std::vector<vk::DescriptorSet>> &getComputeDescriptorSets() const ;
+        const std::vector<std::vector<vk::DescriptorSet>> &getComputeDescriptorSets() const;
 
         [[nodiscard]]
-        const vk::DescriptorSet &getComputeDescriptorSets(uint32_t frameIndex, uint32_t set) const ;
+        const vk::DescriptorSet &getComputeDescriptorSets(uint32_t frameIndex, uint32_t set) const;
 
         ComputeGraphicEngine &updateDescriptorSets(std::function<void(uint32_t frameIndex, DescriptorSetMappingConfigure &configure)> &&configure);
 
-        ComputeGraphicEngine &addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer>& buffers, std::vector<vk::DeviceSize>& offsets)>& configure);
+        ComputeGraphicEngine &addVertexBuffers(const std::function<void(uint32_t frameIndex, std::vector<vk::Buffer> &buffers, std::vector<vk::DeviceSize> &offsets)> &configure);
 
         ComputeGraphicEngine &indexBuffer(const vk::Buffer &buffer, uint32_t indexCount);
 

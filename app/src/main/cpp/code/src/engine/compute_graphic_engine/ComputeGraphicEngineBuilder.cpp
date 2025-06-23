@@ -256,8 +256,10 @@ namespace vklite {
         std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
-                .descriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(mComputeShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(mComputeShaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
         std::unique_ptr<CombinedPipeline> graphicPipeline = CombinedGraphicPipelineBuilder()
@@ -276,17 +278,10 @@ namespace vklite {
         std::unique_ptr<Queue> computeQueue = std::make_unique<Queue>(device->getQueue(computeAndGraphicQueueFamilyIndex));
         std::unique_ptr<CommandBuffers> computeCommandBuffers = commandPool->allocateUnique(mFrameCount);
 
-        std::unique_ptr<DescriptorPool> computeDescriptorPool = vklite::DescriptorPoolBuilder()
-                .device(device->getDevice())
-                .frameCount(mFrameCount)
-                .descriptorPoolSizes(mComputeShaderConfigure.calcDescriptorPoolSizes())
-                .descriptorSetCount(mComputeShaderConfigure.getDescriptorSetCount())
-                .buildUnique();
-
         std::unique_ptr<CombinedPipeline> computePipeline = vklite::CombinedComputePipelineBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
-                .descriptorPool(computeDescriptorPool->getDescriptorPool())
+                .descriptorPool(descriptorPool->getDescriptorPool())
                 .shaderConfigure(mComputeShaderConfigure)
                 .buildUnique();
 
@@ -332,7 +327,6 @@ namespace vklite {
                                     std::move(computeFences),
                                     std::move(computeFinishSemaphores),
 
-                                    std::move(computeDescriptorPool),
                                     std::move(computePipeline)
         };
     }

@@ -37,7 +37,6 @@ namespace vklite {
             std::vector<Fence> &&computeFences,
             std::vector<Semaphore> &&computeFinishSemaphores,
 
-            std::unique_ptr<DescriptorPool> computeDescriptorPool,
             std::unique_ptr<CombinedPipeline> computePipeline)
             : mFrameCount(frameCount),
               mSampleCount(sampleCount),
@@ -70,7 +69,6 @@ namespace vklite {
               mComputeFences(std::move(computeFences)),
               mComputeFinishSemaphores(std::move(computeFinishSemaphores)),
 
-              mComputeDescriptorPool(std::move(computeDescriptorPool)),
               mComputePipeline(std::move(computePipeline)) {}
 
     ComputeGraphicEngine::~ComputeGraphicEngine() = default;
@@ -107,7 +105,6 @@ namespace vklite {
               mComputeFences(std::move(other.mComputeFences)),
               mComputeFinishSemaphores(std::move(other.mComputeFinishSemaphores)),
 
-              mComputeDescriptorPool(std::move(other.mComputeDescriptorPool)),
               mComputePipeline(std::move(other.mComputePipeline)) {}
 
     ComputeGraphicEngine &ComputeGraphicEngine::operator=(ComputeGraphicEngine &&other) noexcept {
@@ -144,7 +141,6 @@ namespace vklite {
             mComputeFences = std::move(other.mComputeFences);
             mComputeFinishSemaphores = std::move(other.mComputeFinishSemaphores);
 
-            mComputeDescriptorPool = std::move(other.mComputeDescriptorPool);
             mComputePipeline = std::move(other.mComputePipeline);
         }
         return *this;
