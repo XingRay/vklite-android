@@ -48,9 +48,9 @@ namespace vklite {
 
     CombinedComputePipelineBuilder &CombinedComputePipelineBuilder::shaderConfigure(ShaderConfigure &shaderConfigure) {
         pushConstantRange(std::move(shaderConfigure.getPushConstantRanges()));
-        mDescriptorSetLayoutsBuilder.bindings(shaderConfigure.createDescriptorSetLayoutBindings());
+        bindings(shaderConfigure.createDescriptorSetLayoutBindings());
 
-        computeShaderCode(std::move(shaderConfigure.getVertexShaderCode()));
+        computeShaderCode(std::move(shaderConfigure.getComputeShaderCode()));
 
         return *this;
     }
@@ -70,6 +70,7 @@ namespace vklite {
         }
 
         DescriptorSetLayouts descriptorSetLayouts = mDescriptorSetLayoutsBuilder.build();
+
         std::vector<std::vector<vk::DescriptorSet>> descriptorSets;
         if (!descriptorSetLayouts.getDescriptorSetLayouts().empty()) {
             if (mDescriptorPool == nullptr) {
