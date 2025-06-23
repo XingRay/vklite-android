@@ -259,7 +259,7 @@ namespace vklite {
                 .descriptorPoolSizes(mGraphicShaderConfigure.calcDescriptorPoolSizes())
                 .descriptorSetCount(mGraphicShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
-        
+
         std::unique_ptr<CombinedPipeline> graphicPipeline = CombinedGraphicPipelineBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
@@ -276,13 +276,6 @@ namespace vklite {
         std::unique_ptr<Queue> computeQueue = std::make_unique<Queue>(device->getQueue(computeAndGraphicQueueFamilyIndex));
         std::unique_ptr<CommandBuffers> computeCommandBuffers = commandPool->allocateUnique(mFrameCount);
 
-        std::vector<vk::PushConstantRange> computePushConstantRanges = mComputeShaderConfigure.getPushConstantRanges();
-        std::vector<PushConstant> computePushConstants;
-        computePushConstants.reserve(computePushConstantRanges.size());
-        for (const vk::PushConstantRange &pushConstantRange: computePushConstantRanges) {
-            computePushConstants.emplace_back(pushConstantRange.size, pushConstantRange.offset, pushConstantRange.stageFlags);
-        }
-
         std::unique_ptr<DescriptorPool> computeDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(device->getDevice())
                 .frameCount(mFrameCount)
@@ -290,37 +283,11 @@ namespace vklite {
                 .descriptorSetCount(mComputeShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
-        DescriptorSetLayouts computeDescriptorSetLayouts = DescriptorSetLayoutsBuilder()
+        std::unique_ptr<CombinedPipeline> computePipeline = vklite::CombinedComputePipelineBuilder()
                 .device(device->getDevice())
-                .bindings(mComputeShaderConfigure.createDescriptorSetLayoutBindings())
-                .build();
-
-        std::vector<std::vector<vk::DescriptorSet>> computeDescriptorSets;
-        computeDescriptorSets.reserve(mFrameCount);
-        for (uint32_t i = 0; i < mFrameCount; i++) {
-            std::vector<vk::DescriptorSet> sets = computeDescriptorPool->allocateDescriptorSets(computeDescriptorSetLayouts.getDescriptorSetLayouts());
-            LOG_D("descriptorPool->allocateDescriptorSets:");
-            for (const vk::DescriptorSet &set: sets) {
-                LOG_D("\tset:%p", (void *) set);
-            }
-            computeDescriptorSets.push_back(std::move(sets));
-        }
-
-        std::unique_ptr<PipelineLayout> computePipelineLayout = vklite::PipelineLayoutBuilder()
-                .device(device->getDevice())
-                .descriptorSetLayouts(computeDescriptorSetLayouts.getDescriptorSetLayouts())
-                .pushConstantRanges(std::move(computePushConstantRanges))
-                .buildUnique();
-
-        std::unique_ptr<ShaderModule> computeShader = ShaderModuleBuilder()
-                .device(device->getDevice())
-                .code(std::move(mComputeShaderConfigure.getComputeShaderCode()))
-                .buildUnique();
-
-        std::unique_ptr<Pipeline> computePipeline = vklite::ComputePipelineBuilder()
-                .device(device->getDevice())
-                .computeShader(std::move(computeShader))
-                .pipelineLayout(computePipelineLayout->getPipelineLayout())
+                .frameCount(mFrameCount)
+                .descriptorPool(computeDescriptorPool->getDescriptorPool())
+                .shaderConfigure(mComputeShaderConfigure)
                 .buildUnique();
 
         std::vector<Fence> computeFences = vklite::FenceBuilder()
@@ -365,11 +332,7 @@ namespace vklite {
                                     std::move(computeFences),
                                     std::move(computeFinishSemaphores),
 
-                                    std::move(computePipelineLayout),
                                     std::move(computeDescriptorPool),
-                                    std::move(computeDescriptorSetLayouts),
-                                    std::move(computeDescriptorSets),
-                                    std::move(computePushConstants),
                                     std::move(computePipeline)
         };
     }

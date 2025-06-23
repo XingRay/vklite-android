@@ -37,12 +37,8 @@ namespace vklite {
             std::vector<Fence> &&computeFences,
             std::vector<Semaphore> &&computeFinishSemaphores,
 
-            std::unique_ptr<PipelineLayout> computePipelineLayout,
             std::unique_ptr<DescriptorPool> computeDescriptorPool,
-            DescriptorSetLayouts &&computeDescriptorSetLayouts,
-            std::vector<std::vector<vk::DescriptorSet>> &&computeDescriptorSets,
-            std::vector<PushConstant> &&computePushConstants,
-            std::unique_ptr<Pipeline> computePipeline)
+            std::unique_ptr<CombinedPipeline> computePipeline)
             : mFrameCount(frameCount),
               mSampleCount(sampleCount),
               mIndexCount(0),
@@ -74,11 +70,7 @@ namespace vklite {
               mComputeFences(std::move(computeFences)),
               mComputeFinishSemaphores(std::move(computeFinishSemaphores)),
 
-              mComputePipelineLayout(std::move(computePipelineLayout)),
               mComputeDescriptorPool(std::move(computeDescriptorPool)),
-              mComputeDescriptorSetLayouts(std::move(computeDescriptorSetLayouts)),
-              mComputeDescriptorSets(std::move(computeDescriptorSets)),
-              mComputePushConstants(std::move(computePushConstants)),
               mComputePipeline(std::move(computePipeline)) {}
 
     ComputeGraphicEngine::~ComputeGraphicEngine() = default;
@@ -115,11 +107,7 @@ namespace vklite {
               mComputeFences(std::move(other.mComputeFences)),
               mComputeFinishSemaphores(std::move(other.mComputeFinishSemaphores)),
 
-              mComputePipelineLayout(std::move(other.mComputePipelineLayout)),
               mComputeDescriptorPool(std::move(other.mComputeDescriptorPool)),
-              mComputeDescriptorSetLayouts(std::move(other.mComputeDescriptorSetLayouts)),
-              mComputeDescriptorSets(std::move(other.mComputeDescriptorSets)),
-              mComputePushConstants(std::move(other.mComputePushConstants)),
               mComputePipeline(std::move(other.mComputePipeline)) {}
 
     ComputeGraphicEngine &ComputeGraphicEngine::operator=(ComputeGraphicEngine &&other) noexcept {
@@ -156,11 +144,7 @@ namespace vklite {
             mComputeFences = std::move(other.mComputeFences);
             mComputeFinishSemaphores = std::move(other.mComputeFinishSemaphores);
 
-            mComputePipelineLayout = std::move(other.mComputePipelineLayout);
             mComputeDescriptorPool = std::move(other.mComputeDescriptorPool);
-            mComputeDescriptorSetLayouts = std::move(other.mComputeDescriptorSetLayouts);
-            mComputeDescriptorSets = std::move(other.mComputeDescriptorSets);
-            mComputePushConstants = std::move(other.mComputePushConstants);
             mComputePipeline = std::move(other.mComputePipeline);
         }
         return *this;
@@ -187,11 +171,11 @@ namespace vklite {
     }
 
     const std::vector<std::vector<vk::DescriptorSet>> &ComputeGraphicEngine::getComputeDescriptorSets() const {
-        return mComputeDescriptorSets;
+        return mComputePipeline->getDescriptorSets();
     }
 
     const vk::DescriptorSet &ComputeGraphicEngine::getComputeDescriptorSets(uint32_t frameIndex, uint32_t set) const {
-        return mComputeDescriptorSets[frameIndex][set];
+        return mComputePipeline->getDescriptorSet(frameIndex, set);
     }
 
     uint32_t ComputeGraphicEngine::getFrameIndex() const {
@@ -304,8 +288,8 @@ namespace vklite {
 
         const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
-            commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getPipeline());
-            commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipelineLayout->getPipelineLayout(), 0, mComputeDescriptorSets[mCurrentFrameIndex], nullptr);
+            commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipeline());
+            commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipelineLayout(), 0, mComputePipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
 
             commandBuffer.dispatch(particleCount / 256, 1, 1);
         });

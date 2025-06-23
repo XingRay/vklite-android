@@ -51,12 +51,8 @@ namespace vklite {
         std::vector<Fence> mComputeFences;
         std::vector<Semaphore> mComputeFinishSemaphores;
 
-        std::unique_ptr<PipelineLayout> mComputePipelineLayout;
         std::unique_ptr<DescriptorPool> mComputeDescriptorPool;
-        DescriptorSetLayouts mComputeDescriptorSetLayouts;
-        std::vector<std::vector<vk::DescriptorSet>> mComputeDescriptorSets;
-        std::vector<PushConstant> mComputePushConstants;
-        std::unique_ptr<Pipeline> mComputePipeline;
+        std::unique_ptr<CombinedPipeline> mComputePipeline;
 
         // config
         uint32_t mFrameCount;
@@ -106,12 +102,9 @@ namespace vklite {
                 std::vector<Fence> &&computeFences,
                 std::vector<Semaphore> &&computeFinishSemaphores,
 
-                std::unique_ptr<PipelineLayout> computePipelineLayout,
+
                 std::unique_ptr<DescriptorPool> computeDescriptorPool,
-                DescriptorSetLayouts &&computeDescriptorSetLayouts,
-                std::vector<std::vector<vk::DescriptorSet>> &&computeDescriptorSets,
-                std::vector<PushConstant> &&computePushConstants,
-                std::unique_ptr<Pipeline> computePipeline);
+                std::unique_ptr<CombinedPipeline> computePipeline);
 
         ~ComputeGraphicEngine();
 
