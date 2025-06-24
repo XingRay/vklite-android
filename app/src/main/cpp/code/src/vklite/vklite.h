@@ -149,7 +149,7 @@
 #include "vklite/image/ImageBuilder.h"
 #include "vklite/image/combined_memory_image/CombinedMemoryImage.h"
 #include "vklite/image/combined_memory_image/CombinedMemoryImageBuilder.h"
-#include "vklite/image/ImageTransition.h"
+
 
 // image view
 #include "vklite/image_view/ImageView.h"

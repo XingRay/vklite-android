@@ -144,6 +144,17 @@ namespace vklite {
         return Sampler{mDevice, sampler};
     }
 
+    std::vector<Sampler> SamplerBuilder::build(uint32_t count) {
+        std::vector<Sampler> samplers;
+        samplers.reserve(count);
+
+        for (uint32_t i = 0; i < count; i++) {
+            samplers.push_back(build());
+        }
+
+        return samplers;
+    }
+
     std::unique_ptr<Sampler> SamplerBuilder::buildUnique() {
         return std::make_unique<Sampler>(build());
     }

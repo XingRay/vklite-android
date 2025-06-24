@@ -79,8 +79,6 @@ namespace vklite {
 
     PipelineBarrierBuilder &PipelineBarrierBuilder::asDefault() {
         (*this)
-                .srcStage(vk::PipelineStageFlagBits::eTopOfPipe)
-                .dstStage(vk::PipelineStageFlagBits::eEarlyFragmentTests)
                 .dependency(vk::DependencyFlags{});
 
         return *this;

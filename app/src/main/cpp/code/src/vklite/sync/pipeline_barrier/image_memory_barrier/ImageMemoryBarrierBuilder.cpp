@@ -64,12 +64,12 @@ namespace vklite {
         return *this;
     }
 
-    ImageMemoryBarrierBuilder &ImageMemoryBarrierBuilder::srcAccessMask(vk::AccessFlagBits srcAccessMask) {
+    ImageMemoryBarrierBuilder &ImageMemoryBarrierBuilder::srcAccessMask(vk::AccessFlags srcAccessMask) {
         mImageMemoryBarrier.setSrcAccessMask(srcAccessMask);
         return *this;
     }
 
-    ImageMemoryBarrierBuilder &ImageMemoryBarrierBuilder::dstAccessMask(vk::AccessFlagBits dstAccessMask) {
+    ImageMemoryBarrierBuilder &ImageMemoryBarrierBuilder::dstAccessMask(vk::AccessFlags dstAccessMask) {
         mImageMemoryBarrier.setDstAccessMask(dstAccessMask);
         return *this;
     }

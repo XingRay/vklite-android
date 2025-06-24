@@ -51,11 +51,11 @@ namespace vklite {
         [[nodiscard]]
         std::unique_ptr<CommandBuffer> allocateOneUnique(vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) const;
 
-        void submitOneTimeCommand(const vk::Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const;
+        void submit(const vk::Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const;
 
-        void submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const;
+        void submit(const std::function<void(const vk::CommandBuffer &)> &command) const;
 
-        void submitOneTimeCommand(const Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const;
+        void submit(const Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const;
     };
 
 } // vklite

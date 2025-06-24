@@ -17,6 +17,13 @@ layout (binding = 2) uniform LetterboxParam {
 
 void main() {
     ivec2 outputCoord = ivec2(gl_GlobalInvocationID.xy);
+
+    if (1 == 1) {
+        vec2 uv = vec2(outputCoord) / vec2(128, 128);
+        imageStore(outputImage, outputCoord, vec4(uv.x, uv.y, 0.5, 1.0));
+        return;
+    }
+
     // todo: 使用 pushConstants
     ivec2 outputSize = imageSize(outputImage);
 

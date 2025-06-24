@@ -89,7 +89,7 @@ namespace vklite {
 
 
     DeviceLocalBuffer &DeviceLocalBuffer::update(const CommandPool &commandPool, vk::Buffer srcBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, srcBuffer, srcOffset, dstOffset, copyDataSize);
         });
         return *this;

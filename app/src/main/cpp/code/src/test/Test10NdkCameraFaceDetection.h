@@ -111,19 +111,19 @@ namespace test10 {
 
 
         // image preprocess compute pipeline
-        std::unique_ptr<vklite::CombinedPipeline> mComputePipeline;
+        std::unique_ptr<vklite::CombinedPipeline> mPreprocessPipeline;
         std::vector<vklite::Fence> mComputeFences;
         std::vector<vklite::Semaphore> mComputeFinishSemaphores;
 
         std::unique_ptr<vklite::CombinedHardwareBufferSampler> mCameraInputSampler;
         std::unique_ptr<vklite::CombinedHardwareBufferImageView> mCameraInputImageView;
 
-        std::vector<vklite::CombinedImageView> mStorageImageViews;
+        std::vector<vklite::CombinedImageView> mPreprocessOutputImageViews;
         std::vector<vklite::UniformBuffer> mLetterboxParamsUniformBuffers;
 
 
         //image pipeline
-        std::unique_ptr<vklite::CombinedPipeline> mPipeline;
+        std::unique_ptr<vklite::CombinedPipeline> mPreviewPipeline;
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
         std::vector<vk::Buffer> mVertexBuffers;
@@ -133,6 +133,8 @@ namespace test10 {
         std::unique_ptr<vklite::IndexBuffer> mIndexBuffer;
         vk::Buffer mIndexVkBuffer;
         uint32_t mIndexCount;
+
+        std::vector<vklite::Sampler> mPreviewSamplers;
 
 
         // lines pipeline resources

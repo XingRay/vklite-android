@@ -87,7 +87,7 @@ namespace vklite {
 
 
     CombinedImageSampler &CombinedImageSampler::update(const CommandPool &commandPool, const vk::Buffer &stagingBuffer) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             recordUpdate(commandBuffer, stagingBuffer);
         });
         return *this;

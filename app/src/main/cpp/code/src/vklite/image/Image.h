@@ -6,7 +6,6 @@
 
 #include <vulkan/vulkan.hpp>
 #include "vklite/command_pool/CommandPool.h"
-#include "vklite/image/ImageTransition.h"
 #include "vklite/image/ImageMeta.h"
 #include "vklite/sync/pipeline_barrier/PipelineBarrier.h"
 
@@ -54,30 +53,28 @@ namespace vklite {
         Image &recordCopyDataFromBuffer(const vk::CommandBuffer &commandBuffer, const vk::Buffer &buffer);
 
 
-        // transition image layout
-        Image &transitionImageLayout(const CommandPool &commandPool,
-                                     vk::ImageLayout oldImageLayout,
-                                     vk::ImageLayout newImageLayout,
-                                     uint32_t levelCount,
-                                     uint32_t srcQueueFamilyIndex,
-                                     uint32_t dstQueueFamilyIndex,
-                                     vk::ImageAspectFlags aspectMask);
+        // changeImageLayout
+        Image &changeImageLayout(const vk::CommandBuffer &commandBuffer,
+                                 vk::ImageLayout oldImageLayout,
+                                 vk::ImageLayout newImageLayout,
+                                 vk::PipelineStageFlags srcStage,
+                                 vk::PipelineStageFlags dstStage,
+                                 vk::AccessFlags srcAccessMask,
+                                 vk::AccessFlags dstAccessMask,
+                                 vk::ImageAspectFlags imageAspect);
 
-        Image &transitionImageLayout(const CommandPool &commandPool);
+        Image &changeImageLayout(const vk::CommandBuffer &commandBuffer);
 
-        Image &transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition);
+        Image &changeImageLayout(const CommandPool &commandPool,
+                                 vk::ImageLayout oldImageLayout,
+                                 vk::ImageLayout newImageLayout,
+                                 vk::PipelineStageFlags srcStage,
+                                 vk::PipelineStageFlags dstStage,
+                                 vk::AccessFlags srcAccessMask,
+                                 vk::AccessFlags dstAccessMask,
+                                 vk::ImageAspectFlags imageAspect);
 
-        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                           vk::ImageLayout oldImageLayout,
-                                           vk::ImageLayout newImageLayout,
-                                           uint32_t levelCount,
-                                           uint32_t srcQueueFamilyIndex,
-                                           uint32_t dstQueueFamilyIndex,
-                                           vk::ImageAspectFlags aspectMask);
-
-        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition);
-
-        Image &recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const PipelineBarrier &imageTransition);
+        Image &changeImageLayout(const CommandPool &commandPool);
 
 
         // generate mipmaps

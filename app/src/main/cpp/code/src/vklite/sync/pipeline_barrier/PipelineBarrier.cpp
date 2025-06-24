@@ -67,7 +67,7 @@ namespace vklite {
     }
 
     void PipelineBarrier::exec(const CommandPool &commandPool) const {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             record(commandBuffer);
         });
     }

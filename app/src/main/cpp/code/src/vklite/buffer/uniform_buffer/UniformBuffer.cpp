@@ -74,7 +74,7 @@ namespace vklite {
 
 
     UniformBuffer &UniformBuffer::update(const CommandPool &commandPool, vk::Buffer stagingBuffer, vk::DeviceSize srcOffset, vk::DeviceSize dstOffset, vk::DeviceSize copyDataSize) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             mCombinedMemoryBuffer.getBuffer().recordCommandCopyFrom(commandBuffer, stagingBuffer, srcOffset, dstOffset, copyDataSize);
         });
         return *this;

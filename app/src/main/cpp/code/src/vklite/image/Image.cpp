@@ -8,6 +8,7 @@
 
 #include "vklite/buffer/staging_buffer/StagingBuffer.h"
 #include "vklite/util/VulkanUtil.h"
+#include "vklite/sync/pipeline_barrier/PipelineBarrierBuilder.h"
 
 namespace vklite {
 
@@ -63,7 +64,7 @@ namespace vklite {
     }
 
     Image &Image::copyDataFromBuffer(const CommandPool &commandPool, const vk::Buffer &buffer) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             recordCopyDataFromBuffer(commandBuffer, buffer);
         });
         return *this;
@@ -96,110 +97,70 @@ namespace vklite {
         return *this;
     }
 
-    Image &Image::transitionImageLayout(const CommandPool &commandPool,
-                                        vk::ImageLayout oldImageLayout,
-                                        vk::ImageLayout newImageLayout,
-                                        uint32_t levelCount,
-                                        uint32_t srcQueueFamilyIndex,
-                                        uint32_t dstQueueFamilyIndex,
-                                        vk::ImageAspectFlags aspectMask) {
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
-            recordTransitionImageLayout(commandBuffer, oldImageLayout, newImageLayout, levelCount, srcQueueFamilyIndex, dstQueueFamilyIndex, aspectMask);
+    Image &Image::changeImageLayout(const vk::CommandBuffer &commandBuffer,
+                                    vk::ImageLayout oldImageLayout,
+                                    vk::ImageLayout newImageLayout,
+                                    vk::PipelineStageFlags srcStage,
+                                    vk::PipelineStageFlags dstStage,
+                                    vk::AccessFlags srcAccessMask,
+                                    vk::AccessFlags dstAccessMask,
+                                    vk::ImageAspectFlags imageAspect) {
+        PipelineBarrier pipelineBarrier = PipelineBarrierBuilder()
+                .asDefault()
+                .srcStage(srcStage)
+                .dstStage(dstStage)
+                .addImageMemoryBarrier([&](ImageMemoryBarrierBuilder &builder) {
+                    builder
+                            .asDefault()
+                            .image(this->mImage)
+                            .oldLayout(oldImageLayout)
+                            .newLayout(newImageLayout)
+                            .srcAccessMask(srcAccessMask)
+                            .dstAccessMask(dstAccessMask)
+                            .aspectMask(imageAspect);
+                })
+                .build();
+        pipelineBarrier.record(commandBuffer);
+        return *this;
+    }
+
+    Image &Image::changeImageLayout(const vk::CommandBuffer &commandBuffer) {
+        changeImageLayout(commandBuffer,
+                          vk::ImageLayout::eUndefined, vk::ImageLayout::eShaderReadOnlyOptimal,
+                          vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eFragmentShader,
+                          vk::AccessFlagBits::eNone, vk::AccessFlagBits::eShaderRead,
+                          vk::ImageAspectFlagBits::eColor);
+        return *this;
+    }
+
+    Image &Image::changeImageLayout(const CommandPool &commandPool,
+                                    vk::ImageLayout oldImageLayout,
+                                    vk::ImageLayout newImageLayout,
+                                    vk::PipelineStageFlags srcStage,
+                                    vk::PipelineStageFlags dstStage,
+                                    vk::AccessFlags srcAccessMask,
+                                    vk::AccessFlags dstAccessMask,
+                                    vk::ImageAspectFlags imageAspect) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
+            changeImageLayout(commandBuffer, oldImageLayout, newImageLayout, srcStage, dstStage, srcAccessMask, dstAccessMask, imageAspect);
         });
         return *this;
     }
 
-    Image &Image::transitionImageLayout(const CommandPool &commandPool) {
-        transitionImageLayout(commandPool, vk::ImageLayout::eUndefined, vk::ImageLayout::eUndefined, 1,
-                              vk::QueueFamilyIgnored, vk::QueueFamilyIgnored, vk::ImageAspectFlagBits::eColor);
+    Image &Image::changeImageLayout(const CommandPool &commandPool) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
+            changeImageLayout(commandBuffer);
+        });
         return *this;
     }
 
-    Image &Image::transitionImageLayout(const CommandPool &commandPool, const ImageTransition &imageTransition) {
-        transitionImageLayout(commandPool,
-                              imageTransition.getOldImageLayout(),
-                              imageTransition.getNewImageLayout(),
-                              imageTransition.getLevelCount(),
-                              imageTransition.getSrcQueueFamilyIndex(),
-                              imageTransition.getDstQueueFamilyIndex(),
-                              imageTransition.getAspectMask());
-        return *this;
-    }
-
-    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer,
-                                              vk::ImageLayout oldImageLayout,
-                                              vk::ImageLayout newImageLayout,
-                                              uint32_t levelCount,
-                                              uint32_t srcQueueFamilyIndex,
-                                              uint32_t dstQueueFamilyIndex,
-                                              vk::ImageAspectFlags aspectMask) {
-
-        vk::ImageSubresourceRange imageSubresourceRange;
-        imageSubresourceRange
-                .setBaseMipLevel(0)
-                .setLevelCount(levelCount)
-                .setBaseArrayLayer(0)
-                .setLayerCount(1)
-                .setAspectMask(aspectMask);
-
-        vk::ImageMemoryBarrier imageMemoryBarrier;
-        imageMemoryBarrier
-//                .setOldLayout(vk::ImageLayout::eUndefined)
-//                .setNewLayout(vk::ImageLayout::eTransferDstOptimal)
-                .setOldLayout(oldImageLayout)
-                .setNewLayout(newImageLayout)
-//                .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setSrcQueueFamilyIndex(srcQueueFamilyIndex)
-//                .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
-                .setDstQueueFamilyIndex(dstQueueFamilyIndex)
-                .setImage(mImage)
-                .setSubresourceRange(imageSubresourceRange)
-                .setSrcAccessMask(vk::AccessFlagBits::eNone)
-                .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-
-        // 内存屏障
-        std::vector<vk::MemoryBarrier> memoryBarriers = {};
-
-        // 缓冲区内存屏障
-        std::vector<vk::BufferMemoryBarrier> bufferMemoryBarriers = {};
-
-        // 图像内存屏障
-        std::array<vk::ImageMemoryBarrier, 1> imageMemoryBarriers = {imageMemoryBarrier};
-
-        commandBuffer.pipelineBarrier(
-                vk::PipelineStageFlagBits::eTopOfPipe,
-                vk::PipelineStageFlagBits::eEarlyFragmentTests,
-                vk::DependencyFlags{},
-                memoryBarriers,
-                bufferMemoryBarriers,
-                imageMemoryBarriers
-        );
-
-        return *this;
-    }
-
-    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const ImageTransition &imageTransition) {
-        recordTransitionImageLayout(commandBuffer,
-                                    imageTransition.getOldImageLayout(),
-                                    imageTransition.getNewImageLayout(),
-                                    imageTransition.getLevelCount(),
-                                    imageTransition.getSrcQueueFamilyIndex(),
-                                    imageTransition.getDstQueueFamilyIndex(),
-                                    imageTransition.getAspectMask());
-        return *this;
-    }
-
-    Image &Image::recordTransitionImageLayout(const vk::CommandBuffer &commandBuffer, const PipelineBarrier &pipelineBarrier) {
-        pipelineBarrier.record(commandBuffer);
-        return *this;
-    }
 
     Image &Image::generateMipmaps(const CommandPool &commandPool) {
 //        if (!mDevice.getPhysicalDevice().isSupportFormatFeature(mFormat, vk::FormatFeatureFlagBits::eSampledImageFilterLinear)) {
 //            throw std::runtime_error("texture image format does not support linear tiling!");
 //        }
 
-        commandPool.submitOneTimeCommand([&](const vk::CommandBuffer &commandBuffer) {
+        commandPool.submit([&](const vk::CommandBuffer &commandBuffer) {
             recordGenerateMipmaps(commandBuffer);
         });
 

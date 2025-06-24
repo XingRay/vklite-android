@@ -67,6 +67,9 @@ namespace vklite {
         Sampler build();
 
         [[nodiscard]]
+        std::vector<Sampler> build(uint32_t count);
+
+        [[nodiscard]]
         std::unique_ptr<Sampler> buildUnique();
 
     };

@@ -69,7 +69,7 @@ namespace vklite {
         return std::make_unique<CommandBuffer>(allocateOne(level));
     }
 
-    void CommandPool::submitOneTimeCommand(const vk::Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const {
+    void CommandPool::submit(const vk::Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const {
 
         CommandBuffer commandBuffer = allocateOne();
         commandBuffer.recordOneTimeSubmit(command);
@@ -83,12 +83,12 @@ namespace vklite {
         queue.waitIdle();
     }
 
-    void CommandPool::submitOneTimeCommand(const std::function<void(const vk::CommandBuffer &)> &command) const {
+    void CommandPool::submit(const std::function<void(const vk::CommandBuffer &)> &command) const {
         vk::Queue queue = mDevice.getQueue(mMeta.queueFamilyIndex, 0);
-        submitOneTimeCommand(queue, command);
+        submit(queue, command);
     }
 
-    void CommandPool::submitOneTimeCommand(const Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const {
+    void CommandPool::submit(const Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const {
 
         CommandBuffer commandBuffer = allocateOne();
         commandBuffer.recordOneTimeSubmit(command);

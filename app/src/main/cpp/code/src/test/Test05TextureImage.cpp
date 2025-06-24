@@ -87,7 +87,7 @@ namespace test05 {
                                            20.0f);
         mTimer.start();
 
-        std::unique_ptr<image::ImageInterface> textureImage = image::StbImage::loadImage("/storage/emulated/0/01.png");
+        std::unique_ptr<image::ImageInterface> textureImage = image::StbImage::loadImage("/storage/emulated/0/01.jpg", STBI_rgb);
 
         mSamplers = mEngine->samplerBuilder()
                 .width(textureImage->getWidth())
@@ -96,7 +96,7 @@ namespace test05 {
                 .build(mEngine->getFrameCount());
 
         for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-            mSamplers[i].getImage().transitionImageLayout(mEngine->getCommandPool());
+            mSamplers[i].getImage().changeImageLayout(mEngine->getCommandPool());
             mSamplers[i].update(mEngine->getCommandPool(), textureImage->getPixels(), textureImage->getPixelBytes());
         }
 

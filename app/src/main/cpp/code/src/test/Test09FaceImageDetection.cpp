@@ -399,7 +399,7 @@ namespace test09 {
                 .build(mFrameCount);
 
         for (uint32_t i = 0; i < mFrameCount; i++) {
-            mSamplers[i].getImage().transitionImageLayout(*mCommandPool);
+//            mSamplers[i].getImage().transitionImageLayout(*mCommandPool);
             mSamplers[i].update(*mCommandPool, mImageMat.data, mImageMat.total() * mImageMat.elemSize());
         }
 

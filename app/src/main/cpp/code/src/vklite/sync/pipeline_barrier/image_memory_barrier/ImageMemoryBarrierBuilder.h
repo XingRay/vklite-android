@@ -42,9 +42,9 @@ namespace vklite {
 
         ImageMemoryBarrierBuilder &dstQueueFamilyIndex(uint32_t dstQueueFamilyIndex);
 
-        ImageMemoryBarrierBuilder &srcAccessMask(vk::AccessFlagBits srcAccessMask);
+        ImageMemoryBarrierBuilder &srcAccessMask(vk::AccessFlags srcAccessMask);
 
-        ImageMemoryBarrierBuilder &dstAccessMask(vk::AccessFlagBits dstAccessMask);
+        ImageMemoryBarrierBuilder &dstAccessMask(vk::AccessFlags dstAccessMask);
 
         ImageMemoryBarrierBuilder &image(vk::Image image);
 

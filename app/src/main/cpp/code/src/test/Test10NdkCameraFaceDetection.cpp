@@ -208,9 +208,9 @@ namespace test10 {
                 .buildUnique();
 
 
-        std::vector<uint32_t> computeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_letter_box.comp.spv");
-        vklite::ShaderConfigure computeShaderConfigure = vklite::ShaderConfigure()
-                .computeShaderCode(std::move(computeShaderCode))
+        std::vector<uint32_t> preprocessComputeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_00_preprocess.comp.spv");
+        vklite::ShaderConfigure preprocessComputeShaderConfigure = vklite::ShaderConfigure()
+                .computeShaderCode(std::move(preprocessComputeShaderCode))
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
@@ -220,10 +220,10 @@ namespace test10 {
                 });
 
 
-        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.vert.spv");
-        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection.frag.spv");
+        std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_01_preview.vert.spv");
+        std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_01_preview.frag.spv");
 
-        vklite::ShaderConfigure shaderConfigure = vklite::ShaderConfigure()
+        vklite::ShaderConfigure previewShaderConfigure = vklite::ShaderConfigure()
                 .vertexShaderCode(std::move(vertexShaderCode))
                 .fragmentShaderCode(std::move(fragmentShaderCode))
                 .addVertexBinding([&](vklite::VertexBindingConfigure &vertexBindingConfigure) {
@@ -279,21 +279,21 @@ namespace test10 {
         mDescriptorPool = vklite::DescriptorPoolBuilder()
                 .device(mDevice->getDevice())
                 .frameCount(mFrameCount)
-                .addDescriptorPoolSizes(computeShaderConfigure.calcDescriptorPoolSizes())
-                .addDescriptorSetCount(computeShaderConfigure.getDescriptorSetCount())
-                .addDescriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
-                .addDescriptorSetCount(shaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(preprocessComputeShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(preprocessComputeShaderConfigure.getDescriptorSetCount())
+                .addDescriptorPoolSizes(previewShaderConfigure.calcDescriptorPoolSizes())
+                .addDescriptorSetCount(previewShaderConfigure.getDescriptorSetCount())
                 .addDescriptorPoolSizes(linesShaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(linesShaderConfigure.getDescriptorSetCount())
                 .addDescriptorPoolSizes(pointsShaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(pointsShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
-        mComputePipeline = vklite::CombinedComputePipelineBuilder()
+        mPreprocessPipeline = vklite::CombinedComputePipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
                 .frameCount(mFrameCount)
-                .shaderConfigure(computeShaderConfigure)
+                .shaderConfigure(preprocessComputeShaderConfigure)
                 .buildUnique();
 
         mComputeFences = vklite::FenceBuilder()
@@ -306,11 +306,11 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .build(mFrameCount);
 
-        mPipeline = vklite::CombinedGraphicPipelineBuilder()
+        mPreviewPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
                 .frameCount(mFrameCount)
-                .shaderConfigure(shaderConfigure)
+                .shaderConfigure(previewShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
                 .renderPass(mRenderPass->getRenderPass(), 0)
@@ -397,7 +397,7 @@ namespace test10 {
 
 
         // image process compute pipeline
-        mStorageImageViews = vklite::CombinedImageViewBuilder()
+        mPreprocessOutputImageViews = vklite::CombinedImageViewBuilder()
                 .asStorage()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
@@ -405,16 +405,7 @@ namespace test10 {
                 .size(128, 128)
                 .build(mFrameCount);
 
-        for (int i = 0; i < mFrameCount; i++) {
-            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder().asDefault()
-                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
-                        builder.asDefault().image(mStorageImageViews[i].getVkImage());
-                    })
-                    .build();
-            pipelineBarrier.exec(*mCommandPool);
-        }
-
-        LetterboxParam letterboxParam;
+        LetterboxParam letterboxParam{};
         float scale = std::min(128.0f / 1080.0f, 128.0f / 1920.0f);
         letterboxParam.unpaddingSize = {1080 * scale, 1920 * scale};
         letterboxParam.padding = {(128 - letterboxParam.unpaddingSize.x) / 2, (128 - letterboxParam.unpaddingSize.y) / 2};
@@ -434,7 +425,12 @@ namespace test10 {
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
-                            .descriptorSet(mComputePipeline->getDescriptorSet(frameIndex, 0))
+                            .descriptorSet(mPreprocessPipeline->getDescriptorSet(frameIndex, 0))
+                            .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
+                                mapping
+                                        .binding(1)
+                                        .addImageInfo(mPreprocessOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
+                            })
                             .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
                                         .binding(2)
@@ -444,6 +440,7 @@ namespace test10 {
                 .build();
 
         mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
 
         // image pipeline
         std::vector<Vertex> vertices = {
@@ -478,6 +475,24 @@ namespace test10 {
         mVertexBuffers.push_back((*mVertexBuffer).getVkBuffer());
         mVertexBufferOffsets.push_back(0);
 
+        mPreviewSamplers = vklite::SamplerBuilder()
+                .device(mDevice->getDevice())
+                .build(mFrameCount);
+
+        vklite::DescriptorSetWriters previewDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mPreviewPipeline->getDescriptorSet(frameIndex, 0))
+                            .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
+                                descriptorMapping
+                                        .binding(0)
+                                        .addImageInfo(mPreviewSamplers[frameIndex], mPreprocessOutputImageViews[frameIndex].getImageView());
+                            });
+                })
+                .build();
+
+        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // lines pipeline resources
@@ -634,7 +649,7 @@ namespace test10 {
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
-                            .descriptorSet(mPipeline->getDescriptorSet(frameIndex, 0))
+                            .descriptorSet(mPreprocessPipeline->getDescriptorSet(frameIndex, 0))
                             .addMapping([&](vklite::DescriptorMapping &descriptorMapping) {
                                 descriptorMapping
                                         .binding(0)
@@ -660,8 +675,8 @@ namespace test10 {
 
         const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
-            commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipeline());
-            commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mComputePipeline->getVkPipelineLayout(), 0, mComputePipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
+            commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipeline());
+            commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipelineLayout(), 0, mPreprocessPipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
 
             // todo: local_size_x local_size_y local_size_z
             commandBuffer.dispatch(128 / 32, 128 / 16, 1);
@@ -803,16 +818,17 @@ namespace test10 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipeline());
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
 
-                if (!mPipeline->getDescriptorSets().empty()) {
-                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipelineLayout(), 0, mPipeline->getDescriptorSets()[mCurrentFrameIndex], nullptr);
+                if (!mPreviewPipeline->getDescriptorSets().empty()) {
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipelineLayout(), 0, mPreviewPipeline->getDescriptorSets()[mCurrentFrameIndex],
+                                                       nullptr);
                 }
 
-                for (const vklite::PushConstant &pushConstant: mPipeline->getPushConstants()) {
-                    vkCommandBuffer.pushConstants(mPipeline->getVkPipelineLayout(),
+                for (const vklite::PushConstant &pushConstant: mPreviewPipeline->getPushConstants()) {
+                    vkCommandBuffer.pushConstants(mPreviewPipeline->getVkPipelineLayout(),
                                                   pushConstant.getStageFlags(),
                                                   pushConstant.getOffset(),
                                                   pushConstant.getSize(),

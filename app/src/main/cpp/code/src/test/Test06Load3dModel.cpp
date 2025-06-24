@@ -40,6 +40,7 @@ namespace test06 {
         mEngine = vklite::AndroidGraphicPipelineEngineBuilder::asDefault(mApp.window)
                 .shaderConfigure(std::move(shaderConfigure))
                 .clearColor(0.2f, 0.4f, 0.8f)
+                .enableDepthTest()
                 .buildUnique();
 
         LOG_D("test created ");
@@ -87,7 +88,7 @@ namespace test06 {
                 .build(mEngine->getFrameCount());
 
         for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {
-            mSamplers[i].getImage().transitionImageLayout(mEngine->getCommandPool());
+            mSamplers[i].getImage().changeImageLayout(mEngine->getCommandPool());
             mSamplers[i].update(mEngine->getCommandPool(), textureImage->getPixels(), textureImage->getPixelBytes());
         }
 
