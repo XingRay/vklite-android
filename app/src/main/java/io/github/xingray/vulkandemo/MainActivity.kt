@@ -9,11 +9,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.activity.result.ActivityResultLauncher
@@ -21,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import com.google.androidgamesdk.GameActivity
-import java.io.File
 
 
 class MainActivity : GameActivity() {
@@ -62,10 +60,12 @@ class MainActivity : GameActivity() {
 
     override fun onCreateSurfaceView() {
         this.mSurfaceView = InputEnabledSurfaceView(this)
+        this.mSurfaceView.layoutParams = FrameLayout.LayoutParams(9 * 116, 16 * 116);
         val frameLayout = FrameLayout(this)
-        frameLayout.setPadding(20, 20, 20, 20)
+        frameLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        frameLayout.setPadding(20, 100, 20, 100)
         frameLayout.setBackgroundColor(Color.GRAY)
-        this.contentViewId = ViewCompat.generateViewId()
+        this.contentViewId = View.generateViewId()
         frameLayout.id = contentViewId
 
         // 添加 SurfaceView
@@ -88,7 +88,6 @@ class MainActivity : GameActivity() {
             changeTriangleColor(gameActivityNativeHandle, randomColor())
         }
 
-        frameLayout.setPadding(100, 200, 100, 200)
         this.setContentView(frameLayout)
         frameLayout.requestFocus()
         mSurfaceView.holder.addCallback(this)

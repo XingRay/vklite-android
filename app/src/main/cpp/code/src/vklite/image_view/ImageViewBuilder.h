@@ -65,7 +65,7 @@ namespace vklite {
 
         ImageViewBuilder &asTexture();
 
-        ImageViewBuilder &asStorage();
+        ImageViewBuilder &asStorageImage();
     };
 
 } // vklite

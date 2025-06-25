@@ -66,11 +66,11 @@ namespace vklite {
 
         CombinedImageViewBuilder &asDefault();
 
-        CombinedImageViewBuilder &asColor();
+        CombinedImageViewBuilder &asColorAttachment();
 
-        CombinedImageViewBuilder &asDepth();
+        CombinedImageViewBuilder &asDepthAttachment();
 
-        CombinedImageViewBuilder &asStorage();
+        CombinedImageViewBuilder &asStorageImage();
     };
 
 } // vklite

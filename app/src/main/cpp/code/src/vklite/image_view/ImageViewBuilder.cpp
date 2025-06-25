@@ -161,7 +161,7 @@ namespace vklite {
                 .aspectMask(vk::ImageAspectFlagBits::eColor);
     }
 
-    ImageViewBuilder &ImageViewBuilder::asStorage() {
+    ImageViewBuilder &ImageViewBuilder::asStorageImage() {
         return (*this)
                 .asDefault()
                 .aspectMask(vk::ImageAspectFlagBits::eColor);

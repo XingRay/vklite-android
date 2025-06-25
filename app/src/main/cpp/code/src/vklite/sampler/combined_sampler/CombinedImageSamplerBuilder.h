@@ -61,6 +61,8 @@ namespace vklite {
         std::vector<CombinedImageSampler> build(uint32_t count);
 
         CombinedImageSamplerBuilder &asDefault();
+
+        CombinedImageSamplerBuilder &asStorageImage();
     };
 
 } // vklite

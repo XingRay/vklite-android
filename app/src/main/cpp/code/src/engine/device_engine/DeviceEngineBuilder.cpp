@@ -155,7 +155,7 @@ namespace vklite {
 
         std::unique_ptr<CombinedImageView> colorImageView = nullptr;
         if (mMsaaEnable) {
-            colorImageView = CombinedImageViewBuilder().asColor()
+            colorImageView = CombinedImageViewBuilder().asColorAttachment()
                     .device(device->getDevice())
                     .format(swapchain->getDisplayFormat())
                     .size(swapchain->getDisplaySize())
@@ -166,7 +166,7 @@ namespace vklite {
 
         std::unique_ptr<CombinedImageView> depthImageView = nullptr;
         if (mDepthTestEnable) {
-            depthImageView = CombinedImageViewBuilder().asDepth()
+            depthImageView = CombinedImageViewBuilder().asDepthAttachment()
                     .device(device->getDevice())
                     .format(physicalDevice->findDepthFormat())
                     .size(swapchain->getDisplaySize())

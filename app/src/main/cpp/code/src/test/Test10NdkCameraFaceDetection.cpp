@@ -8,7 +8,12 @@
 #include "vklite/vklite_android.h"
 #include "image/image.h"
 
-
+/**
+ * todo:
+ * 1 先录制好所有命令, 在looper循环中执行即可
+ * 2 compute pipeline 与 graphic pipeline 通过信号同步, 而不是 device.waitIdle()
+ * 3 commandPool 提交一次性命令使用 semaphore 等待执行完成, 而不是等待 device.waitIdle()
+ */
 namespace test10 {
 
     Test10NdkCameraFaceDetection::Test10NdkCameraFaceDetection(const android_app &app, const std::string &name)
@@ -60,8 +65,8 @@ namespace test10 {
                 .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
                 .buildUnique();
 
-        mViewports = mSwapchain->fullScreenViewports();
-        mScissors = mSwapchain->fullScreenScissors();
+        mViewports = mSwapchain->centerSquareViewports();
+        mScissors = mSwapchain->centerSquareScissors();
 
         mCommandPool = vklite::CommandPoolBuilder()
                 .device(mDevice->getDevice())
@@ -75,7 +80,7 @@ namespace test10 {
 
         mColorImageView = nullptr;
         if (mMsaaEnable) {
-            mColorImageView = vklite::CombinedImageViewBuilder().asColor()
+            mColorImageView = vklite::CombinedImageViewBuilder().asColorAttachment()
                     .device(mDevice->getDevice())
                     .format(mSwapchain->getDisplayFormat())
                     .size(mSwapchain->getDisplaySize())
@@ -86,7 +91,7 @@ namespace test10 {
 
         mDepthImageView = nullptr;
         if (mDepthTestEnable) {
-            mDepthImageView = vklite::CombinedImageViewBuilder().asDepth()
+            mDepthImageView = vklite::CombinedImageViewBuilder().asDepthAttachment()
                     .device(mDevice->getDevice())
                     .format(mPhysicalDevice->findDepthFormat())
                     .size(mSwapchain->getDisplaySize())
@@ -214,8 +219,9 @@ namespace test10 {
                     descriptorSetConfigure
                             .set(0)
                             .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageImage(1, vk::ShaderStageFlagBits::eCompute)
-                            .addUniformBuffer(2, vk::ShaderStageFlagBits::eCompute);
+                            .addUniformBuffer(1, vk::ShaderStageFlagBits::eCompute)
+                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute)
+                            .addStorageImage(3, vk::ShaderStageFlagBits::eCompute);
                 });
 
 
@@ -404,30 +410,14 @@ namespace test10 {
         mAnchors = image_process::Anchor::generateAnchors();
         mLetterBox = image_process::LetterBox::calcLetterbox(1080, 1920, 128, 128);
 
+        // preprocess pipeline
 
-        // image process compute pipeline
-        mPreprocessOutputImageViews = vklite::CombinedImageViewBuilder()
-                .asStorage()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .format(vk::Format::eR8G8B8A8Unorm)
-                .size(128, 128)
-                .build(mFrameCount);
-
-        for (int i = 0; i < mFrameCount; i++) {
-            mPreprocessOutputImageViews[i].getImage().changeImageLayout(*mCommandPool,
-                                                                        vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral,
-                                                                        vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlagBits::eAllCommands,
-                                                                        vk::AccessFlagBits::eNone, vk::AccessFlagBits::eNone,
-                                                                        vk::ImageAspectFlagBits::eColor);
-        }
-
-
+        // letter box params
         LetterboxParam letterboxParam{};
-        float scale = std::min(128.0f / 1080.0f, 128.0f / 1920.0f);
-        letterboxParam.unpaddingSize = {1080 * scale, 1920 * scale};
-        letterboxParam.padding = {(128 - letterboxParam.unpaddingSize.x) / 2, (128 - letterboxParam.unpaddingSize.y) / 2};
-        letterboxParam.fillColor = {1.0f, 0.2f, 0.2, 1.0f};
+        float scale = mLetterBox.scale;
+        letterboxParam.unpaddingSize = {mLetterBox.paddedWidth, mLetterBox.paddedHeight};
+        letterboxParam.padding = {mLetterBox.paddingLeft, mLetterBox.paddingTop};
+        letterboxParam.fillColor = {0.2f, 0.2f, 0.2f, 1.0f};
 
         mLetterboxParamsUniformBuffers = vklite::UniformBufferBuilder()
                 .device(mDevice->getDevice())
@@ -439,6 +429,30 @@ namespace test10 {
             mLetterboxParamsUniformBuffers[i].update(*mCommandPool, &letterboxParam, sizeof(LetterboxParam));
         }
 
+        // letter box output image
+        mLetterBoxOutputImageViews = vklite::CombinedImageViewBuilder()
+                .asStorageImage()
+                .device(mDevice->getDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .format(vk::Format::eR8G8B8A8Unorm)
+                .size(128, 128)
+                .build(mFrameCount);
+
+        for (int i = 0; i < mFrameCount; i++) {
+            mLetterBoxOutputImageViews[i].getImage().changeImageLayout(*mCommandPool,
+                                                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral,
+                                                                       vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlagBits::eAllCommands,
+                                                                       vk::AccessFlagBits::eNone, vk::AccessFlagBits::eNone,
+                                                                       vk::ImageAspectFlagBits::eColor);
+        }
+
+        // rotation output image
+        mRotationOutputImageSamplers = vklite::CombinedImageSamplerBuilder().asStorageImage()
+                .device(mDevice->getDevice())
+                .build(mFrameCount);
+
+
+
         vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
@@ -447,7 +461,7 @@ namespace test10 {
                             .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
                                 mapping
                                         .binding(1)
-                                        .addImageInfo(mPreprocessOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
+                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
                             })
                             .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
@@ -460,16 +474,44 @@ namespace test10 {
         mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
-        // preview pipeline
+        // preview pipeline // with uv rotation
+//        std::vector<Vertex> vertices = {
+//                {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // ndc 左上角 => uv 右下角
+//                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // ndc 右上角 => uv 右上角
+//                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // ndc 左下角 => uv 左下角
+//                {{1.0f,  1.0f,  0.0f}, {0.0f, 0.0f}}, // ndc 右下角 => uv 左上角
+//        };
+
+        // preview pipeline // no rotation
         std::vector<Vertex> vertices = {
-                {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // 显示左上角  => uv右下角
-                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // 显示右上角 => uv右上角
-                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // 左下角 => uv左下角
-                {{1.0f,  1.0f,  0.0f}, {0.0f, 0.0f}}, // 右下角 => uv左上角
+                /*
+                 *   +  .
+                 *   .  .
+                 */
+                {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}}, // ndc 左上角 => uv左上角
+
+                /*
+                 *   .  +
+                 *   .  .
+                 */
+                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // ndc右上角 => uv右上角
+
+                /*
+                 *   .  .
+                 *   .  +
+                 */
+                {{1.0f,  1.0f,  0.0f}, {1.0f, 1.0f}}, // ndc右下角 => uv右下角
+
+                /*
+                 *   .  .
+                 *   +  .
+                 */
+                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // ndc左下角 => uv左下角
+
         };
 
         std::vector<uint32_t> indices = {
-                0, 2, 1, 1, 2, 3,
+                0, 2, 1, 0, 3, 2,
         };
 
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
@@ -505,7 +547,7 @@ namespace test10 {
                             .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
                                 descriptorMapping
                                         .binding(0)
-                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mPreprocessOutputImageViews[frameIndex].getImageView());
+                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mLetterBoxOutputImageViews[frameIndex].getImageView());
                             });
                 })
                 .build();
@@ -694,7 +736,7 @@ namespace test10 {
 
         const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
-            mPreprocessOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(commandBuffer);
+            mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(commandBuffer);
             commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipeline());
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipelineLayout(), 0, mPreprocessPipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
 
@@ -838,11 +880,11 @@ namespace test10 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                mPreprocessOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
-                                                                                             vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
-                                                                                             vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
-                                                                                             vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
-                                                                                             vk::ImageAspectFlagBits::eColor);
+                mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
+                                                                                            vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
+                                                                                            vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
+                                                                                            vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
+                                                                                            vk::ImageAspectFlagBits::eColor);
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);

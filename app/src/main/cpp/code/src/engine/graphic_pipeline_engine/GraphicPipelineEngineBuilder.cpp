@@ -144,8 +144,10 @@ namespace vklite {
                 .config(physicalDevice->getPhysicalDevice(), surface->getSurface())
                 .buildUnique();
 
-        std::vector<vk::Viewport> viewports = swapchain->fullScreenViewports();
-        std::vector<vk::Rect2D> scissors = swapchain->fullScreenScissors();
+//        std::vector<vk::Viewport> viewports = swapchain->fullScreenViewports();
+//        std::vector<vk::Rect2D> scissors = swapchain->fullScreenScissors();
+        std::vector<vk::Viewport> viewports = swapchain->centerSquareViewports();
+        std::vector<vk::Rect2D> scissors = swapchain->centerSquareScissors();
 
         std::unique_ptr<CommandPool> commandPool = CommandPoolBuilder()
                 .device(device->getDevice())
@@ -158,7 +160,7 @@ namespace vklite {
 
         std::unique_ptr<CombinedImageView> colorImageView = nullptr;
         if (mMsaaEnable) {
-            colorImageView = CombinedImageViewBuilder().asColor()
+            colorImageView = CombinedImageViewBuilder().asColorAttachment()
                     .device(device->getDevice())
                     .format(swapchain->getDisplayFormat())
                     .size(swapchain->getDisplaySize())
@@ -169,7 +171,7 @@ namespace vklite {
 
         std::unique_ptr<CombinedImageView> depthImageView = nullptr;
         if (mDepthTestEnable) {
-            depthImageView = CombinedImageViewBuilder().asDepth()
+            depthImageView = CombinedImageViewBuilder().asDepthAttachment()
                     .device(device->getDevice())
                     .format(physicalDevice->findDepthFormat())
                     .size(swapchain->getDisplaySize())

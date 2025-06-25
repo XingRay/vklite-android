@@ -116,4 +116,11 @@ namespace vklite {
         return *this;
     }
 
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::asStorageImage() {
+        asDefault();
+        mImageBuilder.asStorageImage();
+        mImageViewBuilder.asStorageImage();
+        return *this;
+    }
+
 } // vklite

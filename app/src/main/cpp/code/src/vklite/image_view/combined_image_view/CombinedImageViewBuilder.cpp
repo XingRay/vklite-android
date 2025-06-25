@@ -106,7 +106,7 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageViewBuilder &CombinedImageViewBuilder::asColor() {
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asColorAttachment() {
         asDefault();
         mImageBuilder.asColorAttachment();
         mImageViewBuilder.asColorAttachment();
@@ -114,7 +114,7 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageViewBuilder &CombinedImageViewBuilder::asDepth() {
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asDepthAttachment() {
         asDefault();
         mImageBuilder.asDepthAttachment();
         mImageViewBuilder.asDepthAttachment();
@@ -122,10 +122,10 @@ namespace vklite {
         return *this;
     }
 
-    CombinedImageViewBuilder &CombinedImageViewBuilder::asStorage() {
+    CombinedImageViewBuilder &CombinedImageViewBuilder::asStorageImage() {
         asDefault();
-        mImageBuilder.asStorage();
-        mImageViewBuilder.asStorage();
+        mImageBuilder.asStorageImage();
+        mImageViewBuilder.asStorageImage();
 
         return *this;
     }

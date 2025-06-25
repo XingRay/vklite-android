@@ -195,7 +195,7 @@ namespace vklite {
                 .usage(vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled);
     }
 
-    ImageBuilder &ImageBuilder::asStorage() {
+    ImageBuilder &ImageBuilder::asStorageImage() {
         return (*this)
                 .asDefault()
                 .usage(vk::ImageUsageFlagBits::eStorage | vk::ImageUsageFlagBits::eSampled);

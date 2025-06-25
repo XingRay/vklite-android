@@ -120,7 +120,7 @@ namespace test09 {
 
         mColorImageView = nullptr;
         if (mMsaaEnable) {
-            mColorImageView = vklite::CombinedImageViewBuilder().asColor()
+            mColorImageView = vklite::CombinedImageViewBuilder().asColorAttachment()
                     .device(mDevice->getDevice())
                     .format(mSwapchain->getDisplayFormat())
                     .size(mSwapchain->getDisplaySize())
@@ -131,7 +131,7 @@ namespace test09 {
 
         mDepthImageView = nullptr;
         if (mDepthTestEnable) {
-            mDepthImageView = vklite::CombinedImageViewBuilder().asDepth()
+            mDepthImageView = vklite::CombinedImageViewBuilder().asDepthAttachment()
                     .device(mDevice->getDevice())
                     .format(mPhysicalDevice->findDepthFormat())
                     .size(mSwapchain->getDisplaySize())

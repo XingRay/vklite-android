@@ -82,7 +82,7 @@ namespace vklite {
 
         ImageBuilder &asTexture();
 
-        ImageBuilder &asStorage();
+        ImageBuilder &asStorageImage();
     };
 
 } // vklite

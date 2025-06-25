@@ -118,11 +118,12 @@ namespace test10 {
         std::unique_ptr<vklite::CombinedHardwareBufferSampler> mCameraInputSampler;
         std::unique_ptr<vklite::CombinedHardwareBufferImageView> mCameraInputImageView;
 
-        std::vector<vklite::CombinedImageView> mPreprocessOutputImageViews;
+        std::vector<vklite::CombinedImageView> mLetterBoxOutputImageViews;
         std::vector<vklite::UniformBuffer> mLetterboxParamsUniformBuffers;
 
+        std::vector<vklite::CombinedImageSampler> mRotationOutputImageSamplers;
 
-        //image pipeline
+        //preview pipeline
         std::unique_ptr<vklite::CombinedPipeline> mPreviewPipeline;
         // vertex buffer
         std::unique_ptr<vklite::VertexBuffer> mVertexBuffer;
