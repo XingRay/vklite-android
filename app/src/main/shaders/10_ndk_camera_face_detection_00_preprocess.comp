@@ -1,5 +1,5 @@
 #version 450
-layout (local_size_x = 32, local_size_y = 16) in; // 工作组大小512线程（适配移动GPU Wave Size）
+layout (local_size_x = 32, local_size_y = 16) in;
 
 // 输入：从Android Camera HardwareBuffer转换的采样器
 layout (binding = 0) uniform sampler2D inputSampler;
@@ -18,11 +18,7 @@ layout (binding = 2) uniform LetterboxParam {
 void main() {
     ivec2 outputCoord = ivec2(gl_GlobalInvocationID.xy);
 
-    if (1 == 1) {
-        vec2 uv = vec2(outputCoord) / vec2(128, 128);
-        imageStore(outputImage, outputCoord, vec4(uv.x, uv.y, 0.5, 1.0));
-        return;
-    }
+    //    imageStore(outputImage, outputCoord, vec4(1.0, 0.0, 0.0, 1.0));
 
     // todo: 使用 pushConstants
     ivec2 outputSize = imageSize(outputImage);

@@ -196,7 +196,7 @@ namespace test10 {
                 .build(mFrameCount);
 
 
-        // 1 image process by compute shader
+        // preprocess
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
@@ -206,7 +206,6 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
-
 
         std::vector<uint32_t> preprocessComputeShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_00_preprocess.comp.spv");
         vklite::ShaderConfigure preprocessComputeShaderConfigure = vklite::ShaderConfigure()
@@ -220,6 +219,7 @@ namespace test10 {
                 });
 
 
+        // preview
         std::vector<uint32_t> vertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_01_preview.vert.spv");
         std::vector<uint32_t> fragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_01_preview.frag.spv");
 
@@ -236,9 +236,11 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
+                            .addCombinedImageSampler(0, vk::ShaderStageFlagBits::eFragment);
                 });
 
+
+        // lines
         std::vector<uint32_t> linesVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.vert.spv");
         std::vector<uint32_t> linesFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_02_lines.frag.spv");
 
@@ -257,6 +259,8 @@ namespace test10 {
                             .addUniformBuffer(0, vk::ShaderStageFlagBits::eVertex);
                 });
 
+
+        // points
         std::vector<uint32_t> pointsVertexShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_03_points.vert.spv");
         std::vector<uint32_t> pointsFragmentShaderCode = FileUtil::loadSpvFile(mApp.activity->assetManager, "shaders/10_ndk_camera_face_detection_03_points.frag.spv");
 
@@ -289,6 +293,8 @@ namespace test10 {
                 .addDescriptorSetCount(pointsShaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
+
+        // preprocess
         mPreprocessPipeline = vklite::CombinedComputePipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
@@ -306,6 +312,7 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .build(mFrameCount);
 
+        // preview
         mPreviewPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
@@ -318,6 +325,7 @@ namespace test10 {
                 .scissors(mScissors)
                 .buildUnique();
 
+        // lines
         mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
@@ -334,6 +342,7 @@ namespace test10 {
                 .lineWidth(1.0f)
                 .buildUnique();
 
+        // points
         mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
                 .device(mDevice->getDevice())
                 .descriptorPool(mDescriptorPool->getDescriptorPool())
@@ -350,44 +359,44 @@ namespace test10 {
 
 
         // nn model
-        int gpu_count = ncnn::get_gpu_count();
-        if (gpu_count > 0) {
-            LOG_D("use_vulkan_compute");
-            mNet.opt.use_vulkan_compute = true;
-
-            // set specified vulkan device before loading param and model
-            mNet.set_vulkan_device(0); // use device-0
-
-            mNet.opt.use_fp16_packed = false;
-            mNet.opt.use_fp16_storage = false;
-            mNet.opt.use_fp16_arithmetic = false;
-            mNet.opt.use_int8_storage = false;
-            mNet.opt.use_int8_arithmetic = false;
-
-            mNet.opt.use_shader_pack8 = true;
-        }
-
-        LOG_D("加载 param 文件");
-        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
-        if (mNet.load_param(modelParams) != 0) {
-            LOG_E("加载 param 文件失败");
-            return;
-        } else {
-            LOG_D("加载 param 文件完成");
-        }
-        AAsset_close(modelParams);
-
-        LOG_D("加载 bin 文件");
-        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
-        if (mNet.load_model(modelBin) != 0) {
-            LOG_E("加载 bin 文件失败");
-            return;
-        } else {
-            LOG_D("加载 bin 文件完成");
-        }
-        AAsset_close(modelBin);
-
-        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
+//        int gpu_count = ncnn::get_gpu_count();
+//        if (gpu_count > 0) {
+//            LOG_D("use_vulkan_compute");
+//            mNet.opt.use_vulkan_compute = true;
+//
+//            // set specified vulkan device before loading param and model
+//            mNet.set_vulkan_device(0); // use device-0
+//
+//            mNet.opt.use_fp16_packed = false;
+//            mNet.opt.use_fp16_storage = false;
+//            mNet.opt.use_fp16_arithmetic = false;
+//            mNet.opt.use_int8_storage = false;
+//            mNet.opt.use_int8_arithmetic = false;
+//
+//            mNet.opt.use_shader_pack8 = true;
+//        }
+//
+//        LOG_D("加载 param 文件");
+//        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
+//        if (mNet.load_param(modelParams) != 0) {
+//            LOG_E("加载 param 文件失败");
+//            return;
+//        } else {
+//            LOG_D("加载 param 文件完成");
+//        }
+//        AAsset_close(modelParams);
+//
+//        LOG_D("加载 bin 文件");
+//        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
+//        if (mNet.load_model(modelBin) != 0) {
+//            LOG_E("加载 bin 文件失败");
+//            return;
+//        } else {
+//            LOG_D("加载 bin 文件完成");
+//        }
+//        AAsset_close(modelBin);
+//
+//        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
 
     }
 
@@ -404,6 +413,15 @@ namespace test10 {
                 .format(vk::Format::eR8G8B8A8Unorm)
                 .size(128, 128)
                 .build(mFrameCount);
+
+        for (int i = 0; i < mFrameCount; i++) {
+            mPreprocessOutputImageViews[i].getImage().changeImageLayout(*mCommandPool,
+                                                                        vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral,
+                                                                        vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlagBits::eAllCommands,
+                                                                        vk::AccessFlagBits::eNone, vk::AccessFlagBits::eNone,
+                                                                        vk::ImageAspectFlagBits::eColor);
+        }
+
 
         LetterboxParam letterboxParam{};
         float scale = std::min(128.0f / 1080.0f, 128.0f / 1920.0f);
@@ -442,7 +460,7 @@ namespace test10 {
         mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
-        // image pipeline
+        // preview pipeline
         std::vector<Vertex> vertices = {
                 {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // 显示左上角  => uv右下角
                 {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // 显示右上角 => uv右上角
@@ -475,7 +493,7 @@ namespace test10 {
         mVertexBuffers.push_back((*mVertexBuffer).getVkBuffer());
         mVertexBufferOffsets.push_back(0);
 
-        mPreviewSamplers = vklite::SamplerBuilder()
+        mPreprocessOutputImageSamplers = vklite::SamplerBuilder()
                 .device(mDevice->getDevice())
                 .build(mFrameCount);
 
@@ -487,12 +505,12 @@ namespace test10 {
                             .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
                                 descriptorMapping
                                         .binding(0)
-                                        .addImageInfo(mPreviewSamplers[frameIndex], mPreprocessOutputImageViews[frameIndex].getImageView());
+                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mPreprocessOutputImageViews[frameIndex].getImageView());
                             });
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // lines pipeline resources
@@ -634,6 +652,7 @@ namespace test10 {
                 .device(mDevice->getDevice())
                 .hardwareBuffer(pHardwareBuffer)
                 .build();
+
         mCameraInputImageView = vklite::CombinedHardwareBufferImageViewBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
@@ -645,7 +664,7 @@ namespace test10 {
                 .buildUnique();
 
         // bind to pipeline resources
-        vklite::DescriptorSetWriters descriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+        vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
@@ -659,7 +678,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(descriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
         // compute shader preprocess
         vk::Result result = mComputeFences[mCurrentFrameIndex].wait();
@@ -675,6 +694,7 @@ namespace test10 {
 
         const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
+            mPreprocessOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(commandBuffer);
             commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipeline());
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipelineLayout(), 0, mPreprocessPipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
 
@@ -818,6 +838,11 @@ namespace test10 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+                mPreprocessOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
+                                                                                             vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
+                                                                                             vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
+                                                                                             vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
+                                                                                             vk::ImageAspectFlagBits::eColor);
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);

@@ -50,13 +50,13 @@ namespace vklite {
     }
 
     void Queue::submit(const vk::CommandBuffer &commandBuffer, const vk::Semaphore &signalSemaphore, const vk::Fence &fence) const {
-        std::array<vk::CommandBuffer, 1> computeCommandBuffers = {commandBuffer};
-        std::array<vk::Semaphore, 1> computeSignalSemaphores = {signalSemaphore};
+        std::array<vk::CommandBuffer, 1> commandBuffers = {commandBuffer};
+        std::array<vk::Semaphore, 1> semaphores = {signalSemaphore};
 
         vk::SubmitInfo submitInfo{};
         submitInfo
-                .setCommandBuffers(computeCommandBuffers)
-                .setSignalSemaphores(computeSignalSemaphores);
+                .setCommandBuffers(commandBuffers)
+                .setSignalSemaphores(semaphores);
 
         std::array<vk::SubmitInfo, 1> submitInfos = {submitInfo};
 

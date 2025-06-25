@@ -134,7 +134,7 @@ namespace test10 {
         vk::Buffer mIndexVkBuffer;
         uint32_t mIndexCount;
 
-        std::vector<vklite::Sampler> mPreviewSamplers;
+        std::vector<vklite::Sampler> mPreprocessOutputImageSamplers;
 
 
         // lines pipeline resources

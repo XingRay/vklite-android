@@ -88,6 +88,35 @@ namespace vklite {
         submit(queue, command);
     }
 
+    /**
+     * todo: flush by fence
+     * if (commandBuffer == VK_NULL_HANDLE)
+		{
+			return;
+		}
+
+		VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
+
+		VkSubmitInfo submitInfo = vks::initializers::submitInfo();
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+		// Create fence to ensure that the command buffer has finished executing
+		VkFenceCreateInfo fenceInfo = vks::initializers::fenceCreateInfo(VK_FLAGS_NONE);
+		VkFence fence;
+		VK_CHECK_RESULT(vkCreateFence(logicalDevice, &fenceInfo, nullptr, &fence));
+		// Submit to the queue
+		VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, fence));
+		// Wait for the fence to signal that command buffer has finished executing
+		VK_CHECK_RESULT(vkWaitForFences(logicalDevice, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT));
+		vkDestroyFence(logicalDevice, fence, nullptr);
+		if (free)
+		{
+			vkFreeCommandBuffers(logicalDevice, pool, 1, &commandBuffer);
+		}
+
+     * @param queue
+     * @param command
+     */
     void CommandPool::submit(const Queue &queue, const std::function<void(const vk::CommandBuffer &)> &command) const {
 
         CommandBuffer commandBuffer = allocateOne();

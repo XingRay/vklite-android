@@ -102,11 +102,11 @@ namespace vklite {
 
         mImageMemoryBarrier
                 .setOldLayout(vk::ImageLayout::eUndefined)
-                .setNewLayout(vk::ImageLayout::eUndefined)
+                .setNewLayout(vk::ImageLayout::eReadOnlyOptimal)
                 .setSrcQueueFamilyIndex(vk::QueueFamilyIgnored)
                 .setDstQueueFamilyIndex(vk::QueueFamilyIgnored)
                 .setSrcAccessMask(vk::AccessFlagBits::eNone)
-                .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
+                .setDstAccessMask(vk::AccessFlagBits::eShaderRead);
 
         return *this;
     }
