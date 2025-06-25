@@ -108,7 +108,6 @@ namespace test10 {
                     subpass
                             .pipelineBindPoint(vk::PipelineBindPoint::eGraphics)
                             .addDependency(externalSubpass,
-                                    //vk::PipelineStageFlagBits::eBottomOfPipe,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                            vk::AccessFlagBits::eNone,
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
@@ -121,12 +120,8 @@ namespace test10 {
                                     subpasses[0],
                                     vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                     vk::AccessFlagBits::eColorAttachmentWrite,
-//                                           vk::AccessFlagBits::eNone,
-
                                     vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
                                     vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite);
-//                                           vk::PipelineStageFlagBits::eFragmentShader,
-//                                           vk::AccessFlagBits::eInputAttachmentRead);
                 })
                 .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
                     subpass
@@ -134,13 +129,8 @@ namespace test10 {
                             .addDependency(subpasses[1],
                                            vk::PipelineStageFlagBits::eColorAttachmentOutput,
                                            vk::AccessFlagBits::eColorAttachmentWrite,
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite,
-
                                            vk::PipelineStageFlagBits::eFragmentShader,
                                            vk::AccessFlagBits::eInputAttachmentRead
-//                                           vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
-//                                           vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite
                             );
                 })
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
@@ -220,8 +210,7 @@ namespace test10 {
                             .set(0)
                             .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
                             .addUniformBuffer(1, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageImage(3, vk::ShaderStageFlagBits::eCompute);
+                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute);
                 });
 
 
@@ -417,7 +406,7 @@ namespace test10 {
         float scale = mLetterBox.scale;
         letterboxParam.unpaddingSize = {mLetterBox.paddedWidth, mLetterBox.paddedHeight};
         letterboxParam.padding = {mLetterBox.paddingLeft, mLetterBox.paddingTop};
-        letterboxParam.fillColor = {0.2f, 0.2f, 0.2f, 1.0f};
+        letterboxParam.fillColor = {0.0f, 0.0f, 0.0f, 1.0f};
 
         mLetterboxParamsUniformBuffers = vklite::UniformBufferBuilder()
                 .device(mDevice->getDevice())
@@ -446,27 +435,20 @@ namespace test10 {
                                                                        vk::ImageAspectFlagBits::eColor);
         }
 
-        // rotation output image
-        mRotationOutputImageSamplers = vklite::CombinedImageSamplerBuilder().asStorageImage()
-                .device(mDevice->getDevice())
-                .build(mFrameCount);
-
-
-
         vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
                 .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
                     configure
                             .descriptorSet(mPreprocessPipeline->getDescriptorSet(frameIndex, 0))
-                            .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
-                                mapping
-                                        .binding(1)
-                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
-                            })
                             .addUniformBuffer([&](vklite::UniformBufferDescriptorMapping &mapping) {
                                 mapping
-                                        .binding(2)
+                                        .binding(1)
                                         .addBufferInfo(mLetterboxParamsUniformBuffers[frameIndex].getBuffer());
+                            })
+                            .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
+                                mapping
+                                        .binding(2)
+                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
                             });
                 })
                 .build();
@@ -754,9 +736,12 @@ namespace test10 {
             throw std::runtime_error("waitForFences failed");
         }
 
-        // nn net face detection
-//        mExtractor->input("in0", mMatIn);
-
+//        int _w, int _h, VkImageMemory* _data, size_t _elemsize, VkAllocator* _allocator
+//        ncnn::VkImageMemory* imageMemory = nullptr;
+//        ncnn::VkImageMat matIn(1080, 1920, imageMemory, 4, nullptr);
+//
+//        // nn net face detection
+//        mExtractor->input("in0", matIn);
 //
 //        ncnn::Mat regressors;
 //        ncnn::Mat scores;
@@ -848,6 +833,7 @@ namespace test10 {
 //
 //        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
 //        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+
 
         // graphic pipeline
         vklite::Semaphore &imageAvailableSemaphore = mImageAvailableSemaphores[mCurrentFrameIndex];

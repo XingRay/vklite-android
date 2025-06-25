@@ -49,6 +49,10 @@ namespace vklite {
 
         CombinedImageSamplerBuilder &height(uint32_t height);
 
+        CombinedImageSamplerBuilder &size(uint32_t width, uint32_t height);
+
+        CombinedImageSamplerBuilder &size(vk::Extent2D size);
+
         CombinedImageSamplerBuilder &format(vk::Format imageFormat);
 
         CombinedImageSamplerBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);

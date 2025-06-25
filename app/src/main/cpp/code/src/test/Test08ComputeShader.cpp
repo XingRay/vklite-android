@@ -130,7 +130,7 @@ namespace test08 {
     void Test08ComputeShader::drawFrame() {
         UniformBufferObject ubo{};
         ubo.deltaTime = mTimer.getDeltaTimeMs() * 2.0f;
-        LOG_D("ubo.deltaTime: %f", ubo.deltaTime);
+//        LOG_D("ubo.deltaTime: %f", ubo.deltaTime);
         mUniformBuffers[mEngine->getFrameIndex()].update(mEngine->getCommandPool(), &ubo, sizeof(UniformBufferObject));
 
         mEngine->drawIndexed(mParticleCount);

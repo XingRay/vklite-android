@@ -50,6 +50,16 @@ namespace vklite {
         return *this;
     }
 
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::size(uint32_t width, uint32_t height) {
+        mImageBuilder.size(width, height);
+        return *this;
+    }
+
+    CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::size(vk::Extent2D size) {
+        mImageBuilder.size(size);
+        return *this;
+    }
+
     CombinedImageSamplerBuilder &CombinedImageSamplerBuilder::format(vk::Format imageFormat) {
         mImageBuilder.format(imageFormat);
         mImageViewBuilder.format(imageFormat);

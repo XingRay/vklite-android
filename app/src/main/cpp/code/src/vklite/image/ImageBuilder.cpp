@@ -33,10 +33,15 @@ namespace vklite {
         return *this;
     }
 
-    ImageBuilder &ImageBuilder::size(vk::Extent2D size) {
+    ImageBuilder &ImageBuilder::size(uint32_t width, uint32_t height) {
         (*this)
-                .width(size.width)
-                .height(size.height);
+                .width(width)
+                .height(height);
+        return *this;
+    }
+
+    ImageBuilder &ImageBuilder::size(vk::Extent2D size) {
+        (*this).size(size.width, size.height);
         return *this;
     }
 

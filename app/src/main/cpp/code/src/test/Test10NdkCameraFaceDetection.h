@@ -121,8 +121,6 @@ namespace test10 {
         std::vector<vklite::CombinedImageView> mLetterBoxOutputImageViews;
         std::vector<vklite::UniformBuffer> mLetterboxParamsUniformBuffers;
 
-        std::vector<vklite::CombinedImageSampler> mRotationOutputImageSamplers;
-
         //preview pipeline
         std::unique_ptr<vklite::CombinedPipeline> mPreviewPipeline;
         // vertex buffer

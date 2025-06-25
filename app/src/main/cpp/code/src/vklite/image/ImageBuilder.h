@@ -29,6 +29,8 @@ namespace vklite {
 
         ImageBuilder &height(uint32_t height);
 
+        ImageBuilder &size(uint32_t width, uint32_t height);
+
         ImageBuilder &size(vk::Extent2D size);
 
         ImageBuilder &depth(uint32_t depth);
@@ -61,7 +63,7 @@ namespace vklite {
 
         ImageBuilder &sampleCount(vk::SampleCountFlagBits sampleCount);
 
-        ImageBuilder &queueFamilyIndices(std::vector<uint32_t>&& queueFamilyIndices);
+        ImageBuilder &queueFamilyIndices(std::vector<uint32_t> &&queueFamilyIndices);
 
         //用于稀疏纹理相关的标志位
         ImageBuilder &flags(vk::ImageCreateFlags flags);

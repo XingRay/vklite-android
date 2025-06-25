@@ -16,45 +16,36 @@ layout (binding = 1) uniform LetterboxParam {
 // 输出1：128x128 RGBA8存储图像
 layout (binding = 2, rgba8) uniform writeonly image2D letterBoxOutputImage;
 
-layout (binding = 3, rgba8) uniform writeonly image2D rotationOutputImage;
-
-
 void main() {
-    // x: [0, 1080)  y: [0, 1920)
+    // x: [0, 128)  y: [0, 128)
     ivec2 outputCoord = ivec2(gl_GlobalInvocationID.xy);
 
     // todo: 使用 pushConstants
     ivec2 letterBoxOutputSize = imageSize(letterBoxOutputImage);
-    ivec2 rotationOutputSize = imageSize(rotationOutputImage);
 
     // 边界保护：跳过超出输出范围的线程
-    if (any(greaterThanEqual(outputCoord, rotationOutputSize))) {
+    if (any(greaterThanEqual(outputCoord, letterBoxOutputSize))) {
         return;
     }
 
-    bool inSmallImage = all(lessThan(outputCoord, letterBoxOutputSize));
-    if(inSmallImage){
-        // 计算归一化UV（将输出坐标映射到[0,1]区间）
-        // 考虑旋转
-        vec2 letterBoxUv = vec2(outputCoord - letterBoxParam.padding.xy) / letterBoxParam.unpaddingSize;
-        //    vec2 uv = vec2(letterBoxParam.unpaddingSize.y - outputCoord.y, outputCoord.x) / vec2(letterBoxParam.unpaddingSize.y, letterBoxParam.unpaddingSize.x);
+    // 计算归一化UV（将输出坐标映射到[0,1]区间）
+    // 考虑旋转
+    vec2 letterBoxUv = vec2(
+    1.0f - float(outputCoord.y - letterBoxParam.padding.y) / letterBoxParam.unpaddingSize.y,
+    1.0f - float(outputCoord.x - letterBoxParam.padding.x) / letterBoxParam.unpaddingSize.x
+    );
+    //    vec2 uv = vec2(letterBoxParam.unpaddingSize.y - outputCoord.y, outputCoord.x) / vec2(letterBoxParam.unpaddingSize.y, letterBoxParam.unpaddingSize.x);
 
-        // 判断是否在有效区域内（用step替代分支）
-        vec2 inBounds = step(vec2(0.0), letterBoxUv) * step(letterBoxUv, vec2(1.0, 1.0));
-        float isInside = inBounds.x * inBounds.y; // 仅当x/y均有效时为1
+    // 判断是否在有效区域内（用step替代分支）
+    vec2 inBounds = step(vec2(0.0), letterBoxUv) * step(letterBoxUv, vec2(1.0, 1.0));
+    float isInside = inBounds.x * inBounds.y; // 仅当x/y均有效时为1
 
-        // 采样输入图像（双线性滤波）
-        vec4 color = texture(inputSampler, letterBoxUv);
+    // 采样输入图像（双线性滤波）
+    vec4 color = texture(inputSampler, letterBoxUv);
 
-        // 混合填充色与采样色（避免if分支）
-        vec4 finalColor = mix(letterBoxParam.fillColor, color, isInside);
+    // 混合填充色与采样色（避免if分支）
+    vec4 finalColor = mix(letterBoxParam.fillColor, color, isInside);
 
-        // 写入输出图像
-        imageStore(letterBoxOutputImage, outputCoord, finalColor);
-    }
-
-    // todo: rotation
-    vec2 rotationUv = vec2(outputCoord / rotationOutputSize);
-    vec4 rotationOutputColor = texture(inputSampler, rotationUv);
-    imageStore(rotationOutputImage, outputCoord, rotationOutputColor);
+    // 写入输出图像
+    imageStore(letterBoxOutputImage, outputCoord, finalColor);
 }
