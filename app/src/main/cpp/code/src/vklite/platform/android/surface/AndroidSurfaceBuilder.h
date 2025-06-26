@@ -37,7 +37,7 @@ namespace vklite {
         AndroidSurfaceBuilder &nativeWindow(ANativeWindow *nativeWindow);
 
         [[nodiscard]]
-        std::optional<Surface> build() const override;
+        Surface build() const override;
     };
 
 } // vklite

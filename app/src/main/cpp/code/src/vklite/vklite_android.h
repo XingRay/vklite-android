@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "vklite/platform/android/api/VulkanAndroidApi.h"
+
 #include "vklite/platform/android/surface/AndroidSurfaceBuilder.h"
 
 #include "vklite/platform/android/hardware_buffer/HardwareBuffer.h"

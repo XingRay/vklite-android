@@ -31,9 +31,9 @@ namespace ndkcamera {
         );
 
         std::vector<StreamConfiguration> streamConfigurations = meta->queryScalerAvailableStreamConfigurations();
-        for (const StreamConfiguration &configuration: streamConfigurations) {
-            LOG_D("%s", configuration.toString().c_str());
-        }
+//        for (const StreamConfiguration &configuration: streamConfigurations) {
+//            LOG_D("%s", configuration.toString().c_str());
+//        }
 
         mCameraDevice = mCameraManager->openCamera(meta->getId());
 

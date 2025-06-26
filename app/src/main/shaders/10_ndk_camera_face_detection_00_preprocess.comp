@@ -14,7 +14,7 @@ layout (binding = 1) uniform LetterboxParam {
 
 
 // 输出1：128x128 RGBA8存储图像
-layout (binding = 2, rgba8) uniform writeonly image2D letterBoxOutputImage;
+layout (binding = 2, rgba32f) uniform writeonly image2D letterBoxOutputImage;
 
 void main() {
     // x: [0, 128)  y: [0, 128)

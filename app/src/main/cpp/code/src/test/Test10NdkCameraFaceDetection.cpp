@@ -19,23 +19,60 @@ namespace test10 {
     Test10NdkCameraFaceDetection::Test10NdkCameraFaceDetection(const android_app &app, const std::string &name)
             : TestBase(name), mApp(app), mNet() {
 
+        // nn model
+        int gpu_count = ncnn::get_gpu_count();
+        if (gpu_count > 0) {
+            LOG_D("use_vulkan_compute");
+            ncnn::support_VK_KHR_surface = 1;
+            ncnn::support_VK_KHR_android_surface = 1;
+            ncnn::support_VK_KHR_external_memory_capabilities = 1;
+            ncnn::support_VK_KHR_get_physical_device_properties2 = 1;
+            ncnn::support_VK_KHR_get_surface_capabilities2 = 1;
+
+            mNcnnGpuDevice = std::make_unique<ncnn::VulkanDevice>(0);
+            mNet.set_vulkan_device(mNcnnGpuDevice.get());
+
+            VkInstance instance = ncnn::get_gpu_instance();
+            LOG_D("instance: %p", instance);
+
+            const ncnn::GpuInfo &gpuInfo = ncnn::get_gpu_info(0);
+            VkPhysicalDevice physicalDevice = gpuInfo.physicalDevice();
+            LOG_D("physicalDevice: %p", physicalDevice);
+
+            VkDevice ncnnDevice = mNet.vulkan_device()->vkdevice();
+            LOG_D("ncnnDevice: %p", ncnnDevice);
+
+            mNet.opt.use_vulkan_compute = true;
+
+            mNet.opt.use_fp16_packed = false;
+            mNet.opt.use_fp16_storage = false;
+            mNet.opt.use_fp16_arithmetic = false;
+            mNet.opt.use_int8_storage = false;
+            mNet.opt.use_int8_arithmetic = false;
+
+            mNet.opt.use_shader_pack8 = true;
+        }
+
         mNdkCamera = std::make_unique<ndkcamera::NdkCamera>();
-        mNdkCamera->startPreview();
 
-        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
 
-        mInstance = vklite::InstanceBuilder()
-                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
-                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
-                .buildUnique();
+
+//        mInstance = vklite::InstanceBuilder()
+//                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
+//                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
+//                .buildUnique();
+
+        mInstance = std::make_unique<vklite::Instance>(ncnn::get_gpu_instance());
+        vklite::VulkanAndroidApi::initApi(*mInstance);
 
         mSurface = vklite::AndroidSurfaceBuilder()
                 .instance((*mInstance).getInstance())
                 .nativeWindow(app.window)
                 .buildUnique();
 
-        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)
-                .selectUnique((*mInstance).enumeratePhysicalDevices());
+//        mPhysicalDevice = vklite::PhysicalDeviceSelector::makeDefault(*mSurface)
+//                .selectUnique((*mInstance).enumeratePhysicalDevices());
+        mPhysicalDevice = std::make_unique<vklite::PhysicalDevice>(ncnn::get_gpu_info(0).physicalDevice());
 
         vk::SampleCountFlagBits sampleCount = vk::SampleCountFlagBits::e1;
         if (mMsaaEnable) {
@@ -45,13 +82,14 @@ namespace test10 {
         uint32_t presentQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface())[0];
         uint32_t graphicAndComputeQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)[0];
 
-        mDevice = vklite::DeviceBuilder()
-                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
-                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
-                .physicalDevice(mPhysicalDevice->getPhysicalDevice())
-                .addQueueFamily(graphicAndComputeQueueFamilyIndex)
-                .addQueueFamily(presentQueueFamilyIndex)
-                .buildUnique();
+//        mDevice = vklite::DeviceBuilder()
+//                .addPlugin(vklite::AndroidSurfacePlugin::buildUniqueCombined())
+//                .addPlugin(vklite::HardwareBufferPlugin::buildUnique())
+//                .physicalDevice(mPhysicalDevice->getPhysicalDevice())
+//                .addQueueFamily(graphicAndComputeQueueFamilyIndex)
+//                .addQueueFamily(presentQueueFamilyIndex)
+//                .buildUnique();
+        mDevice = std::make_unique<vklite::Device>(mNet.vulkan_device()->vkdevice());
         LOG_D("device => %p", (void *) mDevice->getDevice());
 
         mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndex));
@@ -192,6 +230,9 @@ namespace test10 {
 
 
         // preprocess
+        mNdkCamera->startPreview();
+        ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
+
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
                 .device(mDevice->getDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
@@ -333,7 +374,6 @@ namespace test10 {
                 .scissors(mScissors)
                 .topology(vk::PrimitiveTopology::eLineList)
                 .polygonMode(vk::PolygonMode::eLine)
-//                .cullMode(vk::CullModeFlagBits::eNone)
                 .lineWidth(1.0f)
                 .buildUnique();
 
@@ -354,44 +394,27 @@ namespace test10 {
 
 
         // nn model
-//        int gpu_count = ncnn::get_gpu_count();
-//        if (gpu_count > 0) {
-//            LOG_D("use_vulkan_compute");
-//            mNet.opt.use_vulkan_compute = true;
-//
-//            // set specified vulkan device before loading param and model
-//            mNet.set_vulkan_device(0); // use device-0
-//
-//            mNet.opt.use_fp16_packed = false;
-//            mNet.opt.use_fp16_storage = false;
-//            mNet.opt.use_fp16_arithmetic = false;
-//            mNet.opt.use_int8_storage = false;
-//            mNet.opt.use_int8_arithmetic = false;
-//
-//            mNet.opt.use_shader_pack8 = true;
-//        }
-//
-//        LOG_D("加载 param 文件");
-//        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
-//        if (mNet.load_param(modelParams) != 0) {
-//            LOG_E("加载 param 文件失败");
-//            return;
-//        } else {
-//            LOG_D("加载 param 文件完成");
-//        }
-//        AAsset_close(modelParams);
-//
-//        LOG_D("加载 bin 文件");
-//        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
-//        if (mNet.load_model(modelBin) != 0) {
-//            LOG_E("加载 bin 文件失败");
-//            return;
-//        } else {
-//            LOG_D("加载 bin 文件完成");
-//        }
-//        AAsset_close(modelBin);
-//
-//        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
+        LOG_D("加载 param 文件");
+        AAsset *modelParams = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.param", AASSET_MODE_BUFFER);
+        if (mNet.load_param(modelParams) != 0) {
+            LOG_E("加载 param 文件失败");
+            return;
+        } else {
+            LOG_D("加载 param 文件完成");
+        }
+        AAsset_close(modelParams);
+
+        LOG_D("加载 bin 文件");
+        AAsset *modelBin = AAssetManager_open(mApp.activity->assetManager, "model/ncnn/face_detector/face_detector.bin", AASSET_MODE_BUFFER);
+        if (mNet.load_model(modelBin) != 0) {
+            LOG_E("加载 bin 文件失败");
+            return;
+        } else {
+            LOG_D("加载 bin 文件完成");
+        }
+        AAsset_close(modelBin);
+
+        mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
 
     }
 
@@ -423,7 +446,7 @@ namespace test10 {
                 .asStorageImage()
                 .device(mDevice->getDevice())
                 .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .format(vk::Format::eR8G8B8A8Unorm)
+                .format(vk::Format::eR32G32B32A32Sfloat)
                 .size(128, 128)
                 .build(mFrameCount);
 

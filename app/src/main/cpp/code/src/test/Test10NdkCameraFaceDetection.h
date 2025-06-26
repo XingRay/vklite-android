@@ -64,6 +64,19 @@ namespace test10 {
 
         const android_app &mApp;
 
+        // nn model
+        std::unique_ptr<ncnn::VulkanDevice> mNcnnGpuDevice;
+        ncnn::Net mNet;
+        std::unique_ptr<ncnn::Extractor> mExtractor;
+
+        std::vector<image_process::Anchor> mAnchors;
+        image_process::LetterBox mLetterBox;
+
+
+        // ndk camera
+        std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
+
+
         // config
         bool mMsaaEnable = false;
         bool mDepthTestEnable = false;
@@ -161,16 +174,7 @@ namespace test10 {
 
         std::vector<vklite::UniformBuffer> mPointsUniformBuffers;
 
-
-        // nn model
-        std::vector<image_process::Anchor> mAnchors;
-        image_process::LetterBox mLetterBox;
-
-        ncnn::Net mNet;
-        std::unique_ptr<ncnn::Extractor> mExtractor;
-
-        std::unique_ptr<ndkcamera::NdkCamera> mNdkCamera;
-
+        // utils
         util::FrameCounter mFrameCounter;
 
     public:

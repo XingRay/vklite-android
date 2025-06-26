@@ -50,15 +50,12 @@ namespace vklite {
     }
 
     [[nodiscard]]
-    std::optional<Surface> AndroidSurfaceBuilder::build() const {
-        try {
-            vk::SurfaceKHR surface = mInstance.createAndroidSurfaceKHR(mSurfaceCreateInfo);
-//            return std::optional<Surface>(Surface(mInstance, surface));
-            return Surface(mInstance, surface);
-        } catch (vk::SystemError &err) {
-            LOG_EF("Failed to create Android surface: {}", err.what());
-            return std::nullopt;
+    Surface AndroidSurfaceBuilder::build() const {
+        vk::SurfaceKHR surface = mInstance.createAndroidSurfaceKHR(mSurfaceCreateInfo);
+        if (surface == nullptr) {
+            throw std::runtime_error("AndroidSurfaceBuilder::build(): createAndroidSurfaceKHR failed");
         }
+        return Surface(mInstance, surface);
     };
 
 } // vklite

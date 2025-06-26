@@ -61,7 +61,7 @@ namespace ndkcamera {
 
     [[nodiscard]]
     std::string StreamConfiguration::toString() const {
-        return std::format("{{imageFormat:{}, width:{}, height:{}, streamType:{}}}",
+        return std::format("{{ imageFormat:{}, width:{}, height:{}, streamType:{} }}",
                            ImageFormat::of(mImageFormat).name(),
                            mWidth,
                            mHeight,

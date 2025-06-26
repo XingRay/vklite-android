@@ -548,6 +548,7 @@ namespace test09 {
         const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
         const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
         matIn.substract_mean_normalize(mean_vals, norm_vals);
+        LOG_D("matIn: cstep:%ld, elemsize:%ld", matIn.cstep, matIn.elemsize);
 
         mExtractor->input("in0", matIn);
 

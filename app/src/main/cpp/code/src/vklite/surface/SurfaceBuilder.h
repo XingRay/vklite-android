@@ -21,7 +21,7 @@ namespace vklite {
         virtual ~SurfaceBuilder();
 
         [[nodiscard]]
-        virtual std::optional<Surface> build() const = 0;
+        virtual Surface build() const = 0;
 
         [[nodiscard]]
         std::unique_ptr<Surface> buildUnique() const;
