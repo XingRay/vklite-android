@@ -5,7 +5,7 @@
 #pragma once
 
 #include "vklite/Log.h"
-#include "vklite/result/VkResultUtil.h"
+#include "VkResultUtil.h"
 
 #define CALL_VK(func)                                                 \
   do {                                                                \
