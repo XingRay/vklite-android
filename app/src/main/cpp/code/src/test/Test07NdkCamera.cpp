@@ -47,12 +47,12 @@ namespace test07 {
 
         ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
-                .device(mEngine->getDevice().getDevice())
+                .device(mEngine->getVkDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
                 .build();
 
         mSampler = vklite::CombinedHardwareBufferSamplerBuilder()
-                .device(mEngine->getDevice().getDevice())
+                .device(mEngine->getVkDevice())
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
 
@@ -131,7 +131,7 @@ namespace test07 {
         }
 
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
-                .device(mEngine->getDevice().getDevice())
+                .device(mEngine->getVkDevice())
                 .hardwareBuffer(pHardwareBuffer)
                 .build();
         mImageView = vklite::CombinedHardwareBufferImageViewBuilder()
@@ -141,7 +141,7 @@ namespace test07 {
                 .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
                 .hardwareBufferProperties(hardwareBuffer.getProperties())
                 .memoryProperties((*mEngine).getMemoryProperties())
-                .conversion((*mSampler).getConversion().getSamplerYcbcrConversion())
+                .conversion((*mSampler).getVkSamplerYcbcrConversion())
                 .buildUnique();
 
         mEngine->updateDescriptorSets([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &mappingConfigure) {

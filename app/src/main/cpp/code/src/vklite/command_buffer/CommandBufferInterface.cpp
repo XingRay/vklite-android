@@ -11,7 +11,7 @@ namespace vklite {
     CommandBufferInterface::~CommandBufferInterface() = default;
 
     void CommandBufferInterface::record(const vk::CommandBufferBeginInfo &beginInfo, const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const {
-        const vk::CommandBuffer &commandBuffer = getCommandBuffer();
+        const vk::CommandBuffer &commandBuffer = getVkCommandBuffer();
         commandBuffer.reset();
         commandBuffer.begin(beginInfo);
 

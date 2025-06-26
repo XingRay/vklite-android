@@ -31,7 +31,7 @@ namespace vklite {
         PooledCommandBuffer &operator=(PooledCommandBuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::CommandBuffer &getCommandBuffer() const override;
+        const vk::CommandBuffer &getVkCommandBuffer() const override;
     };
 
 } // vklite

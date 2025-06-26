@@ -89,7 +89,7 @@ namespace vklite {
             descriptorSetLayoutCreateInfo
                     .setBindings(descriptorSetLayoutBindings);
 
-            vk::DescriptorSetLayout descriptorSetLayout = device.getDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
+            vk::DescriptorSetLayout descriptorSetLayout = device.getVkDevice().createDescriptorSetLayout(descriptorSetLayoutCreateInfo);
             descriptorSetLayouts.push_back(descriptorSetLayout);
         }
 

@@ -88,7 +88,7 @@ namespace vklite {
         if (physicalDevice == nullptr) {
             return std::nullopt;
         }
-        return physicalDevice->getPhysicalDevice();
+        return physicalDevice->getVkPhysicalDevice();
     }
 
 

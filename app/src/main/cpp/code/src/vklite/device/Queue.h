@@ -25,7 +25,7 @@ namespace vklite {
         Queue &operator=(Queue &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Queue &getQueue() const;
+        const vk::Queue &getVkQueue() const;
 
         [[nodiscard]]
         vk::Result present(const vk::SwapchainKHR &swapchain, uint32_t imageIndex, const vk::Semaphore &waitSemaphore) const;

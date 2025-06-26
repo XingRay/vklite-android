@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Pipeline &Pipeline::getPipeline() const {
+    const vk::Pipeline &Pipeline::getVkPipeline() const {
         return mPipeline;
     }
 

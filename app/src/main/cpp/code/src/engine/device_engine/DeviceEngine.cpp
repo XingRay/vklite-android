@@ -127,7 +127,7 @@ namespace vklite {
     }
 
     vk::Device DeviceEngine::getVkDevice() const {
-        return (*mDevice).getDevice();
+        return (*mDevice).getVkDevice();
     }
 
     PhysicalDevice &DeviceEngine::getPhysicalDevice() const {
@@ -135,7 +135,7 @@ namespace vklite {
     }
 
     vk::PhysicalDeviceMemoryProperties DeviceEngine::getMemoryProperties() const {
-        return mPhysicalDevice->getPhysicalDevice().getMemoryProperties();
+        return mPhysicalDevice->getMemoryProperties();
     }
 
     CommandPool &DeviceEngine::getCommandPool() const {
@@ -167,14 +167,14 @@ namespace vklite {
         }
 
         mDescriptorPool = vklite::DescriptorPoolBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .frameCount(mFrameCount)
                 .descriptorPoolSizes(shaderConfigure.calcDescriptorPoolSizes())
                 .descriptorSetCount(shaderConfigure.getDescriptorSetCount())
                 .buildUnique();
 
         mDescriptorSetLayouts = DescriptorSetLayoutsBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .bindings(shaderConfigure.createDescriptorSetLayoutBindings())
                 .buildUnique();
 
@@ -189,25 +189,25 @@ namespace vklite {
         }
 
         mPipelineLayout = PipelineLayoutBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .descriptorSetLayouts(mDescriptorSetLayouts->getDescriptorSetLayouts())
                 .pushConstantRanges(std::move(pushConstantRanges))
                 .buildUnique();
 
         std::unique_ptr<ShaderModule> vertexShader = ShaderModuleBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .code(std::move(shaderConfigure.getVertexShaderCode()))
                 .buildUnique();
 
         std::unique_ptr<ShaderModule> fragmentShader = ShaderModuleBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .code(std::move(shaderConfigure.getFragmentShaderCode()))
                 .buildUnique();
 
         mPipeline = GraphicsPipelineBuilder()
-                .device(mDevice->getDevice())
-                .renderPass(mRenderPass->getRenderPass())
-                .pipelineLayout(mPipelineLayout->getPipelineLayout())
+                .device(mDevice->getVkDevice())
+                .renderPass(mRenderPass->getVkRenderPass())
+                .pipelineLayout(mPipelineLayout->getVkPipelineLayout())
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .vertexShader(std::move(vertexShader))
@@ -232,7 +232,7 @@ namespace vklite {
 
         bool debugLog = false;
         if (debugLog) {
-            LOG_D("mDevice->getDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
+            LOG_D("mDevice->getVkDevice().updateDescriptorSets: %ld", writeDescriptorSets.size());
             for (const vk::WriteDescriptorSet &writeDescriptorSet: writeDescriptorSets) {
                 LOG_D("\twriteDescriptorSet:");
                 LOG_D("\t\tdstSet:%p", (void *) writeDescriptorSet.dstSet);
@@ -261,15 +261,15 @@ namespace vklite {
             }
         }
 
-        mDevice->getDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(writeDescriptorSets, nullptr);
 
         return *this;
     }
 
     VertexBufferBuilder DeviceEngine::vertexBufferBuilder() {
         return VertexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
     DeviceEngine &DeviceEngine::addVertexBuffer(const vk::Buffer &buffer, vk::DeviceSize offset) {
@@ -286,8 +286,8 @@ namespace vklite {
 
     IndexBufferBuilder DeviceEngine::indexBufferBuilder() {
         return IndexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
     DeviceEngine &DeviceEngine::indexBuffer(const vk::Buffer &buffer, uint32_t indexCount) {
@@ -319,7 +319,7 @@ namespace vklite {
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-        auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getSemaphore());
+        auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getVkSemaphore());
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
                 // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。
@@ -337,17 +337,17 @@ namespace vklite {
 
         const PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getPipeline());
+            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getVkFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+                vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
 
                 if (!mDescriptorSets.empty()) {
-                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getPipelineLayout(), 0, mDescriptorSets[mCurrentFrameIndex], nullptr);
+                    vkCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout->getVkPipelineLayout(), 0, mDescriptorSets[mCurrentFrameIndex], nullptr);
                 }
 
                 for (const PushConstant &pushConstant: mPushConstants) {
-                    vkCommandBuffer.pushConstants(mPipelineLayout->getPipelineLayout(),
+                    vkCommandBuffer.pushConstants(mPipelineLayout->getVkPipelineLayout(),
                                                   pushConstant.getStageFlags(),
                                                   pushConstant.getOffset(),
                                                   pushConstant.getSize(),
@@ -365,13 +365,13 @@ namespace vklite {
             throw std::runtime_error("resetFences failed");
         }
 
-        mGraphicQueue->submit(commandBuffer.getCommandBuffer(),
+        mGraphicQueue->submit(commandBuffer.getVkCommandBuffer(),
                               vk::PipelineStageFlagBits::eColorAttachmentOutput,
-                              imageAvailableSemaphore.getSemaphore(),
-                              renderFinishedSemaphore.getSemaphore(),
-                              fence.getFence());
+                              imageAvailableSemaphore.getVkSemaphore(),
+                              renderFinishedSemaphore.getVkSemaphore(),
+                              fence.getVkFence());
 
-        result = mPresentQueue->present(mSwapchain->getSwapChain(), imageIndex, renderFinishedSemaphore.getSemaphore());
+        result = mPresentQueue->present(mSwapchain->getVkSwapChain(), imageIndex, renderFinishedSemaphore.getVkSemaphore());
         if (result != vk::Result::eSuccess) {
             if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFramebufferResized) {
                 mFramebufferResized = false;
@@ -389,26 +389,26 @@ namespace vklite {
 
     UniformBufferBuilder DeviceEngine::uniformBufferBuilder() {
         return UniformBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
     StorageBufferBuilder DeviceEngine::storageBufferBuilder() {
         return StorageBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
     StagingBufferBuilder DeviceEngine::stagingBufferBuilder() {
         return StagingBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
     CombinedImageSamplerBuilder DeviceEngine::samplerBuilder() {
         return CombinedImageSamplerBuilder().asDefault()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties());
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties());
     }
 
 } // vklite

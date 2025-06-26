@@ -29,7 +29,7 @@ namespace vklite {
         ShaderModule &operator=(ShaderModule &&other) noexcept;
 
         [[nodiscard]]
-        const vk::ShaderModule &getShaderModule() const;
+        const vk::ShaderModule &getVkShaderModule() const;
     };
 
 } // vklite

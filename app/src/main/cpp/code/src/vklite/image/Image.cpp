@@ -45,7 +45,7 @@ namespace vklite {
         return mMeta.mipLevels;
     }
 
-    vk::Format Image::getFormat() const {
+    vk::Format Image::getVkFormat() const {
         return mMeta.format;
     }
 

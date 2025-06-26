@@ -27,7 +27,7 @@ namespace vklite {
         DescriptorSetLayout &operator=(DescriptorSetLayout &&other) noexcept;
 
         [[nodiscard]]
-        const vk::DescriptorSetLayout &getDescriptorSetLayout() const;
+        const vk::DescriptorSetLayout &getVkDescriptorSetLayout() const;
     };
 
 } // vklite

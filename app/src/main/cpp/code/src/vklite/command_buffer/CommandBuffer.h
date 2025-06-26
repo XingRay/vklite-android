@@ -28,7 +28,7 @@ namespace vklite {
         CommandBuffer &operator=(CommandBuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::CommandBuffer &getCommandBuffer() const override;
+        const vk::CommandBuffer &getVkCommandBuffer() const override;
 
     };
 

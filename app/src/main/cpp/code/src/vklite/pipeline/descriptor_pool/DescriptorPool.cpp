@@ -34,7 +34,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::DescriptorPool &DescriptorPool::getDescriptorPool() const {
+    const vk::DescriptorPool &DescriptorPool::getVkDescriptorPool() const {
         return mDescriptorPool;
     }
 

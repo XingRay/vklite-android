@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::SurfaceKHR &Surface::getSurface() const {
+    const vk::SurfaceKHR &Surface::getVkSurface() const {
         return mSurface;
     }
 

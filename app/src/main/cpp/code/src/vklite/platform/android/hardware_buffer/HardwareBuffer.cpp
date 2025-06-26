@@ -56,20 +56,5 @@ namespace vklite {
     AHardwareBuffer *HardwareBuffer::getHardwareBuffer() const {
         return mHardwareBuffer;
     }
-
-//    HardwareBuffer HardwareBuffer::build(const Device &device, AHardwareBuffer *hardwareBuffer) {
-//        const vk::Device &vkDevice = device.getDevice();
-//        // 获取 HardwareBuffer 属性
-//        vk::AndroidHardwareBufferPropertiesANDROID propertiesInfo;
-//        vk::AndroidHardwareBufferFormatPropertiesANDROID formatInfo;
-//        propertiesInfo.pNext = &formatInfo;
-//
-//        CALL_VK(vkGetAndroidHardwareBufferPropertiesANDROID(vkDevice, hardwareBuffer, reinterpret_cast<VkAndroidHardwareBufferPropertiesANDROID *>(&propertiesInfo)));
-//
-//        AHardwareBuffer_Desc hardwareBufferDescription;
-//        AHardwareBuffer_describe(hardwareBuffer, &hardwareBufferDescription);
-//
-////        return HardwareBuffer(hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription);
-//        return {hardwareBuffer, propertiesInfo, formatInfo, hardwareBufferDescription};
-//    }
+    
 } // vklite

@@ -49,7 +49,7 @@ namespace vklite {
         throw std::runtime_error("DescriptorMapping::getDescriptorCount(): no bufferInfos and imageInfos");
     }
 
-    vk::DescriptorType DescriptorMapping::getDescriptorType() const {
+    vk::DescriptorType DescriptorMapping::getVkDescriptorType() const {
         return mDescriptorType;
     }
 

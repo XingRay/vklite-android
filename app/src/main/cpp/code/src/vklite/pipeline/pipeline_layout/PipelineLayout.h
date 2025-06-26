@@ -27,7 +27,7 @@ namespace vklite {
         PipelineLayout &operator=(PipelineLayout &&other) noexcept;
 
         [[nodiscard]]
-        const vk::PipelineLayout &getPipelineLayout() const;
+        const vk::PipelineLayout &getVkPipelineLayout() const;
 
 //        [[nodiscard]]
 //        const std::vector<vk::DescriptorSetLayout> &getDescriptorSetLayouts() const;

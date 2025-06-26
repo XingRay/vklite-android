@@ -28,8 +28,16 @@ namespace vklite {
         return mImage;
     }
 
+    const vk::Image &CombinedMemoryImage::getVkImage() {
+        return mImage.getVkImage();
+    }
+
     DeviceMemory &CombinedMemoryImage::getDeviceMemory() {
         return mDeviceMemory;
+    }
+
+    const vk::DeviceMemory &CombinedMemoryImage::getVkDeviceMemory() {
+        return mDeviceMemory.getVkDeviceMemory();
     }
 
 } // vklite

@@ -32,7 +32,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Fence &Fence::getFence() const {
+    const vk::Fence &Fence::getVkFence() const {
         return mFence;
     }
 

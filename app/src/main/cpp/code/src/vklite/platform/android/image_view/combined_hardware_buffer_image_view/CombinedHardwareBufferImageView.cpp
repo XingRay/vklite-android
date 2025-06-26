@@ -31,4 +31,12 @@ namespace vklite {
         return mImageView;
     }
 
+    ImageView &CombinedHardwareBufferImageView::getImageView() {
+        return mImageView;
+    }
+
+    const vk::ImageView CombinedHardwareBufferImageView::getVkImageView() const {
+        return mImageView.getVkImageView();
+    }
+
 } // vklite

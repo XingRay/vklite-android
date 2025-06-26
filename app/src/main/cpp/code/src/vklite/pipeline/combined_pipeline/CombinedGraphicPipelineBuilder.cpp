@@ -172,7 +172,7 @@ namespace vklite {
         Pipeline pipeline = mGraphicsPipelineBuilder
                 .vertexShader(mVertexShaderModuleBuilder.buildUnique())
                 .fragmentShader(mFragmentShaderModuleBuilder.buildUnique())
-                .pipelineLayout(pipelineLayout.getPipelineLayout())
+                .pipelineLayout(pipelineLayout.getVkPipelineLayout())
                 .build();
 
         return CombinedPipeline(

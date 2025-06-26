@@ -27,7 +27,7 @@ namespace vklite {
         Surface &operator=(Surface &&other) noexcept;
 
         [[nodiscard]]
-        const vk::SurfaceKHR &getSurface() const;
+        const vk::SurfaceKHR &getVkSurface() const;
     };
 
 } // namespace engine

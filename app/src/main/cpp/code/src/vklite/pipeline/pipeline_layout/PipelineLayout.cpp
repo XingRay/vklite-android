@@ -34,7 +34,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::PipelineLayout &PipelineLayout::getPipelineLayout() const {
+    const vk::PipelineLayout &PipelineLayout::getVkPipelineLayout() const {
         return mPipelineLayout;
     }
 } // vklite

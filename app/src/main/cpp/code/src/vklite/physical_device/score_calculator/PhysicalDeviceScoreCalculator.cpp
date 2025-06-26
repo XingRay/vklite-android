@@ -31,9 +31,8 @@ namespace vklite {
 
     [[nodiscard]]
     uint32_t PhysicalDeviceScoreCalculator::calculateScore(const PhysicalDevice &physicalDevice) const {
-        vk::PhysicalDevice vkPhysicalDevice = physicalDevice.getPhysicalDevice();
-        vk::PhysicalDeviceProperties properties = vkPhysicalDevice.getProperties();
-        vk::PhysicalDeviceFeatures features = vkPhysicalDevice.getFeatures();
+        vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
+        vk::PhysicalDeviceFeatures features = physicalDevice.getFeatures();
 
         uint32_t score = 0;
 

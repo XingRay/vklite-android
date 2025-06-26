@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::ShaderModule &ShaderModule::getShaderModule() const {
+    const vk::ShaderModule &ShaderModule::getVkShaderModule() const {
         return mShaderModule;
     }
 

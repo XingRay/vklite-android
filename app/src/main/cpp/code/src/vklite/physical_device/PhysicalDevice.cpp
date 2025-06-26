@@ -29,6 +29,22 @@ namespace vklite {
         return *this;
     }
 
+    const vk::PhysicalDevice &PhysicalDevice::getVkPhysicalDevice() const {
+        return mPhysicalDevice;
+    }
+
+    vk::PhysicalDeviceMemoryProperties PhysicalDevice::getMemoryProperties() const {
+        return mPhysicalDevice.getMemoryProperties();
+    }
+
+    vk::PhysicalDeviceProperties PhysicalDevice::getProperties() const{
+        return mPhysicalDevice.getProperties();
+    }
+
+    vk::PhysicalDeviceFeatures PhysicalDevice::getFeatures() const{
+        return mPhysicalDevice.getFeatures();
+    }
+
     std::vector<uint32_t> PhysicalDevice::queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const {
         std::vector<uint32_t> queueFamilyIndices;
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
@@ -58,10 +74,6 @@ namespace vklite {
 
     bool PhysicalDevice::isSupportExtensions(const std::vector<std::string> &extensions) const {
         return StringUtil::isContains(queryExtensionNames(), extensions);
-    }
-
-    const vk::PhysicalDevice &PhysicalDevice::getPhysicalDevice() const {
-        return mPhysicalDevice;
     }
 
     vk::SampleCountFlagBits PhysicalDevice::queryMaxUsableSampleCount() const {

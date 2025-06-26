@@ -191,7 +191,7 @@ namespace vklite {
     GraphicsPipelineBuilder &GraphicsPipelineBuilder::vertexShader(std::unique_ptr<ShaderModule> vertexShaderModule) {
         mVertexShaderModule = std::move(vertexShaderModule);
 //        mShaderStageCreateInfos[0].setModule(mFragmentShaderModule->getShaderModule());
-        mShaderStageCreateInfoMap.at(vk::ShaderStageFlagBits::eVertex).get().setModule(mVertexShaderModule->getShaderModule());
+        mShaderStageCreateInfoMap.at(vk::ShaderStageFlagBits::eVertex).get().setModule(mVertexShaderModule->getVkShaderModule());
         return *this;
     }
 
@@ -210,7 +210,7 @@ namespace vklite {
     GraphicsPipelineBuilder &GraphicsPipelineBuilder::fragmentShader(std::unique_ptr<ShaderModule> fragmentShaderModule) {
         mFragmentShaderModule = std::move(fragmentShaderModule);
 //        mShaderStageCreateInfos[1].setModule(mFragmentShaderModule->getShaderModule());
-        mShaderStageCreateInfoMap.at(vk::ShaderStageFlagBits::eFragment).get().setModule(mFragmentShaderModule->getShaderModule());
+        mShaderStageCreateInfoMap.at(vk::ShaderStageFlagBits::eFragment).get().setModule(mFragmentShaderModule->getVkShaderModule());
         return *this;
     }
 

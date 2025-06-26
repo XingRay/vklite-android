@@ -37,7 +37,7 @@ namespace vklite {
         uint32_t getMipLevels() const;
 
         [[nodiscard]]
-        vk::Format getFormat() const;
+        vk::Format getVkFormat() const;
 
         [[nodiscard]]
         uint32_t getWidth() const;

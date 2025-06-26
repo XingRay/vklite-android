@@ -31,7 +31,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::SamplerYcbcrConversion &SamplerYcbcrConversion::getSamplerYcbcrConversion() const {
+    const vk::SamplerYcbcrConversion &SamplerYcbcrConversion::getVkSamplerYcbcrConversion() const {
         return mSamplerYcbcrConversion;
     }
 

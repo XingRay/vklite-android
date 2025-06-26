@@ -106,7 +106,7 @@ namespace vklite {
         image.bindMemory(deviceMemory.getVkDeviceMemory());
 
         ImageView imageView = mHardwareBufferImageViewBuilder
-                .image(image.getImage())
+                .image(image.getVkImage())
                 .build();
 
         return CombinedHardwareBufferImageView{std::move(image), std::move(deviceMemory), std::move(imageView)};

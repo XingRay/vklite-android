@@ -32,11 +32,16 @@ namespace vklite {
 
         CombinedHardwareBufferSampler &operator=(CombinedHardwareBufferSampler &&other) noexcept;
 
+        [[nodiscard]]
+        const SamplerYcbcrConversion &getSamplerYcbcrConversion() const;
 
-        const SamplerYcbcrConversion &getConversion() const;
+        [[nodiscard]]
+        const vk::SamplerYcbcrConversion &getVkSamplerYcbcrConversion() const;
 
+        [[nodiscard]]
         const Sampler &getSampler() const;
 
+        [[nodiscard]]
         const vk::Sampler &getVkSampler() const;
 
     };

@@ -29,7 +29,14 @@ namespace vklite {
 
         CombinedHardwareBufferImageView &operator=(CombinedHardwareBufferImageView &&other) noexcept;
 
+        [[nodiscard]]
         const ImageView &getImageView() const;
+
+        [[nodiscard]]
+        ImageView &getImageView();
+
+        [[nodiscard]]
+        const vk::ImageView getVkImageView() const;
     };
 
 } // vklite

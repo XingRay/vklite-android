@@ -30,13 +30,13 @@ namespace vklite {
         HardwareBufferImage &operator=(HardwareBufferImage &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Image &getImage() const;
+        const vk::Image &getVkImage() const;
 
         [[nodiscard]]
         uint32_t getMipLevels() const;
 
         [[nodiscard]]
-        vk::Format getFormat() const;
+        vk::Format getVkFormat() const;
 
         [[nodiscard]]
         uint32_t getWidth() const;

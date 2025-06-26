@@ -54,7 +54,7 @@ namespace vklite {
     }
 
     const vk::Pipeline &CombinedPipeline::getVkPipeline() const {
-        return mPipeline.getPipeline();
+        return mPipeline.getVkPipeline();
     }
 
 
@@ -63,7 +63,7 @@ namespace vklite {
     }
 
     const vk::PipelineLayout &CombinedPipeline::getVkPipelineLayout() {
-        return mPipelineLayout.getPipelineLayout();
+        return mPipelineLayout.getVkPipelineLayout();
     }
 
     std::vector<PushConstant> &CombinedPipeline::getPushConstants() {

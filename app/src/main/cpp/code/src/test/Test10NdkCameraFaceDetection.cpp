@@ -66,7 +66,7 @@ namespace test10 {
         vklite::VulkanAndroidApi::initApi(*mInstance);
 
         mSurface = vklite::AndroidSurfaceBuilder()
-                .instance((*mInstance).getInstance())
+                .instance((*mInstance).getVkInstance())
                 .nativeWindow(app.window)
                 .buildUnique();
 
@@ -79,7 +79,7 @@ namespace test10 {
             sampleCount = vklite::MaxMsaaSampleCountSelector(4).select(mPhysicalDevice->querySampleCountFlagBits());
         }
 
-        uint32_t presentQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getSurface())[0];
+        uint32_t presentQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesBySurface(mSurface->getVkSurface())[0];
         uint32_t graphicAndComputeQueueFamilyIndex = mPhysicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)[0];
 
 //        mDevice = vklite::DeviceBuilder()
@@ -90,24 +90,24 @@ namespace test10 {
 //                .addQueueFamily(presentQueueFamilyIndex)
 //                .buildUnique();
         mDevice = std::make_unique<vklite::Device>(mNet.vulkan_device()->vkdevice());
-        LOG_D("device => %p", (void *) mDevice->getDevice());
+        LOG_D("device => %p", (void *) mDevice->getVkDevice());
 
         mGraphicQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndex));
         mComputeQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(graphicAndComputeQueueFamilyIndex));
         mPresentQueue = std::make_unique<vklite::Queue>(mDevice->getQueue(presentQueueFamilyIndex));
 
         mSwapchain = vklite::SwapchainBuilder()
-                .device(mDevice->getDevice())
-                .surface(mSurface->getSurface())
+                .device(mDevice->getVkDevice())
+                .surface(mSurface->getVkSurface())
                 .queueFamilyIndices({presentQueueFamilyIndex})
-                .config(mPhysicalDevice->getPhysicalDevice(), mSurface->getSurface())
+                .config(mPhysicalDevice->getVkPhysicalDevice(), mSurface->getVkSurface())
                 .buildUnique();
 
         mViewports = mSwapchain->centerSquareViewports();
         mScissors = mSwapchain->centerSquareScissors();
 
         mCommandPool = vklite::CommandPoolBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .queueFamilyIndex(graphicAndComputeQueueFamilyIndex)
                 .buildUnique();
         mCommandBuffers = mCommandPool->allocateUnique(mFrameCount);
@@ -119,28 +119,28 @@ namespace test10 {
         mColorImageView = nullptr;
         if (mMsaaEnable) {
             mColorImageView = vklite::CombinedImageViewBuilder().asColorAttachment()
-                    .device(mDevice->getDevice())
-                    .format(mSwapchain->getDisplayFormat())
+                    .device(mDevice->getVkDevice())
+                    .format(mSwapchain->getVkFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                     .buildUnique();
         }
 
         mDepthImageView = nullptr;
         if (mDepthTestEnable) {
             mDepthImageView = vklite::CombinedImageViewBuilder().asDepthAttachment()
-                    .device(mDevice->getDevice())
+                    .device(mDevice->getVkDevice())
                     .format(mPhysicalDevice->findDepthFormat())
                     .size(mSwapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                     .buildUnique();
         }
 
         vklite::Subpass externalSubpass = vklite::Subpass::externalSubpass();
         mRenderPass = vklite::RenderPassBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .renderAreaExtend(mSwapchain->getDisplaySize())
                 .addSubpass([&](vklite::Subpass &subpass, const std::vector<vklite::Subpass> &subpasses) {
                     subpass
@@ -174,13 +174,13 @@ namespace test10 {
                 .addAttachmentIf(mMsaaEnable, [&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
-                            .format(mSwapchain->getDisplayFormat())
+                            .format(mSwapchain->getVkFormat())
                             .clearColorValue(mClearColor)
                             .asColorAttachmentUsedIn(subpasses[0]);
                 })
                 .addAttachment([&](vklite::Attachment &attachment, std::vector<vklite::Subpass> &subpasses) {
                     vklite::Attachment::presentColorAttachment(attachment)
-                            .format(mSwapchain->getDisplayFormat())
+                            .format(mSwapchain->getVkFormat())
                             .clearColorValue(mClearColor)
                             .applyIf(mMsaaEnable, [&](vklite::Attachment &thiz) {
                                 thiz
@@ -209,8 +209,8 @@ namespace test10 {
                 .count(mDisplayImageViews.size())
                 .framebufferBuilder([&](uint32_t index) {
                     return vklite::FramebufferBuilder()
-                            .device(mDevice->getDevice())
-                            .renderPass(mRenderPass->getRenderPass())
+                            .device(mDevice->getVkDevice())
+                            .renderPass(mRenderPass->getVkRenderPass())
                             .size(mSwapchain->getDisplaySize())
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
                             .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getVkImageView(); })
@@ -220,10 +220,10 @@ namespace test10 {
                 })
                 .build();
 
-        mImageAvailableSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
-        mRenderFinishedSemaphores = vklite::SemaphoreBuilder().device(mDevice->getDevice()).build(mFrameCount);
+        mImageAvailableSemaphores = vklite::SemaphoreBuilder().device(mDevice->getVkDevice()).build(mFrameCount);
+        mRenderFinishedSemaphores = vklite::SemaphoreBuilder().device(mDevice->getVkDevice()).build(mFrameCount);
         mFences = vklite::FenceBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
@@ -234,12 +234,12 @@ namespace test10 {
         ndkcamera::Image image = mNdkCamera->loopAcquireImageWithBuffer();
 
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .hardwareBuffer(image.getHardwareBuffer())
                 .build();
 
         mCameraInputSampler = vklite::CombinedHardwareBufferSamplerBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .formatProperties(hardwareBuffer.getFormatProperties())
                 .buildUnique();
 
@@ -317,7 +317,7 @@ namespace test10 {
 
 
         mDescriptorPool = vklite::DescriptorPoolBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .frameCount(mFrameCount)
                 .addDescriptorPoolSizes(preprocessComputeShaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(preprocessComputeShaderConfigure.getDescriptorSetCount())
@@ -332,44 +332,44 @@ namespace test10 {
 
         // preprocess
         mPreprocessPipeline = vklite::CombinedComputePipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .device(mDevice->getVkDevice())
+                .descriptorPool(mDescriptorPool->getVkDescriptorPool())
                 .frameCount(mFrameCount)
                 .shaderConfigure(preprocessComputeShaderConfigure)
                 .buildUnique();
 
         mComputeFences = vklite::FenceBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
         mComputeFinishSemaphores = vklite::SemaphoreBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .build(mFrameCount);
 
         // preview
         mPreviewPipeline = vklite::CombinedGraphicPipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .device(mDevice->getVkDevice())
+                .descriptorPool(mDescriptorPool->getVkDescriptorPool())
                 .frameCount(mFrameCount)
                 .shaderConfigure(previewShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 0)
+                .renderPass(mRenderPass->getVkRenderPass(), 0)
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .buildUnique();
 
         // lines
         mLinesPipeline = vklite::CombinedGraphicPipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .device(mDevice->getVkDevice())
+                .descriptorPool(mDescriptorPool->getVkDescriptorPool())
                 .frameCount(mFrameCount)
                 .shaderConfigure(linesShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 1)
+                .renderPass(mRenderPass->getVkRenderPass(), 1)
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .topology(vk::PrimitiveTopology::eLineList)
@@ -379,13 +379,13 @@ namespace test10 {
 
         // points
         mPointsPipeline = vklite::CombinedGraphicPipelineBuilder()
-                .device(mDevice->getDevice())
-                .descriptorPool(mDescriptorPool->getDescriptorPool())
+                .device(mDevice->getVkDevice())
+                .descriptorPool(mDescriptorPool->getVkDescriptorPool())
                 .frameCount(mFrameCount)
                 .shaderConfigure(pointsShaderConfigure)
                 .sampleCount(sampleCount)
                 .depthTestEnable(mDepthTestEnable)
-                .renderPass(mRenderPass->getRenderPass(), 2)
+                .renderPass(mRenderPass->getVkRenderPass(), 2)
                 .viewports(mViewports)
                 .scissors(mScissors)
                 .topology(vk::PrimitiveTopology::ePointList)
@@ -432,8 +432,8 @@ namespace test10 {
         letterboxParam.fillColor = {0.0f, 0.0f, 0.0f, 1.0f};
 
         mLetterboxParamsUniformBuffers = vklite::UniformBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .addUsage(vk::BufferUsageFlagBits::eStorageBuffer)
                 .size(sizeof(LetterboxParam))
                 .build(mFrameCount);
@@ -444,8 +444,8 @@ namespace test10 {
         // letter box output image
         mLetterBoxOutputImageViews = vklite::CombinedImageViewBuilder()
                 .asStorageImage()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .format(vk::Format::eR32G32B32A32Sfloat)
                 .size(128, 128)
                 .build(mFrameCount);
@@ -476,7 +476,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // preview pipeline // with uv rotation
@@ -521,8 +521,8 @@ namespace test10 {
 
         uint32_t indicesSize = indices.size() * sizeof(uint32_t);
         mIndexBuffer = vklite::IndexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(indicesSize)
                 .buildUnique();
         mIndexBuffer->update(*mCommandPool, indices);
@@ -532,8 +532,8 @@ namespace test10 {
 
         uint32_t verticesSize = vertices.size() * sizeof(Vertex);
         mVertexBuffer = vklite::VertexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(verticesSize)
                 .buildUnique();
         mVertexBuffer->update(*mCommandPool, vertices.data(), verticesSize);
@@ -541,7 +541,7 @@ namespace test10 {
         mVertexBufferOffsets.push_back(0);
 
         mPreprocessOutputImageSamplers = vklite::SamplerBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .build(mFrameCount);
 
         vklite::DescriptorSetWriters previewDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
@@ -557,7 +557,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // lines pipeline resources
@@ -577,8 +577,8 @@ namespace test10 {
 
         uint32_t linesIndicesSize = linesIndices.size() * sizeof(uint32_t);
         mLinesIndexBuffer = vklite::IndexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(linesIndicesSize)
                 .buildUnique();
         mLinesIndexBuffer->update(*mCommandPool, linesIndices);
@@ -588,8 +588,8 @@ namespace test10 {
 
         uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
         mLinesVertexBuffer = vklite::VertexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(linesVerticesSize)
                 .buildUnique();
         mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
@@ -599,8 +599,8 @@ namespace test10 {
 
         ColorUniformBufferObject colorUniformBufferObject{{0.0f, 0.0f, 1.0f}};
         mLinesUniformBuffers = vklite::UniformBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(sizeof(ColorUniformBufferObject))
                 .build(mFrameCount);
 
@@ -620,7 +620,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(linesDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // points
@@ -636,8 +636,8 @@ namespace test10 {
 
         uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
         mPointsVertexBuffer = vklite::VertexBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(pointsVerticesSize)
                 .buildUnique();
         mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
@@ -647,8 +647,8 @@ namespace test10 {
 
         PointAttribute pointAttribute{{1.0f, 0.0f, 0.0f}, 14.0f};
         mPointsUniformBuffers = vklite::UniformBufferBuilder()
-                .device(mDevice->getDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
+                .device(mDevice->getVkDevice())
+                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
                 .size(sizeof(PointAttribute))
                 .build(mFrameCount);
 
@@ -668,7 +668,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(pointsDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(pointsDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
         mFrameCounter.start();
 
@@ -696,18 +696,18 @@ namespace test10 {
         }
 
         vklite::HardwareBuffer hardwareBuffer = vklite::HardwareBufferBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .hardwareBuffer(pHardwareBuffer)
                 .build();
 
         mCameraInputImageView = vklite::CombinedHardwareBufferImageViewBuilder()
-                .device(mDevice->getDevice())
+                .device(mDevice->getVkDevice())
                 .hardwareBuffer(hardwareBuffer.getHardwareBuffer())
                 .hardwareBufferFormatProperties(hardwareBuffer.getFormatProperties())
                 .hardwareBufferDescription(hardwareBuffer.getAndroidHardwareBufferDescription())
                 .hardwareBufferProperties(hardwareBuffer.getProperties())
-                .memoryProperties(mPhysicalDevice->getPhysicalDevice().getMemoryProperties())
-                .conversion((*mCameraInputSampler).getConversion().getSamplerYcbcrConversion())
+                .memoryProperties(mPhysicalDevice->getMemoryProperties())
+                .conversion((*mCameraInputSampler).getVkSamplerYcbcrConversion())
                 .buildUnique();
 
         // bind to pipeline resources
@@ -725,7 +725,7 @@ namespace test10 {
                 })
                 .build();
 
-        mDevice->getDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+        mDevice->getVkDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
         // compute shader preprocess
         vk::Result result = mComputeFences[mCurrentFrameIndex].wait();
@@ -749,9 +749,9 @@ namespace test10 {
             commandBuffer.dispatch(128 / 32, 128 / 16, 1);
         });
 
-        mComputeQueue->submit(computeCommandBuffer.getCommandBuffer(),
-                              mComputeFinishSemaphores[mCurrentFrameIndex].getSemaphore(),
-                              mComputeFences[mCurrentFrameIndex].getFence());
+        mComputeQueue->submit(computeCommandBuffer.getVkCommandBuffer(),
+                              mComputeFinishSemaphores[mCurrentFrameIndex].getVkSemaphore(),
+                              mComputeFences[mCurrentFrameIndex].getVkFence());
 
         result = mComputeFences[mCurrentFrameIndex].wait();
         if (result != vk::Result::eSuccess) {
@@ -873,7 +873,7 @@ namespace test10 {
         }
 
         // 当 acquireNextImageKHR 成功返回时，imageAvailableSemaphore 会被触发，表示图像已经准备好，可以用于渲染。
-        auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getSemaphore());
+        auto [acquireResult, imageIndex] = mSwapchain->acquireNextImage(imageAvailableSemaphore.getVkSemaphore());
         if (acquireResult != vk::Result::eSuccess) {
             if (acquireResult == vk::Result::eErrorOutOfDateKHR) {
                 // 交换链已与表面不兼容，不能再用于渲染。通常在窗口大小调整后发生。
@@ -891,7 +891,7 @@ namespace test10 {
 
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
-            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
+            mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getVkFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
                 mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
                                                                                             vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
                                                                                             vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
@@ -977,13 +977,13 @@ namespace test10 {
             throw std::runtime_error("resetFences failed");
         }
 
-        mGraphicQueue->submit(commandBuffer.getCommandBuffer(),
+        mGraphicQueue->submit(commandBuffer.getVkCommandBuffer(),
                               vk::PipelineStageFlagBits::eColorAttachmentOutput,
-                              imageAvailableSemaphore.getSemaphore(),
-                              renderFinishedSemaphore.getSemaphore(),
-                              fence.getFence());
+                              imageAvailableSemaphore.getVkSemaphore(),
+                              renderFinishedSemaphore.getVkSemaphore(),
+                              fence.getVkFence());
 
-        result = mPresentQueue->present(mSwapchain->getSwapChain(), imageIndex, renderFinishedSemaphore.getSemaphore());
+        result = mPresentQueue->present(mSwapchain->getVkSwapChain(), imageIndex, renderFinishedSemaphore.getVkSemaphore());
         if (result != vk::Result::eSuccess) {
             if (result == vk::Result::eErrorOutOfDateKHR || result == vk::Result::eSuboptimalKHR || mFramebufferResized) {
                 mFramebufferResized = false;

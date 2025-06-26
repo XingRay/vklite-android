@@ -29,7 +29,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::DescriptorSetLayout &DescriptorSetLayout::getDescriptorSetLayout() const {
+    const vk::DescriptorSetLayout &DescriptorSetLayout::getVkDescriptorSetLayout() const {
         return mDescriptorSetLayout;
     }
 

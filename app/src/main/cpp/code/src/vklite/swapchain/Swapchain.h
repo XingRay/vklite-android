@@ -33,13 +33,13 @@ namespace vklite {
 
 
         [[nodiscard]]
-        const vk::SwapchainKHR &getSwapChain() const;
+        const vk::SwapchainKHR &getVkSwapChain() const;
 
         [[nodiscard]]
-        vk::Format getDisplayFormat() const;
+        vk::Format getVkFormat() const;
 
         [[nodiscard]]
-        vk::SurfaceFormatKHR getSurfaceFormat() const;
+        vk::SurfaceFormatKHR getVkSurfaceFormat() const;
 
         [[nodiscard]]
         uint32_t getImageCount() const;

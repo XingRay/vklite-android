@@ -34,7 +34,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::CommandPool &CommandPool::getCommandPool() const {
+    const vk::CommandPool &CommandPool::getVkCommandPool() const {
         return mCommandPool;
     }
 
@@ -77,7 +77,7 @@ namespace vklite {
         vk::SubmitInfo submitInfo{};
         submitInfo
                 .setCommandBufferCount(1)
-                .setPCommandBuffers(&(commandBuffer.getCommandBuffer()));
+                .setPCommandBuffers(&(commandBuffer.getVkCommandBuffer()));
 
         queue.submit(submitInfo);
         queue.waitIdle();
@@ -122,7 +122,7 @@ namespace vklite {
         CommandBuffer commandBuffer = allocateOne();
         commandBuffer.recordOneTimeSubmit(command);
 
-        queue.submit(commandBuffer.getCommandBuffer());
+        queue.submit(commandBuffer.getVkCommandBuffer());
         queue.waitIdle();
     }
 

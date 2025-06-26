@@ -94,7 +94,7 @@ namespace vklite {
 
         Pipeline pipeline = mComputePipelineBuilder
                 .computeShader(mComputeShaderModuleBuilder.buildUnique())
-                .pipelineLayout(pipelineLayout.getPipelineLayout())
+                .pipelineLayout(pipelineLayout.getVkPipelineLayout())
                 .build();
 
         return CombinedPipeline{

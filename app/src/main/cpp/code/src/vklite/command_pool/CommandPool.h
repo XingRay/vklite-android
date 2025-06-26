@@ -37,7 +37,7 @@ namespace vklite {
         CommandPool &operator=(CommandPool &&other) noexcept;
 
         [[nodiscard]]
-        const vk::CommandPool &getCommandPool() const;
+        const vk::CommandPool &getVkCommandPool() const;
 
         [[nodiscard]]
         CommandBuffers allocate(uint32_t count, vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) const;

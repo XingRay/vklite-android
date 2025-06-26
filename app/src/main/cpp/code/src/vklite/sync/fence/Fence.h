@@ -27,7 +27,7 @@ namespace vklite {
         Fence &operator=(Fence &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Fence &getFence() const;
+        const vk::Fence &getVkFence() const;
 
         vk::Result reset();
 

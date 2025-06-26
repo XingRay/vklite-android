@@ -32,7 +32,7 @@ namespace vklite {
         RenderPass &operator=(RenderPass &&other) noexcept;
 
         [[nodiscard]]
-        const vk::RenderPass &getRenderPass() const;
+        const vk::RenderPass &getVkRenderPass() const;
 
         RenderPass &renderArea(vk::Rect2D renderArea);
 

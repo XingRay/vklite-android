@@ -126,31 +126,31 @@ namespace vklite {
             mMsaaEnable = true;
         }
 
-        uint32_t presentQueueFamilyIndex = physicalDevice->queryQueueFamilyIndicesBySurface(surface->getSurface())[0];
+        uint32_t presentQueueFamilyIndex = physicalDevice->queryQueueFamilyIndicesBySurface(surface->getVkSurface())[0];
         uint32_t computeAndGraphicQueueFamilyIndex = physicalDevice->queryQueueFamilyIndicesByFlags(vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute)[0];
 
         std::unique_ptr<Device> device = mDeviceBuilder
-                .physicalDevice(physicalDevice->getPhysicalDevice())
+                .physicalDevice(physicalDevice->getVkPhysicalDevice())
                 .addQueueFamily(computeAndGraphicQueueFamilyIndex)
                 .addQueueFamily(presentQueueFamilyIndex)
                 .buildUnique();
-        LOG_D("device => %p", (void *) device->getDevice());
+        LOG_D("device => %p", (void *) device->getVkDevice());
 
         std::unique_ptr<Queue> graphicQueue = std::make_unique<Queue>(device->getQueue(computeAndGraphicQueueFamilyIndex));
         std::unique_ptr<Queue> presentQueue = std::make_unique<Queue>(device->getQueue(presentQueueFamilyIndex));
 
         std::unique_ptr<Swapchain> swapchain = SwapchainBuilder()
-                .device(device->getDevice())
-                .surface(surface->getSurface())
+                .device(device->getVkDevice())
+                .surface(surface->getVkSurface())
                 .queueFamilyIndices({presentQueueFamilyIndex})
-                .config(physicalDevice->getPhysicalDevice(), surface->getSurface())
+                .config(physicalDevice->getVkPhysicalDevice(), surface->getVkSurface())
                 .buildUnique();
 
         std::vector<vk::Viewport> viewports = swapchain->fullScreenViewports();
         std::vector<vk::Rect2D> scissors = swapchain->fullScreenScissors();
 
         std::unique_ptr<CommandPool> commandPool = CommandPoolBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .queueFamilyIndex(computeAndGraphicQueueFamilyIndex)
                 .buildUnique();
         std::unique_ptr<CommandBuffers> commandBuffers = commandPool->allocateUnique(mFrameCount);
@@ -161,28 +161,28 @@ namespace vklite {
         std::unique_ptr<CombinedImageView> colorImageView = nullptr;
         if (mMsaaEnable) {
             colorImageView = CombinedImageViewBuilder().asColorAttachment()
-                    .device(device->getDevice())
-                    .format(swapchain->getDisplayFormat())
+                    .device(device->getVkDevice())
+                    .format(swapchain->getVkFormat())
                     .size(swapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .physicalDeviceMemoryProperties(physicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(physicalDevice->getMemoryProperties())
                     .buildUnique();
         }
 
         std::unique_ptr<CombinedImageView> depthImageView = nullptr;
         if (mDepthTestEnable) {
             depthImageView = CombinedImageViewBuilder().asDepthAttachment()
-                    .device(device->getDevice())
+                    .device(device->getVkDevice())
                     .format(physicalDevice->findDepthFormat())
                     .size(swapchain->getDisplaySize())
                     .sampleCount(sampleCount)
-                    .physicalDeviceMemoryProperties(physicalDevice->getPhysicalDevice().getMemoryProperties())
+                    .physicalDeviceMemoryProperties(physicalDevice->getMemoryProperties())
                     .buildUnique();
         }
 
         Subpass externalSubpass = Subpass::externalSubpass();
         std::unique_ptr<RenderPass> renderPass = RenderPassBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .renderAreaExtend(swapchain->getDisplaySize())
                 .addSubpass([&](Subpass &subpass, const std::vector<Subpass> &subpasses) {
                     subpass
@@ -196,13 +196,13 @@ namespace vklite {
                 .addAttachmentIf(mMsaaEnable, [&](Attachment &attachment, std::vector<Subpass> &subpasses) {
                     Attachment::msaaColorAttachment(attachment)
                             .sampleCount(sampleCount)
-                            .format(swapchain->getDisplayFormat())
+                            .format(swapchain->getVkFormat())
                             .clearColorValue(mClearColor)
                             .asColorAttachmentUsedIn(subpasses[0], vk::ImageLayout::eColorAttachmentOptimal);
                 })
                 .addAttachment([&](Attachment &attachment, std::vector<Subpass> &subpasses) {
                     Attachment::presentColorAttachment(attachment)
-                            .format(swapchain->getDisplayFormat())
+                            .format(swapchain->getVkFormat())
                             .clearColorValue(mClearColor)
                             .applyIf(mMsaaEnable, [&](Attachment &thiz) {
                                 thiz
@@ -226,8 +226,8 @@ namespace vklite {
                 .count(displayImageViews.size())
                 .framebufferBuilder([&](uint32_t index) {
                     return FramebufferBuilder()
-                            .device(device->getDevice())
-                            .renderPass(renderPass->getRenderPass())
+                            .device(device->getVkDevice())
+                            .renderPass(renderPass->getVkRenderPass())
                             .width(swapchain->getDisplaySize().width)
                             .height(swapchain->getDisplaySize().height)
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
@@ -238,10 +238,10 @@ namespace vklite {
                 })
                 .build();
 
-        std::vector<Semaphore> imageAvailableSemaphores = SemaphoreBuilder().device(device->getDevice()).build(mFrameCount);
-        std::vector<Semaphore> renderFinishedSemaphores = SemaphoreBuilder().device(device->getDevice()).build(mFrameCount);
+        std::vector<Semaphore> imageAvailableSemaphores = SemaphoreBuilder().device(device->getVkDevice()).build(mFrameCount);
+        std::vector<Semaphore> renderFinishedSemaphores = SemaphoreBuilder().device(device->getVkDevice()).build(mFrameCount);
         std::vector<Fence> fences = FenceBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
@@ -254,7 +254,7 @@ namespace vklite {
         }
 
         std::unique_ptr<DescriptorPool> descriptorPool = vklite::DescriptorPoolBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .frameCount(mFrameCount)
                 .addDescriptorPoolSizes(mComputeShaderConfigure.calcDescriptorPoolSizes())
                 .addDescriptorSetCount(mComputeShaderConfigure.getDescriptorSetCount())
@@ -263,9 +263,9 @@ namespace vklite {
                 .buildUnique();
 
         std::unique_ptr<CombinedPipeline> graphicPipeline = CombinedGraphicPipelineBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .frameCount(mFrameCount)
-                .renderPass(renderPass->getRenderPass())
+                .renderPass(renderPass->getVkRenderPass())
                 .shaderConfigure(mGraphicShaderConfigure)
                 .topology(vk::PrimitiveTopology::ePointList)
                 .viewports(viewports)
@@ -279,20 +279,20 @@ namespace vklite {
         std::unique_ptr<CommandBuffers> computeCommandBuffers = commandPool->allocateUnique(mFrameCount);
 
         std::unique_ptr<CombinedPipeline> computePipeline = vklite::CombinedComputePipelineBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .frameCount(mFrameCount)
-                .descriptorPool(descriptorPool->getDescriptorPool())
+                .descriptorPool(descriptorPool->getVkDescriptorPool())
                 .shaderConfigure(mComputeShaderConfigure)
                 .buildUnique();
 
         std::vector<Fence> computeFences = vklite::FenceBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                         // 已发出信号的状态下创建栅栏，以便第一次调用 vkWaitForFences()立即返回
                 .fenceCreateFlags(vk::FenceCreateFlagBits::eSignaled)
                 .build(mFrameCount);
 
         std::vector<Semaphore> computeFinishSemaphores = vklite::SemaphoreBuilder()
-                .device(device->getDevice())
+                .device(device->getVkDevice())
                 .build(mFrameCount);
 
 

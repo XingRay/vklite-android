@@ -36,15 +36,15 @@ namespace vklite {
         return *this;
     }
 
-    const vk::SwapchainKHR &Swapchain::getSwapChain() const {
+    const vk::SwapchainKHR &Swapchain::getVkSwapChain() const {
         return mSwapChain;
     }
 
-    vk::Format Swapchain::getDisplayFormat() const {
+    vk::Format Swapchain::getVkFormat() const {
         return mMeta.surfaceFormat.format;
     }
 
-    vk::SurfaceFormatKHR Swapchain::getSurfaceFormat() const {
+    vk::SurfaceFormatKHR Swapchain::getVkSurfaceFormat() const {
         return mMeta.surfaceFormat;
     }
 
@@ -63,7 +63,7 @@ namespace vklite {
     std::vector<ImageView> Swapchain::createDisplayImageViews() const {
         return ImageViewBuilder().asColorAttachment()
                 .device(mDevice)
-                .format(getDisplayFormat())
+                .format(getVkFormat())
                 .build(getDisplayImages());
     }
 

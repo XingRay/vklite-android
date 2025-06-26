@@ -31,7 +31,7 @@ namespace vklite {
         SamplerYcbcrConversion conversion = mHardwareBufferYcbcrConversionBuilder.build();
 
         Sampler sampler = mHardwareBufferSamplerBuilder
-                .ycbcrConversion(conversion.getSamplerYcbcrConversion())
+                .ycbcrConversion(conversion.getVkSamplerYcbcrConversion())
                 .build();
 
         return CombinedHardwareBufferSampler{

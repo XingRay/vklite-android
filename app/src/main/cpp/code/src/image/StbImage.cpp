@@ -66,7 +66,7 @@ namespace image {
         return mHeight;
     }
 
-    vk::Format StbImage::getFormat() const {
+    vk::Format StbImage::getVkFormat() const {
         return mFormat;
     }
 

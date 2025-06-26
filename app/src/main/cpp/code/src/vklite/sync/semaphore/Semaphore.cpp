@@ -29,7 +29,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Semaphore &Semaphore::getSemaphore() const {
+    const vk::Semaphore &Semaphore::getVkSemaphore() const {
         return mSemaphore;
     }
 

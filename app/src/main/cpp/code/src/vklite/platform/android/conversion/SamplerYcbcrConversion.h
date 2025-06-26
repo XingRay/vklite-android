@@ -28,7 +28,7 @@ namespace vklite {
         SamplerYcbcrConversion &operator=(SamplerYcbcrConversion &&other) noexcept;
 
         [[nodiscard]]
-        const vk::SamplerYcbcrConversion &getSamplerYcbcrConversion() const;
+        const vk::SamplerYcbcrConversion &getVkSamplerYcbcrConversion() const;
     };
 
 } // vklite

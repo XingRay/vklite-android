@@ -32,7 +32,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Image &HardwareBufferImage::getImage() const {
+    const vk::Image &HardwareBufferImage::getVkImage() const {
         return mImage;
     }
 
@@ -40,7 +40,7 @@ namespace vklite {
         return mMeta.mipLevels;
     }
 
-    vk::Format HardwareBufferImage::getFormat() const {
+    vk::Format HardwareBufferImage::getVkFormat() const {
         return mMeta.format;
     }
 

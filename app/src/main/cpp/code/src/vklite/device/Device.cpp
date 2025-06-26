@@ -34,7 +34,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Device &Device::getDevice() const {
+    const vk::Device &Device::getVkDevice() const {
         return mDevice;
     }
 

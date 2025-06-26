@@ -92,7 +92,7 @@ namespace test05 {
         mSamplers = mEngine->samplerBuilder()
                 .width(textureImage->getWidth())
                 .height(textureImage->getHeight())
-                .format(textureImage->getFormat())
+                .format(textureImage->getVkFormat())
                 .build(mEngine->getFrameCount());
 
         for (uint32_t i = 0; i < mEngine->getFrameCount(); i++) {

@@ -29,7 +29,7 @@ namespace vklite {
         DescriptorPool &operator=(DescriptorPool &&other) noexcept;
 
         [[nodiscard]]
-        const vk::DescriptorPool &getDescriptorPool() const;
+        const vk::DescriptorPool &getVkDescriptorPool() const;
 
         [[nodiscard]]
         std::vector<vk::DescriptorSet> allocateDescriptorSets(const std::vector<vk::DescriptorSetLayout> &descriptorSetLayouts);

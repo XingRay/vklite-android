@@ -44,7 +44,7 @@ namespace image {
 
         uint32_t getHeight() const override;
 
-        vk::Format getFormat() const override;
+        vk::Format getVkFormat() const override;
 
         const void *getPixels() const override;
 

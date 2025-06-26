@@ -27,7 +27,7 @@ namespace vklite {
         Semaphore &operator=(Semaphore &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Semaphore &getSemaphore() const;
+        const vk::Semaphore &getVkSemaphore() const;
     };
 
 } // vklite

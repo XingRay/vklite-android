@@ -41,7 +41,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::RenderPass &RenderPass::getRenderPass() const {
+    const vk::RenderPass &RenderPass::getVkRenderPass() const {
         return mRenderPass;
     }
 

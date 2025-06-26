@@ -28,7 +28,7 @@ namespace vklite {
         Pipeline &operator=(Pipeline &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Pipeline &getPipeline() const;
+        const vk::Pipeline &getVkPipeline() const;
 
 //        void drawFrame(const vk::CommandBuffer &commandBuffer,
 //                       const PipelineLayout &pipelineLayout,

@@ -45,8 +45,6 @@ namespace vklite {
         [[nodiscard]]
         AHardwareBuffer *getHardwareBuffer() const;
 
-//    public://static
-//        static HardwareBuffer build(const Device &device, AHardwareBuffer *hardwareBuffer);
     };
 
 } // vklite

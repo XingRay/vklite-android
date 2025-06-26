@@ -30,6 +30,18 @@ namespace vklite {
         PhysicalDevice &operator=(PhysicalDevice &&other) noexcept;
 
         [[nodiscard]]
+        const vk::PhysicalDevice &getVkPhysicalDevice() const;
+
+        [[nodiscard]]
+        vk::PhysicalDeviceMemoryProperties getMemoryProperties() const;
+
+        [[nodiscard]]
+        vk::PhysicalDeviceProperties getProperties() const;
+
+        [[nodiscard]]
+        vk::PhysicalDeviceFeatures getFeatures() const;
+
+        [[nodiscard]]
         std::vector<uint32_t> queryQueueFamilyIndicesByFlags(vk::QueueFlags requiredFlags) const;
 
         [[nodiscard]]
@@ -37,9 +49,6 @@ namespace vklite {
 
         [[nodiscard]]
         bool isSupportExtensions(const std::vector<std::string> &extensions) const;
-
-        [[nodiscard]]
-        const vk::PhysicalDevice &getPhysicalDevice() const;
 
         [[nodiscard]]
         vk::SampleCountFlagBits queryMaxUsableSampleCount() const;

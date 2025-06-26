@@ -31,7 +31,7 @@ namespace vklite {
         Instance &operator=(Instance &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Instance &getInstance() const;
+        const vk::Instance &getVkInstance() const;
 
         [[nodiscard]]
         const std::vector<std::string> &getEnabledExtensions() const;

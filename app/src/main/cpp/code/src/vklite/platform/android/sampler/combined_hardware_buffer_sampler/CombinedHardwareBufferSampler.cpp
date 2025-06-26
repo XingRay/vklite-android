@@ -25,8 +25,12 @@ namespace vklite {
         return *this;
     }
 
-    const SamplerYcbcrConversion &CombinedHardwareBufferSampler::getConversion() const {
+    const SamplerYcbcrConversion &CombinedHardwareBufferSampler::getSamplerYcbcrConversion() const {
         return mConversion;
+    }
+
+    const vk::SamplerYcbcrConversion &CombinedHardwareBufferSampler::getVkSamplerYcbcrConversion() const {
+        return mConversion.getVkSamplerYcbcrConversion();
     }
 
     const Sampler &CombinedHardwareBufferSampler::getSampler() const {

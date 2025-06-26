@@ -26,7 +26,7 @@ namespace image {
         virtual uint32_t getHeight() const = 0;
 
         [[nodiscard]]
-        virtual vk::Format getFormat() const = 0;
+        virtual vk::Format getVkFormat() const = 0;
 
         [[nodiscard]]
         virtual const void *getPixels() const = 0;

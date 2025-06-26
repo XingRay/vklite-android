@@ -48,7 +48,7 @@ namespace vklite {
         uint32_t getDescriptorCount() const;
 
         [[nodiscard]]
-        vk::DescriptorType getDescriptorType() const;
+        vk::DescriptorType getVkDescriptorType() const;
 
         [[nodiscard]]
         const std::vector<vk::DescriptorBufferInfo> &getDescriptorBufferInfos() const;

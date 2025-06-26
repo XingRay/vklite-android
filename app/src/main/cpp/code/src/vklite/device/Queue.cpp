@@ -23,7 +23,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Queue &Queue::getQueue() const {
+    const vk::Queue &Queue::getVkQueue() const {
         return mQueue;
     }
 

@@ -39,8 +39,7 @@ namespace vklite {
         return *this;
     }
 
-    [[nodiscard]]
-    const vk::Instance &Instance::getInstance() const {
+    const vk::Instance &Instance::getVkInstance() const {
         return mInstance;
     }
 

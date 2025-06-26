@@ -18,7 +18,7 @@ namespace vklite {
         virtual ~CommandBufferInterface() = 0;
 
         [[nodiscard]]
-        virtual const vk::CommandBuffer &getCommandBuffer() const = 0;
+        virtual const vk::CommandBuffer &getVkCommandBuffer() const = 0;
 
         void record(const vk::CommandBufferBeginInfo &beginInfo, const std::function<void(const vk::CommandBuffer &commandBuffer)> &handler) const;
 

@@ -19,7 +19,7 @@ namespace vklite {
                 .addDevicePlugin(AndroidSurfacePlugin::buildUniqueCombined())
                 .surfaceBuilder([=](const vklite::Instance &instance) {
                     return AndroidSurfaceBuilder()
-                            .instance(instance.getInstance())
+                            .instance(instance.getVkInstance())
                             .nativeWindow(window)
                             .buildUnique();
                 });

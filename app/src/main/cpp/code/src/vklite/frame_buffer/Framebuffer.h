@@ -31,7 +31,8 @@ namespace vklite {
         Framebuffer &operator=(Framebuffer &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Framebuffer &getFramebuffer() const;
+        const vk::Framebuffer &getVkFramebuffer() const;
+        
     };
 
 } // vklite

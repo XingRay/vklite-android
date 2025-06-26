@@ -33,7 +33,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::CommandBuffer &CommandBuffer::getCommandBuffer() const {
+    const vk::CommandBuffer &CommandBuffer::getVkCommandBuffer() const {
         return mCommandBuffer;
     }
 
