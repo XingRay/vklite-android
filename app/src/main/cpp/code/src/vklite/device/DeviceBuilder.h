@@ -77,9 +77,7 @@ namespace vklite {
 
 
         // build
-        std::optional<Device>
-
-        build();
+        Device build();
 
         std::unique_ptr<Device> buildUnique();
 

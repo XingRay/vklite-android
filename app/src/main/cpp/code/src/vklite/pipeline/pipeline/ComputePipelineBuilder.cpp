@@ -68,11 +68,7 @@ namespace vklite {
     }
 
     std::unique_ptr<Pipeline> ComputePipelineBuilder::buildUnique() {
-        std::optional<Pipeline> computePipeline = build();
-        if (!computePipeline.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<Pipeline>(std::move(computePipeline.value()));
+        return std::make_unique<Pipeline>(build());
     }
 
 } // vklite

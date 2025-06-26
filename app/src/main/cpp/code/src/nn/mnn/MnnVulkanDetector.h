@@ -37,7 +37,7 @@ namespace detector {
 
         ~MnnVulkanDetector();
 
-        std::optional<std::pair<std::vector<float>, std::vector<float> > > detect(AHardwareBuffer *hardwareBuffer);
+        std::pair<std::vector<float>, std::vector<float> > detect(AHardwareBuffer *hardwareBuffer);
     };
 
 } // detector

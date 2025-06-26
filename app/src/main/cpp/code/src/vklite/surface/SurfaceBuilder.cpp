@@ -11,10 +11,6 @@ namespace vklite {
     SurfaceBuilder::~SurfaceBuilder() = default;
 
     std::unique_ptr<Surface> SurfaceBuilder::buildUnique() const {
-        std::optional<Surface> surface = build();
-        if (!surface.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<Surface>(std::move(surface.value()));
+        return std::make_unique<Surface>(build());
     }
 }

@@ -36,7 +36,7 @@ namespace ndkcamera {
         camera_status_t add(const CaptureSessionOutput &sessionOutput);
 
     public://static
-        static std::optional<CaptureSessionOutputContainer> build();
+        static CaptureSessionOutputContainer build();
 
         static std::unique_ptr<CaptureSessionOutputContainer> buildUnique();
     };

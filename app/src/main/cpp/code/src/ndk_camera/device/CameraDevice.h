@@ -34,7 +34,7 @@ namespace ndkcamera {
 
 
         // createCaptureRequest
-        std::optional<CaptureRequest> createCaptureRequest();
+        CaptureRequest createCaptureRequest();
 
         std::unique_ptr<CaptureRequest> createUniqueCaptureRequest();
 

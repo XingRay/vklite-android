@@ -36,7 +36,7 @@ namespace vklite {
 
     std::optional<PhysicalDevice *> PhysicalDeviceSelector::select(std::vector<PhysicalDevice> &physicalDevices) {
         if (physicalDevices.empty()) {
-            LOG_D("No physical devices found!");
+            LOG_D("PhysicalDeviceSelector::select: No physical devices found!");
             return std::nullopt;
         }
 
@@ -63,8 +63,8 @@ namespace vklite {
         }
 
         if (maxScore == 0) {
-            LOG_E("suitable PhysicalDevice not found !");
-            throw std::runtime_error("suitable PhysicalDevice not found !");
+            LOG_E("PhysicalDeviceSelector::select: suitable PhysicalDevice not found !");
+            throw std::runtime_error("PhysicalDeviceSelector::select: suitable PhysicalDevice not found !");
         }
 
         return bestPhysicalDevice;

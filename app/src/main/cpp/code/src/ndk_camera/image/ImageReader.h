@@ -36,17 +36,17 @@ namespace ndkcamera {
         ImageReader &operator=(ImageReader &&other) noexcept;
 
 
-        std::optional<NativeWindow> getWindow();
+        NativeWindow getWindow();
 
         std::unique_ptr<NativeWindow> getUniqueWindow();
 
 
-        std::optional<CaptureSessionOutput> createCaptureSessionOutput();
+        CaptureSessionOutput createCaptureSessionOutput();
 
         std::unique_ptr<CaptureSessionOutput> createUniqueCaptureSessionOutput();
 
 
-        std::optional<CameraOutputTarget> createCameraOutputTarget();
+        CameraOutputTarget createCameraOutputTarget();
 
         std::unique_ptr<CameraOutputTarget> createUniqueCameraOutputTarget();
 
@@ -62,7 +62,7 @@ namespace ndkcamera {
         // static methods
 
     public://static
-        static std::optional<ImageReader> build(int32_t width, int32_t height, int32_t format, uint64_t usage, int32_t maxImages);
+        static ImageReader build(int32_t width, int32_t height, int32_t format, uint64_t usage, int32_t maxImages);
 
         static std::unique_ptr<ImageReader> buildUnique(int32_t width, int32_t height, int32_t format, uint64_t usage, int32_t maxImages);
 

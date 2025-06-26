@@ -160,28 +160,30 @@ namespace vklite {
         return *this;
     }
 
-    std::optional<Swapchain> SwapchainBuilder::build() {
+    Swapchain SwapchainBuilder::build() {
         if (mDevice == nullptr) {
             LOG_E("mDevice== nullptr, must invoke SwapchainBuilder::device(vk::Device device)");
-            throw std::runtime_error("mDevice== nullptr, must invoke SwapchainBuilder::device(vk::Device device)");
+            throw std::runtime_error("SwapchainBuilder::build(): mDevice== nullptr, must invoke SwapchainBuilder::device(vk::Device device)");
         }
         if (mSwapchainCreateInfo.surface == nullptr) {
             LOG_E("mSwapchainCreateInfo.surface== nullptr, must invoke SwapchainBuilder::surface(vk::SurfaceKHR surface)");
-            throw std::runtime_error("mSwapchainCreateInfo.surface== nullptr, must invoke SwapchainBuilder::surface(vk::SurfaceKHR surface)");
+            throw std::runtime_error("SwapchainBuilder::build(): mSwapchainCreateInfo.surface== nullptr, must invoke SwapchainBuilder::surface(vk::SurfaceKHR surface)");
         }
 
         if (mQueueFamilyIndices.empty()) {
-            LOG_E("mQueueFamilyIndices not set , mQueueFamilyIndices.size()==0");
-            return std::nullopt;
-        } else if (mQueueFamilyIndices.size() == 1){
-            if(mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eExclusive) {
-                LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eExclusive when mQueueFamilyIndices.size() == 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
+            LOG_E("mQueueFamilyIndices not set , mQueueFamilyIndices.size() == 0");
+            throw std::runtime_error("SwapchainBuilder::build(): mQueueFamilyIndices not set , mQueueFamilyIndices.size() == 0");
+        } else if (mQueueFamilyIndices.size() == 1) {
+            if (mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eExclusive) {
+                LOG_E("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eExclusive when mQueueFamilyIndices.size() == 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
                       mSwapchainCreateInfo.imageSharingMode);
+                throw std::runtime_error("SwapchainBuilder::build():  mSwapchainCreateInfo.imageSharingMode error");
             }
         } else {
-            if(mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eConcurrent) {
-                LOG_W("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eConcurrent when mQueueFamilyIndices.size() > 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
+            if (mSwapchainCreateInfo.imageSharingMode != vk::SharingMode::eConcurrent) {
+                LOG_E("mSwapchainCreateInfo.imageSharingMode should be vk::SharingMode::eConcurrent when mQueueFamilyIndices.size() > 1 , but mSwapchainCreateInfo.imageSharingMode:%d",
                       mSwapchainCreateInfo.imageSharingMode);
+                throw std::runtime_error("SwapchainBuilder::build():  mSwapchainCreateInfo.imageSharingMode error");
             }
         }
 
@@ -195,11 +197,7 @@ namespace vklite {
     }
 
     std::unique_ptr<Swapchain> SwapchainBuilder::buildUnique() {
-        std::optional<Swapchain> swapchain = build();
-        if (!swapchain.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<Swapchain>(std::move(swapchain.value()));
+        return std::make_unique<Swapchain>(build());
     }
 
     vk::Extent2D SwapchainBuilder::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR &capability, uint32_t width, uint32_t height) {

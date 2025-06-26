@@ -36,7 +36,7 @@ namespace detector {
 
         ~MnnDetector();
 
-        std::optional<std::pair<std::vector<float>, std::vector<float> > > detect(float *data);
+        std::pair<std::vector<float>, std::vector<float> > detect(float *data);
     };
 
 } // detector

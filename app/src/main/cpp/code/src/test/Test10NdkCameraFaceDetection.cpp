@@ -25,9 +25,9 @@ namespace test10 {
             LOG_D("use_vulkan_compute");
             ncnn::support_VK_KHR_surface = 1;
             ncnn::support_VK_KHR_android_surface = 1;
-            ncnn::support_VK_KHR_external_memory_capabilities = 1;
-            ncnn::support_VK_KHR_get_physical_device_properties2 = 1;
-            ncnn::support_VK_KHR_get_surface_capabilities2 = 1;
+//            ncnn::support_VK_KHR_external_memory_capabilities = 1;
+//            ncnn::support_VK_KHR_get_physical_device_properties2 = 1;
+//            ncnn::support_VK_KHR_get_surface_capabilities2 = 1;
 
             mNcnnGpuDevice = std::make_unique<ncnn::VulkanDevice>(0);
             mNet.set_vulkan_device(mNcnnGpuDevice.get());

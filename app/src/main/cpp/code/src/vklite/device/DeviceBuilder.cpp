@@ -143,7 +143,7 @@ namespace vklite {
         return *this;
     }
 
-    std::optional<Device> DeviceBuilder::build() {
+    Device DeviceBuilder::build() {
 
         std::vector<vk::QueueFamilyProperties> queueFamilyProperties = mPhysicalDevice.getQueueFamilyProperties();
         uint32_t queueFamilyPropertiesSize = queueFamilyProperties.size();
@@ -214,11 +214,7 @@ namespace vklite {
     }
 
     std::unique_ptr<Device> DeviceBuilder::buildUnique() {
-        std::optional<Device> device = build();
-        if (!device.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<Device>(std::move(device.value()));
+        return std::make_unique<Device>(build());
     }
 
     void DeviceBuilder::checkPhysicalDeviceFeatures() {

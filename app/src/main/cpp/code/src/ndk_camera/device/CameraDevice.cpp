@@ -38,22 +38,18 @@ namespace ndkcamera {
     }
 
 
-    std::optional<CaptureRequest> CameraDevice::createCaptureRequest() {
+    CaptureRequest CameraDevice::createCaptureRequest() {
         ACaptureRequest *captureRequest;
         camera_status_t status = ACameraDevice_createCaptureRequest(mCameraDevice, TEMPLATE_PREVIEW, &captureRequest);
         if (status != ACAMERA_OK || captureRequest == nullptr) {
             LOG_E("ACameraDevice_createCaptureRequest() Failed, status: %d, captureRequest:%p", status, captureRequest);
-            return std::nullopt;
+            throw std::runtime_error("ACameraDevice_createCaptureRequest() Failed");
         }
         return CaptureRequest(captureRequest);
     }
 
     std::unique_ptr<CaptureRequest> CameraDevice::createUniqueCaptureRequest() {
-        std::optional<CaptureRequest> captureRequest = createCaptureRequest();
-        if (!captureRequest.has_value()) {
-            return nullptr;
-        }
-        return std::make_unique<CaptureRequest>(std::move(captureRequest.value()));
+        return std::make_unique<CaptureRequest>(createCaptureRequest());
     }
 
     CameraCaptureSession CameraDevice::createCaptureSession(const CaptureSessionOutputContainer &captureSessionOutputContainer) {

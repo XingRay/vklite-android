@@ -41,24 +41,18 @@ namespace ndkcamera {
         return status;
     }
 
-    std::optional<CaptureSessionOutputContainer> CaptureSessionOutputContainer::build() {
+    CaptureSessionOutputContainer CaptureSessionOutputContainer::build() {
         ACaptureSessionOutputContainer *captureSessionOutputContainer;
         camera_status_t status = ACaptureSessionOutputContainer_create(&captureSessionOutputContainer);
         if (status != camera_status_t::ACAMERA_OK || captureSessionOutputContainer == nullptr) {
             LOG_E("ACaptureSessionOutputContainer_create() failed, status:%d, captureSessionOutputContainer:%p", status, captureSessionOutputContainer);
-            return std::nullopt;
+            throw std::runtime_error("CaptureSessionOutputContainer::build(): ACaptureSessionOutputContainer_create() failed");
         }
         return CaptureSessionOutputContainer(captureSessionOutputContainer);
     }
 
     std::unique_ptr<CaptureSessionOutputContainer> CaptureSessionOutputContainer::buildUnique() {
-        ACaptureSessionOutputContainer *captureSessionOutputContainer;
-        camera_status_t status = ACaptureSessionOutputContainer_create(&captureSessionOutputContainer);
-        if (status != camera_status_t::ACAMERA_OK || captureSessionOutputContainer == nullptr) {
-            LOG_E("ACaptureSessionOutputContainer_create() failed, status:%d, captureSessionOutputContainer:%p", status, captureSessionOutputContainer);
-            return nullptr;
-        }
-        return std::make_unique<CaptureSessionOutputContainer>(captureSessionOutputContainer);
+        return std::make_unique<CaptureSessionOutputContainer>(build());
     }
 
 } // ndkcamera

@@ -69,7 +69,7 @@ namespace vklite {
         SwapchainBuilder &selectPresentMode(const std::vector<vk::PresentModeKHR> &availablePresentModes,
                                             vk::PresentModeKHR prefer, vk::PresentModeKHR insurance);
 
-        std::optional<Swapchain> build();
+        Swapchain build();
 
         std::unique_ptr<Swapchain> buildUnique();
 

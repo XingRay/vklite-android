@@ -57,9 +57,7 @@ namespace detector {
         delete input_host;
     }
 
-    std::optional<std::pair<std::vector<float>, std::vector<float> > > MnnVulkanDetector::detect(AHardwareBuffer *hardwareBuffer){
-        return std::nullopt;
-
+    std::pair<std::vector<float>, std::vector<float> > MnnVulkanDetector::detect(AHardwareBuffer *hardwareBuffer) {
         // **将 AHardwareBuffer 绑定为 Vulkan 纹理**
         LOG_D("Binding AHardwareBuffer to Vulkan...");
         MNN::CV::ImageProcess::Config imgProcessConfig;
@@ -73,10 +71,11 @@ namespace detector {
         AHardwareBuffer_describe(hardwareBuffer, &desc);
         LOG_D("AHardwareBuffer Info: width=%d, height=%d, layers=%d", desc.width, desc.height, desc.layers);
 
-        volatile uint64_t inputValue = (uint64_t)hardwareBuffer;
-        input_tensor->setDevicePtr((void*)inputValue, MNN_MEMORY_AHARDWAREBUFFER);
+        volatile uint64_t inputValue = (uint64_t) hardwareBuffer;
+        input_tensor->setDevicePtr((void *) inputValue, MNN_MEMORY_AHARDWAREBUFFER);
 
-
+        // todo
+        return {};
     }
 
 //    std::optional<std::pair<std::vector<float>, std::vector<float> > > MnnVulkanDetector::detect(float* data) {

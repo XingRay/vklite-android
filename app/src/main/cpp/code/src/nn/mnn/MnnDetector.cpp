@@ -56,7 +56,7 @@ namespace detector {
         delete input_host;
     }
 
-    std::optional<std::pair<std::vector<float>, std::vector<float> > > MnnDetector::detect(float* data) {
+    std::pair<std::vector<float>, std::vector<float> > MnnDetector::detect(float *data) {
         memcpy(input_data, data, sizeof(float) * input_width * input_height * input_channels);
         // int index = 0;
         // for (int c = 0; c < input_channels; c++) {
@@ -79,7 +79,6 @@ namespace detector {
 
         output_classificators->copyToHostTensor(output_classificators_host);
         output_regressors->copyToHostTensor(output_regressors_host);
-
 
 
         int mnn_num_scores = output_classificators_host->elementSize();
