@@ -225,9 +225,9 @@ namespace test09 {
                             .renderPass(mRenderPass->getRenderPass())
                             .size(mSwapchain->getDisplaySize())
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView().getImageView(); })
-                            .addAttachment(mDisplayImageViews[index].getImageView())
-                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView().getImageView(); })
+                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getVkImageView(); })
+                            .addAttachment(mDisplayImageViews[index].getVkImageView())
+                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getVkImageView(); })
                             .build();
                 })
                 .build();

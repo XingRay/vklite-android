@@ -90,7 +90,7 @@ namespace vklite {
 
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
-        buffer.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
+        buffer.bindMemory(deviceMemory.getVkDeviceMemory(), mMemoryOffset);
 
         return CombinedMemoryBuffer{std::move(buffer), std::move(deviceMemory)};
     }

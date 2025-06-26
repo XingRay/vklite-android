@@ -32,7 +32,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::ImageView &ImageView::getImageView() const {
+    const vk::ImageView &ImageView::getVkImageView() const {
         return mImageView;
     }
 

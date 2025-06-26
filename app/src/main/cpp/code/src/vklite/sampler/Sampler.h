@@ -32,7 +32,7 @@ namespace vklite {
         Sampler &operator=(Sampler &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Sampler &getSampler() const;
+        const vk::Sampler &getVkSampler() const;
     };
 
 } // vklite

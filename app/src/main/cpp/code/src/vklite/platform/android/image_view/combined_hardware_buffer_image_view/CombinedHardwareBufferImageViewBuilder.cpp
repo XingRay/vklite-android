@@ -103,7 +103,7 @@ namespace vklite {
 
         DeviceMemory deviceMemory = mHardwareBufferDeviceMemoryBuilder.build();
 
-        image.bindMemory(deviceMemory.getDeviceMemory());
+        image.bindMemory(deviceMemory.getVkDeviceMemory());
 
         ImageView imageView = mHardwareBufferImageViewBuilder
                 .image(image.getImage())

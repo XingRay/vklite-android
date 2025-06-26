@@ -58,7 +58,7 @@ namespace vklite {
     }
 
     StorageImageDescriptorMapping &StorageImageDescriptorMapping::addImageInfo(const ImageView &imageView, vk::ImageLayout imageLayout) {
-        addImageInfo(imageView.getImageView(), imageLayout);
+        addImageInfo(imageView.getVkImageView(), imageLayout);
         return *this;
     }
 

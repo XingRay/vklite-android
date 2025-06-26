@@ -73,7 +73,7 @@ namespace test07 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {mSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eFragment);
+                            .addImmutableSampler(0, mSampler->getVkSampler(), vk::ShaderStageFlagBits::eFragment);
                 });
 
         mEngine->shaderConfigure(shaderConfigure);

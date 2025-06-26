@@ -37,7 +37,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Image &Image::getImage() const {
+    const vk::Image &Image::getVkImage() const {
         return mImage;
     }
 

@@ -47,13 +47,25 @@ namespace vklite {
         Image &getImage();
 
         [[nodiscard]]
+        const vk::Image &getVkImage();
+
+        [[nodiscard]]
         DeviceMemory &getDeviceMemory();
+
+        [[nodiscard]]
+        const vk::DeviceMemory &getVkDeviceMemory();
 
         [[nodiscard]]
         ImageView &getImageView();
 
         [[nodiscard]]
+        const vk::ImageView &getVkImageView();
+
+        [[nodiscard]]
         Sampler &getSampler();
+
+        [[nodiscard]]
+        const vk::Sampler &getVkSampler();
 
         CombinedImageSampler &recordUpdate(const vk::CommandBuffer &commandBuffer, vk::Buffer stagingBuffer);
 

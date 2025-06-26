@@ -28,7 +28,7 @@ namespace vklite {
         ImageView &operator=(ImageView &&other) noexcept;
 
         [[nodiscard]]
-        const vk::ImageView &getImageView() const;
+        const vk::ImageView &getVkImageView() const;
     };
 
 } // vklite

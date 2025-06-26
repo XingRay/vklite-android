@@ -213,9 +213,9 @@ namespace test10 {
                             .renderPass(mRenderPass->getRenderPass())
                             .size(mSwapchain->getDisplaySize())
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getImageView().getImageView(); })
-                            .addAttachment(mDisplayImageViews[index].getImageView())
-                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getImageView().getImageView(); })
+                            .addAttachmentIf(mMsaaEnable, [&]() { return mColorImageView->getVkImageView(); })
+                            .addAttachment(mDisplayImageViews[index].getVkImageView())
+                            .addAttachmentIf(mDepthTestEnable, [&]() { return mDepthImageView->getVkImageView(); })
                             .build();
                 })
                 .build();
@@ -249,7 +249,7 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addImmutableSampler(0, {mCameraInputSampler->getSampler().getSampler()}, vk::ShaderStageFlagBits::eCompute)
+                            .addImmutableSampler(0, mCameraInputSampler->getVkSampler(), vk::ShaderStageFlagBits::eCompute)
                             .addUniformBuffer(1, vk::ShaderStageFlagBits::eCompute)
                             .addStorageImage(2, vk::ShaderStageFlagBits::eCompute);
                 });
@@ -760,12 +760,15 @@ namespace test10 {
         }
 
 //        int _w, int _h, VkImageMemory* _data, size_t _elemsize, VkAllocator* _allocator
-//        ncnn::VkImageMemory* imageMemory = nullptr;
-//        ncnn::VkImageMat matIn(1080, 1920, imageMemory, 4, nullptr);
-//
-//        // nn net face detection
-//        mExtractor->input("in0", matIn);
-//
+
+        ncnn::VkImageMemory imageMemory;
+        imageMemory.image = mLetterBoxOutputImageViews[mCurrentFrameIndex].getVkImage();
+        imageMemory.imageview = mLetterBoxOutputImageViews[mCurrentFrameIndex].getVkImageView();
+        ncnn::VkImageMat matIn(1080, 1920, &imageMemory, 4, nullptr);
+
+        // nn net face detection
+        mExtractor->input("in0", matIn);
+
 //        ncnn::Mat regressors;
 //        ncnn::Mat scores;
 //        mExtractor->extract("out0", regressors);

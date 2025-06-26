@@ -41,7 +41,13 @@ namespace vklite {
         DeviceMemory &getDeviceMemory();
 
         [[nodiscard]]
+        const vk::DeviceMemory &getVkDeviceMemory();
+
+        [[nodiscard]]
         ImageView &getImageView();
+
+        [[nodiscard]]
+        const vk::ImageView &getVkImageView();
     };
 
 } // vklite

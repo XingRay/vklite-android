@@ -30,7 +30,7 @@ namespace vklite {
     }
 
     ImmutableSamplerConfigure &ImmutableSamplerConfigure::addSampler(const Sampler &sampler) {
-        addSampler(sampler.getSampler());
+        addSampler(sampler.getVkSampler());
         return *this;
     }
 

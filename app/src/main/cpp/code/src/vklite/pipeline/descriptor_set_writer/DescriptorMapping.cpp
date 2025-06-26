@@ -112,7 +112,7 @@ namespace vklite {
     }
 
     DescriptorMapping &DescriptorMapping::addImageInfo(const Sampler &sampler, const ImageView &imageView, vk::ImageLayout imageLayout) {
-        addImageInfo(sampler.getSampler(), imageView.getImageView(), imageLayout);
+        addImageInfo(sampler.getVkSampler(), imageView.getVkImageView(), imageLayout);
         return *this;
     }
 

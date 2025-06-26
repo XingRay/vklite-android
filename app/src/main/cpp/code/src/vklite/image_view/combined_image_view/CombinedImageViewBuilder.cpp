@@ -68,7 +68,7 @@ namespace vklite {
         Image image = mImageBuilder.build();
 
         // create DeviceMemory
-        vk::MemoryRequirements memoryRequirements = mDevice.getImageMemoryRequirements(image.getImage());
+        vk::MemoryRequirements memoryRequirements = mDevice.getImageMemoryRequirements(image.getVkImage());
         mDeviceMemoryBuilder.allocationSize(memoryRequirements.size);
 
         uint32_t memoryTypeIndex = VulkanUtil::findMemoryTypeIndex(mPhysicalDeviceMemoryProperties, memoryRequirements, mMemoryPropertyFlags);
@@ -77,10 +77,10 @@ namespace vklite {
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
         // bind memory
-        image.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
+        image.bindMemory(deviceMemory.getVkDeviceMemory(), mMemoryOffset);
 
         // create ImageView
-        mImageViewBuilder.image(image.getImage());
+        mImageViewBuilder.image(image.getVkImage());
         ImageView imageView = mImageViewBuilder.build();
 
         // combine Image / DeviceMemory / ImageView as CombinedMemoryImage

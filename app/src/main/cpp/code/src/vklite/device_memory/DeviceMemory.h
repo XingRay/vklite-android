@@ -30,7 +30,7 @@ namespace vklite {
         DeviceMemory &operator=(DeviceMemory &&other) noexcept;
 
         [[nodiscard]]
-        const vk::DeviceMemory &getDeviceMemory() const;
+        const vk::DeviceMemory &getVkDeviceMemory() const;
 
         void updateBuffer(const void *data, uint32_t size, uint32_t offset, vk::MemoryMapFlags flags = vk::MemoryMapFlags{}) const;
 

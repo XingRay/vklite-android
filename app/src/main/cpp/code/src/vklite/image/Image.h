@@ -31,7 +31,7 @@ namespace vklite {
         Image &operator=(Image &&other) noexcept;
 
         [[nodiscard]]
-        const vk::Image &getImage() const;
+        const vk::Image &getVkImage() const;
 
         [[nodiscard]]
         uint32_t getMipLevels() const;

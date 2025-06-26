@@ -33,7 +33,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::Sampler &Sampler::getSampler() const {
+    const vk::Sampler &Sampler::getVkSampler() const {
         return mSampler;
     }
 

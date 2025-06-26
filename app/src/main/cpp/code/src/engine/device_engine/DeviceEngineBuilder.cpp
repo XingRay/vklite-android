@@ -226,9 +226,9 @@ namespace vklite {
                             .width(swapchain->getDisplaySize().width)
                             .height(swapchain->getDisplaySize().height)
                                     // 下面添加附件的顺序不能乱, 附件的顺序由 RenderPass 的附件定义顺序决定，必须严格一致。
-                            .addAttachmentIf(mMsaaEnable, [&]() { return colorImageView->getImageView().getImageView(); })
-                            .addAttachment(displayImageViews[index].getImageView())
-                            .addAttachmentIf(mDepthTestEnable, [&]() { return depthImageView->getImageView().getImageView(); })
+                            .addAttachmentIf(mMsaaEnable, [&]() { return colorImageView->getVkImageView(); })
+                            .addAttachment(displayImageViews[index].getVkImageView())
+                            .addAttachmentIf(mDepthTestEnable, [&]() { return depthImageView->getVkImageView(); })
                             .build();
                 })
                 .build();

@@ -34,7 +34,7 @@ namespace vklite {
     }
 
     const vk::Sampler &CombinedHardwareBufferSampler::getVkSampler() const {
-        return mSampler.getSampler();
+        return mSampler.getVkSampler();
     }
 
 } // vklite

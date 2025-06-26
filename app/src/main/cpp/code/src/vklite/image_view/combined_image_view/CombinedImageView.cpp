@@ -30,16 +30,23 @@ namespace vklite {
     }
 
     const vk::Image &CombinedImageView::getVkImage() const {
-        return mImage.getImage();
+        return mImage.getVkImage();
     }
 
     DeviceMemory &CombinedImageView::getDeviceMemory() {
         return mDeviceMemory;
     }
 
-    [[nodiscard]]
+    const vk::DeviceMemory &CombinedImageView::getVkDeviceMemory() {
+        return mDeviceMemory.getVkDeviceMemory();
+    }
+
     ImageView &CombinedImageView::getImageView() {
         return mImageView;
+    }
+
+    const vk::ImageView &CombinedImageView::getVkImageView() {
+        return mImageView.getVkImageView();
     }
 
 } // vklite

@@ -34,7 +34,7 @@ namespace vklite {
         return *this;
     }
 
-    const vk::DeviceMemory &DeviceMemory::getDeviceMemory() const {
+    const vk::DeviceMemory &DeviceMemory::getVkDeviceMemory() const {
         return mDeviceMemory;
     }
 

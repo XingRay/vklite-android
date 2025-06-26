@@ -9,11 +9,11 @@
 namespace vklite {
 
     CombinedImageSampler::CombinedImageSampler(const vk::Device &device,
-                                     std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
-                                     Image &&image,
-                                     DeviceMemory &&deviceMemory,
-                                     ImageView &&imageView,
-                                     Sampler &&sampler)
+                                               std::optional<vk::PhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties,
+                                               Image &&image,
+                                               DeviceMemory &&deviceMemory,
+                                               ImageView &&imageView,
+                                               Sampler &&sampler)
             : mDevice(device),
               mPhysicalDeviceMemoryProperties(physicalDeviceMemoryProperties),
               mImage(std::move(image)),
@@ -57,16 +57,32 @@ namespace vklite {
         return mImage;
     }
 
+    const vk::Image &CombinedImageSampler::getVkImage() {
+        return mImage.getVkImage();
+    }
+
     DeviceMemory &CombinedImageSampler::getDeviceMemory() {
         return mDeviceMemory;
+    }
+
+    const vk::DeviceMemory &CombinedImageSampler::getVkDeviceMemory() {
+        return mDeviceMemory.getVkDeviceMemory();
     }
 
     ImageView &CombinedImageSampler::getImageView() {
         return mImageView;
     }
 
+    const vk::ImageView &CombinedImageSampler::getVkImageView() {
+        return mImageView.getVkImageView();
+    }
+
     Sampler &CombinedImageSampler::getSampler() {
         return mSampler;
+    }
+
+    const vk::Sampler &CombinedImageSampler::getVkSampler() {
+        return mSampler.getVkSampler();
     }
 
 //    update(){

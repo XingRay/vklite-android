@@ -39,7 +39,7 @@ namespace vklite {
         mDeviceMemoryBuilderConfigure(image, mDeviceMemoryBuilder);
         DeviceMemory deviceMemory = mDeviceMemoryBuilder.build();
 
-        image.bindMemory(deviceMemory.getDeviceMemory(), mMemoryOffset);
+        image.bindMemory(deviceMemory.getVkDeviceMemory(), mMemoryOffset);
 
         return CombinedMemoryImage{std::move(image), std::move(deviceMemory)};
     }
