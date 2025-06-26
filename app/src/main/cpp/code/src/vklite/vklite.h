@@ -97,11 +97,6 @@
 #include "vklite/pipeline/descriptor_set_writer/DescriptorSetWritersBuilder.h"
 
 
-// pipeline resource
-#include "vklite/pipeline/pipeline_resource/PipelineResource.h"
-#include "vklite/pipeline/pipeline_resource/PipelineResourceBuilder.h"
-#include "vklite/pipeline/pipeline_resource/PipelineResourcesBuilder.h"
-
 // pipeline
 #include "vklite/pipeline/shader/ShaderConfigure.h"
 #include "vklite/pipeline/pipeline/Pipeline.h"
