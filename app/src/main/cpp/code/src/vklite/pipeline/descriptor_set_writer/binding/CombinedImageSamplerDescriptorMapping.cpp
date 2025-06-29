@@ -53,7 +53,7 @@ namespace vklite {
     }
 
     CombinedImageSamplerDescriptorMapping &CombinedImageSamplerDescriptorMapping::addImageInfo(vk::Sampler sampler, vk::ImageView imageView, vk::ImageLayout imageLayout) {
-        addImageInfo({sampler, imageView, imageLayout});
+        addImageInfo(vk::DescriptorImageInfo{sampler, imageView, imageLayout});
         return *this;
     }
 
@@ -61,5 +61,5 @@ namespace vklite {
         addImageInfo(sampler.getVkSampler(), imageView.getVkImageView(), imageLayout);
         return *this;
     }
-    
+
 } // vklite

@@ -110,8 +110,8 @@ namespace test10 {
                 .config(mPhysicalDevice->getVkPhysicalDevice(), mSurface->getVkSurface())
                 .buildUnique();
 
-        mViewports = mSwapchain->centerSquareViewports();
-        mScissors = mSwapchain->centerSquareScissors();
+        mViewports = mSwapchain->fullScreenViewports();
+        mScissors = mSwapchain->fullScreenScissors();
 
         mCommandPool = vklite::CommandPoolBuilder()
                 .device(mDevice->getVkDevice())
@@ -280,7 +280,8 @@ namespace test10 {
                 .addDescriptorSetConfigure([&](vklite::DescriptorSetConfigure &descriptorSetConfigure) {
                     descriptorSetConfigure
                             .set(0)
-                            .addCombinedImageSampler(0, vk::ShaderStageFlagBits::eFragment);
+                            .addImmutableSampler(0, mCameraInputSampler->getVkSampler(), vk::ShaderStageFlagBits::eFragment);
+//                            .addCombinedImageSampler(0, vk::ShaderStageFlagBits::eFragment);
                 });
 
 
@@ -540,12 +541,39 @@ namespace test10 {
 //        };
 
         // preview pipeline // no rotation
+//        std::vector<Vertex> vertices = {
+//                /*
+//                 *   +  .
+//                 *   .  .
+//                 */
+//                {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}}, // ndc 左上角 => uv左上角
+//
+//                /*
+//                 *   .  +
+//                 *   .  .
+//                 */
+//                {{1.0f,  -1.0f, 0.0f}, {1.0f, 0.0f}}, // ndc右上角 => uv右上角
+//
+//                /*
+//                 *   .  .
+//                 *   .  +
+//                 */
+//                {{1.0f,  1.0f,  0.0f}, {1.0f, 1.0f}}, // ndc右下角 => uv右下角
+//
+//                /*
+//                 *   .  .
+//                 *   +  .
+//                 */
+//                {{-1.0f, 1.0f,  0.0f}, {0.0f, 1.0f}}, // ndc左下角 => uv左下角
+//
+//        };
+
         std::vector<Vertex> vertices = {
                 /*
                  *   +  .
                  *   .  .
                  */
-                {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}}, // ndc 左上角 => uv左上角
+                {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f}}, // ndc 左上角 => uv右下角
 
                 /*
                  *   .  +
@@ -557,7 +585,7 @@ namespace test10 {
                  *   .  .
                  *   .  +
                  */
-                {{1.0f,  1.0f,  0.0f}, {1.0f, 1.0f}}, // ndc右下角 => uv右下角
+                {{1.0f,  1.0f,  0.0f}, {0.0f, 0.0f}}, // ndc右下角 => uv左上角
 
                 /*
                  *   .  .
@@ -596,21 +624,21 @@ namespace test10 {
                 .device(mDevice->getVkDevice())
                 .build(mFrameCount);
 
-        vklite::DescriptorSetWriters previewDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
-                .frameCount(mFrameCount)
-                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
-                    configure
-                            .descriptorSet(mPreviewPipeline->getDescriptorSet(frameIndex, 0))
-                            .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
-                                descriptorMapping
-                                        .binding(0)
-//                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mLetterBoxOutputImageViews[frameIndex].getImageView());
-                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex].getVkSampler(), mLetterBoxOutputNcnnImages[frameIndex].imageview());
-                            });
-                })
-                .build();
-
-        mDevice->getVkDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+//        vklite::DescriptorSetWriters previewDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+//                .frameCount(mFrameCount)
+//                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+//                    configure
+//                            .descriptorSet(mPreviewPipeline->getDescriptorSet(frameIndex, 0))
+//                            .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
+//                                descriptorMapping
+//                                        .binding(0)
+////                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mLetterBoxOutputImageViews[frameIndex].getImageView());
+//                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex].getVkSampler(), mLetterBoxOutputNcnnImages[frameIndex].imageview());
+//                            });
+//                })
+//                .build();
+//
+//        mDevice->getVkDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
 
         // lines pipeline resources
@@ -779,6 +807,21 @@ namespace test10 {
                 .build();
 
         mDevice->getVkDevice().updateDescriptorSets(preprocessDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
+
+        vklite::DescriptorSetWriters previewDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
+                .frameCount(mFrameCount)
+                .descriptorSetMappingConfigure([&](uint32_t frameIndex, vklite::DescriptorSetMappingConfigure &configure) {
+                    configure
+                            .descriptorSet(mPreviewPipeline->getDescriptorSet(frameIndex, 0))
+                            .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
+                                descriptorMapping
+                                        .binding(0)
+                                        .addImageInfo(mCameraInputSampler->getSampler(), mCameraInputImageView->getImageView());
+                            });
+                })
+                .build();
+
+        mDevice->getVkDevice().updateDescriptorSets(previewDescriptorSetWriters.createWriteDescriptorSets(), nullptr);
 
         // compute shader preprocess
         vk::Result result = mComputeFences[mCurrentFrameIndex].wait();

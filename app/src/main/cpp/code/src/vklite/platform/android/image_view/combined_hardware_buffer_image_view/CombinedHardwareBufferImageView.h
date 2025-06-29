@@ -36,7 +36,7 @@ namespace vklite {
         ImageView &getImageView();
 
         [[nodiscard]]
-        const vk::ImageView getVkImageView() const;
+        const vk::ImageView& getVkImageView() const;
     };
 
 } // vklite
