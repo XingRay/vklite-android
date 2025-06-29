@@ -547,25 +547,74 @@ namespace test09 {
         const float norm_vals[3] = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
         const float mean_vals[3] = {0.0f, 0.0f, 0.0f};
         matIn.substract_mean_normalize(mean_vals, norm_vals);
+        /*
+            data = {void *} 0x739c787040
+            refcount = {int *} 0x739c7b7040
+            elemsize = {size_t} 4 [0x4]
+            elempack = {int} 1 [0x1]
+            allocator = {ncnn::Allocator *} NULL
+            dims = {int} 3 [0x3]
+            w = {int} 128 [0x80]
+            h = {int} 128 [0x80]
+            d = {int} 1 [0x1]
+            c = {int} 3 [0x3]
+            cstep = {size_t} 16384 [0x4000]
+         */
         LOG_D("matIn: cstep:%ld, elemsize:%ld", matIn.cstep, matIn.elemsize);
 
         mExtractor->input("in0", matIn);
+        LOG_D("\n\n");
+        for (const ncnn::Blob &blob: mNet.blobs()) {
+            ncnn::Mat blobOut;
+            mExtractor->extract(blob.name.c_str(), blobOut);
+            LOG_D("blobOut: %s, shape:[whdc: %d, %d, %d, %d], dims: %d, elemsize: %d, elempack: %d", blob.name.c_str(), blobOut.w, blobOut.h, blobOut.d, blobOut.c,
+                  blobOut.dims, blobOut.elempack, blobOut.elempack);
+        }
+        LOG_D("\n\n");
 
+        /*
+            data = {void *} 0x73832764c0
+            refcount = {int *} 0x73832844c0
+            elemsize = {size_t} 4 [0x4]
+            elempack = {int} 1 [0x1]
+            allocator = {ncnn::Allocator *} NULL
+            dims = {int} 2 [0x2]
+            w = {int} 16 [0x10]
+            h = {int} 896 [0x380]
+            d = {int} 1 [0x1]
+            c = {int} 1 [0x1]
+            cstep = {size_t} 14336 [0x3800]
+         */
         ncnn::Mat regressors;
-        ncnn::Mat scores;
         mExtractor->extract("out0", regressors);
+
+        /*
+            data = {void *} 0x738d5aa000
+            refcount = {int *} 0x738d5aae00
+            elemsize = {size_t} 4 [0x4]
+            elempack = {int} 1 [0x1]
+            allocator = {ncnn::Allocator *} NULL
+            dims = {int} 2 [0x2]
+            w = {int} 1 [0x1]
+            h = {int} 896 [0x380]
+            d = {int} 1 [0x1]
+            c = {int} 1 [0x1]
+            cstep = {size_t} 896 [0x380]
+         */
+        ncnn::Mat scores;
         mExtractor->extract("out1", scores);
 
         int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
         int num_scores = scores.w * scores.h * scores.c; // 896
+
         float *regressors_data = (float *) regressors.data;
         float *scores_data = (float *) scores.data;
 
-        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
-        std::vector<float> score_vec(scores_data, scores_data + num_scores);
+        std::vector<float> regressorsData(regressors_data, regressors_data + num_regressors);
+        std::vector<float> scoresData(scores_data, scores_data + num_scores);
 
         // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
-        for (auto &s: score_vec) {
+        for (auto &s: scoresData) {
             if (s < -100.0f) {
                 s = -100.0f;
             }
@@ -575,10 +624,10 @@ namespace test09 {
             s = 1.0f / (1.0f + std::exp(-s));
         }
         // 找到最大分数索引
-        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
-        float max_score = score_vec[maxIndex];
+        int maxIndex = std::distance(scoresData.begin(), std::max_element(scoresData.begin(), scoresData.end()));
+        float max_score = scoresData[maxIndex];
 
-        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
+        std::vector<float> bestRegressor(regressorsData.begin() + maxIndex * 16, regressorsData.begin() + maxIndex * 16 + 16);
         float box_dx = bestRegressor[0];
         float box_dy = bestRegressor[1];
         float w_box = bestRegressor[2];

@@ -51,6 +51,8 @@ namespace vklite {
 
         StorageBufferDescriptorMapping &addBufferInfo(vk::Buffer buffer, vk::DeviceSize offset, vk::DeviceSize range);
 
+        StorageBufferDescriptorMapping &addBufferInfo(vk::Buffer buffer, vk::DeviceSize range);
+
         StorageBufferDescriptorMapping &addBufferInfo(const Buffer &buffer);
     };
 

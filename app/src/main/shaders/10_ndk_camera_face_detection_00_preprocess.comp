@@ -1,4 +1,5 @@
-#version 450
+#version 460
+
 layout (local_size_x = 32, local_size_y = 16) in;
 
 // 输入：从Android Camera HardwareBuffer转换的采样器
@@ -13,8 +14,12 @@ layout (binding = 1) uniform LetterboxParam {
 } letterBoxParam;
 
 
-// 输出1：128x128 RGBA8存储图像
+// 输出1：128x128 RGBA32f存储图像
 layout (binding = 2, rgba32f) uniform writeonly image2D letterBoxOutputImage;
+
+layout (binding = 3) buffer RGBABuffer {
+    float rgbaData[];
+} rgbaBuffer;
 
 void main() {
     // x: [0, 128)  y: [0, 128)
@@ -48,4 +53,13 @@ void main() {
 
     // 写入输出图像
     imageStore(letterBoxOutputImage, outputCoord, finalColor);
+
+    // 新增：写入RGB Buffer (忽略Alpha通道)
+    int index = outputCoord.y * letterBoxOutputSize.x + outputCoord.x;
+    int stride = letterBoxOutputSize.x * letterBoxOutputSize.y;
+
+    rgbaBuffer.rgbaData[0 * stride + index] = finalColor.r; // R
+    rgbaBuffer.rgbaData[1 * stride + index] = finalColor.g; // G
+    rgbaBuffer.rgbaData[2 * stride + index] = finalColor.b; // B
+    rgbaBuffer.rgbaData[3 * stride + index] = 1.0f;         // A
 }

@@ -58,9 +58,14 @@ namespace vklite {
         return *this;
     }
 
+    StorageBufferDescriptorMapping &StorageBufferDescriptorMapping::addBufferInfo(vk::Buffer buffer, vk::DeviceSize range) {
+        addBufferInfo({buffer, 0, range});
+        return *this;
+    }
+
     StorageBufferDescriptorMapping &StorageBufferDescriptorMapping::addBufferInfo(const Buffer &buffer) {
         addBufferInfo({buffer.getVkBuffer(), 0, buffer.getSize()});
         return *this;
     }
-    
+
 } // vklite

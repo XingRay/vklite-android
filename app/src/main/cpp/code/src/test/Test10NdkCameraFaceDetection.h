@@ -66,6 +66,9 @@ namespace test10 {
 
         // nn model
         std::unique_ptr<ncnn::VulkanDevice> mNcnnGpuDevice;
+        std::unique_ptr<ncnn::VkAllocator> mBlobVkAllocator;
+        std::unique_ptr<ncnn::VkAllocator> mStagingVkAllocator;
+        std::unique_ptr<ncnn::VkCompute> mNcnnCompute;
         ncnn::Net mNet;
         std::unique_ptr<ncnn::Extractor> mExtractor;
 
@@ -128,11 +131,18 @@ namespace test10 {
         std::vector<vklite::Fence> mComputeFences;
         std::vector<vklite::Semaphore> mComputeFinishSemaphores;
 
+        // input
         std::unique_ptr<vklite::CombinedHardwareBufferSampler> mCameraInputSampler;
         std::unique_ptr<vklite::CombinedHardwareBufferImageView> mCameraInputImageView;
 
-        std::vector<vklite::CombinedImageView> mLetterBoxOutputImageViews;
+        // param
         std::vector<vklite::UniformBuffer> mLetterboxParamsUniformBuffers;
+
+        // output
+        std::vector<ncnn::VkMat> mLetterBoxOutputNcnnBuffers;
+        std::vector<ncnn::VkImageMat> mLetterBoxOutputNcnnImages;
+//        std::vector<vklite::CombinedImageView> mLetterBoxOutputImageViews;
+
 
         //preview pipeline
         std::unique_ptr<vklite::CombinedPipeline> mPreviewPipeline;

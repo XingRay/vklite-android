@@ -25,12 +25,19 @@ namespace test10 {
             LOG_D("use_vulkan_compute");
             ncnn::support_VK_KHR_surface = 1;
             ncnn::support_VK_KHR_android_surface = 1;
-//            ncnn::support_VK_KHR_external_memory_capabilities = 1;
-//            ncnn::support_VK_KHR_get_physical_device_properties2 = 1;
-//            ncnn::support_VK_KHR_get_surface_capabilities2 = 1;
 
             mNcnnGpuDevice = std::make_unique<ncnn::VulkanDevice>(0);
+            mBlobVkAllocator = std::unique_ptr<ncnn::VkAllocator>(mNcnnGpuDevice->acquire_blob_allocator());
+            mStagingVkAllocator = std::unique_ptr<ncnn::VkAllocator>(mNcnnGpuDevice->acquire_staging_allocator());
+
+            mNet.opt.blob_vkallocator = mBlobVkAllocator.get();
+            mNet.opt.workspace_vkallocator = mBlobVkAllocator.get();
+            mNet.opt.staging_vkallocator = mStagingVkAllocator.get();
+
             mNet.set_vulkan_device(mNcnnGpuDevice.get());
+
+            mNcnnCompute = std::make_unique<ncnn::VkCompute>(mNcnnGpuDevice.get());
+
 
             VkInstance instance = ncnn::get_gpu_instance();
             LOG_D("instance: %p", instance);
@@ -251,7 +258,8 @@ namespace test10 {
                             .set(0)
                             .addImmutableSampler(0, mCameraInputSampler->getVkSampler(), vk::ShaderStageFlagBits::eCompute)
                             .addUniformBuffer(1, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute);
+                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute)
+                            .addStorageBuffer(3, vk::ShaderStageFlagBits::eCompute);
                 });
 
 
@@ -415,7 +423,10 @@ namespace test10 {
         AAsset_close(modelBin);
 
         mExtractor = std::make_unique<ncnn::Extractor>(mNet.create_extractor());
-
+        mExtractor->set_blob_vkallocator(mBlobVkAllocator.get());
+        mExtractor->set_workspace_vkallocator(mBlobVkAllocator.get());
+        mExtractor->set_staging_vkallocator(mStagingVkAllocator.get());
+        mExtractor->set_vulkan_compute(true);
     }
 
     void Test10NdkCameraFaceDetection::init() {
@@ -441,21 +452,55 @@ namespace test10 {
             mLetterboxParamsUniformBuffers[i].update(*mCommandPool, &letterboxParam, sizeof(LetterboxParam));
         }
 
-        // letter box output image
-        mLetterBoxOutputImageViews = vklite::CombinedImageViewBuilder()
-                .asStorageImage()
-                .device(mDevice->getVkDevice())
-                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
-                .format(vk::Format::eR32G32B32A32Sfloat)
-                .size(128, 128)
-                .build(mFrameCount);
+
+//        // letter box output image
+//        mLetterBoxOutputImageViews = vklite::CombinedImageViewBuilder()
+//                .asStorageImage()
+//                .device(mDevice->getVkDevice())
+//                .physicalDeviceMemoryProperties(mPhysicalDevice->getMemoryProperties())
+//                .format(vk::Format::eR32G32B32A32Sfloat)
+//                .size(128, 128)
+//                .build(mFrameCount);
+//
+//        for (int i = 0; i < mFrameCount; i++) {
+//            mLetterBoxOutputImageViews[i].getImage().changeImageLayout(*mCommandPool,
+//                                                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral,
+//                                                                       vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlagBits::eAllCommands,
+//                                                                       vk::AccessFlagBits::eNone, vk::AccessFlagBits::eNone,
+//                                                                       vk::ImageAspectFlagBits::eColor);
+//        }
 
         for (int i = 0; i < mFrameCount; i++) {
-            mLetterBoxOutputImageViews[i].getImage().changeImageLayout(*mCommandPool,
-                                                                       vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral,
-                                                                       vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlagBits::eAllCommands,
-                                                                       vk::AccessFlagBits::eNone, vk::AccessFlagBits::eNone,
-                                                                       vk::ImageAspectFlagBits::eColor);
+            ncnn::VkMat mat;
+            mat.create(128, 128, 3, (size_t) 4, 1, mBlobVkAllocator.get());
+            mLetterBoxOutputNcnnBuffers.push_back(std::move(mat));
+        }
+
+        for (int i = 0; i < mFrameCount; i++) {
+            ncnn::VkImageMat imageMat;
+            // 每个像素 rgba_f32 是 4*4=16 byte , 每个
+            imageMat.create(128, 128, (size_t) 16, 4, mBlobVkAllocator.get());
+            mLetterBoxOutputNcnnImages.push_back(std::move(imageMat));
+        }
+        for (int i = 0; i < mFrameCount; i++) {
+            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
+                    .asDefault()
+                    .srcStage(vk::PipelineStageFlagBits::eAllCommands)
+                    .dstStage(vk::PipelineStageFlagBits::eAllCommands)
+                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+                        builder
+                                .asDefault()
+                                .image(mLetterBoxOutputNcnnImages[i].image())
+                                .oldLayout(vk::ImageLayout::eUndefined)
+                                .newLayout(vk::ImageLayout::eGeneral)
+                                .srcAccessMask(vk::AccessFlagBits::eNone)
+                                .dstAccessMask(vk::AccessFlagBits::eNone)
+                                .aspectMask(vk::ImageAspectFlagBits::eColor);
+                    })
+                    .build();
+            mCommandPool->submit([&](const vk::CommandBuffer &commandBuffer) {
+                pipelineBarrier.record(commandBuffer);
+            });
         }
 
         vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
@@ -471,7 +516,14 @@ namespace test10 {
                             .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
                                 mapping
                                         .binding(2)
-                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
+//                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
+                                        .addImageInfo(mLetterBoxOutputNcnnImages[frameIndex].imageview(), vk::ImageLayout::eGeneral);
+                            })
+                            .addStorageBuffer([&](vklite::StorageBufferDescriptorMapping &mapping) {
+                                mapping
+                                        .binding(3)
+                                        .addBufferInfo(mLetterBoxOutputNcnnBuffers[frameIndex].buffer(), mLetterBoxOutputNcnnBuffers[frameIndex].buffer_offset(),
+                                                       mLetterBoxOutputNcnnBuffers[frameIndex].buffer_capacity());
                             });
                 })
                 .build();
@@ -552,7 +604,8 @@ namespace test10 {
                             .addCombinedImageSampler([&](vklite::CombinedImageSamplerDescriptorMapping &descriptorMapping) {
                                 descriptorMapping
                                         .binding(0)
-                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mLetterBoxOutputImageViews[frameIndex].getImageView());
+//                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex], mLetterBoxOutputImageViews[frameIndex].getImageView());
+                                        .addImageInfo(mPreprocessOutputImageSamplers[frameIndex].getVkSampler(), mLetterBoxOutputNcnnImages[frameIndex].imageview());
                             });
                 })
                 .build();
@@ -741,7 +794,25 @@ namespace test10 {
 
         const vklite::PooledCommandBuffer &computeCommandBuffer = (*mComputeCommandBuffers)[mCurrentFrameIndex];
         computeCommandBuffer.record([&](const vk::CommandBuffer &commandBuffer) {
-            mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(commandBuffer);
+//            mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(commandBuffer);
+
+//            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
+//                    .asDefault()
+//                    .srcStage(vk::PipelineStageFlagBits::eAllCommands)
+//                    .dstStage(vk::PipelineStageFlagBits::eAllCommands)
+//                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+//                        builder
+//                                .asDefault()
+//                                .image(mLetterBoxOutputNcnnImages[mCurrentFrameIndex].image())
+//                                .oldLayout(vk::ImageLayout::eUndefined)
+//                                .newLayout(vk::ImageLayout::eGeneral)
+//                                .srcAccessMask(vk::AccessFlagBits::eNone)
+//                                .dstAccessMask(vk::AccessFlagBits::eNone)
+//                                .aspectMask(vk::ImageAspectFlagBits::eColor);
+//                    })
+//                    .build();
+//            pipelineBarrier.record(commandBuffer);
+
             commandBuffer.bindPipeline(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipeline());
             commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eCompute, mPreprocessPipeline->getVkPipelineLayout(), 0, mPreprocessPipeline->getDescriptorSets(mCurrentFrameIndex), nullptr);
 
@@ -759,106 +830,132 @@ namespace test10 {
             throw std::runtime_error("waitForFences failed");
         }
 
-//        int _w, int _h, VkImageMemory* _data, size_t _elemsize, VkAllocator* _allocator
 
-        ncnn::VkImageMemory imageMemory;
-        imageMemory.image = mLetterBoxOutputImageViews[mCurrentFrameIndex].getVkImage();
-        imageMemory.imageview = mLetterBoxOutputImageViews[mCurrentFrameIndex].getVkImageView();
-        ncnn::VkImageMat matIn(1080, 1920, &imageMemory, 4, nullptr);
+        ncnn::Extractor extractor = mNet.create_extractor();
+        extractor.set_blob_vkallocator(mBlobVkAllocator.get());
+        extractor.set_workspace_vkallocator(mBlobVkAllocator.get());
+        extractor.set_staging_vkallocator(mStagingVkAllocator.get());
 
-        // nn net face detection
-        mExtractor->input("in0", matIn);
+        ncnn::VkCompute ncnnCompute = ncnn::VkCompute(mNcnnGpuDevice.get());
 
-//        ncnn::Mat regressors;
-//        ncnn::Mat scores;
-//        mExtractor->extract("out0", regressors);
-//        mExtractor->extract("out1", scores);
-//
-//        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
-//        int num_scores = scores.w * scores.h * scores.c; // 896
-//        float *regressors_data = (float *) regressors.data;
-//        float *scores_data = (float *) scores.data;
-//
-//        std::vector<float> reg_vec(regressors_data, regressors_data + num_regressors);
-//        std::vector<float> score_vec(scores_data, scores_data + num_scores);
-//
-//        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
-//        for (auto &s: score_vec) {
-//            if (s < -100.0f) {
-//                s = -100.0f;
-//            }
-//            if (s > 100.0f) {
-//                s = 100.0f;
-//            }
-//            s = 1.0f / (1.0f + std::exp(-s));
+
+        extractor.input("in0", mLetterBoxOutputNcnnBuffers[mCurrentFrameIndex]);
+
+//        LOG_D("\n\n");
+//        for (const ncnn::Blob &blob: mNet.blobs()) {
+//            ncnn::VkMat blobOut;
+//            extractor.extract(blob.name.c_str(), blobOut, ncnnCompute);
+//            LOG_D("blobOut: %s, shape:[whdc: %d, %d, %d, %d], dims: %d, elemsize: %d, elempack: %d", blob.name.c_str(), blobOut.w, blobOut.h, blobOut.d, blobOut.c,
+//                  blobOut.dims, blobOut.elempack, blobOut.elempack);
 //        }
-//        // 找到最大分数索引
-//        int maxIndex = std::distance(score_vec.begin(), std::max_element(score_vec.begin(), score_vec.end()));
-//        float max_score = score_vec[maxIndex];
-//
-//        std::vector<float> bestRegressor(reg_vec.begin() + maxIndex * 16, reg_vec.begin() + maxIndex * 16 + 16);
-//        float box_dx = bestRegressor[0];
-//        float box_dy = bestRegressor[1];
-//        float w_box = bestRegressor[2];
-//        float h_box = bestRegressor[3];
-//
-//        // 相对于 anchor 中心点的归一化偏移量
-//        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
-//        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
-//        const image_process::Anchor &anchor = mAnchors[maxIndex];
-//
-//        // 计算边界框在输入图片(128*128)中的位置
-//        float box_center_x = box_dx + anchor.centerX * 128.0f;
-//        float box_center_y = box_dy + anchor.centerY * 128.0f;
-//        float box_w = w_box;
-//        float box_h = h_box;
-//        float box_x = box_center_x - box_w / 2.0f;
-//        float box_y = box_center_y - box_h / 2.0f;
-//
-//        // 检测框的坐标
-//        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
-//                     cv::Size(std::round(box_w), std::round(box_h)));
-//
-//        // 检测框在原图(1080*1920)中的坐标
-//        cv::Rect originalBox = mLetterBox.transformBack(box);
-//        float x0 = (originalBox.x / 1080.0f) * 2.0f - 1.0f;
-//        float y0 = (originalBox.y / 1920.0f) * 2.0f - 1.0f;
-//        float x1 = ((originalBox.x + originalBox.width) / 1080.0f) * 2.0f - 1.0f;
-//        float y1 = ((originalBox.y + originalBox.height) / 1920.0f) * 2.0f - 1.0f;
-//
-//        std::vector<SimpleVertex> linesVertices;
-//        linesVertices.reserve(4);
-//        linesVertices.emplace_back(glm::vec3(x0, y0, 0.0f));
-//        linesVertices.emplace_back(glm::vec3(x1, y0, 0.0f));
-//        linesVertices.emplace_back(glm::vec3(x1, y1, 0.0f));
-//        linesVertices.emplace_back(glm::vec3(x0, y1, 0.0f));
-//
-//        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
-//        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
-//
-//
-//        // 解析关键点在输入图片(128*128)中的坐标
-//        std::vector<cv::Point2f> kps;
-//        kps.reserve(keyPoints.size() / 2);
-//        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
-//            float kp_dx = keyPoints[i];
-//            float kp_dy = keyPoints[i + 1];
-//            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
-//            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
-//            kps.emplace_back(kp_x, kp_y);
-//        }
-//
-//        // 关键点在原图(1080*1920)中的坐标
-//        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
-//
-//        std::vector<SimpleVertex> pointsVertices;
-//        pointsVertices.reserve(points.size());
-//        for (const cv::Point &point: points) {
-//            pointsVertices.emplace_back(glm::vec3((point.x / 1080.0f) * 2.0f - 1.0f, (point.y / 1920.0f) * 2.0f - 1.0f, 0.0f));
-//        }
-//
-//        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
-//        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
+//        LOG_D("\n\n");
+
+
+        ncnn::VkMat vkRegressors;
+        extractor.extract("out0", vkRegressors, ncnnCompute);
+        ncnn::VkMat vkScores;
+        extractor.extract("out1", vkScores, ncnnCompute);
+
+        ncnn::Mat packedRegressors;
+        ncnnCompute.record_clone(vkRegressors, packedRegressors, mNet.opt);
+        ncnn::Mat packedScores;
+        ncnnCompute.record_clone(vkScores, packedScores, mNet.opt);
+
+        ncnnCompute.submit_and_wait();
+        ncnnCompute.reset();
+        extractor.clear();
+
+        ncnn::Mat regressors;
+        ncnn::convert_packing(packedRegressors, regressors, 1, mNet.opt);
+        ncnn::Mat scores;
+        ncnn::convert_packing(packedScores, scores, 1, mNet.opt);
+
+
+        int num_regressors = regressors.w * regressors.h * regressors.c; // 896*16
+        int num_scores = scores.w * scores.h * scores.c; // 896
+        float *regressors_data = (float *) regressors.data;
+        float *scores_data = (float *) scores.data;
+
+        std::vector<float> regressorsData(regressors_data, regressors_data + num_regressors);
+        std::vector<float> scoreData(scores_data, scores_data + num_scores);
+
+        // 对 score_vec 执行 clip(-100,100) 并计算 sigmoid
+        for (auto &s: scoreData) {
+            if (s < -100.0f) {
+                s = -100.0f;
+            }
+            if (s > 100.0f) {
+                s = 100.0f;
+            }
+            s = 1.0f / (1.0f + std::exp(-s));
+        }
+        // 找到最大分数索引
+        long maxIndex = std::distance(scoreData.begin(), std::max_element(scoreData.begin(), scoreData.end()));
+        float max_score = scoreData[maxIndex];
+
+        std::vector<float> bestRegressor(regressorsData.begin() + maxIndex * 16, regressorsData.begin() + maxIndex * 16 + 16);
+        float box_dx = bestRegressor[0];
+        float box_dy = bestRegressor[1];
+        float w_box = bestRegressor[2];
+        float h_box = bestRegressor[3];
+
+        // 相对于 anchor 中心点的归一化偏移量
+        std::vector<float> keyPoints(bestRegressor.begin() + 4, bestRegressor.end());
+        // 检测框在输入图片(128*128)中的归一化坐标([0.0~1.0])
+        const image_process::Anchor &anchor = mAnchors[maxIndex];
+
+        // 计算边界框在输入图片(128*128)中的位置
+        float box_center_x = box_dx + anchor.centerX * 128.0f;
+        float box_center_y = box_dy + anchor.centerY * 128.0f;
+        float box_w = w_box;
+        float box_h = h_box;
+        float box_x = box_center_x - box_w / 2.0f;
+        float box_y = box_center_y - box_h / 2.0f;
+
+        // 检测框的坐标
+        cv::Rect box(cv::Point(std::round(box_x), std::round(box_y)),
+                     cv::Size(std::round(box_w), std::round(box_h)));
+
+        // 检测框在原图(1080*1920)中的坐标
+        cv::Rect originalBox = mLetterBox.transformBack(box);
+        float x0 = (originalBox.x / 1080.0f) * 2.0f - 1.0f;
+        float y0 = (originalBox.y / 1920.0f) * 2.0f - 1.0f;
+        float x1 = ((originalBox.x + originalBox.width) / 1080.0f) * 2.0f - 1.0f;
+        float y1 = ((originalBox.y + originalBox.height) / 1920.0f) * 2.0f - 1.0f;
+
+        std::vector<SimpleVertex> linesVertices;
+        linesVertices.reserve(4);
+        linesVertices.emplace_back(glm::vec3(x0, y0, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x1, y0, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x1, y1, 0.0f));
+        linesVertices.emplace_back(glm::vec3(x0, y1, 0.0f));
+
+        uint32_t linesVerticesSize = linesVertices.size() * sizeof(SimpleVertex);
+        mLinesVertexBuffer->update(*mCommandPool, linesVertices.data(), linesVerticesSize);
+
+
+        // 解析关键点在输入图片(128*128)中的坐标
+        std::vector<cv::Point2f> kps;
+        kps.reserve(keyPoints.size() / 2);
+        for (size_t i = 0; i + 1 < keyPoints.size(); i += 2) {
+            float kp_dx = keyPoints[i];
+            float kp_dy = keyPoints[i + 1];
+            float kp_x = kp_dx * anchor.width + anchor.centerX * 128.0f;
+            float kp_y = kp_dy * anchor.height + anchor.centerY * 128.0f;
+            kps.emplace_back(kp_x, kp_y);
+        }
+
+        // 关键点在原图(1080*1920)中的坐标
+        std::vector<cv::Point> points = mLetterBox.transformBack(kps);
+
+        std::vector<SimpleVertex> pointsVertices;
+        pointsVertices.reserve(points.size());
+        for (const cv::Point &point: points) {
+            pointsVertices.emplace_back(glm::vec3((point.x / 1080.0f) * 2.0f - 1.0f, (point.y / 1920.0f) * 2.0f - 1.0f, 0.0f));
+        }
+
+        uint32_t pointsVerticesSize = pointsVertices.size() * sizeof(SimpleVertex);
+        mPointsVertexBuffer->update(*mCommandPool, pointsVertices.data(), pointsVerticesSize);
 
 
         // graphic pipeline
@@ -892,11 +989,29 @@ namespace test10 {
         const vklite::PooledCommandBuffer &commandBuffer = (*mCommandBuffers)[mCurrentFrameIndex];
         commandBuffer.record([&](const vk::CommandBuffer &vkCommandBuffer) {
             mRenderPass->execute(vkCommandBuffer, mFramebuffers[imageIndex].getVkFramebuffer(), [&](const vk::CommandBuffer &vkCommandBuffer) {
-                mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
-                                                                                            vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
-                                                                                            vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
-                                                                                            vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
-                                                                                            vk::ImageAspectFlagBits::eColor);
+//                mLetterBoxOutputImageViews[mCurrentFrameIndex].getImage().changeImageLayout(vkCommandBuffer,
+//                                                                                            vk::ImageLayout::eGeneral, vk::ImageLayout::eGeneral,
+//                                                                                            vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eFragmentShader,
+//                                                                                            vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
+//                                                                                            vk::ImageAspectFlagBits::eColor);
+
+                vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
+                        .asDefault()
+                        .srcStage(vk::PipelineStageFlagBits::eComputeShader)
+                        .dstStage(vk::PipelineStageFlagBits::eFragmentShader)
+                        .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+                            builder
+                                    .asDefault()
+                                    .image(mLetterBoxOutputNcnnImages[mCurrentFrameIndex].image())
+                                    .oldLayout(vk::ImageLayout::eGeneral)
+                                    .newLayout(vk::ImageLayout::eGeneral)
+                                    .srcAccessMask(vk::AccessFlagBits::eShaderWrite)
+                                    .dstAccessMask(vk::AccessFlagBits::eShaderRead)
+                                    .aspectMask(vk::ImageAspectFlagBits::eColor);
+                        })
+                        .build();
+                pipelineBarrier.record(vkCommandBuffer);
+
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);
                 vkCommandBuffer.setScissor(0, mScissors);
