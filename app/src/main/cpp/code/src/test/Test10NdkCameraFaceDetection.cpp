@@ -258,8 +258,9 @@ namespace test10 {
                             .set(0)
                             .addImmutableSampler(0, mCameraInputSampler->getVkSampler(), vk::ShaderStageFlagBits::eCompute)
                             .addUniformBuffer(1, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageImage(2, vk::ShaderStageFlagBits::eCompute)
-                            .addStorageBuffer(3, vk::ShaderStageFlagBits::eCompute);
+                            .addStorageBuffer(2, vk::ShaderStageFlagBits::eCompute)
+//                            .addStorageImage(3, vk::ShaderStageFlagBits::eCompute)
+                            ;
                 });
 
 
@@ -439,6 +440,7 @@ namespace test10 {
         // letter box params
         LetterboxParam letterboxParam{};
         float scale = mLetterBox.scale;
+        letterboxParam.outputSize = {mLetterBox.targetWidth, mLetterBox.targetHeight};
         letterboxParam.unpaddingSize = {mLetterBox.paddedWidth, mLetterBox.paddedHeight};
         letterboxParam.padding = {mLetterBox.paddingLeft, mLetterBox.paddingTop};
         letterboxParam.fillColor = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -477,32 +479,32 @@ namespace test10 {
             mLetterBoxOutputNcnnBuffers.push_back(std::move(mat));
         }
 
-        for (int i = 0; i < mFrameCount; i++) {
-            ncnn::VkImageMat imageMat;
-            // 每个像素 rgba_f32 是 4*4=16 byte , 每个
-            imageMat.create(128, 128, (size_t) 16, 4, mBlobVkAllocator.get());
-            mLetterBoxOutputNcnnImages.push_back(std::move(imageMat));
-        }
-        for (int i = 0; i < mFrameCount; i++) {
-            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
-                    .asDefault()
-                    .srcStage(vk::PipelineStageFlagBits::eAllCommands)
-                    .dstStage(vk::PipelineStageFlagBits::eAllCommands)
-                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
-                        builder
-                                .asDefault()
-                                .image(mLetterBoxOutputNcnnImages[i].image())
-                                .oldLayout(vk::ImageLayout::eUndefined)
-                                .newLayout(vk::ImageLayout::eGeneral)
-                                .srcAccessMask(vk::AccessFlagBits::eNone)
-                                .dstAccessMask(vk::AccessFlagBits::eNone)
-                                .aspectMask(vk::ImageAspectFlagBits::eColor);
-                    })
-                    .build();
-            mCommandPool->submit([&](const vk::CommandBuffer &commandBuffer) {
-                pipelineBarrier.record(commandBuffer);
-            });
-        }
+//        for (int i = 0; i < mFrameCount; i++) {
+//            ncnn::VkImageMat imageMat;
+//            // 每个像素 rgba_f32 是 4*4=16 byte , 每个
+//            imageMat.create(128, 128, (size_t) 16, 4, mBlobVkAllocator.get());
+//            mLetterBoxOutputNcnnImages.push_back(std::move(imageMat));
+//        }
+//        for (int i = 0; i < mFrameCount; i++) {
+//            vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
+//                    .asDefault()
+//                    .srcStage(vk::PipelineStageFlagBits::eAllCommands)
+//                    .dstStage(vk::PipelineStageFlagBits::eAllCommands)
+//                    .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+//                        builder
+//                                .asDefault()
+//                                .image(mLetterBoxOutputNcnnImages[i].image())
+//                                .oldLayout(vk::ImageLayout::eUndefined)
+//                                .newLayout(vk::ImageLayout::eGeneral)
+//                                .srcAccessMask(vk::AccessFlagBits::eNone)
+//                                .dstAccessMask(vk::AccessFlagBits::eNone)
+//                                .aspectMask(vk::ImageAspectFlagBits::eColor);
+//                    })
+//                    .build();
+//            mCommandPool->submit([&](const vk::CommandBuffer &commandBuffer) {
+//                pipelineBarrier.record(commandBuffer);
+//            });
+//        }
 
         vklite::DescriptorSetWriters preprocessDescriptorSetWriters = vklite::DescriptorSetWritersBuilder()
                 .frameCount(mFrameCount)
@@ -514,18 +516,19 @@ namespace test10 {
                                         .binding(1)
                                         .addBufferInfo(mLetterboxParamsUniformBuffers[frameIndex].getBuffer());
                             })
-                            .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
-                                mapping
-                                        .binding(2)
-//                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
-                                        .addImageInfo(mLetterBoxOutputNcnnImages[frameIndex].imageview(), vk::ImageLayout::eGeneral);
-                            })
                             .addStorageBuffer([&](vklite::StorageBufferDescriptorMapping &mapping) {
                                 mapping
-                                        .binding(3)
+                                        .binding(2)
                                         .addBufferInfo(mLetterBoxOutputNcnnBuffers[frameIndex].buffer(), mLetterBoxOutputNcnnBuffers[frameIndex].buffer_offset(),
                                                        mLetterBoxOutputNcnnBuffers[frameIndex].buffer_capacity());
-                            });
+                            })
+//                            .addStorageImage([&](vklite::StorageImageDescriptorMapping &mapping) {
+//                                mapping
+//                                        .binding(3)
+////                                        .addImageInfo(mLetterBoxOutputImageViews[frameIndex].getImageView(), vk::ImageLayout::eGeneral);
+//                                        .addImageInfo(mLetterBoxOutputNcnnImages[frameIndex].imageview(), vk::ImageLayout::eGeneral);
+//                            })
+                            ;
                 })
                 .build();
 
@@ -880,8 +883,6 @@ namespace test10 {
         extractor.set_staging_vkallocator(mStagingVkAllocator.get());
 
         ncnn::VkCompute ncnnCompute = ncnn::VkCompute(mNcnnGpuDevice.get());
-
-
         extractor.input("in0", mLetterBoxOutputNcnnBuffers[mCurrentFrameIndex]);
 
 //        LOG_D("\n\n");
@@ -930,7 +931,7 @@ namespace test10 {
             if (s > 100.0f) {
                 s = 100.0f;
             }
-            s = 1.0f / (1.0f + std::exp(-s));
+//            s = 1.0f / (1.0f + std::exp(-s));
         }
         // 找到最大分数索引
         long maxIndex = std::distance(scoreData.begin(), std::max_element(scoreData.begin(), scoreData.end()));
@@ -1038,22 +1039,22 @@ namespace test10 {
 //                                                                                            vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead,
 //                                                                                            vk::ImageAspectFlagBits::eColor);
 
-                vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
-                        .asDefault()
-                        .srcStage(vk::PipelineStageFlagBits::eComputeShader)
-                        .dstStage(vk::PipelineStageFlagBits::eFragmentShader)
-                        .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
-                            builder
-                                    .asDefault()
-                                    .image(mLetterBoxOutputNcnnImages[mCurrentFrameIndex].image())
-                                    .oldLayout(vk::ImageLayout::eGeneral)
-                                    .newLayout(vk::ImageLayout::eGeneral)
-                                    .srcAccessMask(vk::AccessFlagBits::eShaderWrite)
-                                    .dstAccessMask(vk::AccessFlagBits::eShaderRead)
-                                    .aspectMask(vk::ImageAspectFlagBits::eColor);
-                        })
-                        .build();
-                pipelineBarrier.record(vkCommandBuffer);
+//                vklite::PipelineBarrier pipelineBarrier = vklite::PipelineBarrierBuilder()
+//                        .asDefault()
+//                        .srcStage(vk::PipelineStageFlagBits::eComputeShader)
+//                        .dstStage(vk::PipelineStageFlagBits::eFragmentShader)
+//                        .addImageMemoryBarrier([&](vklite::ImageMemoryBarrierBuilder &builder) {
+//                            builder
+//                                    .asDefault()
+//                                    .image(mLetterBoxOutputNcnnImages[mCurrentFrameIndex].image())
+//                                    .oldLayout(vk::ImageLayout::eGeneral)
+//                                    .newLayout(vk::ImageLayout::eGeneral)
+//                                    .srcAccessMask(vk::AccessFlagBits::eShaderWrite)
+//                                    .dstAccessMask(vk::AccessFlagBits::eShaderRead)
+//                                    .aspectMask(vk::ImageAspectFlagBits::eColor);
+//                        })
+//                        .build();
+//                pipelineBarrier.record(vkCommandBuffer);
 
                 vkCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPreviewPipeline->getVkPipeline());
                 vkCommandBuffer.setViewport(0, mViewports);

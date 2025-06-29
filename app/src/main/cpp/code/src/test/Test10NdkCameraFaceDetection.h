@@ -26,9 +26,10 @@
 namespace test10 {
 
     struct LetterboxParam {
-        glm::ivec2 unpaddingSize;// 输出图像不包含 padding 部分的长宽
-        glm::ivec2 padding;        // padding: left, top
-        glm::vec4 fillColor;      // 填充颜色 (RGBA)
+        glm::ivec2 outputSize;      // 输出图像包含 padding 部分的长宽
+        glm::ivec2 unpaddingSize;   // 输出图像不包含 padding 部分的长宽
+        glm::ivec2 padding;         // padding: left, top
+        glm::vec4 fillColor;        // 填充颜色 (RGBA)
     };
 
     struct Vertex {
@@ -140,7 +141,7 @@ namespace test10 {
 
         // output
         std::vector<ncnn::VkMat> mLetterBoxOutputNcnnBuffers;
-        std::vector<ncnn::VkImageMat> mLetterBoxOutputNcnnImages;
+//        std::vector<ncnn::VkImageMat> mLetterBoxOutputNcnnImages;
 //        std::vector<vklite::CombinedImageView> mLetterBoxOutputImageViews;
 
 

@@ -8,28 +8,27 @@ layout (binding = 0) uniform sampler2D inputSampler;
 // todo: 使用 pushConstants
 // Letterbox参数（通过Uniform Buffer传递）
 layout (binding = 1) uniform LetterboxParam {
+    ivec2 outputSize; // 输出的buffer的长宽
     ivec2 unpaddingSize; // 输出图像不包含 padding 部分的长宽
     ivec2 padding;     // padding left/top
     vec4 fillColor;    // 填充颜色 rgba
 } letterBoxParam;
 
-
-// 输出1：128x128 RGBA32f存储图像
-layout (binding = 2, rgba32f) uniform writeonly image2D letterBoxOutputImage;
-
-layout (binding = 3) buffer RGBABuffer {
+// 输出1: 128*128 rgba32f存储缓存
+layout (binding = 2) buffer RGBABuffer {
     float rgbaData[];
 } rgbaBuffer;
+
+// 输出2：128x128 RGBA32f存储图像
+//layout (binding = 3, rgba32f) uniform writeonly image2D letterBoxOutputImage;
+
 
 void main() {
     // x: [0, 128)  y: [0, 128)
     ivec2 outputCoord = ivec2(gl_GlobalInvocationID.xy);
 
-    // todo: 使用 pushConstants
-    ivec2 letterBoxOutputSize = imageSize(letterBoxOutputImage);
-
     // 边界保护：跳过超出输出范围的线程
-    if (any(greaterThanEqual(outputCoord, letterBoxOutputSize))) {
+    if (any(greaterThanEqual(outputCoord, letterBoxParam.outputSize))) {
         return;
     }
 
@@ -51,15 +50,16 @@ void main() {
     // 混合填充色与采样色（避免if分支）
     vec4 finalColor = mix(letterBoxParam.fillColor, color, isInside);
 
-    // 写入输出图像
-    imageStore(letterBoxOutputImage, outputCoord, finalColor);
-
     // 新增：写入RGB Buffer (忽略Alpha通道)
-    int index = outputCoord.y * letterBoxOutputSize.x + outputCoord.x;
-    int stride = letterBoxOutputSize.x * letterBoxOutputSize.y;
+    int index = outputCoord.y * letterBoxParam.outputSize.x + outputCoord.x;
+    int stride = letterBoxParam.outputSize.x * letterBoxParam.outputSize.y;
 
     rgbaBuffer.rgbaData[0 * stride + index] = finalColor.r; // R
     rgbaBuffer.rgbaData[1 * stride + index] = finalColor.g; // G
     rgbaBuffer.rgbaData[2 * stride + index] = finalColor.b; // B
-    rgbaBuffer.rgbaData[3 * stride + index] = 1.0f;         // A
+    //    rgbaBuffer.rgbaData[3 * stride + index] = 1.0f;         // A
+
+
+    // 写入输出图像
+    //    imageStore(letterBoxOutputImage, outputCoord, finalColor);
 }
