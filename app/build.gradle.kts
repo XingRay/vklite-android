@@ -60,7 +60,7 @@ android {
     }
 
     ndkVersion = "29.0.13599879"
-    buildToolsVersion = "35.0.0"
+    buildToolsVersion = "36.0.0"
     buildFeatures {
         viewBinding = false
     }

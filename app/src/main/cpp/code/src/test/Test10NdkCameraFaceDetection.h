@@ -203,6 +203,10 @@ namespace test10 {
 
         // 清理操作
         void cleanup() override;
+
+        void initJNICache(const android_app& app);
+
+        void callDataCallback(const android_app &app, int fps);
     };
 
 } // test

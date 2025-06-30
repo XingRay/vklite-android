@@ -1161,12 +1161,45 @@ namespace test10 {
         mFrameCounter.count();
         if (mFrameCounter.getAndResetIsFpsUpdated()) {
             LOG_D("fps: %f", mFrameCounter.getFps());
+            callDataCallback(mApp, mFrameCounter.getFps());
         }
     }
 
     // 清理操作
     void Test10NdkCameraFaceDetection::cleanup() {
         LOG_I("Cleaning up %s", getName().c_str());
+    }
+
+
+    jclass g_activityClass = nullptr;
+    jmethodID g_callbackMethod = nullptr;
+
+    // 假设已经获取到 android_app 实例指针 android_app* app
+    void Test10NdkCameraFaceDetection::callDataCallback(const android_app &app, int fps) {
+        JNIEnv *env;
+        JavaVM *vm = app.activity->vm;
+
+        vm->AttachCurrentThread(&env, nullptr);
+
+        // 获取 MainActivity 类
+        jclass localClass = env->GetObjectClass(app.activity->javaGameActivity);
+        g_activityClass = reinterpret_cast<jclass>(env->NewGlobalRef(localClass));
+
+        // 获取回调方法 ID (注意方法签名)
+        g_callbackMethod = env->GetMethodID(g_activityClass, "onDataCallback", "(I)V");
+
+        // 调用 Java 方法
+        env->CallVoidMethod(app.activity->javaGameActivity, g_callbackMethod, fps);
+
+        // 检查异常
+        if (env->ExceptionCheck()) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+        }
+
+        // 清理临时引用
+        env->DeleteLocalRef(localClass);
+        vm->DetachCurrentThread();
     }
 
 } // test

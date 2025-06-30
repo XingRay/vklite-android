@@ -13,12 +13,13 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.setPadding
 import com.google.androidgamesdk.GameActivity
 
 
@@ -33,13 +34,14 @@ class MainActivity : GameActivity() {
         private val TAG = MainActivity::class.java.simpleName
 
         private const val REQUEST_CODE_STORAGE_PERMISSION: Int = 100
-
     }
 
     private var mPermissionRequest = SinglePermissionRequest(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 //    private var mPermissionRequest = SinglePermissionRequest(android.Manifest.permission.CAMERA)
 
     private lateinit var manageAllFilesPermissionLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var mTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,19 +74,22 @@ class MainActivity : GameActivity() {
         frameLayout.addView(this.mSurfaceView)
 
         // 添加按钮
-        val button = Button(this)
-        button.text = "Change Color"
-        button.layoutParams = FrameLayout.LayoutParams(
+        mTextView = TextView(this)
+        mTextView.text = "fps"
+        mTextView.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             bottomMargin = 50
         }
-        frameLayout.addView(button)
+        mTextView.setPadding(20)
+        mTextView.setBackgroundColor(Color.WHITE)
+        mTextView.setTextSize(24.0f)
+        frameLayout.addView(mTextView)
 
         // 设置点击事件
-        button.setOnClickListener {
+        mTextView.setOnClickListener {
             changeTriangleColor(gameActivityNativeHandle, randomColor())
         }
 
@@ -148,4 +153,10 @@ class MainActivity : GameActivity() {
     }
 
     private external fun changeTriangleColor(nativeHandle: Long, color: Int)
+
+    fun onDataCallback(fps: Int) {
+        runOnUiThread {
+            mTextView.text = "fps: $fps"
+        }
+    }
 }
